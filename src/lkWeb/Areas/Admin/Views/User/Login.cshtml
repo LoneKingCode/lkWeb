@@ -1,5 +1,124 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>欢迎登陆---lkWeb</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+
+    <style>
+        .container {
+            display: table;
+            height: 100%;
+        }
+
+        .row {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .row-centered {
+            text-align: center;
+        }
+
+        .col-centered {
+            display: inline-block;
+            float: none;
+            text-align: left;
+            margin-right: -4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row row-centered">
+            <div class="well col-md-6 col-centered">
+                <h2>欢迎登录</h2>
+                <form action="@Url.Action("Login","User")" method="post" role="form" id="loginForm">
+                    <div class="form-group">
+                        <div class="input-group input-group-md">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user" aria-hidden="true"></i></span>
+                            <input type="text" class="form-control" id="txtLoginName" name="LoginName" placeholder="请输入登陆账户" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-md">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input type="password" class="form-control" id="txtPwd" name="Password" placeholder="请输入密码" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-block">登录</button>
+                    </div>
+                    <div class="form-group">
+                        <a href="#" data-toggle="modal" data-target="#register">还没有账户？点击注册</a>
+                        <br />
+                        <a href="#" data-toggle="modal" data-target="#forgetPwd">忘记密码？</a>
+                    </div>
+                </form>
+                <div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <form action="@Url.Action("Register","User")" method="post" role="form" id="registerForm">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="myModalLabel">注册账户</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>输入您的注册账号.</p>
+                                    <input type="text" name="LoginName" placeholder="账号" autocomplete="off" class="form-control" />
+                                    <p>输入您的注册邮箱</p>
+                                    <input type="text" name="Email" placeholder="邮箱" autocomplete="off" class="form-control" />
+                                    <p>输入您的密码</p>
+                                    <input type="text" name="PassWord" placeholder="密码" autocomplete="off" class="form-control" />
+                                    <p>再次输入密码</p>
+                                    <input type="text" name="PwdConfirm" placeholder="确认密码" autocomplete="off" class="form-control" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="submit" class="btn btn-primary">确认注册</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </form>
+                </div><!-- /.modal -->
+
+                <div class="modal fade" id="forgetPwd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <form action="@Url.Action("ForgetPwd","User")" method="post" role="form" id="forgetPwdForm">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="myModalLabel">忘记密码</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>输入您的账号.</p>
+                                    <input type="text" name="LoginName" placeholder="账号" autocomplete="off" class="form-control" />
+                                    <p>输入您的邮箱</p>
+                                    <input type="text" name="Email" placeholder="邮箱" autocomplete="off" class="form-control" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary">找回密码</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </form>
+                </div><!-- /.modal -->
+
+            </div>
+        </div>
+    </div>
+    <footer class="navbar navbar-fixed-bottom text-center">
+        <hr />
+        <p>&copy; 2017 - lkWeb</p>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+</body>
+</html>

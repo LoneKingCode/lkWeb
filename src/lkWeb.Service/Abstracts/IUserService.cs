@@ -17,5 +17,7 @@ namespace lkWeb.Service.Abstracts
         bool Delete(UserDto dto);
         bool Update(UserDto dto);
         ResultDto<T> GetPageData<T, TKey>(int pageSize, int pageIndex, Expression<Func<T, bool>> whereExp, Expression<Func<T, TKey>> orderExp, bool isDesc = true) where T : class;
+        List<MenuDto> GetUserMenu(int userID);
+        ResultDto<RoleDto> GetUserRoles(int userID);    
     }
 }

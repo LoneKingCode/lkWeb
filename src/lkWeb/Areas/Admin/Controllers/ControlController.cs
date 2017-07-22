@@ -7,33 +7,24 @@ using lkWeb.Service.Abstracts;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
-    public class HomeController : AdminBaseController
+    public class ControlController : AdminBaseController
     {
         public readonly IUserService _userService;
-        public HomeController(IUserService userService)
+        public ControlController(IUserService userService)
         {
             _userService = userService;
         }
+        // GET: /<controller>/
         public IActionResult Index()
         {
+            if(IsLogined)
+            {
+                var userId = CurrentUser.Id;
+                ViewBag.Menus = _userService.GetUserMenu(userId);
+            }
             return View();
         }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Error()
+        public IActionResult Welcome()
         {
             return View();
         }

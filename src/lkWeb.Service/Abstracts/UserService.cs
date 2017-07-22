@@ -17,6 +17,9 @@ namespace lkWeb.Service.Abstracts
             using (var db = GetDb())
             {
                 var entity = MapTo<UserDto, UserEntity>(dto);
+                var isHas = db.Users.Where(x => x.LoginName == dto.LoginName);
+                if (isHas != null)
+                    return false;
                 db.Users.Add(entity);
                 return db.SaveChanges() > 0;
             }
@@ -54,6 +57,38 @@ namespace lkWeb.Service.Abstracts
             }
         }
 
+        public List<MenuDto> GetUserMenu(int userID)
+        {
+            using (var db = GetDb())
+            {
+                var roleResult = GetUserRoles(userID);
+                var roleIds = roleResult.data.Select(x => x.Id).ToList();
+                Expression<Func<RoleMenuEntity, bool>> exp = item => (!item.IsDeleted && roleIds.Contains(item.RoleId));
+                var roleMenus = db.RoleMenus.Where(exp).ToList();
+                var menuIds = roleMenus.Select(x => x.MenuId).ToList();
+                Expression<Func<MenuEntity, bool>> expMenu = item => (!item.IsDeleted && menuIds.Contains(item.Id));
+                var menus = db.Menus.Where(expMenu).ToList();
+                return MapTo<List<MenuEntity>, List<MenuDto>>(menus);
+            }
+        }
+
+        public ResultDto<RoleDto> GetUserRoles(int userID)
+        {
+            using (var db = GetDb())
+            {
+                var userRoles = db.UserRoles.Where(x => x.UserId == userID).ToList();
+                var roleIds = userRoles.Select(x => x.RoleId).ToList();
+                Expression<Func<RoleEntity, bool>> exp = item => (!item.IsDeleted && roleIds.Contains(item.Id));
+                var roles = db.Roles.Where(exp).ToList();
+                var result = new ResultDto<RoleDto>
+                {
+                    recordsTotal = roles.Count,
+                    data = MapTo<List<RoleEntity>, List<RoleDto>>(roles)
+                };
+                return result;
+            }
+        }
+
         public Result<UserDto> Login(UserDto dto)
         {
             using (var db = GetDb())
@@ -83,11 +118,11 @@ namespace lkWeb.Service.Abstracts
                     {
                         result.msg = " 账户已删除";
                     }
-                    else if(user.Status == UserStatus.未激活)
+                    else if (user.Status == UserStatus.未激活)
                     {
                         result.msg = "账户未激活";
                     }
-                    else if(user.Status == UserStatus.禁用)
+                    else if (user.Status == UserStatus.禁用)
                     {
                         result.msg = "账户已禁用";
                     }

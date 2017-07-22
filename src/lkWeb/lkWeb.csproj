@@ -11,6 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot/js\layer-v3.0.3.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\js\login.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="wwwroot\**\*">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
