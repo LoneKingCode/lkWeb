@@ -4,66 +4,120 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - lkWeb</title>
-
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
-    @RenderSection("styles", required: false)
+    @RenderSection("Styles", required: false)
 </head>
 <body>
-
-    <div class="row">
-        <div class="col-md-2">
-            <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
-                <div class="navbar-header profile">
-                    <h2 class="title"><a href="#">lkImage</a></h2>
-                    <img src="~/upload/131328142728914736.png" alt="..." class="img-circle profile_img">
-                    <br />
-                    <label id="lblUserName" class="glyphicon glyphicon-user">管理员</label>
+    <div id="wrapper">
+        <!-- 左侧导航栏开始-->
+        <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+            <div class="navbar-header profile">
+                <h2 class="title"><a href="#">lkWeb </a></h2>
+                <img src="~/images/head.jpg" alt="..." class="img-circle profile_img">
+                <br />
+                <label id="lblUserName" class="glyphicon glyphicon-user">管理员</label>
+            </div>
+            <div class="clearfix"></div>
+            <ul class="nav sidebar-nav" id="lkMenu">
+                <li>
+                    <a data-url="@Url.Action("Index", "Control")"><i class="glyphicon glyphicon-home"></i> 首页</a>
+                </li>
+                <li>
+                    <a data-url="@Url.Action("Index", "Role")"><i class="glyphicon glyphicon-cloud-upload"></i>角色管理</a>
+                </li>
+                <li>
+                    <a data-url="@Url.Action("UserRole", "Role")"><i class="glyphicon glyphicon-cog"></i> 角色用户管理</a>
+                </li>
+                <li>
+                    <a data-url="@Url.Action("Index", "User")"><i class="glyphicon glyphicon-trash"></i> 用户管理</a>
+                </li>
+                <li>
+                    <a data-url="@Url.Action("Index", "Menu")"><i class="glyphicon glyphicon-trash"></i> 菜单管理</a>
+                </li>
+                <li>
+                    <a data-url="@Url.Action("RoleMenu", "Menu")"><i class="glyphicon glyphicon-trash"></i> 角色菜单管理</a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-url="#">
+                        <i class="glyphicon glyphicon-user"></i> 用户设置 <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a data-url="@Url.Action("Edit", "User")">修改信息</a></li>
+                        <li><a data-url="@Url.Action("History", "User")">登录历史</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" data-url="#"><i class="glyphicon glyphicon-arrow-right"></i> 退出登录</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- 左侧导航栏结束 -->
+        <!-- 右侧部分开始 -->
+        <div id="page-wrapper">
+            <!--右侧顶部开始-->
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li class="hidden-xs">
+                            admin
+                        </li>
+                        <li class="hidden-xs">
+                            <a href="/Home/Logout"><i class="fa fa fa-sign-out"></i> 退出</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <!--右侧顶部结束-->
+            <!--右侧选项卡开始-->
+            <div class="row content-tabs">
+                <button type="button" class="roll-nav">
+                    <i class="glyphicon glyphicon-backward"></i>
+                </button>
+                <nav class="page-tabs">
+                    <div class="page-tabs-content">
+                        <a href="javascript:;" class="J_menuTab active" data-id="/Home/Welcome">首页</a>
+                    </div>
+                </nav>
+                <button type="button" class="btn-group roll-nav roll-right" style="right: 150px;">
+                    <i class="glyphicon glyphicon-forward"></i>
+                </button>
+                <div class="btn-group roll-nav roll-right">
+                    <button type="button" class="btn btn-default dropdown-toggle btn-lg"
+                            data-toggle="dropdown">
+                        选项卡操作 <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">关闭其他选项卡</a></li>
+                        <li><a href="#">恢复上次关闭的</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">关闭所有选项卡</a></li>
+                    </ul>
                 </div>
-                <div class="clearfix"></div>
-                <ul class="nav sidebar-nav" id="lkMenu">
-                    <li>
-                        <a data-url="@Url.Action("Index", "Control")"><i class="glyphicon glyphicon-home"></i> 首页</a>
-                    </li>
-                    <li>
-                        <a data-url="@Url.Action("Index", "Role")"><i class="glyphicon glyphicon-cloud-upload"></i>角色管理</a>
-                    </li>
-                    <li>
-                        <a data-url="@Url.Action("UserRole", "Role")"><i class="glyphicon glyphicon-cog"></i> 角色用户管理</a>
-                    </li>
-                    <li>
-                        <a data-url="@Url.Action("Index", "User")"><i class="glyphicon glyphicon-trash"></i> 用户管理</a>
-                    </li>
-                    <li>
-                        <a data-url="@Url.Action("Index", "Menu")"><i class="glyphicon glyphicon-trash"></i> 菜单管理</a>
-                    </li>
-                    <li>
-                        <a data-url="@Url.Action("RoleMenu", "Menu")"><i class="glyphicon glyphicon-trash"></i> 角色菜单管理</a>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-url="#">
-                            <i class="glyphicon glyphicon-user"></i> 用户设置 <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a data-url="@Url.Action("Edit", "User")">修改信息</a></li>
-                            <li><a data-url="@Url.Action("History", "User")">登录历史</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#" data-url="#"><i class="glyphicon glyphicon-arrow-right"></i> 退出登录</a>
-                    </li>
-                </ul>
-            </nav>
+            </div>
+            <!--右侧选项卡结束-->
+            <!--右侧框架内容开始-->
+            <div class="row" id="content-main">
+                @RenderBody()
+                <iframe id="frmBody" style="width:calc(100%); height: calc(100%); border: 0; margin: 0; padding: 0; min-height: 400px;overflow-y:scroll" src="@Url.Action("Welcome","Control")"></iframe>
+
+            </div>
+            <!--右侧框架内容结束-->
+            <!--右侧底部开始-->
+            <div class="footer navbar-fixed-bottom">
+                <div class="pull-right">
+                    © 2017 - 2017 <a href="http://loneking.net" target="_blank">©lkWeb</a>
+                </div>
+            </div>
+            <!-- 右侧底部结束-->
+
         </div>
-        <div class="col-md-10">
-            @RenderBody()
-            <iframe id="frmBody" style="width:calc(100%); height: calc(100%); border: 0; margin: 0; padding: 0; min-height: 400px;overflow-y:scroll" src="@Url.Action("Welcome","Control")"></iframe>
-        </div>
+        <!-- 右边部分结束 -->
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="~/lib/layer/build/layer.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
@@ -81,6 +135,6 @@
             });
         });
     </script>
-    @RenderSection("scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

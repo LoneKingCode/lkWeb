@@ -3,9 +3,14 @@
   "private": true,
   "dependencies": {
     "bootstrap": "3.3.6",
-    "jquery": "2.2.0",
     "jquery-validation": "1.14.0",
     "jquery-validation-unobtrusive": "3.2.6",
-    "layer": "3.0.3"
+    "layer": "3.0.3",
+    "DataTables": "datatable#RELEASE_1_9_4",
+    "jQuery": "2.2.4",
+    "jquery": "jQuery#2.1.1"
+  },
+  "resolutions": {
+    "jquery": ">= 1.7.2"
   }
 }

@@ -64,5 +64,26 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return RedirectToAction("Login");
         }
+        [HttpGet]
+        public IActionResult GetList()
+        {
+            var data = _userService.GetList();
+            var strData = data.data.Select(d => new
+            {
+                loginName = d.LoginName,
+                realName = d.RealName,
+                email = d.Email,
+                statusName = d.StatusName,
+                id = d.Id.ToString(),
+                createDateTime = d.CreateDateTime.ToString(),
+                edit = "<button type=\"button\" class=\"btn btn-success\" onClick=\"EditUser(" + d.Id.ToString() + ")\">编辑</button>",
+                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteUser(" + d.Id.ToString() + ")\">删除</button>",
+            });
+            var result = Json(new
+            {            
+                aaData = strData
+            });
+            return result;
+        }
     }
 }

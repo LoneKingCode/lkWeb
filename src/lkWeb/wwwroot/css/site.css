@@ -1,7 +1,24 @@
-﻿body {
-    padding-top: 50px;
+﻿#wrapper, html {
+    height: 100%;
+}
+
+body {
     padding-bottom: 20px;
-    background-color: #514949;
+}
+
+button, html input[type=button], input[type=reset], input[type=submit] {
+    -webkit-appearance: button;
+    cursor: pointer;
+}
+
+#wrapper {
+    width: 100%;
+    overflow-x: hidden;
+    background-color: #eceded;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e7eaec !important;
 }
 
 /*#region 后台侧边栏样式*/
@@ -30,7 +47,7 @@
 }
 
 #sidebar-wrapper {
-    width: 11%;
+    width: 200px;
     height: 100%;
     z-index: 1000;
 }
@@ -39,63 +56,63 @@
     list-style: none;
 }
 
-.sidebar-nav > li > a {
-    color: #ffffff;
-}
-
-    .sidebar-nav > li > a:hover {
-        background-color: transparent;
+    .sidebar-nav > li > a {
         color: #ffffff;
-        text-decoration: none;
-        transition: all 0.5s ease;
-        border-radius: 5px;
     }
 
-.sidebar-nav li:before {
-    background-color: #1c1c1c;
-    content: '';
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 3px;
-    z-index: -1;
-    border-radius: 3px;
-}
+        .sidebar-nav > li > a:hover {
+            background-color: transparent;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.5s ease;
+            border-radius: 5px;
+        }
 
-.sidebar-nav li:first-child a {
-    color: #ffffff;
-}
+    .sidebar-nav li:before {
+        background-color: #1c1c1c;
+        content: '';
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 3px;
+        z-index: -1;
+        border-radius: 3px;
+    }
 
-.sidebar-nav li:nth-child(2):before {
-    background-color: #402d5c;
-}
+    .sidebar-nav li:first-child a {
+        color: #ffffff;
+    }
 
-.sidebar-nav li:nth-child(3):before {
-    background-color: #4c366d;
-}
+    .sidebar-nav li:nth-child(2):before {
+        background-color: #402d5c;
+    }
 
-.sidebar-nav li:nth-child(4):before {
-    background-color: #583e7e;
-}
+    .sidebar-nav li:nth-child(3):before {
+        background-color: #4c366d;
+    }
 
-.sidebar-nav li:nth-child(5):before {
-    background-color: #64468f;
-}
+    .sidebar-nav li:nth-child(4):before {
+        background-color: #583e7e;
+    }
 
-.sidebar-nav li:nth-child(6):before {
-    background-color: #704fa0;
-}
+    .sidebar-nav li:nth-child(5):before {
+        background-color: #64468f;
+    }
 
-.sidebar-nav li:nth-child(7):before {
-    background-color: #7c5aae;
-}
+    .sidebar-nav li:nth-child(6):before {
+        background-color: #704fa0;
+    }
 
-.sidebar-nav li:hover:before {
-    -webkit-transition: width 0.2s ease-in;
-    transition: width 0.2s ease-in;
-    width: 100%;
-}
+    .sidebar-nav li:nth-child(7):before {
+        background-color: #7c5aae;
+    }
+
+    .sidebar-nav li:hover:before {
+        -webkit-transition: width 0.2s ease-in;
+        transition: width 0.2s ease-in;
+        width: 100%;
+    }
 
 .nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
     background-color: #615F5F;
@@ -114,3 +131,95 @@
         color: white;
     }
 /*#endregion */
+
+/*#region 后台右边内容样式*/
+#page-wrapper {
+    padding: 0 15px;
+    position: inherit;
+    margin: 0px 0 0 200px;
+}
+
+.navbar-static-top {
+    background: #f3f3f4;
+}
+
+.content-tabs {
+    position: relative;
+    height: 43px;
+    background: #fafafa;
+    line-height: 40px;
+    border-bottom: solid 2px #2f4050;
+}
+
+    .content-tabs .roll-nav {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        color: #999;
+        z-index: 2;
+        top: 0;
+    }
+
+    .content-tabs button {
+        background: #fff;
+        border: 0;
+        height: 40px;
+        width: 40px;
+        outline: 0;
+    }
+
+    .content-tabs .roll-right {
+        right: 0;
+        border-left: solid 1px #eee;
+    }
+
+.roll-right.btn-group {
+    width: 130px;
+    padding: 0;
+}
+
+.btn-group button {
+    width: 130px;
+}
+
+nav.page-tabs {
+    margin-left: 40px;
+    width: 100000px;
+    height: 40px;
+    overflow: hidden;
+}
+
+    nav.page-tabs .page-tabs-content {
+        float: left;
+    }
+
+.page-tabs a.active {
+    background: #2a3f54;
+    color: #a7b1c2;
+}
+
+.page-tabs a {
+    color: #999;
+}
+
+.page-tabs a {
+    display: block;
+    float: left;
+    border-right: solid 1px #eee;
+    padding: 0 15px;
+}
+
+#content-main {
+    height: calc(100% - 140px);
+    overflow: hidden;
+}
+.footer {
+    background: none repeat scroll 0 0 #fff;
+    border-top: 1px solid #e7eaec;
+    overflow: hidden;
+    padding: 10px 20px;
+    margin: 0 -15px;
+    height: 36px;
+}
+/*#endregion*/

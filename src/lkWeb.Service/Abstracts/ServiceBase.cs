@@ -41,6 +41,9 @@ namespace lkWeb.Service.Abstracts
             if (source == null) throw new ArgumentNullException();
             return _mapper.Map<TSource, TDestination>(source);
         }
+
+    
+
         /// <summary>
         /// 获取分页数据
         /// </summary>

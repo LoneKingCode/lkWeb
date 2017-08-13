@@ -146,6 +146,40 @@ namespace lkWeb.Service.Abstracts
                 return db.SaveChanges() > 0;
             }
         }
+
+        /// <summary>
+        /// 获取用户列表
+        /// </summary>
+        /// <returns></returns>
+        public ResultDto<UserDto> GetList()
+        {
+            using (var db = GetDb())
+            {
+                var temp = db.Set<UserEntity>().ToList();
+                var dtoData = MapTo<List<UserEntity>, List<UserDto>>(temp);
+                var result = new ResultDto<UserDto>
+                {
+                    data = dtoData.Select(
+                    d => new UserDto
+                    {
+                        Id = d.Id,
+                        LoginName = d.LoginName,
+                        Email = d.Email == null ? "" : d.Email,
+                        IsDeleted = d.IsDeleted,
+                        Status = d.Status,
+                        RealName = d.RealName == null ? "" : d.RealName,
+                        CreateDateTime = d.CreateDateTime,
+                        Password = "",
+                    }
+                    ).ToList(),
+                    recordsTotal = dtoData.Count,
+                    pageSize = 15,
+                    pageIndex = 0
+                };
+                return result;
+            }
+        }
+
     }
 
 }
