@@ -14,3 +14,29 @@ insert_final_newline = true
 indent_style = space
 indent_size = 2
 
+tyle = tab
+
+
+[speed/**.html]
+indent_style = tab
+
+[speed/**.css]
+indent_style = tab
+
+[speed/benchmarker.js]
+indent_style = space
+indent_size = 2
+
+
+[test/**.xml]
+indent_style = tab
+
+[test/**.php]
+indent_style = tab
+
+[test/**.html]
+indent_style = tab
+
+[test/**.css]
+indent_style = space
+indent_size = 8

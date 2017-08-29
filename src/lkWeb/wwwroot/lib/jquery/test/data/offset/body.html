@@ -5,22 +5,20 @@
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 		<title>body</title>
 		<style type="text/css" media="screen">
-			body { margin: 1px; padding: 5px; position: relative }
+			body { margin: 1px; padding: 5px; }
 			#marker { position: absolute; border: 2px solid #000; width: 50px; height: 50px; background: #ccc; }
-			#firstElement { width: 50px; height: 50px; background: green; }
 		</style>
-		<script src="../../jquery.js"></script>
+		<script src="../../../dist/jquery.js"></script>
 		<script type="text/javascript" charset="utf-8">
 			jQuery(function($) {
-				$("body").click(function() {
-					$("marker").css( $(this).offset() );
+				$('body').click(function() {
+					$('#marker').css( $(this).offset() );
 					return false;
 				});
 			});
 		</script>
 	</head>
 	<body>
-		<div id="firstElement"></div>
 		<div id="marker"></div>
 	</body>
 </html>

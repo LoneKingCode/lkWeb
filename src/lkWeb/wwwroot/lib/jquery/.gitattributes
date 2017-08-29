@@ -1,4 +1,6 @@
-# Auto detect text files and perform LF normalization
+*     eol=lf
+*.jar binary
+nd perform LF normalization
 * text=auto
 
 # JS files must always use LF for tools to work

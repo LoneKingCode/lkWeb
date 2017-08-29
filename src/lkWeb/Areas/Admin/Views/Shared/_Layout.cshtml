@@ -7,6 +7,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/js/lkWeb.js"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
@@ -24,22 +25,22 @@
             <div class="clearfix"></div>
             <ul class="nav sidebar-nav" id="lkMenu">
                 <li>
-                    <a data-url="@Url.Action("Index", "Control")"><i class="glyphicon glyphicon-home"></i> 首页</a>
+                    <a data-url="@Url.Action("Index", "Control")" class="J_menuItem" data-index=""><i class="glyphicon glyphicon-home"></i> 首页</a>
                 </li>
                 <li>
-                    <a data-url="@Url.Action("Index", "Role")"><i class="glyphicon glyphicon-cloud-upload"></i>角色管理</a>
+                    <a data-url="@Url.Action("Index", "Role")" class="J_menuItem" data-index="1"><i class="glyphicon glyphicon-cloud-upload"></i>角色管理</a>
                 </li>
                 <li>
-                    <a data-url="@Url.Action("UserRole", "Role")"><i class="glyphicon glyphicon-cog"></i> 角色用户管理</a>
+                    <a data-url="@Url.Action("UserRole", "Role")" class="J_menuItem" data-index="2"><i class="glyphicon glyphicon-cog"></i> 角色用户管理</a>
                 </li>
                 <li>
-                    <a data-url="@Url.Action("Index", "User")"><i class="glyphicon glyphicon-trash"></i> 用户管理</a>
+                    <a data-url="@Url.Action("Index", "User")" class="J_menuItem" data-index="3"><i class="glyphicon glyphicon-trash"></i> 用户管理</a>
                 </li>
                 <li>
-                    <a data-url="@Url.Action("Index", "Menu")"><i class="glyphicon glyphicon-trash"></i> 菜单管理</a>
+                    <a data-url="@Url.Action("Index", "Menu")" class="J_menuItem" data-index="4"><i class="glyphicon glyphicon-trash"></i> 菜单管理</a>
                 </li>
                 <li>
-                    <a data-url="@Url.Action("RoleMenu", "Menu")"><i class="glyphicon glyphicon-trash"></i> 角色菜单管理</a>
+                    <a data-url="@Url.Action("RoleMenu", "Menu")" class="J_menuItem" data-index="5"><i class="glyphicon glyphicon-trash"></i> 角色菜单管理</a>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-url="#">
@@ -74,35 +75,41 @@
             <!--右侧顶部结束-->
             <!--右侧选项卡开始-->
             <div class="row content-tabs">
-                <button type="button" class="roll-nav">
+                <button class="roll-nav roll-left J_tabLeft">
                     <i class="glyphicon glyphicon-backward"></i>
                 </button>
-                <nav class="page-tabs">
-                    <div class="page-tabs-content">
-                        <a href="javascript:;" class="J_menuTab active" data-id="/Home/Welcome">首页</a>
+                <nav class="page-tabs J_menuTabs">
+                    <div class="page-tabs-content" style="margin-left: 0px;">
+                        <a href="javascript:;" class="J_menuTab active" data-id="">首页</a>
                     </div>
                 </nav>
-                <button type="button" class="btn-group roll-nav roll-right" style="right: 150px;">
+                <button class="roll-nav roll-right J_tabRight">
                     <i class="glyphicon glyphicon-forward"></i>
                 </button>
                 <div class="btn-group roll-nav roll-right">
-                    <button type="button" class="btn btn-default dropdown-toggle btn-lg"
-                            data-toggle="dropdown">
-                        选项卡操作 <span class="caret"></span>
+                    <button class="dropdown J_tabClose" data-toggle="dropdown" aria-expanded="true">
+                        关闭操作<span class="caret"></span>
+
                     </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">关闭其他选项卡</a></li>
-                        <li><a href="#">恢复上次关闭的</a></li>
+                    <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                        <li class="J_tabShowActive">
+                            <a>定位当前选项卡</a>
+                        </li>
                         <li class="divider"></li>
-                        <li><a href="#">关闭所有选项卡</a></li>
+                        <li class="J_tabCloseAll">
+                            <a>关闭全部选项卡</a>
+                        </li>
+                        <li class="J_tabCloseOther">
+                            <a>关闭其他选项卡</a>
+                        </li>
                     </ul>
                 </div>
             </div>
             <!--右侧选项卡结束-->
             <!--右侧框架内容开始-->
-            <div class="row" id="content-main">
+            <div class="row J_mainContent" id="content-main">
                 @RenderBody()
-                <iframe id="frmBody" style="width:calc(100%); height: calc(100%); border: 0; margin: 0; padding: 0; min-height: 400px;overflow-y:scroll" src="@Url.Action("Welcome","Control")"></iframe>
+                <iframe id="frmBody" name="iframe0" class="J_Iframe" data-id="/" style="width:calc(100%); height: calc(100%); border: 0; margin: 0; padding: 0; min-height: 400px;overflow-y:scroll" src="/"></iframe>
 
             </div>
             <!--右侧框架内容结束-->
@@ -120,7 +127,7 @@
 
     <script src="~/lib/layer/build/layer.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <script src="~/js/contabs.js"></script>
     <script>
         //显示loading提示
         var firstLoading = layer.load(2);
@@ -128,13 +135,14 @@
             setInterval(function () { layer.close(firstLoading); }, 1000);
         }
         $(function () {
-            $(".panel-heading").click(function (e) {
-                /*切换折叠指示图标*/
-                $(this).find("span").toggleClass("glyphicon-chevron-down");
-                $(this).find("span").toggleClass("glyphicon-chevron-up");
-            });
+            //$(".panel-heading").click(function (e) {
+            //    /*切换折叠指示图标*/
+            //    $(this).find("span").toggleClass("glyphicon-chevron-down");
+            //    $(this).find("span").toggleClass("glyphicon-chevron-up");
+            //});
         });
     </script>
     @RenderSection("Scripts", required: false)
+
 </body>
 </html>

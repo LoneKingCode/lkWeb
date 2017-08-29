@@ -15,7 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\js\contabs.js" />
+    <Content Include="wwwroot\js\lkWeb.js" />
     <Content Include="wwwroot\js\login.js" />
+    <Content Include="wwwroot\js\tab.js" />
     <Content Include="wwwroot\lib\bootstrap\.bower.json" />
     <Content Include="wwwroot\lib\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="wwwroot\lib\bootstrap\dist\css\bootstrap-theme.css.map" />

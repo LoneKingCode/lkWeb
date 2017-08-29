@@ -4,6 +4,7 @@
 
 body {
     padding-bottom: 20px;
+    height: 100%;
 }
 
 button, html input[type=button], input[type=reset], input[type=submit] {
@@ -15,6 +16,7 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     width: 100%;
     overflow-x: hidden;
     background-color: #eceded;
+    height: 100%;
 }
 
 .border-bottom {
@@ -137,6 +139,7 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     padding: 0 15px;
     position: inherit;
     margin: 0px 0 0 200px;
+    height: 100%;
 }
 
 .navbar-static-top {
@@ -179,6 +182,10 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     padding: 0;
 }
 
+.roll-right.J_tabRight {
+    right: 140px;
+}
+
 .btn-group button {
     width: 130px;
 }
@@ -214,6 +221,7 @@ nav.page-tabs {
     height: calc(100% - 140px);
     overflow: hidden;
 }
+
 .footer {
     background: none repeat scroll 0 0 #fff;
     border-top: 1px solid #e7eaec;
@@ -222,4 +230,6 @@ nav.page-tabs {
     margin: 0 -15px;
     height: 36px;
 }
+
+
 /*#endregion*/

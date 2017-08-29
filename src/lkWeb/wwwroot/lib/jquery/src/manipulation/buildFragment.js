@@ -100,15 +100,3 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 
 return buildFragment;
 } );
-riptType.test( elem.type || "" ) ) {
-					scripts.push( elem );
-				}
-			}
-		}
-	}
-
-	return fragment;
-}
-
-return buildFragment;
-} );
