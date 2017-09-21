@@ -7,6 +7,10 @@ body {
     height: 100%;
 }
 
+a {
+    cursor: pointer;
+}
+
 button, html input[type=button], input[type=reset], input[type=submit] {
     -webkit-appearance: button;
     cursor: pointer;
@@ -215,8 +219,18 @@ nav.page-tabs {
     float: left;
     border-right: solid 1px #eee;
     padding: 0 15px;
+    text-decoration: none;
 }
 
+    .content-tabs .roll-nav:hover, .page-tabs a:hover {
+        color: #777;
+        background: #f2f2f2;
+        cursor: pointer;
+    }
+    .page-tabs a.active i:hover, .page-tabs a.active:hover {
+        background: #172d44;
+        color: #fff;
+    }
 #content-main {
     height: calc(100% - 140px);
     overflow: hidden;

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using SimpleInjector.Lifestyles;
 using lkWeb.Controllers;
+using Microsoft.AspNetCore.Routing;
 
 namespace lkWeb
 {
@@ -79,7 +80,7 @@ namespace lkWeb
             {
                 routes.MapRoute(
                     name: "Admin",
-                    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                    template: "{area:exists}/{controller=Control}/{action=Index}/{id?}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

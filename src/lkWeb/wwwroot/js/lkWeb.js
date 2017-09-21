@@ -1,12 +1,50 @@
 ﻿
 var lkWeb = {};
 
-lkWeb.goAction = function () {
+lkWeb.GoAction = function () {
 
 }
 
-lkWeb.deleteUser = function () {
-    alert("delete");
+lkWeb.DeleteUser = function (userID) {
+    $.ajax(
+        {
+            type: 'post',
+            url: '/Admin/User/Delete',
+            data: {
+                UserID: userID
+            },
+            success: function (result) {
+                if (result.flag == true)
+                {
+                    alert("删除成功")                     
+                }
+                else {
+                    alert("删除失败");
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+}
+
+lkWeb.EditUser = function () {
+    var option = {
+        datatype: "json",
+        success: function (data) {
+            if (data.flag == true) {
+                alert("保存成功");
+            }
+            else {
+                alert(data.msg);
+            }
+        },
+        error: function (error) {
+            alert('提交请求失败');
+            console.log(error);
+        }
+    };
+    $("#form-editUser").ajaxSubmit(option);
 }
 
 //两种调用方式
@@ -28,7 +66,7 @@ String.prototype.format = function (args) {
         else {
             for (var i = 0; i < arguments.length; i++) {
                 if (arguments[i] != undefined) {
-                    　　　　　　　　　　　　var reg = new RegExp("({)" + i + "(})", "g");
+                    var reg = new RegExp("({)" + i + "(})", "g");
                     result = result.replace(reg, arguments[i]);
                 }
             }

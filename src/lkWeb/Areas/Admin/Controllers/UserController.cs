@@ -17,6 +17,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             _userService = userService;
         }
+        #region Page
         // GET: /<controller>/
         public IActionResult Index()
         {
@@ -31,10 +32,25 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
+        public IActionResult Add()
+        {
+            return View();
+        }
         public IActionResult History()
         {
             return View();
         }
+        public IActionResult ForgetPwd()
+        {
+            return View();
+        }
+        public IActionResult Register()
+        {
+            return View();
+        }
+        #endregion
+
+        #region Ajax
 
         [HttpPost]
         public IActionResult Login(UserDto dto)
@@ -60,10 +76,7 @@ namespace lkWeb.Areas.Admin.Controllers
             //else
             //     return Content("<script>alert('注册失败！')</script>");
         }
-        public IActionResult ForgetPwd(UserDto dto)
-        {
-            return RedirectToAction("Login");
-        }
+
         [HttpGet]
         public IActionResult GetList()
         {
@@ -76,14 +89,40 @@ namespace lkWeb.Areas.Admin.Controllers
                 statusName = d.StatusName,
                 id = d.Id.ToString(),
                 createDateTime = d.CreateDateTime.ToString(),
-                edit = "<button type=\"button\" class=\"btn btn-success\" onClick=\"EditUser(" + d.Id.ToString() + ")\">编辑</button>",
-                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteUser(" + d.Id.ToString() + ")\">删除</button>",
+                edit = "<button type=\"button\" class=\"btn btn-success\" onClick=\"lkWeb.ModifyUser(" + d.Id.ToString() + ")\">编辑</button>",
+                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"lkWeb.DeleteUser(" + d.Id.ToString() + ")\">删除</button>",
             });
             var result = Json(new
-            {            
+            {
                 aaData = strData
             });
             return result;
         }
+        [HttpPost]
+        public IActionResult Edit(UserDto user)
+        {
+
+            return null;
+        }
+        [HttpPost]
+        public IActionResult Add(UserDto user)
+        {
+            return null;
+        }
+        [HttpPost]
+        public IActionResult ForgetPwd(UserDto user)
+        {
+            return null;
+        }
+        [HttpPost]
+        public IActionResult Delete(int UserID)
+        {
+            var result = Json(new
+            {
+                flag = _userService.Delete(UserID)
+            });
+            return result;
+        }
+        #endregion
     }
 }

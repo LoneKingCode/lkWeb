@@ -168,7 +168,7 @@ $(function () {
 
         // 选项卡菜单不存在
         if (flag) {
-            var str = '<a href="javascript:;" class="active J_menuTab" data-id="' + dataUrl + '">' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+            var str = '<a href="javascript:;" class="active J_menuTab" data-id="' + dataUrl + '">' + menuName + ' <i class="glyphicon glyphicon-remove-circle"></i></a>';
             $('.J_menuTab').removeClass('active');
 
             // 添加选项卡对应的iframe
@@ -221,7 +221,7 @@ $(function () {
         if (dataUrl == undefined || $.trim(dataUrl).length == 0) return false;
 
 
-        var str = '<a href="javascript:;" class="active J_menuTab" data-id="' + dataUrl + '">' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+        var str = '<a href="javascript:;" class="active J_menuTab" data-id="' + dataUrl + '">' + menuName + ' <i class="glyphicon glyphicon-remove-circle"></i></a>';
         $('.J_menuTab').removeClass('active');
 
         // 添加选项卡对应的iframe
