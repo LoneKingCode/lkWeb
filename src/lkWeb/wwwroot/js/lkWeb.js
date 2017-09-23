@@ -14,12 +14,35 @@ lkWeb.DeleteUser = function (userID) {
                 UserID: userID
             },
             success: function (result) {
-                if (result.flag == true)
-                {
-                    alert("删除成功")                     
+                if (result.flag == true) {
+                    alert("删除成功")
+                    table_user.fnReloadAjax(table_user.fnSettings()); //刷新datatable
                 }
                 else {
                     alert("删除失败");
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+}
+
+lkWeb.DeleteUsers = function (userIDs) {
+    $.ajax(
+        {
+            type: 'post',
+            url: '/Admin/User/DeleteMulti',
+            data: {
+                UserIDs: userIDs
+            },
+            success: function (result) {
+                if (result.flag == true) {
+                    alert("删除多个成功")
+                    table_user.fnReloadAjax(table_user.fnSettings()); //刷新datatable
+                }
+                else {
+                    alert("删除多个失败");
                 }
             },
             error: function (err) {

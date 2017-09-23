@@ -2,9 +2,26 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
 }
 @section Scripts{
+<script src="~/js/user.js"></script>
     <script>
-                  var url = '@Url.Action("GetList")';
-        var cols = [
+        $(function () {
+            InitDataTable();
+
+            $(".box-refresh").click(function () {
+
+            });
+
+            $(".checkAll").click(function () {
+                var check = $(this).prop("checked");
+                $(".checkChild").prop("checked", check);
+            });
+
+        });
+        var table_user;
+        function InitDataTable() {
+            var url = '@Url.Action("GetList")';
+            $.fn.dataTableExt.sErrMode = 'throw';
+              var cols = [
             { data: "id", orderable: false },
             { data: "loginName", name: "loginName", orderable: true },
             { data: "realName", name: "realName", orderable: true },
@@ -74,19 +91,29 @@
             },
             'order': [[1, 'asc']]
         };
-        $(function () {
+          table_user = $("#table_user").dataTable(config);
+    }
 
-           $.fn.dataTableExt.sErrMode = 'throw';
-           $("#table_user").dataTable(config);
+        //add this plug in
+        // you can call the below function to reload the table with current state
+        //Datatables刷新方法
+        //oTable.fnReloadAjax(oTable.fnSettings());
+        $.fn.dataTableExt.oApi.fnReloadAjax = function (oSettings) {
+            //oSettings.sAjaxSource = sNewSource;
+            this.fnClearTable(this);
+            this.oApi._fnProcessingDisplay(oSettings, true);
+            var that = this;
 
-            $(".box-refresh").click(function () {
-                $("#table_user").relooad();
-           });
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
+            $.getJSON(oSettings.sAjaxSource, null, function (json) {
+                /* Got the data - add it to the table */
+                for (var i = 0; i < json.aaData.length; i++) {
+                    that.oApi._fnAddData(oSettings, json.aaData[i]);
+                }
+                oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                that.fnDraw(that);
+                that.oApi._fnProcessingDisplay(oSettings, false);
             });
-        });
+        }
     </script>
 }
 <div class="data-content" style="padding:15px 0 0 15px;">

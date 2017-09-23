@@ -34,7 +34,19 @@ namespace lkWeb.Service.Abstracts
                 return db.SaveChanges() > 0;
             }
         }
-
+        public bool DeleteMulti(string userIDs)
+        {
+            using (var db = GetDb())
+            {
+                string[] userID = userIDs.Split(',');
+                foreach (string id in userID)
+                {
+                    var entity = db.Users.FirstOrDefault(item => item.Id == int.Parse(id));
+                    db.Remove(entity);
+                }
+                return db.SaveChanges() > 0;
+            }
+        }
         public bool Delete(UserDto dto)
         {
             using (var db = GetDb())

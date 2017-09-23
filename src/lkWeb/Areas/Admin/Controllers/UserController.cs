@@ -115,11 +115,19 @@ namespace lkWeb.Areas.Admin.Controllers
             return null;
         }
         [HttpPost]
-        public IActionResult Delete(int UserID)
+        public IActionResult Delete(string UserID)
         {
             var result = Json(new
             {
-                flag = _userService.Delete(UserID)
+                flag = _userService.Delete(int.Parse(UserID))
+            });
+            return result;
+        }
+        public IActionResult DeleteMulti(string UserIDs)
+        {
+            var result = Json(new
+            {
+                flag = _userService.DeleteMulti(UserIDs)
             });
             return result;
         }
