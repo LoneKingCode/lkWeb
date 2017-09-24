@@ -28,9 +28,10 @@ namespace lkWeb.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Edit()
+        public IActionResult Edit(string id)
         {
-            return View();
+            var user = _userService.GetById(int.Parse(id));
+            return View(user);
         }
         public IActionResult Add()
         {
@@ -89,8 +90,8 @@ namespace lkWeb.Areas.Admin.Controllers
                 statusName = d.StatusName,
                 id = d.Id.ToString(),
                 createDateTime = d.CreateDateTime.ToString(),
-                edit = "<button type=\"button\" class=\"btn btn-success\" onClick=\"lkWeb.ModifyUser(" + d.Id.ToString() + ")\">编辑</button>",
-                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"lkWeb.DeleteUser(" + d.Id.ToString() + ")\">删除</button>",
+                edit = "<button type=\"button\" class=\"btn btn-success\" onClick=\"GoToEditUser(" + d.Id.ToString() + ")\">编辑</button>",
+                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteUser(" + d.Id.ToString() + ")\">删除</button>",
             });
             var result = Json(new
             {
@@ -101,13 +102,20 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(UserDto user)
         {
-
-            return null;
+            var result = Json(new
+            {
+                flag = _userService.Update(user)
+            });
+            return result;
         }
         [HttpPost]
         public IActionResult Add(UserDto user)
         {
-            return null;
+            var result = Json(new
+            {
+                flag = _userService.AddUser(user)
+            });
+            return result;
         }
         [HttpPost]
         public IActionResult ForgetPwd(UserDto user)

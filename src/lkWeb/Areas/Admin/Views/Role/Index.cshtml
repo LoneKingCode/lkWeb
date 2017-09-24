@@ -1,6 +1,9 @@
 ﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
 }
-
+@section Scripts{
+<script src="~/js/role.js"></script>
+}
 <div class="data-content" style="padding:15px 0 0 15px;">
     <h2>角色管理</h2>
     <hr />
@@ -10,7 +13,7 @@
         <input type="text" id="txtRoleName" />
         <label>角色描述</label>
         <input type="text" id="txtRoleDesc" />
-        <a href="#" class="btn btn-success" id="btnAddRole">增加</a>
+        <a href="#" class="btn btn-success" onclick="AddRole();">增加</a>
     </div>
     <table class="table table-striped table-hover">
         <thead>

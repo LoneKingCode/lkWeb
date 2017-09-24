@@ -17,7 +17,7 @@ namespace lkWeb.Service.Abstracts
             using (var db = GetDb())
             {
                 var entity = MapTo<UserDto, UserEntity>(dto);
-                var isHas = db.Users.Where(x => x.LoginName == dto.LoginName);
+                var isHas = db.Users.Where(x => x.LoginName == dto.LoginName).FirstOrDefault();
                 if (isHas != null)
                     return false;
                 db.Users.Add(entity);

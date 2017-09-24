@@ -1,73 +1,14 @@
 ﻿
 var lkWeb = {};
 
-lkWeb.GoAction = function () {
-
-}
-
-lkWeb.DeleteUser = function (userID) {
-    $.ajax(
-        {
-            type: 'post',
-            url: '/Admin/User/Delete',
-            data: {
-                UserID: userID
-            },
-            success: function (result) {
-                if (result.flag == true) {
-                    alert("删除成功")
-                    table_user.fnReloadAjax(table_user.fnSettings()); //刷新datatable
-                }
-                else {
-                    alert("删除失败");
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-}
-
-lkWeb.DeleteUsers = function (userIDs) {
-    $.ajax(
-        {
-            type: 'post',
-            url: '/Admin/User/DeleteMulti',
-            data: {
-                UserIDs: userIDs
-            },
-            success: function (result) {
-                if (result.flag == true) {
-                    alert("删除多个成功")
-                    table_user.fnReloadAjax(table_user.fnSettings()); //刷新datatable
-                }
-                else {
-                    alert("删除多个失败");
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-}
-
-lkWeb.EditUser = function () {
-    var option = {
-        datatype: "json",
-        success: function (data) {
-            if (data.flag == true) {
-                alert("保存成功");
-            }
-            else {
-                alert(data.msg);
-            }
-        },
-        error: function (error) {
-            alert('提交请求失败');
-            console.log(error);
-        }
-    };
-    $("#form-editUser").ajaxSubmit(option);
+lkWeb.GoAction = function (ctrl, action, values) {
+    var curWwwPath = window.document.location.href;
+    //获取主机地址之后的目录，如： uimcardprj/share/meun.jsp
+    var pathName = window.document.location.pathname;
+    var pos = curWwwPath.indexOf(pathName);
+    //获取主机地址，如： http://localhost:8083
+    var localhostPath = curWwwPath.substring(0, pos);
+    window.location.href = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
 }
 
 //两种调用方式
