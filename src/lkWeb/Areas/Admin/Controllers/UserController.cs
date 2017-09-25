@@ -113,7 +113,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var result = Json(new
             {
-                flag = _userService.AddUser(user)
+                flag = _userService.Add(user)
             });
             return result;
         }

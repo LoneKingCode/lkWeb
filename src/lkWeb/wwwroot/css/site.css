@@ -227,10 +227,12 @@ nav.page-tabs {
         background: #f2f2f2;
         cursor: pointer;
     }
+
     .page-tabs a.active i:hover, .page-tabs a.active:hover {
         background: #172d44;
         color: #fff;
     }
+
 #content-main {
     height: calc(100% - 140px);
     overflow: hidden;
@@ -245,5 +247,53 @@ nav.page-tabs {
     height: 36px;
 }
 
+.role-list {
+    border-right: 1px solid #583e7e;
+    height: 0px;
+    padding-bottom: 100%;
+}
+
+    .role-list > ul {
+        list-style-type: none;
+        padding-left: 15px;
+    }
+
+        .role-list > ul > li {
+            background: url("../images/people.png") no-repeat 0px 0px;
+            padding: 6px 0px 0px 25px;
+            width: 125px;
+            position: relative;
+        }
+
+            .role-list > ul > li > a {
+                color: #000000;
+                position: relative;
+            }
+
+            .role-list > ul > li:before {
+                background-color: #DADADA;
+                content: '';
+                height: 105%;
+                left: 0;
+                position: absolute;
+                top: 0px;
+                width: 3px;
+                z-index: 0;
+                border-radius: 3px;
+            }
+
+            .role-list > ul > li > a:hover {
+                background-color: transparent;
+                color: #64468f;
+                text-decoration: none;
+                transition: all 0.5s ease;
+                border-radius: 5px;
+            }
+
+            .role-list > ul > li:hover:before {
+                transition: width 0.2s ease-in;
+                width: 67%;
+                left: 18%;
+            }
 
 /*#endregion*/

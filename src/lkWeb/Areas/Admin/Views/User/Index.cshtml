@@ -21,19 +21,7 @@
         function InitDataTable() {
             var url = '@Url.Action("GetList")';
             $.fn.dataTableExt.sErrMode = 'throw';
-              var cols = [
-            { data: "id", orderable: false },
-            { data: "loginName", name: "loginName", orderable: true },
-            { data: "realName", name: "realName", orderable: true },
-            { data: "email", name: "email", orderable: true },
-            { data: function (e) { return e.StatusName; }, name: "status", orderable: true },
-            {
-                data: function (e) {
-                    return e.CreateDateTime.toString().getDate();
-                }, name: "createDateTime",
-                orderable: true
-            }
-        ];
+ 
         var config = {
             "processing": true,
             "bInfo": true, //是否显示是否启用底边信息栏

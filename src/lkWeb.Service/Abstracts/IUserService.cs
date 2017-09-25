@@ -10,7 +10,7 @@ namespace lkWeb.Service.Abstracts
 {
     public interface IUserService
     {
-        bool AddUser(UserDto dto);
+        bool Add(UserDto dto);
         Result<UserDto> Login(UserDto dto);
         UserDto GetById(int userID);
         bool Delete(int userID);

@@ -12,7 +12,7 @@ namespace lkWeb.Service.Abstracts
 {
     public class UserService : ServiceBase, IUserService
     {
-        public bool AddUser(UserDto dto)
+        public bool Add(UserDto dto)
         {
             using (var db = GetDb())
             {

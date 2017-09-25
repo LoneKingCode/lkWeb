@@ -22,6 +22,8 @@ namespace lkWeb.Service
         {
             CreateMap<UserEntity, UserDto>().ForMember(u => u.Status, e => e.MapFrom(s => (UserStatus)s.Status));
             CreateMap<UserDto, UserEntity>().ForMember(u => u.Status, e => e.MapFrom(s => (byte)s.Status));
+            CreateMap<RoleEntity, RoleDto>();
+            CreateMap<RoleDto, RoleEntity>();
         }
     }
 }

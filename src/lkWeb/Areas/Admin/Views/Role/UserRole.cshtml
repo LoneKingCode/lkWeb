@@ -2,7 +2,7 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
 }
 @section Scripts{
-<script src="~/js/role.js"></script>
+    <script src="~/js/role.js"></script>
 }
 <div class="data-content" style="padding:15px 0 0 15px;">
     <h2>角色用户管理</h2>
@@ -16,8 +16,8 @@
         </ul>
     </div>
     <div class="col-md-10">
-        <a href="#" class="btn btn-success">增加</a>
-        <a href="#" class="btn btn-danger">删除</a>
+        <a href="#" class="btn btn-success" id="btnAddUserRole">增加</a>
+        <a href="#" class="btn btn-danger" id="btnDelMulti">删除</a>
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
@@ -31,7 +31,7 @@
                     <td><input type="checkbox" /></td>
                     <td>admin</td>
                     <td>2017年5月5日 21:50</td>
-                    <td><a href="#" class="btn btn-danger">删除</a></td>
+                    <td><a href="#" class="btn btn-danger" onclick="DeleteUserRole(1,2)">删除</a></td>
                 </tr>
 
             </tbody>
