@@ -22,7 +22,7 @@
     $("#btnGoToAddUser").click(function () {
         lkWeb.GoAction("user", "add", 0);
     })
-    
+
 
 })
 
@@ -53,50 +53,54 @@ function ModifyUser() {
 
 //删除多个用户
 function DeleteUsers(userIDs) {
-    $.ajax(
-        {
-            type: 'post',
-            url: '/Admin/User/DeleteMulti',
-            data: {
-                UserIDs: userIDs
-            },
-            success: function (result) {
-                if (result.flag == true) {
-                    alert("删除多个成功")
-                    table_user.fnReloadAjax(table_user.fnSettings()); //刷新datatable
+    if (confirm('确认删除?')) {
+        $.ajax(
+            {
+                type: 'post',
+                url: '/Admin/User/DeleteMulti',
+                data: {
+                    UserIDs: userIDs
+                },
+                success: function (result) {
+                    if (result.flag == true) {
+                        alert("删除多个成功")
+                        table_user.fnReloadAjax(table_user.fnSettings()); //刷新datatable
+                    }
+                    else {
+                        alert("删除多个失败");
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
                 }
-                else {
-                    alert("删除多个失败");
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
+            })
+    }
 }
 
 //删除单个用户
 function DeleteUser(userID) {
-    $.ajax(
-        {
-            type: 'post',
-            url: '/Admin/User/Delete',
-            data: {
-                UserID: userID
-            },
-            success: function (result) {
-                if (result.flag == true) {
-                    alert("删除成功")
-                    table_user.fnReloadAjax(table_user.fnSettings()); //刷新datatable
+    if (confirm('确认删除?')) {
+        $.ajax(
+            {
+                type: 'post',
+                url: '/Admin/User/Delete',
+                data: {
+                    UserID: userID
+                },
+                success: function (result) {
+                    if (result.flag == true) {
+                        alert("删除成功")
+                        table_user.fnReloadAjax(table_user.fnSettings()); //刷新datatable
+                    }
+                    else {
+                        alert("删除失败");
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
                 }
-                else {
-                    alert("删除失败");
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
+            })
+    }
 }
 
 //修改用户

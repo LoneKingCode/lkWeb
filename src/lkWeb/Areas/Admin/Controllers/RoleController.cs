@@ -23,10 +23,6 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult UserRole()
-        {
-            return View();
-        }
         public IActionResult Add()
         {
             return View();
@@ -35,6 +31,10 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var role = _roleService.GetById(int.Parse(id));
             return View(role);
+        }
+        public IActionResult Authen()
+        {
+            return View();
         }
         #endregion
         #region Ajax

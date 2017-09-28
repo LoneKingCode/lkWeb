@@ -1,34 +1,34 @@
-﻿ $(function () {
+﻿$(function () {
     //角色主页 确定操作
     $("#btnOperate").click(function () {
         var select = $("#sltOperate");
         var selectVal = select.val();
         if (selectVal == "delete") {
-            var roleIDs = "";
-            $(":checkbox:checked", "#table_role").each(function (i, n) {
+            var menuIDs = "";
+            $(":checkbox:checked", "#table_menu").each(function (i, n) {
                 if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                roleIDs += $(n).val() + ",";
+                menuIDs += $(n).val() + ",";
             })
 
-            roleIDs = roleIDs.substr(0, roleIDs.length - 1);
-            DeleteRoles(roleIDs);
+            menuIDs = menuIDs.substr(0, menuIDs.length - 1);
+            DeleteMenus(menuIDs);
         }
 
     })
     //角色主页 增加角色
-    $("#btnGoToAddRole").click(function () {
-        lkWeb.GoAction("role", "add", 0);
-     })
+    $("#btnGoToAddMenu").click(function () {
+        lkWeb.GoAction("menu", "add", 0);
+    })
 })
 
 //增加角色
-function AddRole() {
+function AddMenu() {
     var option = {
         datatype: "json",
         success: function (data) {
             if (data.flag == true) {
                 alert("增加成功");
-                lkWeb.GoAction("role", "index", 0);
+                lkWeb.GoAction("menu", "index", 0);
             }
             else {
                 alert(data.msg);
@@ -39,22 +39,22 @@ function AddRole() {
             console.log(error);
         }
     };
-    $("#form-addRole").ajaxSubmit(option);
+    $("#form-addMenu").ajaxSubmit(option);
 }
 //删除多个角色
-function DeleteRoles(roleIDs) {
+function DeleteMenus(menuIDs) {
     if (confirm('确认删除?')) {
         $.ajax(
             {
                 type: 'post',
-                url: '/Admin/Role/DeleteMulti',
+                url: '/Admin/Menu/DeleteMulti',
                 data: {
-                    roleIDs: roleIDs
+                    MenuIDs: menuIDs
                 },
                 success: function (result) {
                     if (result.flag == true) {
                         alert("删除多个成功")
-                        table_role.fnReloadAjax(table_role.fnSettings()); //刷新datatable
+                        table_menu.fnReloadAjax(table_menu.fnSettings()); //刷新datatable
                     }
                     else {
                         alert("删除多个失败");
@@ -67,19 +67,19 @@ function DeleteRoles(roleIDs) {
     }
 }
 //删除角色
-function DeleteRole(roleID) {
+function DeleteMenu(menuID) {
     if (confirm('确认删除?')) {
         $.ajax(
             {
                 type: 'post',
-                url: '/Admin/Role/Delete',
+                url: '/Admin/Menu/Delete',
                 data: {
-                    RoleID: roleID
+                    MenuID: menuID
                 },
                 success: function (result) {
                     if (result.flag == true) {
                         alert("删除成功")
-                        table_role.fnReloadAjax(table_role.fnSettings()); //刷新datatable
+                        table_menu.fnReloadAjax(table_menu.fnSettings()); //刷新datatable
                     }
                     else {
                         alert("删除失败");
@@ -93,18 +93,18 @@ function DeleteRole(roleID) {
 }
 
 //跳转到编辑角色页面
-function GoToEditRole(roleID) {
-    lkWeb.GoAction("role", "edit", roleID);
+function GoToEditMenu(menuID) {
+    lkWeb.GoAction("menu", "edit", menuID);
 }
 
 //编辑角色
-function EditRole() {
+function EditMenu() {
     var option = {
         datatype: "json",
         success: function (data) {
             if (data.flag == true) {
                 alert("保存成功");
-                lkWeb.GoAction("role", "index", 0);
+                lkWeb.GoAction("menu", "index", 0);
             }
             else {
                 alert(data.msg);
@@ -115,5 +115,5 @@ function EditRole() {
             console.log(error);
         }
     };
-    $("#form-editRole").ajaxSubmit(option);
+    $("#form-editMenu").ajaxSubmit(option);
 }

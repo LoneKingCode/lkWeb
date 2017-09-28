@@ -25,13 +25,10 @@
             <div class="clearfix"></div>
             <ul class="nav sidebar-nav" id="lkMenu">
                 <li>
-                    <a data-url="@Url.Action("Index", "Control")" class="J_menuItem" data-index=""><i class="glyphicon glyphicon-home"></i> 首页</a>
-                </li>
-                <li>
                     <a data-url="@Url.Action("Index", "Role")" class="J_menuItem" data-index="1"><i class="glyphicon glyphicon-cloud-upload"></i>角色管理</a>
                 </li>
                 <li>
-                    <a data-url="@Url.Action("UserRole", "Role")" class="J_menuItem" data-index="2"><i class="glyphicon glyphicon-cog"></i> 角色用户管理</a>
+                    <a data-url="@Url.Action("Authen", "Role")" class="J_menuItem" data-index="2"><i class="glyphicon glyphicon-cog"></i> 角色授权</a>
                 </li>
                 <li>
                     <a data-url="@Url.Action("Index", "User")" class="J_menuItem" data-index="3"><i class="glyphicon glyphicon-trash"></i> 用户管理</a>
@@ -80,7 +77,7 @@
                 </button>
                 <nav class="page-tabs J_menuTabs">
                     <div class="page-tabs-content" style="margin-left: 0px;">
-                        <a href="javascript:;" class="J_menuTab active" data-id="">首页</a>
+                         <a href="javascript:;" class="active J_menuTab" data-id="@Url.Action("Welcome","Control")">首页</a>
                     </div>
                 </nav>
                 <button class="roll-nav roll-right J_tabRight">
@@ -109,7 +106,7 @@
             <!--右侧框架内容开始-->
             <div class="row J_mainContent" id="content-main">
                 @RenderBody()
-                <iframe id="frmBody" name="iframe0" class="J_Iframe" data-id="/" style="width:calc(100%); height: calc(100%); border: 0; margin: 0; padding: 0; min-height: 400px;overflow-y:scroll" src="/"></iframe>
+                <iframe id="frmBody" name="iframe0" class="J_iframe" data-id="@Url.Action("Welcome","Control")" style="width:calc(100%); height: calc(100%); border: 0; margin: 0; padding: 0; min-height: 400px;overflow-y:scroll" src="@Url.Action("Welcome","Control")"></iframe>
 
             </div>
             <!--右侧框架内容结束-->

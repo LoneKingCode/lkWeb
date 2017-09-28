@@ -27,7 +27,10 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-
+        public IActionResult Authen()
+        {
+            return View();
+        }
         public IActionResult Edit(string id)
         {
             var user = _userService.GetById(int.Parse(id));

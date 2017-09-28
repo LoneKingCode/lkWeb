@@ -18,6 +18,7 @@
     <Content Include="wwwroot\js\contabs.js" />
     <Content Include="wwwroot\js\lkWeb.js" />
     <Content Include="wwwroot\js\login.js" />
+    <Content Include="wwwroot\js\menu.js" />
     <Content Include="wwwroot\js\role.js" />
     <Content Include="wwwroot\js\tab.js" />
     <Content Include="wwwroot\js\user.js" />
