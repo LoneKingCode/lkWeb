@@ -2,26 +2,48 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
 }
 @section Scripts{
-<script src="~/js/user.js"></script>
     <script>
         $(function () {
             InitDataTable();
 
-            $(".box-refresh").click(function () {
+            //用户主页 确定操作
+            $("#btnOperate").click(function () {
+                var select = $("#sltOperate");
+                var selectVal = select.val();
+                if (selectVal == "delete") {
+                    var ids = "";
+                    $(":checkbox:checked", "#table_user").each(function (i, n) {
+                        if ($(n).attr("class") == "checkAll") return true;//相当于continue
+                        ids += $(n).val() + ",";
+                    })
 
-            });
+                    ids = ids.substr(0, ids.length - 1);
+                    lkWeb.DeleteMulti(ids,"user",table_user);
+                }
+                else if (selectVal == "disable") {
+                    alert("disable");
+                }
 
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
-            });
+            })
+            //用户主页 增加用户
+            $("#btnGoToAddUser").click(function () {
+                lkWeb.GoAction("user", "add", 0);
+            })
+
 
         });
+        function DeleteUser(id)
+        {
+            lkWeb.Delete(id, "user", table_user);
+        }
+        function GoToEditUser(userID) {
+            lkWeb.GoAction("user", "edit", userID);
+        }
         var table_user;
         function InitDataTable() {
             var url = '@Url.Action("GetList")';
             $.fn.dataTableExt.sErrMode = 'throw';
- 
+
         var config = {
             "processing": true,
             "bInfo": true, //是否显示是否启用底边信息栏
@@ -82,26 +104,7 @@
           table_user = $("#table_user").dataTable(config);
     }
 
-        //add this plug in
-        // you can call the below function to reload the table with current state
-        //Datatables刷新方法
-        //oTable.fnReloadAjax(oTable.fnSettings());
-        $.fn.dataTableExt.oApi.fnReloadAjax = function (oSettings) {
-            //oSettings.sAjaxSource = sNewSource;
-            this.fnClearTable(this);
-            this.oApi._fnProcessingDisplay(oSettings, true);
-            var that = this;
 
-            $.getJSON(oSettings.sAjaxSource, null, function (json) {
-                /* Got the data - add it to the table */
-                for (var i = 0; i < json.aaData.length; i++) {
-                    that.oApi._fnAddData(oSettings, json.aaData[i]);
-                }
-                oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
-                that.fnDraw(that);
-                that.oApi._fnProcessingDisplay(oSettings, false);
-            });
-        }
     </script>
 }
 <div class="data-content" style="padding:15px 0 0 15px;">

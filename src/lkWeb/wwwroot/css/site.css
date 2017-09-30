@@ -86,8 +86,8 @@ button, html input[type=button], input[type=reset], input[type=submit] {
         border-radius: 3px;
     }
 
-    .sidebar-nav li:first-child a {
-        color: #ffffff;
+    .sidebar-nav li:first-child:before {
+        background-color: #402d4a;
     }
 
     .sidebar-nav li:nth-child(2):before {

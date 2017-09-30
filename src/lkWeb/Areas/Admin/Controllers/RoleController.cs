@@ -77,19 +77,19 @@ namespace lkWeb.Areas.Admin.Controllers
             return result;
         }
         [HttpPost]
-        public IActionResult Delete(string RoleID)
+        public IActionResult Delete(string id)
         {
             var result = Json(new
             {
-                flag = _roleService.Delete(int.Parse(RoleID))
+                flag = _roleService.Delete(int.Parse(id))
             });
             return result;
         }
-        public IActionResult DeleteMulti(string roleIDs)
+        public IActionResult DeleteMulti(string ids)
         {
             var result = Json(new
             {
-                flag = _roleService.DeleteMulti(roleIDs)
+                flag = _roleService.DeleteMulti(ids)
             });
             return result;
         }

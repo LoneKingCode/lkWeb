@@ -126,19 +126,19 @@ namespace lkWeb.Areas.Admin.Controllers
             return null;
         }
         [HttpPost]
-        public IActionResult Delete(string UserID)
+        public IActionResult Delete(string id)
         {
             var result = Json(new
             {
-                flag = _userService.Delete(int.Parse(UserID))
+                flag = _userService.Delete(int.Parse(id))
             });
             return result;
         }
-        public IActionResult DeleteMulti(string UserIDs)
+        public IActionResult DeleteMulti(string ids)
         {
             var result = Json(new
             {
-                flag = _userService.DeleteMulti(UserIDs)
+                flag = _userService.DeleteMulti(ids)
             });
             return result;
         }

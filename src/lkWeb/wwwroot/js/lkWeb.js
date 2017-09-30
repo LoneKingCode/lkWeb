@@ -10,6 +10,79 @@ lkWeb.GoAction = function (ctrl, action, values) {
     var localhostPath = curWwwPath.substring(0, pos);
     window.location.href = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
 }
+lkWeb.DeleteMulti = function (ids, model, table) {
+    if (confirm('确认删除?')) {
+        $.ajax(
+            {
+                type: 'post',
+                url: '/Admin/' + model + '/DeleteMulti',
+                data: {
+                    ids: ids
+                },
+                success: function (result) {
+                    if (result.flag == true) {
+                        alert("删除多个成功")
+                        table.fnReloadAjax(table.fnSettings()); //刷新datatable
+                    }
+                    else {
+                        alert("删除多个失败");
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+    }
+}
+
+lkWeb.Delete = function (id, model, table) {
+
+    if (confirm('确认删除?')) {
+        $.ajax(
+            {
+                type: 'post',
+                url: '/Admin/' + model + '/Delete',
+                data: {
+                    id: id
+                },
+                success: function (result) {
+                    if (result.flag == true) {
+                        alert("删除成功")
+                        table.fnReloadAjax(table.fnSettings()); //刷新datatable
+                    }
+                    else {
+                        alert("删除失败");
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+    }
+
+
+}
+
+//add this plug in
+// you can call the below function to reload the table with current state
+//Datatables刷新方法
+//oTable.fnReloadAjax(oTable.fnSettings());
+$.fn.dataTableExt.oApi.fnReloadAjax = function (oSettings) {
+    //oSettings.sAjaxSource = sNewSource;
+    this.fnClearTable(this);
+    this.oApi._fnProcessingDisplay(oSettings, true);
+    var that = this;
+
+    $.getJSON(oSettings.sAjaxSource, null, function (json) {
+        /* Got the data - add it to the table */
+        for (var i = 0; i < json.aaData.length; i++) {
+            that.oApi._fnAddData(oSettings, json.aaData[i]);
+        }
+        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+        that.fnDraw(that);
+        that.oApi._fnProcessingDisplay(oSettings, false);
+    });
+}
 
 //两种调用方式
 //var template1 = "我是{0}，今年{1}了";
