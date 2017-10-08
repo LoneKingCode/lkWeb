@@ -83,7 +83,7 @@ namespace lkWeb.Service.Abstracts
                         CreateDateTime = d.CreateDateTime,
                         Type = d.Type,
                         ParentId = d.ParentId,
-                        Order=d.Order
+                        Order = d.Order
                     }
                     ).ToList(),
                     recordsTotal = dtoData.Count,

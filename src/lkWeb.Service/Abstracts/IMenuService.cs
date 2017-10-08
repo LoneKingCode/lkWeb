@@ -16,5 +16,5 @@ namespace lkWeb.Service.Abstracts
         bool Update(MenuDto dto);
         ResultDto<T> GetPageData<T, TKey>(int pageSize, int pageIndex, Expression<Func<T, bool>> whereExp, Expression<Func<T, TKey>> orderExp, bool isDesc = true) where T : class;
         ResultDto<MenuDto> GetList();
-    }
+      }
 }

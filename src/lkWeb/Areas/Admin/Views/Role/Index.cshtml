@@ -5,6 +5,12 @@
     <script>
         $(function () {
             InitDataTable();
+
+            $(".checkAll").click(function () {
+                var check = $(this).prop("checked");
+                $(".checkChild").prop("checked", check);
+            });
+
             $("#btnOperate").click(function () {
                 var select = $("#sltOperate");
                 var selectVal = select.val();
@@ -18,13 +24,10 @@
                     ids = ids.substr(0, ids.length - 1);
                     lkWeb.DeleteMulti(ids,"role",table_role);
                 }
-
-                $("#btnGoToAddRole").click(function () {
-                    lkWeb.GoAction("role", "add", 0);
-                })
-
             })
-
+            $("#btnGoToAddRole").click(function () {
+                lkWeb.GoAction("role", "add", 0);
+            })
         });
         function GoToEditRole(roleID) {
             lkWeb.GoAction("role", "edit", roleID);
@@ -95,7 +98,7 @@
         table_role = $("#table_role").dataTable(config);
     }
 
- 
+
     </script>
 }
 <div class="data-content" style="padding:15px 0 0 15px;">

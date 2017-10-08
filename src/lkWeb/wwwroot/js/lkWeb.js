@@ -10,6 +10,8 @@ lkWeb.GoAction = function (ctrl, action, values) {
     var localhostPath = curWwwPath.substring(0, pos);
     window.location.href = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
 }
+
+//删除多个
 lkWeb.DeleteMulti = function (ids, model, table) {
     if (confirm('确认删除?')) {
         $.ajax(
@@ -35,6 +37,7 @@ lkWeb.DeleteMulti = function (ids, model, table) {
     }
 }
 
+//删除单个
 lkWeb.Delete = function (id, model, table) {
 
     if (confirm('确认删除?')) {
@@ -64,7 +67,7 @@ lkWeb.Delete = function (id, model, table) {
 }
 
 //add this plug in
-// you can call the below function to reload the table with current state
+//you can call the below function to reload the table with current state
 //Datatables刷新方法
 //oTable.fnReloadAjax(oTable.fnSettings());
 $.fn.dataTableExt.oApi.fnReloadAjax = function (oSettings) {

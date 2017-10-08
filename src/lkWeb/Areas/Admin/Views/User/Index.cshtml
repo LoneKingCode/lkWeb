@@ -6,6 +6,11 @@
         $(function () {
             InitDataTable();
 
+            $(".checkAll").click(function () {
+                var check = $(this).prop("checked");
+                $(".checkChild").prop("checked", check);
+            });
+
             //用户主页 确定操作
             $("#btnOperate").click(function () {
                 var select = $("#sltOperate");
@@ -29,7 +34,15 @@
             $("#btnGoToAddUser").click(function () {
                 lkWeb.GoAction("user", "add", 0);
             })
-
+            //角色授权
+            $("#btnRoleAuth").click(function () {
+                var userId;
+                $(":checkbox:checked", "#table_user").each(function (i, n) {
+                    if ($(n).attr("class") == "checkAll") return true;//相当于continue
+                    userId= $(n).val(); //只要一个用户ID 如果多选的话也只要最后一个
+                })
+                lkWeb.GoAction("user", "authen", userId);
+            })
 
         });
         function DeleteUser(id)
@@ -120,7 +133,7 @@
             <option value="disable">禁用</option>
         </select>
         <button type="button" class="btn btn-success" id="btnOperate">确定操作</button>
-        <a href="@Url.Action("Authen","User")" target="_self" class="btn btn-info">角色授权</a>
+        <button type="button" class="btn btn-info" id="btnRoleAuth">角色授权</button>
     </div>
     <table class="table table-striped table-hover" id="table_user">
         <thead>

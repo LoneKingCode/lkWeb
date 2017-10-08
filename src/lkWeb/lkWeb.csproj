@@ -15,11 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\css\jquery.dataTables.min.css" />
     <Content Include="wwwroot\js\contabs.js" />
     <Content Include="wwwroot\js\lkWeb.js" />
     <Content Include="wwwroot\js\login.js" />
-    <Content Include="wwwroot\js\role.js" />
-    <Content Include="wwwroot\js\tab.js" />
     <Content Include="wwwroot\lib\bootstrap\.bower.json" />
     <Content Include="wwwroot\lib\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="wwwroot\lib\bootstrap\dist\css\bootstrap-theme.css.map" />
@@ -191,6 +190,7 @@
     <Content Include="wwwroot\lib\DataTables\media\css\demo_table.css" />
     <Content Include="wwwroot\lib\DataTables\media\css\demo_table_jui.css" />
     <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables.css" />
+    <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables.min.css" />
     <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables_themeroller.css" />
     <Content Include="wwwroot\lib\DataTables\media\images\back_disabled.png" />
     <Content Include="wwwroot\lib\DataTables\media\images\back_enabled.png" />

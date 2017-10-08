@@ -27,9 +27,10 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Authen()
+        public IActionResult Authen(string id)
         {
-            return View();
+            var user = _userService.GetById(int.Parse(id));
+            return View(user);
         }
         public IActionResult Edit(string id)
         {
@@ -102,6 +103,38 @@ namespace lkWeb.Areas.Admin.Controllers
             });
             return result;
         }
+        [HttpGet]
+        public IActionResult GetMyRoles(string userId)
+        {
+            var list = _userService.GetUserRoles(int.Parse(userId));
+            var strData = list.data.Select(d => new
+            {
+                id = d.Id,
+                rolename = d.Name,
+                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteRole(" + d.Id.ToString() + ")\">删除</button>",
+            });
+            var result = Json(new
+            {
+                aaData = strData
+            });
+            return result;
+        }
+        [HttpGet]
+        public IActionResult GetNotMyRoles(string userId)
+        {
+            var list = _userService.GetNotUserRoles(int.Parse(userId));
+            var strData = list.data.Select(d => new
+            {
+                id = d.Id,
+                rolename = d.Name,
+                auth = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"AuthRole(" + d.Id.ToString() + ")\">授权</button>",
+            });
+            var result = Json(new
+            {
+                aaData = strData
+            });
+            return result;
+        }
         [HttpPost]
         public IActionResult Edit(UserDto user)
         {
@@ -134,6 +167,7 @@ namespace lkWeb.Areas.Admin.Controllers
             });
             return result;
         }
+        [HttpPost]
         public IActionResult DeleteMulti(string ids)
         {
             var result = Json(new

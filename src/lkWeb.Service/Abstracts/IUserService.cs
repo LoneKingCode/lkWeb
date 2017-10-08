@@ -20,6 +20,7 @@ namespace lkWeb.Service.Abstracts
         ResultDto<T> GetPageData<T, TKey>(int pageSize, int pageIndex, Expression<Func<T, bool>> whereExp, Expression<Func<T, TKey>> orderExp, bool isDesc = true) where T : class;
         List<MenuDto> GetUserMenu(int userID);
         ResultDto<RoleDto> GetUserRoles(int userID);
+        ResultDto<RoleDto> GetNotUserRoles(int userID);
         ResultDto<UserDto> GetList();
     }
 }

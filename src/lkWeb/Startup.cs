@@ -101,6 +101,7 @@ namespace lkWeb
             container.Register<IUserService, UserService>(Lifestyle.Scoped);
             container.Register<IRoleService, RoleService>(Lifestyle.Scoped);
             container.Register<IMenuService, MenuService>(Lifestyle.Scoped);
+            container.Register<IRoleMenuService, RoleMenuService>(Lifestyle.Scoped);
 
             // Cross-wire ASP.NET services (if any). For instance:
             container.RegisterSingleton(app.ApplicationServices.GetService<ILoggerFactory>());

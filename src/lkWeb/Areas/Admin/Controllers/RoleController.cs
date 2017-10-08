@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
+using lkWeb.Areas.Admin.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,9 +14,13 @@ namespace lkWeb.Areas.Admin.Controllers
     public class RoleController : AdminBaseController
     {
         public readonly IRoleService _roleService;
-        public RoleController(IRoleService roleService)
+        public readonly IMenuService _menuService;
+        public readonly IRoleMenuService _roleMenuService;
+        public RoleController(IRoleService roleService, IMenuService menuService, IRoleMenuService roleMenuService)
         {
             _roleService = roleService;
+            _menuService = menuService;
+            _roleMenuService = roleMenuService;
         }
         #region Page
         // GET: /<controller>/
@@ -85,11 +90,69 @@ namespace lkWeb.Areas.Admin.Controllers
             });
             return result;
         }
+        [HttpPost]
         public IActionResult DeleteMulti(string ids)
         {
             var result = Json(new
             {
                 flag = _roleService.DeleteMulti(ids)
+            });
+            return result;
+        }
+        [HttpPost]
+        public IActionResult GetRoleList()
+        {
+            var list = _roleService.GetList();
+            var strData = list.data.Select(d => new
+            {
+                id = d.Id,
+                pid = 0,
+                name = d.Name
+            });
+            return Json(strData);
+
+        }
+        [HttpPost]
+        public IActionResult GetMenuList()
+        {
+            var list = _menuService.GetList();
+            var strData = list.data.Select(d => new
+            {
+                id = d.Id,
+                pId = d.ParentId,
+                name = d.Name,
+                open = true
+            });
+            return Json(strData);
+        }
+        [HttpPost]
+        public IActionResult GetRoleMenus(string roleId)
+        {
+            var list = _roleMenuService.GetList(int.Parse(roleId));
+            var strData = list.data.Select(d => new
+            {
+                id = d.Id,
+                menuId = d.MenuId,
+                recordsTotal = list.recordsTotal
+            });
+            return Json(strData);
+        }
+        [HttpPost]
+        public IActionResult AuthMenus(AuthMenuDto dto)
+        {
+            foreach (var roleId in dto.RoleIds)
+            {
+                _roleMenuService.Delete(roleId);
+                if (dto.MenuIds != null)
+                {
+                    var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
+                    _roleMenuService.Add(newRoleMenus);
+                }
+            }
+
+            var result = Json(new
+            {
+                flag = true
             });
             return result;
         }

@@ -2,4 +2,236 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
 }
 
-角色授权 role-authen
+@section Scripts{
+    <link href="~/lib/zTree_v3/css/metroStyle/metroStyle.css" rel="stylesheet" />
+    <script src="~/lib/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script src="~/lib/zTree_v3/js/jquery.ztree.excheck.js"></script>
+
+    <script>
+        var zNodes_role = [
+            { id: 1, pid: 0, name: "管理员" },
+            { id: 11, pid: 0, name: "普通用户" },
+            { id: 111, pid: 0, name: "VIP会员" },
+            { id: 112, pid: 0, name: "啦啦啦啦" }
+        ];
+
+        var zNodes_menu = [
+            { id: 1, pId: 0, name: "随意勾选 1", open: true },
+            { id: 11, pId: 1, name: "随意勾选 1-1", open: true },
+            { id: 111, pId: 11, name: "随意勾选 1-1-1" },
+            { id: 112, pId: 11, name: "随意勾选 1-1-2" },
+            { id: 12, pId: 1, name: "随意勾选 1-2", open: true },
+            { id: 121, pId: 12, name: "随意勾选 1-2-1" },
+            { id: 122, pId: 12, name: "随意勾选 1-2-2" },
+            { id: 2, pId: 0, name: "随意勾选 2", open: true },
+            { id: 21, pId: 2, name: "随意勾选 2-1" },
+            { id: 22, pId: 2, name: "随意勾选 2-2", open: true },
+            { id: 221, pId: 22, name: "随意勾选 2-2-1" },
+            { id: 222, pId: 22, name: "随意勾选 2-2-2" },
+            { id: 23, pId: 2, name: "随意勾选 2-3" }
+        ];
+
+        function LoadData() {
+            $.ajax({
+                type: "post",
+                url:"@Url.Action("GetRoleList", "Role")",
+                dataType:"json",
+                async: false,
+                success: function (data) {
+                    zNodes_role = data;
+
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+            $.ajax({
+                type: "post",
+                url:"@Url.Action("GetMenuList", "Role")",
+                dataType:"json",
+                async: false,
+                success: function (data) {
+                    zNodes_menu = data;
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        }
+        var setting_role = {
+            check: {
+                enable: true,
+                chkStyle: "radio",
+                radioType: "level"
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+           callback: {
+                onCheck: onRoleCheck
+            }
+        };
+
+        var setting_menu = {
+            check: {
+                enable: true
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+        };
+
+        var roleId;
+        function onRoleCheck(e, treeId, treeNode) {
+            roleId = treeNode.id;
+            $.ajax({
+                url: "@Url.Action("GetRoleMenus", "Role")",
+                type: "post",
+                dataType: "json",
+                data: { roleId: roleId },
+                async: false,
+                success: function (data) {
+                    var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+                    treeObj.checkAllNodes(false);
+                    $.each(data,function (n,value) {
+                        var node = treeObj.getNodeByParam("id", value.menuId);
+                        treeObj.checkNode(node, true, true);
+                    })
+                },
+                err: function (err) {
+                    console.log(err);
+                }
+            })
+        }
+
+        //获取选中节点的id
+        //function onCheck(e, treeId, treeNode) {
+        //    var treeObj = $.fn.zTree.getZTreeObj("menuTree"),
+        //        nodes = treeObj.getCheckedNodes(true),
+        //        v = "";
+        //    for (var i = 0; i < nodes.length; i++) {
+        //        v += nodes[i].name + ",";
+        //        alert(nodes[i].id);
+        //    }
+        //}
+        function setCheck_role() {
+            var type = $("#level").attr("checked") ? "level" : "all";
+            setting_role.check.radioType = type;
+            $.fn.zTree.init($("#roleTree"), setting_role, zNodes_role);
+        }
+
+        function setCheck_menu() {
+            var zTree = $.fn.zTree.getZTreeObj("menuTree"),
+                py = $("#py").attr("checked") ? "p" : "",
+                sy = $("#sy").attr("checked") ? "s" : "",
+                pn = $("#pn").attr("checked") ? "p" : "",
+                sn = $("#sn").attr("checked") ? "s" : "",
+                type = { "Y": py + sy, "N": pn + sn };
+            setting_menu.check.chkboxType = type;
+        }
+
+        function InitRoleTree() {
+            setCheck_role();
+            $("#level").bind("change", setCheck_role);
+            $("#all").bind("change", setCheck_role);
+        }
+
+        function InitMenuTree() {
+            setCheck_menu();
+            $.fn.zTree.init($("#menuTree"), setting_menu, zNodes_menu);
+            $("#py").bind("change", setCheck_menu);
+            $("#sy").bind("change", setCheck_menu);
+            $("#pn").bind("change", setCheck_menu);
+            $("#sn").bind("change", setCheck_menu);
+        }
+
+        function GetData() {
+            var data = { RoleIds: [], MenuIds: [] };
+            data.RoleIds.push(roleId);
+            var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+            nodes = treeObj.getCheckedNodes(true);
+            for (var i = 0; i < nodes.length; i++) {
+                data.MenuIds.push(nodes[i].id);
+            }
+            return data;
+        }
+
+        $(function () {
+            LoadData();
+            InitRoleTree();
+            InitMenuTree();
+
+            $("#btnClear").click(function () {
+                if (confirm("确认取消全部权限"))
+                {
+                    var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+                    treeObj.checkAllNodes(false);
+
+                }
+            })
+            $("#btnSave").click(function () {
+                if (confirm("确认保存？")) {
+                    var data = GetData();
+                    $.ajax({
+                          url: "@Url.Action("AuthMenus", "Role")",
+                          type: "post",
+                          dataType: "json",
+                          data: { dto:data},
+                          async: false,
+                          success: function (data) {
+                              if (data.flag == true)
+                              {
+                                  alert("保存成功");
+                              }
+                              else {
+                                  alert("保存失败");
+                              }
+                          },
+                           err: function (err) {
+                              console.log(err);
+                          }
+
+                     })
+                }
+            })
+        })
+    </script>
+}
+
+<div class="data-content" style="padding:15px 0 0 15px;">
+    <h2>角色授权</h2>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <button id="btnSave" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-save"></i> 保存</button>
+            <button id="btnClear" class="btn btn-w-m btn-danger" type="button"><i class="glyphicon glyphicon-remove-circle"></i> 清空</button>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    角色列表
+                </div>
+                <div class="panel-body">
+                    <ul id="roleTree" class="ztree"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    权限菜单
+                </div>
+                <div class="panel-body">
+                    <ul id="menuTree" class="ztree"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

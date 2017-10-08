@@ -84,6 +84,7 @@ namespace lkWeb.Areas.Admin.Controllers
             });
             return result;
         }
+        [HttpPost]
         public IActionResult DeleteMulti(string ids)
         {
             var result = Json(new

@@ -26,6 +26,8 @@ namespace lkWeb.Service
             CreateMap<RoleDto, RoleEntity>();
             CreateMap<MenuDto, MenuEntity>().ForMember(u => u.Type, e => e.MapFrom(s => (byte)s.Type));
             CreateMap<MenuEntity, MenuDto>().ForMember(u => u.Type, e => e.MapFrom(s => (MenuType)s.Type));
+            CreateMap<RoleMenuEntity, RoleMenuDto>();
+            CreateMap<RoleMenuDto, RoleMenuEntity>();
         }
     }
 }
