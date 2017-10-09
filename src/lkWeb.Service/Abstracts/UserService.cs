@@ -196,14 +196,18 @@ namespace lkWeb.Service.Abstracts
         {
             using (var db = GetDb())
             {
-                var userRoles = db.UserRoles.Where(x => x.UserId != userID).ToList();
-                var roleIds = userRoles.Select(x => x.RoleId).ToList();
-                Expression<Func<RoleEntity, bool>> exp = item => (!item.IsDeleted && roleIds.Contains(item.Id));
-                var roles = db.Roles.Where(exp).ToList();
+                var roles = db.Roles.ToList();
+                var roleIds = roles.Select(x => x.Id).ToList();
+
+                var userRoles = db.UserRoles.Where(x => x.UserId == userID).ToList();
+                var userRoleIds = userRoles.Select(x => x.RoleId).ToList();
+
+                Expression<Func<RoleEntity, bool>> exp = item => (!item.IsDeleted && !userRoleIds.Contains(item.Id));
+                var notRoles = db.Roles.Where(exp).ToList();
                 var result = new ResultDto<RoleDto>
                 {
-                    recordsTotal = roles.Count,
-                    data = MapTo<List<RoleEntity>, List<RoleDto>>(roles)
+                    recordsTotal = notRoles.Count,
+                    data = MapTo<List<RoleEntity>, List<RoleDto>>(notRoles)
                 };
                 return result;
             }

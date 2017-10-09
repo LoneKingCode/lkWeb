@@ -18,28 +18,66 @@
                 var check = $(this).prop("checked");
                 $(".checkChild-1").prop("checked", check);
             });
-            alert(@ViewBag.UserId);
         })
         function DeleteRole(roleId) {
-            alert(roleId);
+            var data = { UserID:@ViewBag.UserId,RoleIds: [] }
+            data.RoleIds.push(roleId);
+            $.ajax({
+                          url: "@Url.Action("DeleteRole", "User")",
+                          type: "post",
+                          dataType: "json",
+                          data: { dto:data},
+                          async: false,
+                          success: function (data) {
+                              if (data.flag == true)
+                              {
+                                  alert("成功");
+                              }
+                              else {
+                                  alert("失败");
+                              }
+                          },
+                           err: function (err) {
+                              console.log(err);
+                          }
+
+                     })
+
         }
         function AuthRole(roleId) {
-            alert(roleId);
+             var data = { UserID:@ViewBag.UserId,RoleIds: [] }
+             data.RoleIds.push(roleId);
+             $.ajax({
+                          url: "@Url.Action("AuthRole", "User")",
+                          type: "post",
+                          dataType: "json",
+                          data: { dto:data},
+                          async: false,
+                          success: function (data) {
+                              if (data.flag == true)
+                              {
+                                  alert("成功");
+                              }
+                              else {
+                                  alert("失败");
+                              }
+                          },
+                           err: function (err) {
+                              console.log(err);
+                          }
+
+                     })
         }
         //已拥有的角色
         var table_has_role;
         function InitDataTable() {
-            var url = '@Url.Action("GetMyRoles")';
+            var url = '@Url.Action("GetMyRoles")?userId=' + @ViewBag.UserId;
             $.fn.dataTableExt.sErrMode = 'throw';
 
             var config = {
             "processing": true,
             "bInfo": true, //是否显示是否启用底边信息栏
             "sAjaxSource": url,
-            "fnServerParams": function (aoData) {
-                aoData.push({ "userId":"@ViewBag.UserId" });
-
-            },
              'autoWidth': true,
             "sPaginationType": "full_numbers",
             "oLanguage": {
@@ -94,16 +132,13 @@
             //未拥有的角色
         var table_not_role;
          function InitDataTable_1() {
-            var url = '@Url.Action("GetNotMyRoles")';
+       var url = '@Url.Action("GetNotMyRoles")?userId=' + @ViewBag.UserId;
             $.fn.dataTableExt.sErrMode = 'throw';
 
             var config = {
             "processing": true,
             "bInfo": true, //是否显示是否启用底边信息栏
             "sAjaxSource": url,
-            "fnServerParams": function (aoData) {
-                 aoData.push({ "userId":"@ViewBag.UserId" });
-            },
              'autoWidth': true,
             "sPaginationType": "full_numbers",
             "oLanguage": {

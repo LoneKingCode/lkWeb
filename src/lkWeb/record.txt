@@ -1,0 +1,5 @@
+datatable  所有按钮  前台JS代码写就行。。。 没必要后台写好按钮传到前台的 自定义列嘛
+
+删除多个 不要逗号隔开了 一个dto  list<string>就行
+
+什么userid了 都替换成 dto

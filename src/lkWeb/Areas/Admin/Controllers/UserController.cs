@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Dto;
 using lkWeb.Service.Abstracts;
+using lkWeb.Areas.Admin.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,9 +14,12 @@ namespace lkWeb.Areas.Admin.Controllers
     public class UserController : AdminBaseController
     {
         public readonly IUserService _userService;
-        public UserController(IUserService userService)
+        public readonly IUserRoleService _userRoleService;
+
+        public UserController(IUserService userService, IUserRoleService userRoleService)
         {
             _userService = userService;
+            _userRoleService = userRoleService;
         }
         #region Page
         // GET: /<controller>/
@@ -111,7 +115,7 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 id = d.Id,
                 rolename = d.Name,
-                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteRole(" + d.Id.ToString() + ")\">删除</button>",
+                delete = "<button type=\"button\" class=\"btn btn-danger\" onClick=\"DeleteRole(" + d.Id.ToString() + ")\">取消</button>",
             });
             var result = Json(new
             {
@@ -127,7 +131,7 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 id = d.Id,
                 rolename = d.Name,
-                auth = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"AuthRole(" + d.Id.ToString() + ")\">授权</button>",
+                auth = "<button type=\"button\" class=\"btn btn-success\" onClick=\"AuthRole(" + d.Id.ToString() + ")\">授权</button>",
             });
             var result = Json(new
             {
@@ -173,6 +177,40 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = Json(new
             {
                 flag = _userService.DeleteMulti(ids)
+            });
+            return result;
+        }
+        public IActionResult DeleteRole(AuthRoleDto dto)
+        {
+            foreach (var roleId in dto.RoleIds)
+            {
+                var d = new UserRoleDto
+                {
+                    UserId = dto.UserId,
+                    RoleId = roleId
+                };
+                _userRoleService.Delete(d);
+            }
+            var result = Json(new
+            {
+                flag = true
+            });
+            return result;
+        }
+        public IActionResult AuthRole(AuthRoleDto dto)
+        {
+            foreach (var roleId in dto.RoleIds)
+            {
+                var d = new UserRoleDto
+                {
+                    UserId = dto.UserId,
+                    RoleId = roleId
+                };
+                _userRoleService.Add(d);
+            }
+            var result = Json(new
+            {
+                flag = true
             });
             return result;
         }
