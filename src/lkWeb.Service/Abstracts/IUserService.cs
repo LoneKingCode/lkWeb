@@ -8,19 +8,36 @@ using System.Threading.Tasks;
 
 namespace lkWeb.Service.Abstracts
 {
-    public interface IUserService
+    public partial interface IUserService
     {
-        bool Add(UserDto dto);
+        /// <summary>
+        /// 登陆
+        /// </summary>
+        /// <param name="dto">user实体</param>
+        /// <returns></returns>
         Result<UserDto> Login(UserDto dto);
-        UserDto GetById(int userID);
-        bool Delete(int userID);
-        bool DeleteMulti(string userIDs);
-        bool Delete(UserDto dto);
-        bool Update(UserDto dto);
-        ResultDto<T> GetPageData<T, TKey>(int pageSize, int pageIndex, Expression<Func<T, bool>> whereExp, Expression<Func<T, TKey>> orderExp, bool isDesc = true) where T : class;
-        List<MenuDto> GetUserMenu(int userID);
-        ResultDto<RoleDto> GetUserRoles(int userID);
-        ResultDto<RoleDto> GetNotUserRoles(int userID);
+         /// <summary>
+        /// 获取用户菜单数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        List<MenuDto> GetUserMenu(int id);
+        /// <summary>
+        /// 获取用户角色数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        ResultDto<RoleDto> GetUserRoles(int id);
+        /// <summary>
+        /// 获取不是用户所属的角色数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        ResultDto<RoleDto> GetNotUserRoles(int id);
+        /// <summary>
+        /// 获取所有用户数据
+        /// </summary>
+        /// <returns></returns>
         ResultDto<UserDto> GetList();
     }
 }

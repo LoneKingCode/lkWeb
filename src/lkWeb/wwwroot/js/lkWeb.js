@@ -13,7 +13,14 @@ lkWeb.GoAction = function (ctrl, action, values) {
 
 //删除多个
 lkWeb.DeleteMulti = function (ids, model, table) {
-    if (confirm('确认删除?')) {
+    if (ids.length > 0)
+    {
+        parent.layer.alert("请选择");
+        return;
+    }
+    parent.layer.confirm("确认删除" + ids.length + "条数据？", {
+        btn: ["确认", "取消"]
+    }, function () {
         $.ajax(
             {
                 type: 'post',
@@ -23,49 +30,67 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                 },
                 success: function (result) {
                     if (result.flag == true) {
-                        alert("删除多个成功")
+                        parent.layer.alert("删除成功")
                         table.fnReloadAjax(table.fnSettings()); //刷新datatable
                     }
                     else {
-                        alert("删除多个失败");
+                        parent.layer.alert("删除失败");
                     }
                 },
                 error: function (err) {
                     console.log(err);
+                    parent.layer.alert("删除失败");
                 }
             })
+    }, function () {
+
     }
+    )
+
+
 }
 
 //删除单个
 lkWeb.Delete = function (id, model, table) {
-
-    if (confirm('确认删除?')) {
-        $.ajax(
-            {
-                type: 'post',
-                url: '/Admin/' + model + '/Delete',
-                data: {
-                    id: id
-                },
-                success: function (result) {
-                    if (result.flag == true) {
-                        alert("删除成功")
-                        table.fnReloadAjax(table.fnSettings()); //刷新datatable
+    parent.layer.confirm("确认删除？", {
+        btn: ["确认", "取消"]
+    },
+        function () {
+            $.ajax(
+                {
+                    type: 'post',
+                    url: '/Admin/' + model + '/Delete',
+                    data: {
+                        Id: id
+                    },
+                    success: function (result) {
+                        if (result.flag == true) {
+                            parent.layer.alert("删除成功")
+                            table.fnReloadAjax(table.fnSettings()); //刷新datatable
+                        }
+                        else {
+                            parent.layer.alert("删除失败");
+                        }
+                    },
+                    error: function (err) {
+                        parent.layer.alert("删除失败");
+                        console.log(err);
                     }
-                    else {
-                        alert("删除失败");
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-    }
+                })
+        }, function () {
 
-
+        }
+    )
 }
-
+var layerIndex = -1;
+lkWeb.ShowLoad = function () {
+    layerIndex = layer.load(1, {
+        shade: [0.1, '#fff'] //0.1透明度的白色背景
+    });
+}
+lkWeb.CloseLoad = function () {
+    layer.close(layerIndex);
+}
 //add this plug in
 //you can call the below function to reload the table with current state
 //Datatables刷新方法

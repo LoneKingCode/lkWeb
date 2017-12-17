@@ -16,13 +16,11 @@
                 var select = $("#sltOperate");
                 var selectVal = select.val();
                 if (selectVal == "delete") {
-                    var ids = "";
+                    var ids = [];
                     $(":checkbox:checked", "#table_user").each(function (i, n) {
                         if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                        ids += $(n).val() + ",";
+                        ids.push($(n).val());
                     })
-
-                    ids = ids.substr(0, ids.length - 1);
                     lkWeb.DeleteMulti(ids,"user",table_user);
                 }
                 else if (selectVal == "disable") {
@@ -98,8 +96,22 @@
                 { "mData": "email", "sClass": "text-center", "bSortable": false },
                 { "mData": "statusName", "sClass": "text-center" },
                 { "mData": "createDateTime", "sClass": "text-center" },
-                { "mData": "edit", "sClass": "text-center", "bSortable": false },
-                { "mData": "delete", "sClass": "text-center", "bSortable": false }
+                {
+                    "sClass": "text-center",
+                    "mData": "id",
+                    "mRender": function (data, type, row) {
+                        return "<button type=\"button\" class=\"btn btn-success\" onClick=\"GoToEditUser(" + data+ ")\">编辑</button>";
+                    },
+                    "bSortable": false
+                },
+                {
+                    "sClass": "text-center",
+                    "mData": "id",
+                    "mRender": function (data, type, row) {
+                        return "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteUser(" + data + ")\">删除</button>";
+                    },
+                    "bSortable": false
+                },
             ],
             'columnDefs': [
                 {

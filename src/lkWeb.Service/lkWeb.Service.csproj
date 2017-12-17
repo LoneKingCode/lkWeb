@@ -12,10 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Abstracts\IService.tt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\lkWeb.Core\lkWeb.Core.csproj" />
     <ProjectReference Include="..\lkWeb.Data\lkWeb.Data.csproj" />
     <ProjectReference Include="..\lkWeb.Entity\lkWeb.Entity.csproj" />
@@ -31,6 +27,21 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Abstracts\IService.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IService.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Abstracts\IService.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IService.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

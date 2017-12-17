@@ -54,8 +54,6 @@ namespace lkWeb.Areas.Admin.Controllers
                 description = d.Description,
                 id = d.Id.ToString(),
                 createDateTime = d.CreateDateTime.ToString(),
-                edit = "<button type=\"button\" class=\"btn btn-success\" onClick=\"GoToEditRole(" + d.Id.ToString() + ")\">编辑</button>",
-                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteRole(" + d.Id.ToString() + ")\">删除</button>",
             });
             var result = Json(new
             {
@@ -82,16 +80,16 @@ namespace lkWeb.Areas.Admin.Controllers
             return result;
         }
         [HttpPost]
-        public IActionResult Delete(string id)
+        public IActionResult Delete(int id)
         {
             var result = Json(new
             {
-                flag = _roleService.Delete(int.Parse(id))
+                flag = _roleService.Delete(id)
             });
             return result;
         }
         [HttpPost]
-        public IActionResult DeleteMulti(string ids)
+        public IActionResult DeleteMulti(List<int> ids)
         {
             var result = Json(new
             {
@@ -140,9 +138,14 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult AuthMenus(AuthMenuDto dto)
         {
+            if(dto.RoleIds.Count == 1)
+            {
+                var roleMenuIds = _roleMenuService.GetList(dto.RoleIds[0]).data.Select(x => x.Id).ToList();
+                _roleMenuService.DeleteMulti(roleMenuIds);
+            }
             foreach (var roleId in dto.RoleIds)
             {
-                _roleMenuService.Delete(roleId);
+
                 if (dto.MenuIds != null)
                 {
                     var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();

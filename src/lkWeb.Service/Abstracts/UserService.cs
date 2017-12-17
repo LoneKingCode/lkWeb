@@ -10,70 +10,19 @@ using lkWeb.Service.Enum;
 
 namespace lkWeb.Service.Abstracts
 {
-    public class UserService : ServiceBase, IUserService
+    public partial class UserService : ServiceBase<UserEntity>, IUserService
     {
-        public bool Add(UserDto dto)
+        /// <summary>
+        /// 获取用户菜单数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        public List<MenuDto> GetUserMenu(int id)
         {
             using (var db = GetDb())
             {
-                var entity = MapTo<UserDto, UserEntity>(dto);
-                var isHas = db.Users.Where(x => x.LoginName == dto.LoginName).FirstOrDefault();
-                if (isHas != null)
-                    return false;
-                db.Users.Add(entity);
-                return db.SaveChanges() > 0;
-            }
-        }
 
-        public bool Delete(int userID)
-        {
-            using (var db = GetDb())
-            {
-                var entity = db.Users.FirstOrDefault(item => item.Id == userID);
-                db.Remove(entity);
-                return db.SaveChanges() > 0;
-            }
-        }
-        public bool DeleteMulti(string userIDs)
-        {
-            using (var db = GetDb())
-            {
-                string[] userID = userIDs.Split(',');
-                foreach (string id in userID)
-                {
-                    var entity = db.Users.FirstOrDefault(item => item.Id == int.Parse(id));
-                    db.Remove(entity);
-                }
-                return db.SaveChanges() > 0;
-            }
-        }
-        public bool Delete(UserDto dto)
-        {
-            using (var db = GetDb())
-            {
-                var entity = MapTo<UserDto, UserEntity>(dto);
-                db.Remove(entity);
-                return db.SaveChanges() > 0;
-            }
-        }
-
-        public UserDto GetById(int userID)
-        {
-            using (var db = GetDb())
-            {
-                var entity = db.Users.FirstOrDefault(item => item.Id == userID);
-                if (entity != null)
-                    return MapTo<UserEntity, UserDto>(entity);
-                else
-                    return null;
-            }
-        }
-
-        public List<MenuDto> GetUserMenu(int userID)
-        {
-            using (var db = GetDb())
-            {
-                var roleResult = GetUserRoles(userID);
+                var roleResult = GetUserRoles(id);
                 var roleIds = roleResult.data.Select(x => x.Id).ToList();
                 Expression<Func<RoleMenuEntity, bool>> exp = item => (!item.IsDeleted && roleIds.Contains(item.RoleId));
                 var roleMenus = db.RoleMenus.Where(exp).ToList();
@@ -83,12 +32,16 @@ namespace lkWeb.Service.Abstracts
                 return MapTo<List<MenuEntity>, List<MenuDto>>(menus);
             }
         }
-
-        public ResultDto<RoleDto> GetUserRoles(int userID)
+        /// <summary>
+        /// 获取用户角色数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        public ResultDto<RoleDto> GetUserRoles(int id)
         {
             using (var db = GetDb())
             {
-                var userRoles = db.UserRoles.Where(x => x.UserId == userID).ToList();
+                var userRoles = db.UserRoles.Where(x => x.UserId == id).ToList();
                 var roleIds = userRoles.Select(x => x.RoleId).ToList();
                 Expression<Func<RoleEntity, bool>> exp = item => (!item.IsDeleted && roleIds.Contains(item.Id));
                 var roles = db.Roles.Where(exp).ToList();
@@ -101,6 +54,11 @@ namespace lkWeb.Service.Abstracts
             }
         }
 
+        /// <summary>
+        /// 登陆
+        /// </summary>
+        /// <param name="dto">user实体</param>
+        /// <returns></returns>
         public Result<UserDto> Login(UserDto dto)
         {
             using (var db = GetDb())
@@ -150,14 +108,6 @@ namespace lkWeb.Service.Abstracts
             }
         }
 
-        public bool Update(UserDto dto)
-        {
-            using (var db = GetDb())
-            {
-                db.Update(MapTo<UserDto, UserEntity>(dto));
-                return db.SaveChanges() > 0;
-            }
-        }
 
         /// <summary>
         /// 获取用户列表
@@ -191,7 +141,11 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
-
+        /// <summary>
+        /// 获取不是用户所属的角色数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
         public ResultDto<RoleDto> GetNotUserRoles(int userID)
         {
             using (var db = GetDb())

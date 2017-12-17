@@ -481,12 +481,12 @@ $(function () {
     function refreshTab() {
         var target = $('.J_iframe[data-id="' + $(this).data('id') + '"]');
         var url = target.attr('src');
-        //        //显示loading提示
-        //        var loading = layer.load();
-        //        target.attr('src', url).load(function () {
-        //            //关闭loading提示
-        //            layer.close(loading);
-        //        });
+                //显示loading提示
+                var loading = layer.load();
+                target.attr('src', url).load(function () {
+                    //关闭loading提示
+                    layer.close(loading);
+                });
     }
 
     $('.J_menuTabs').on('dblclick', '.J_menuTab', refreshTab);

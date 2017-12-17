@@ -1,0 +1,13 @@
+1.lambda这块看看书学一遍 接触的不多 Expression 和func才刚知道区别
+然后搜索，分页做一下
+然后放T4模板里
+
+2.调整lkWeb.js 封装下ajax 为DoPost DoGet，等
+lkWeb = {
+	GoAction:function(){},
+	......
+}
+
+3.缺个部门管理
+
+4.菜单管理 菜单现在是写死的 改成从数据库读取该角色菜单

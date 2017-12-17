@@ -47,9 +47,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 createDateTime = d.CreateDateTime.ToString(),
                 type=d.TypeName,
                 url = d.Url,
-                order=d.Order,
-                edit = "<button type=\"button\" class=\"btn btn-success\" onClick=\"GoToEditMenu(" + d.Id.ToString() + ")\">编辑</button>",
-                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteMenu(" + d.Id.ToString() + ")\">删除</button>",
+                order=d.Order
             });
             var result = Json(new
             {
@@ -76,16 +74,16 @@ namespace lkWeb.Areas.Admin.Controllers
             return result;
         }
         [HttpPost]
-        public IActionResult Delete(string id)
+        public IActionResult Delete(int id)
         {
             var result = Json(new
             {
-                flag = _menuService.Delete(int.Parse(id))
+                flag = _menuService.Delete(id)
             });
             return result;
         }
         [HttpPost]
-        public IActionResult DeleteMulti(string ids)
+        public IActionResult DeleteMulti(List<int> ids)
         {
             var result = Json(new
             {

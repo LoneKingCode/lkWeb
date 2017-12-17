@@ -31,7 +31,7 @@
                           success: function (data) {
                               if (data.flag == true)
                               {
-                                  alert("成功");
+                                  ReloadDataTable();
                               }
                               else {
                                   alert("失败");
@@ -56,7 +56,7 @@
                           success: function (data) {
                               if (data.flag == true)
                               {
-                                  alert("成功");
+                                  ReloadDataTable();
                               }
                               else {
                                   alert("失败");
@@ -68,10 +68,14 @@
 
                      })
         }
+        function ReloadDataTable() {
+            table_not_role.fnReloadAjax(table_not_role.fnSettings());
+            table_has_role.fnReloadAjax(table_has_role.fnSettings());
+        }
         //已拥有的角色
         var table_has_role;
         function InitDataTable() {
-            var url = '@Url.Action("GetMyRoles")?userId=' + @ViewBag.UserId;
+            var url = '@Url.Action("GetMyRoles")?Id=' + @ViewBag.UserId;
             $.fn.dataTableExt.sErrMode = 'throw';
 
             var config = {
@@ -132,7 +136,7 @@
             //未拥有的角色
         var table_not_role;
          function InitDataTable_1() {
-       var url = '@Url.Action("GetNotMyRoles")?userId=' + @ViewBag.UserId;
+       var url = '@Url.Action("GetNotMyRoles")?Id=' + @ViewBag.UserId;
             $.fn.dataTableExt.sErrMode = 'throw';
 
             var config = {

@@ -11,7 +11,6 @@ using AutoMapper;
 using lkWeb.Service;
 using lkWeb.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using lkWeb.Service.Abstracts;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector;

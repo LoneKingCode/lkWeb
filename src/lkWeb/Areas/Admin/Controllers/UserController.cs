@@ -98,8 +98,6 @@ namespace lkWeb.Areas.Admin.Controllers
                 statusName = d.StatusName,
                 id = d.Id.ToString(),
                 createDateTime = d.CreateDateTime.ToString(),
-                edit = "<button type=\"button\" class=\"btn btn-success\" onClick=\"GoToEditUser(" + d.Id.ToString() + ")\">编辑</button>",
-                delete = "<button type=\"button\" class=\"btn btn-delete\" onClick=\"DeleteUser(" + d.Id.ToString() + ")\">删除</button>",
             });
             var result = Json(new
             {
@@ -108,9 +106,9 @@ namespace lkWeb.Areas.Admin.Controllers
             return result;
         }
         [HttpGet]
-        public IActionResult GetMyRoles(string userId)
+        public IActionResult GetMyRoles(UserDto dto)
         {
-            var list = _userService.GetUserRoles(int.Parse(userId));
+            var list = _userService.GetUserRoles(dto.Id);
             var strData = list.data.Select(d => new
             {
                 id = d.Id,
@@ -124,9 +122,9 @@ namespace lkWeb.Areas.Admin.Controllers
             return result;
         }
         [HttpGet]
-        public IActionResult GetNotMyRoles(string userId)
+        public IActionResult GetNotMyRoles(UserDto dto)
         {
-            var list = _userService.GetNotUserRoles(int.Parse(userId));
+            var list = _userService.GetNotUserRoles(dto.Id);
             var strData = list.data.Select(d => new
             {
                 id = d.Id,
@@ -163,16 +161,16 @@ namespace lkWeb.Areas.Admin.Controllers
             return null;
         }
         [HttpPost]
-        public IActionResult Delete(string id)
+        public IActionResult Delete(int Id)
         {
             var result = Json(new
             {
-                flag = _userService.Delete(int.Parse(id))
+                flag = _userService.Delete(Id)
             });
             return result;
         }
         [HttpPost]
-        public IActionResult DeleteMulti(string ids)
+        public IActionResult DeleteMulti(List<int> ids)
         {
             var result = Json(new
             {

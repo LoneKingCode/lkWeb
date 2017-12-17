@@ -1,1 +1,285 @@
-﻿
+﻿<#@ template  language="C#"    debug="true" hostspecific="True"#>
+<#@ include file="$(SolutionDir)\src\lkWeb.Service\Abstracts\MultipleOutputHelper.ttinclude"#>
+<#@ import namespace="System"#>
+<#
+	 string solutionsPath = Host.ResolveAssemblyReference("$(SolutionDir)");
+	var files = System.IO.Directory.GetFiles(solutionsPath+@"\src\lkWeb.Entity", "*.cs");
+	var manager = Manager.Create(Host, GenerationEnvironment);
+	//1.开始输出接口契约文件
+    foreach (var filePath in files)
+    {
+		var file = new FileInfo(filePath);
+		var name = file.Name.Replace("Entity.cs",string.Empty);
+		var lowerName =name.ToLower();
+        //定义输出文件
+        manager.StartNewFile("I"+name+"Service.Partial.cs", string.Empty);
+#>
+
+using lkWeb.Service.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Text;
+
+namespace lkWeb.Service.Abstracts
+{
+    public partial interface I<#=name#>Service
+    {
+		 /// <summary>
+        /// 添加<#=lowerName#>
+        /// </summary>
+        /// <param name="dto"><#=lowerName#>实体</param>
+        /// <returns></returns>
+        bool Add(<#=name#>Dto dto);
+		/// <summary>
+        /// 批量添加<#=lowerName#>
+        /// </summary>
+        /// <param name="dto"><#=lowerName#>实体集合</param>
+        /// <returns></returns>
+        bool Add(List<<#=name#>Dto> dtos);
+        /// <summary>
+        /// 根据id获取<#=lowerName#>数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        <#=name#>Dto GetById(int id);
+        /// <summary>
+        /// 根据id删除<#=lowerName#>数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        bool Delete(int id);
+        /// <summary>
+        /// 批量删除<#=lowerName#>数据
+        /// </summary>
+        /// <param name="ids">id集合</param>
+        /// <returns></returns>
+        bool DeleteMulti(List<int> ids);
+        /// <summary>
+        /// 删除单个数据
+        /// </summary>
+        /// <param name="dto"><#=lowerName#>实体</param>
+        /// <returns></returns>
+        bool Delete(<#=name#>Dto dto);
+        /// <summary>
+        /// 更新单个数据
+        /// </summary>
+        /// <param name="dto"><#=lowerName#>实体</param>
+        /// <returns></returns>
+        bool Update(<#=name#>Dto dto);
+		     /// <summary>
+        /// 批量更新数据
+        /// </summary>
+        /// <param name="dto"><#=lowerName#>实体集合</param>
+        /// <returns></returns>
+	    bool Update(List<<#=name#>Dto> dtos);
+	}
+}
+
+
+
+
+
+
+
+<#
+		// 结束输出文件
+		manager.EndBlock();
+}
+	//2.开始生成契约实现文件
+	foreach (var filePath in files)
+    {
+		var file = new FileInfo(filePath);
+		var name = file.Name.Replace("Entity.cs",string.Empty);
+		var lowerName = name.ToLower();
+        //定义输出文件
+        manager.StartNewFile(name+"Service.Partial.cs", string.Empty);
+
+#>
+
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Text;
+using lkWeb.Service.Dto;
+using lkWeb.Entity;
+using System.Linq;
+
+namespace lkWeb.Service.Abstracts
+{
+    public partial class <#=name#>Service : ServiceBase<<#=name#>Entity>, I<#=name#>Service
+    {
+		/// <summary>
+        ///添加<#=lowerName#>
+        /// </summary>
+        /// <param name="dto"><#=lowerName#>实体</param>
+        /// <returns></returns>
+        public bool Add(<#=name#>Dto dto)
+        {
+            using (var db = GetDb())
+            {
+				var ds = GetDbSet(db);
+                var entity = MapTo<<#=name#>Dto, <#=name#>Entity>(dto);
+                ds.Add(entity);
+                return db.SaveChanges() > 0;
+            }
+        }
+        /// <summary>
+        /// 批量添加<#=lowerName#>
+        /// </summary>
+        /// <param name="dtos"><#=lowerName#>集合</param>
+        /// <returns></returns>
+        public bool Add(List<<#=name#>Dto> dtos)
+        {
+            using (var db = GetDb())
+            {
+			    var ds = GetDbSet(db);
+                var entities =  MapTo<List<<#=name#>Dto>, List<<#=name#>Entity>>(dtos);
+                ds.AddRange(entities);
+                return db.SaveChanges() > 0;
+            }
+        }
+		   /// <summary>
+        /// 更新单个数据
+        /// </summary>
+        /// <param name="dto"><#=lowerName#>实体</param>
+        /// <returns></returns>
+        public bool Update(<#=name#>Dto dto)
+        {
+            using (var db = GetDb())
+            {
+                db.Update(MapTo<<#=name#>Dto, <#=name#>Entity>(dto));
+                return db.SaveChanges() > 0;
+            }
+        }
+		   /// <summary>
+        /// 批量更新<#=lowerName#>
+        /// </summary>
+        /// <param name="dtos"><#=lowerName#>集合</param>
+        /// <returns></returns>
+        public bool Update(List<<#=name#>Dto> dtos)
+        {
+            using (var db = GetDb())
+            {
+			    var ds = GetDbSet(db);
+                var entities =  MapTo<List<<#=name#>Dto>, List<<#=name#>Entity>>(dtos);
+                ds.UpdateRange(entities);
+                return db.SaveChanges() > 0;
+            }
+        }
+        /// <summary>
+        /// 根据id删除<#=lowerName#>
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        public bool Delete(int id)
+        {
+            using (var db = GetDb())
+            {
+				var ds = GetDbSet(db);
+                var entity =ds.FirstOrDefault(item => item.Id == id);
+                ds.Remove(entity);
+                return db.SaveChanges() > 0;
+            }
+        }
+        /// <summary>
+        /// 根据id批量删除<#=lowerName#>
+        /// </summary>
+        /// <param name="ids">id集合</param>
+        /// <returns></returns>
+        public bool DeleteMulti(List<int> ids)
+        {
+            using (var db = GetDb())
+            {
+                foreach (var id in ids)
+                {
+					var ds = GetDbSet(db);
+                    var entity =ds.FirstOrDefault(item => item.Id ==id);
+                    ds.Remove(entity);
+                }
+                return db.SaveChanges() > 0;
+            }
+        }
+        /// <summary>
+        /// 删除单个<#=lowerName#>
+        /// </summary>
+        /// <param name="dto"><#=lowerName#>实体</param>
+        /// <returns></returns>
+        public bool Delete(<#=name#>Dto dto)
+        {
+            using (var db = GetDb())
+            {
+				var ds = GetDbSet(db);
+                var entity = MapTo<<#=name#>Dto, <#=name#>Entity>(dto);
+                ds.Remove(entity);
+                return db.SaveChanges() > 0;
+            }
+        }
+        /// <summary>
+        /// 根据id获取单条数据
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public <#=name#>Dto GetById(int id)
+        {
+            using (var db = GetDb())
+            {
+				var ds = GetDbSet(db);
+                var entity = ds.FirstOrDefault(item => item.Id == id);
+                if (entity != null)
+                    return MapTo<<#=name#>Entity, <#=name#>Dto>(entity);
+                else
+                    return null;
+            }
+        }
+	}
+
+}
+
+
+
+<#
+    // 结束输出文件
+    manager.EndBlock();
+}
+#>
+
+
+<#
+	manager.StartNewFile("AutoMapperConfiguration.Partial.cs", string.Empty);
+#>
+using AutoMapper;
+using lkWeb.Entity;
+using lkWeb.Service.Dto;
+public partial class AutoMapperConfiguration : Profile
+{
+        /// <summary>
+        /// 自定义AutoMapper配置
+        /// </summary>
+     public void AutoMapperConfiguration_None()
+       {
+
+		  <#
+	//1.开始输出接口契约文件
+			foreach (var filePath in files)
+            {
+				var file = new FileInfo(filePath);
+				var name = file.Name.Replace("Entity.cs",string.Empty);
+				var lowerName =name.ToLower();
+				//定义输出文件
+#>
+					CreateMap<<#=name#>Entity, <#=name#>Dto>();
+					CreateMap<<#=name#>Dto, <#=name#>Entity>();
+<#
+			}
+#>
+
+        }
+}
+
+<#
+    // 结束输出文件
+    manager.EndBlock();
+	//执行编译
+	manager.Process(true);
+#>
