@@ -13,7 +13,7 @@ lkWeb.GoAction = function (ctrl, action, values) {
 
 //删除多个
 lkWeb.DeleteMulti = function (ids, model, table) {
-    if (ids.length > 0)
+    if (ids.length < 1)
     {
         parent.layer.alert("请选择");
         return;

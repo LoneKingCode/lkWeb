@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using System.Data;
 namespace lkWeb.Data
 {
     public class lkWebContext : DbContext
@@ -22,6 +22,8 @@ namespace lkWeb.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+          //  modelBuilder.Entity();
+
         }
         public override int SaveChanges()
         {
