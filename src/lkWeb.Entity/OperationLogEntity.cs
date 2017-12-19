@@ -11,12 +11,13 @@ namespace lkWeb.Entity
         /// <summary>
         /// 用户ID
         /// </summary>
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
         /// 操作页面地址
         /// </summary>
         public string OperationUrl { get; set; }
+
         /// <summary>
         /// 操作说明
         /// </summary>

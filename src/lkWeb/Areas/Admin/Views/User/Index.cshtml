@@ -34,11 +34,15 @@
             })
             //角色授权
             $("#btnRoleAuth").click(function () {
-                var userId;
+                var userId = "";
                 $(":checkbox:checked", "#table_user").each(function (i, n) {
                     if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                    userId= $(n).val(); //只要一个用户ID 如果多选的话也只要最后一个
+                    userId = $(n).val(); //只要一个用户ID 如果多选的话也只要最后一个
                 })
+                if (userId == "") {
+                    parent.layer.alert("请选择用户");
+                    return;
+                }
                 lkWeb.GoAction("user", "authen", userId);
             })
 

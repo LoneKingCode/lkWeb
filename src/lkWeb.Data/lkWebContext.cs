@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
+using lkWeb.Data.Config;
+
 namespace lkWeb.Data
 {
     public class lkWebContext : DbContext
@@ -22,8 +24,13 @@ namespace lkWeb.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-          //  modelBuilder.Entity();
-
+            modelBuilder.ApplyConfiguration(new LoginLogConfig());
+            modelBuilder.ApplyConfiguration(new MenuConfig());
+            modelBuilder.ApplyConfiguration(new OperationLog());
+            modelBuilder.ApplyConfiguration(new RoleConfig());
+            modelBuilder.ApplyConfiguration(new RoleMenuConfig());
+            modelBuilder.ApplyConfiguration(new UserConfig());
+            modelBuilder.ApplyConfiguration(new UserRoleConfig());
         }
         public override int SaveChanges()
         {

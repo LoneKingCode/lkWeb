@@ -21,5 +21,15 @@ namespace lkWeb.Entity
         /// 描述
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// 角色菜单权限
+        /// </summary>
+        public virtual ICollection<RoleMenuEntity> RoleMenus { get; set; }
+
+        /// <summary>
+        /// 用户角色
+        /// </summary>
+        public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
     }
 }

@@ -38,5 +38,11 @@ namespace lkWeb.Entity
         /// </summary>
         public byte Status { get; set; }
 
+        /// <summary>
+        /// 用户拥有的角色
+        /// </summary>
+        public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
+
+
     }
 }

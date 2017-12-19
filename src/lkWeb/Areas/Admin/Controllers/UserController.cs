@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Dto;
 using lkWeb.Service.Abstracts;
 using lkWeb.Areas.Admin.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using lkWeb.Service.Enum;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,8 +41,10 @@ namespace lkWeb.Areas.Admin.Controllers
         public IActionResult Edit(string id)
         {
             var user = _userService.GetById(int.Parse(id));
+            ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View(user);
         }
+
         public IActionResult Add()
         {
             return View();
@@ -60,7 +64,6 @@ namespace lkWeb.Areas.Admin.Controllers
         #endregion
 
         #region Ajax
-
         [HttpPost]
         public IActionResult Login(UserDto dto)
         {

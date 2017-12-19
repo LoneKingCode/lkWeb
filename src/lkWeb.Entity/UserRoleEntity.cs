@@ -21,5 +21,15 @@ namespace lkWeb.Entity
         /// 角色ID
         /// </summary>
         public int RoleId { get; set; }
+
+        /// <summary>
+        /// 所属用户  virtual开启lazyload
+        /// </summary>
+        public virtual UserEntity User { get; set; }
+
+        /// <summary>
+        /// 所属角色
+        /// </summary>
+        public virtual RoleEntity Role { get; set; }
     }
 }

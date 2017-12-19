@@ -2,8 +2,10 @@
 @model UserDto
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
+
 }
-@section Scripts{
+@section Scripts
+    {
     <script type="text/javascript">
         function Save() {
             if ($("#txtNewPwdAgain").val() != $("#txtNewPwd").val()) {
@@ -54,15 +56,22 @@
     <div class="form-group">
         <label class="col-md-3 control-label">新密码</label>
         <div class="col-md-3">
-            <input type="text" class="form-control" id="txtNewPwd" name="PassWord" />
+            <input type="password" class="form-control" id="txtNewPwd" name="PassWord"/>
         </div>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">再次输入</label>
         <div class="col-md-3">
-            <input type="text" class="form-control" id="txtNewPwdAgain" />
+            <input type="password" class="form-control" id="txtNewPwdAgain" />
         </div>
     </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">状态</label>
+        <div class="col-md-3">
+            @Html.DropDownListFor(x => x.Status, (SelectList)ViewBag.StatusList, "请选择", new { @class = "form-control" })
+        </div>
+    </div>
+
     <div class="form-group">
         <div class="col-md-3 col-md-offset-3">
             <button type="button" class="btn btn-success" onclick="Save();">保存修改</button>
