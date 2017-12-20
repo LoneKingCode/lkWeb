@@ -2,13 +2,13 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
 }
 @section Scripts{
-    <script type="text/javascript">
+<script type="text/javascript">
         function Submit() {
             var option = {
                 datatype: "json",
                 success: function (data) {
                     if (data.flag == true) {
-                        alert("增加成功");
+                        parent.layer.alert("操作成功");
                         lkWeb.GoAction("role", "index", 0);
                     }
                     else {
@@ -16,13 +16,13 @@
                     }
                 },
                 error: function (error) {
-                    alert('提交请求失败');
+                    parent.layer.alert('提交请求失败');
                     console.log(error);
                 }
             };
             $("#form-addRole").ajaxSubmit(option);
         }
-    </script>
+</script>
 }
 <form class="form-horizontal" action="@Url.Action("Add", "Role")" method="post" id="form-addRole">
     <div class="form-group">

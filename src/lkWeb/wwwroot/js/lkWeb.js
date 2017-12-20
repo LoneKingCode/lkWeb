@@ -91,6 +91,7 @@ lkWeb.ShowLoad = function () {
 lkWeb.CloseLoad = function () {
     layer.close(layerIndex);
 }
+
 //add this plug in
 //you can call the below function to reload the table with current state
 //Datatables刷新方法

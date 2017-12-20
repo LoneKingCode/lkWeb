@@ -9,26 +9,11 @@
 
     <script>
         var zNodes_role = [
-            { id: 1, pid: 0, name: "管理员" },
-            { id: 11, pid: 0, name: "普通用户" },
-            { id: 111, pid: 0, name: "VIP会员" },
-            { id: 112, pid: 0, name: "啦啦啦啦" }
+
         ];
 
         var zNodes_menu = [
-            { id: 1, pId: 0, name: "随意勾选 1", open: true },
-            { id: 11, pId: 1, name: "随意勾选 1-1", open: true },
-            { id: 111, pId: 11, name: "随意勾选 1-1-1" },
-            { id: 112, pId: 11, name: "随意勾选 1-1-2" },
-            { id: 12, pId: 1, name: "随意勾选 1-2", open: true },
-            { id: 121, pId: 12, name: "随意勾选 1-2-1" },
-            { id: 122, pId: 12, name: "随意勾选 1-2-2" },
-            { id: 2, pId: 0, name: "随意勾选 2", open: true },
-            { id: 21, pId: 2, name: "随意勾选 2-1" },
-            { id: 22, pId: 2, name: "随意勾选 2-2", open: true },
-            { id: 221, pId: 22, name: "随意勾选 2-2-1" },
-            { id: 222, pId: 22, name: "随意勾选 2-2-2" },
-            { id: 23, pId: 2, name: "随意勾选 2-3" }
+
         ];
 
         function LoadData() {
@@ -85,7 +70,7 @@
             },
         };
 
-        var roleId;
+        var roleId="";
         function onRoleCheck(e, treeId, treeNode) {
             roleId = treeNode.id;
             $.ajax({
@@ -108,16 +93,7 @@
             })
         }
 
-        //获取选中节点的id
-        //function onCheck(e, treeId, treeNode) {
-        //    var treeObj = $.fn.zTree.getZTreeObj("menuTree"),
-        //        nodes = treeObj.getCheckedNodes(true),
-        //        v = "";
-        //    for (var i = 0; i < nodes.length; i++) {
-        //        v += nodes[i].name + ",";
-        //        alert(nodes[i].id);
-        //    }
-        //}
+
         function setCheck_role() {
             var type = $("#level").attr("checked") ? "level" : "all";
             setting_role.check.radioType = type;
@@ -150,7 +126,7 @@
         }
 
         function GetData() {
-            var data = { RoleIds: [], MenuIds: [] };
+                      var data = { RoleIds: [], MenuIds: [] };
             data.RoleIds.push(roleId);
             var treeObj = $.fn.zTree.getZTreeObj("menuTree");
             nodes = treeObj.getCheckedNodes(true);
@@ -166,17 +142,18 @@
             InitMenuTree();
 
             $("#btnClear").click(function () {
-                if (confirm("确认取消全部权限"))
-                {
-                    var treeObj = $.fn.zTree.getZTreeObj("menuTree");
-                    treeObj.checkAllNodes(false);
-
-                }
+                var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+                treeObj.checkAllNodes(false);
             })
             $("#btnSave").click(function () {
-                if (confirm("确认保存？")) {
-                    var data = GetData();
-                    $.ajax({
+                if (roleId == "") {
+                    parent.layer.alert("请选择角色");
+                    return;
+                }
+                parent.layer.confirm("确认保存", { btn: ["确认", "取消"] },
+                    function () {
+                        var data = GetData();
+                     $.ajax({
                           url: "@Url.Action("AuthMenus", "Role")",
                           type: "post",
                           dataType: "json",
@@ -185,19 +162,24 @@
                           success: function (data) {
                               if (data.flag == true)
                               {
-                                  alert("保存成功");
+                                  parent.layer.alert("操作成功");
                               }
                               else {
-                                  alert("保存失败");
+                                  parent.layer.alert("操作失败");
                               }
                           },
                            err: function (err) {
                               console.log(err);
                           }
+                        })
+                    }, function () {
 
-                     })
-                }
+                    }
+                )
             })
+
+
+
         })
     </script>
 }

@@ -17,6 +17,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             _menuService = roleService;
         }
+
         #region Page
         // GET: /<controller>/
         public IActionResult Index()
@@ -33,6 +34,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return View(menu);
         }
         #endregion
+
         #region Ajax
 
         [HttpGet]

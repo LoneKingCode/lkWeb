@@ -9,14 +9,14 @@
     <script type="text/javascript">
         function Save() {
             if ($("#txtNewPwdAgain").val() != $("#txtNewPwd").val()) {
-                alert("两次输入的密码不相同");
+                parent.layer.alert("两次输入的密码不相同");
                 return;
             }
             var option = {
                 datatype: "json",
                 success: function (data) {
                     if (data.flag == true) {
-                        alert("保存成功");
+                        parent.layer.alert("操作成功");
                         lkWeb.GoAction("user", "index", 0);
                     }
                     else {
@@ -24,7 +24,7 @@
                     }
                 },
                 error: function (error) {
-                    alert('提交请求失败');
+                    parent.layer.alert('提交请求失败');
                     console.log(error);
                 }
             };

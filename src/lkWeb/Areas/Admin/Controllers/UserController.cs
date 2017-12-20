@@ -49,10 +49,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult History()
-        {
-            return View();
-        }
+
         public IActionResult ForgetPwd()
         {
             return View();
