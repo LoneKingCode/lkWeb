@@ -8,6 +8,7 @@ using lkWeb.Service.Abstracts;
 using lkWeb.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using lkWeb.Service.Enum;
+using System.Linq.Expressions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -89,8 +90,9 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetList()
         {
-            var data = _userService.GetList();
-            var strData = data.data.Select(d => new
+            string start = Request.Query["start"];
+            var dto = _userService.GetList();
+            var data = dto.data.Select(d => new
             {
                 loginName = d.LoginName,
                 realName = d.RealName,
@@ -101,10 +103,35 @@ namespace lkWeb.Areas.Admin.Controllers
             });
             var result = Json(new
             {
-                aaData = strData
+                aaData = data
             });
             return result;
         }
+        [HttpGet]
+        public IActionResult GetPageData(QueryBase queryBase)
+        {
+            Expression<Func<UserDto, bool>> where = item => !item.IsDeleted;
+            if (!(string.IsNullOrEmpty(queryBase.SearchKey)))
+                where = x =>(x.LoginName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+            var dto = _userService.GetPageData(queryBase, x => x.LoginName, where, true);
+            var data = new
+            {
+                draw = queryBase.Draw,
+                recordsTotal = dto.recordsTotal,
+                recordsFiltered = dto.recordsTotal,
+                data = dto.data.Select(d => new
+                {
+                    loginName = d.LoginName,
+                    realName = d.RealName,
+                    email = d.Email,
+                    statusName = d.StatusName,
+                    id = d.Id.ToString(),
+                    createDateTime = d.CreateDateTime.ToString(),
+                })
+            };
+            return Json(data);
+        }
+
         [HttpGet]
         public IActionResult GetMyRoles(UserDto dto)
         {

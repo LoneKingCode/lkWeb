@@ -11,6 +11,10 @@
                 $(".checkChild").prop("checked", check);
             });
 
+            $("#btnSearch").click(function () {
+                lkWeb.Search($("#txtSearchKey").val(), table_role);
+
+            })
         });
 
         function AddModel() {
@@ -38,35 +42,8 @@
 
         var table_role;
         function InitDataTable() {
-            var url = '@Url.Action("GetList")';
-            $.fn.dataTableExt.sErrMode = 'throw';
-        var config = {
-            "processing": true,
-            "bInfo": true, //是否显示是否启用底边信息栏
-            "sAjaxSource": url,
-            'autoWidth': true,
-            "sPaginationType": "full_numbers",
-            "oLanguage": {
-                "sProcessing": "请求数据中......",
-                "sLengthMenu": "每页显示 _MENU_ 条记录",
-                "sZeroRecords": "抱歉， 没有找到",
-                "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
-                "sInfoEmpty": "没有数据",
-                "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
-                "sSearch": "搜索",
-                "oPaginate": {
-                    "sFirst": "<button type=\"button\" class=\"btn btn-primar\" >首页</button>",
-                    "sPrevious": "<button type=\"button\" class=\"btn btn-primar\" >上一页</button>",
-                    "sNext": "<button type=\"button\" class=\"btn btn-primar\" >后一页</button>",
-                    "sLast": "<button type=\"button\" class=\"btn btn-primar\" >尾页</button>"
-                }
-            },
-            "sZeroRecords": "没有检索到数据",
-            "retrieve": true,
-            "paging": true,
-            "ordering": true,
-            "info": true,
-            "aoColumns": [
+            var dataUrl = '@Url.Action("GetPageData")';
+            var columns = [
                 {
                     "sClass": "text-center",
                     "mData": "id",
@@ -79,47 +56,42 @@
                 { "mData": "name", "sClass": "text-center" },
                 { "mData": "description", "sClass": "text-center" },
                 { "mData": "createDateTime", "sClass": "text-center" },
-            ],
-            'columnDefs': [
-                {
-                    'targets': 0,
-                    'checkboxes': {
-                        'selectRow': true
-                    }
-                }
-            ],
-            'select': {
-                'style': 'multi'
-            },
-            'order': [[1, 'asc']]
-        };
-        table_role = $("#table_role").dataTable(config);
+            ];
+            table_role = lkWeb.LoadTable("table_role", columns, dataUrl)
     }
 
 
     </script>
 }
-<div class="data-content" style="padding:15px 0 0 15px;">
-    <h2>角色管理</h2>
-    <hr />
-    <div>
-        <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
-        <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
-        <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
-    </div>
-    <table class="table table-striped table-hover" id="table_role">
-        <thead>
-            <tr>
-                <th>
-                    <input type="checkbox" class="checkAll" />
-                </th>
-                <th>Id</th>
-                <th>角色名称</th>
-                <th>角色描述</th>
-                <th>创建时间</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div class="data-content" style="padding:15px 0 0 15px;">
+        <h2>角色管理</h2>
+        <hr />
+        <div class="form-group">
+            <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
+            <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+            <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
+                <span class="input-group-btn">
+                    <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
+                </span>
+            </div>
+        </div>
+        <table class="table table-striped table-hover" id="table_role">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" class="checkAll" />
+                    </th>
+                    <th>Id</th>
+                    <th>角色名称</th>
+                    <th>角色描述</th>
+                    <th>创建时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
 
-</div>
+    </div>

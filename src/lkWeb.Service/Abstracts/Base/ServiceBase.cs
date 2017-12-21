@@ -55,11 +55,35 @@ namespace lkWeb.Service.Abstracts
             if (source == null) throw new ArgumentNullException();
             return _mapper.Map<TSource, TDestination>(source);
         }
-        //public IQueryable<T> GetQuery()
-        //{
 
-        //}
-
+        /// <summary>
+        /// 获取查询结果
+        /// </summary>
+        /// <param name="queryBase">基础查询对象</param>
+        /// <param name="ds">dataset</param>
+        /// <param name="orderExp">orderExp</param>
+        /// <param name="queryExp">queryExp</param>
+        /// <param name="isAsc">是否升序</param>
+        /// <returns></returns>
+        public List<T> GetQuery<Tkey>(QueryBase queryBase, DbSet<T> ds, Expression<Func<T, Tkey>> orderExp, Expression<Func<T, bool>> queryExp, bool isAsc, out int totalRecords)
+        {
+            if (isAsc)
+            {
+                var query = ds.Where(queryExp).OrderBy(orderExp);
+                totalRecords = query.Count();
+                var list = query.Skip(queryBase.Start)
+                   .Take(queryBase.Length).ToList();
+                return list;
+            }
+            else
+            {
+                var query = ds.Where(queryExp).OrderByDescending(orderExp);
+                totalRecords = query.Count();
+                var list = query.Skip(queryBase.Start)
+                 .Take(queryBase.Length).ToList();
+                return list;
+            }
+        }
 
         ///// <summary>
         ///// 获取分页数据

@@ -15,7 +15,7 @@ namespace lkWeb.Service.Abstracts
         {
             using (var db = GetDb())
             {
-                var temp = db.Set<RoleMenuEntity>().Where(r => r.RoleId == roleID).ToList();
+                var temp = db.Set<RoleMenuEntity>().Where(r => r.RoleId == roleID).OrderBy(item=>item.Id).ToList();
                 var dtoData = MapTo<List<RoleMenuEntity>, List<RoleMenuDto>>(temp);
                 var result = new ResultDto<RoleMenuDto>
                 {

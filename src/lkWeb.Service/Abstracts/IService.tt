@@ -73,6 +73,15 @@ namespace lkWeb.Service.Abstracts
         /// <param name="dto"><#=lowerName#>实体集合</param>
         /// <returns></returns>
 	    bool Update(List<<#=name#>Dto> dtos);
+		  /// <summary>
+        /// 获取分页数据
+        /// </summary>
+        /// <param name="queryBase">基础查询对象</param>
+        /// <param name="orderExp">orderExp</param>
+        /// <param name="queryExp">queryExp</param>
+        /// <param name="isAsc">是否升序</param>
+        /// <returns></returns>
+        ResultDto<<#=name#>Dto> GetPageData<Tkey>(QueryBase queryBase, Expression<Func<<#=name#>Dto, Tkey>> orderExp, Expression<Func<<#=name#>Dto, bool>> queryExp, bool isAsc);
 	}
 }
 
@@ -104,6 +113,7 @@ using System.Text;
 using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
+using lkWeb.Core.Extensions;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -230,6 +240,31 @@ namespace lkWeb.Service.Abstracts
                     return MapTo<<#=name#>Entity, <#=name#>Dto>(entity);
                 else
                     return null;
+            }
+        }
+		 /// <summary>
+        /// 获取<#=lowerName#>分页数据
+        /// </summary>
+        /// <param name="queryBase">基础查询对象</param>
+        /// <param name="orderExp">orderExp</param>
+        /// <param name="queryExp">queryExp</param>
+        /// <param name="isAsc">是否升序</param>
+        /// <returns></returns>
+       public ResultDto<<#=name#>Dto> GetPageData<Tkey>(QueryBase queryBase, Expression<Func<<#=name#>Dto, Tkey>> orderExp, Expression<Func<<#=name#>Dto, bool>> queryExp, bool isAsc)
+        {
+            using (var db =GetDb())
+            {
+                var ds = db.Set<<#=name#>Entity>();
+                var result = new ResultDto<<#=name#>Dto>();
+                var order = orderExp.Cast<<#=name#>Dto, <#=name#>Entity, Tkey>();
+                var where = queryExp.Cast<<#=name#>Dto, <#=name#>Entity, bool>();
+                int recordsTotal;
+               var list = GetQuery(queryBase, ds,order, where, isAsc, out recordsTotal);
+                result.data = MapTo<List<<#=name#>Entity>, List<<#=name#>Dto>>(list);
+                result.recordsTotal = recordsTotal;
+                result.pageIndex = queryBase.Start;
+                result.pageSize = queryBase.Length;
+                return result;
             }
         }
 	}

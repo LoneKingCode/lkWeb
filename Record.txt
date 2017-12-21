@@ -1,6 +1,4 @@
-1.lambda这块看看书学一遍 接触的不多 Expression 和func才刚知道区别
-然后搜索，分页做一下
-然后放T4模板里
+1.datatable 搜索，排序 后台暂时写死不是根据前台参数修改的
 
 2.调整lkWeb.js 封装下ajax 为DoPost DoGet，等
 lkWeb = {

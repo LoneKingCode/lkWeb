@@ -7,7 +7,7 @@ using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq.Expressions;
 using lkWeb.Service.Enum;
-
+using lkWeb.Core.Extensions;
 namespace lkWeb.Service.Abstracts
 {
     public partial class UserService : ServiceBase<UserEntity>, IUserService
@@ -117,7 +117,7 @@ namespace lkWeb.Service.Abstracts
         {
             using (var db = GetDb())
             {
-                var temp = db.Set<UserEntity>().ToList();
+                var temp = db.Set<UserEntity>().OrderBy(item=>item.Id).ToList();
                 var dtoData = MapTo<List<UserEntity>, List<UserDto>>(temp);
                 var result = new ResultDto<UserDto>
                 {
@@ -166,6 +166,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
+
     }
 
 }

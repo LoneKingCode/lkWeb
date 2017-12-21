@@ -6,6 +6,7 @@ using System.Text;
 using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
+using lkWeb.Core.Extensions;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -132,6 +133,31 @@ namespace lkWeb.Service.Abstracts
                     return MapTo<LoginLogEntity, LoginLogDto>(entity);
                 else
                     return null;
+            }
+        }
+		 /// <summary>
+        /// 获取loginlog分页数据
+        /// </summary>
+        /// <param name="queryBase">基础查询对象</param>
+        /// <param name="orderExp">orderExp</param>
+        /// <param name="queryExp">queryExp</param>
+        /// <param name="isAsc">是否升序</param>
+        /// <returns></returns>
+       public ResultDto<LoginLogDto> GetPageData<Tkey>(QueryBase queryBase, Expression<Func<LoginLogDto, Tkey>> orderExp, Expression<Func<LoginLogDto, bool>> queryExp, bool isAsc)
+        {
+            using (var db =GetDb())
+            {
+                var ds = db.Set<LoginLogEntity>();
+                var result = new ResultDto<LoginLogDto>();
+                var order = orderExp.Cast<LoginLogDto, LoginLogEntity, Tkey>();
+                var where = queryExp.Cast<LoginLogDto, LoginLogEntity, bool>();
+                int recordsTotal;
+               var list = GetQuery(queryBase, ds,order, where, isAsc, out recordsTotal);
+                result.data = MapTo<List<LoginLogEntity>, List<LoginLogDto>>(list);
+                result.recordsTotal = recordsTotal;
+                result.pageIndex = queryBase.Start;
+                result.pageSize = queryBase.Length;
+                return result;
             }
         }
 	}

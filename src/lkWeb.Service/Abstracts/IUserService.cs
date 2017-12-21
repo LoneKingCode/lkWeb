@@ -39,5 +39,6 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <returns></returns>
         ResultDto<UserDto> GetList();
-    }
+
+        }
 }

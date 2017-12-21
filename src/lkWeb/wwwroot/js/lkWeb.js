@@ -13,8 +13,7 @@ lkWeb.GoAction = function (ctrl, action, values) {
 
 //删除多个
 lkWeb.DeleteMulti = function (ids, model, table) {
-    if (ids.length < 1)
-    {
+    if (ids.length < 1) {
         parent.layer.alert("请选择");
         return;
     }
@@ -30,8 +29,8 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                 },
                 success: function (result) {
                     if (result.flag == true) {
+                        table.draw();//刷新datatable
                         parent.layer.alert("删除成功")
-                        table.fnReloadAjax(table.fnSettings()); //刷新datatable
                     }
                     else {
                         parent.layer.alert("删除失败");
@@ -65,8 +64,8 @@ lkWeb.Delete = function (id, model, table) {
                     },
                     success: function (result) {
                         if (result.flag == true) {
+                            table.draw();//刷新datatable
                             parent.layer.alert("删除成功")
-                            table.fnReloadAjax(table.fnSettings()); //刷新datatable
                         }
                         else {
                             parent.layer.alert("删除失败");
@@ -92,6 +91,67 @@ lkWeb.CloseLoad = function () {
     layer.close(layerIndex);
 }
 
+lkWeb.Search = function (searchKey, table) {
+    console.log("searchKey:" + searchKey);
+    _searchKey = searchKey;
+    table.search(_searchKey).draw(); //！！！！！！！！！！！搜索暂时无效 很无奈！！！ 只能先这样代替了
+}
+var _searchKey = "";
+lkWeb.LoadTable = function (tableID, colums, dataUrl) {
+    var config = {
+        "processing": true, //载入数据的时候是否显示“载入中”
+        "bInfo": true, //是否显示是否启用底边信息栏
+        "ajax": {
+            url: dataUrl,
+            type: "get",
+            data: function (d) {
+                var param = {}; //d是原始的数据 不过太长了，只取需要的数据出来
+                param.start = d.start;//开始的数据位置
+                param.length = d.length;//获取的数据长度
+                //取得排序的字段
+                if (d.columns && d.order && d.order.length > 0) {
+                    var orderBy = d.columns[d.order[0].column].name;
+                    var orderDir = d.order[0].dir;
+                    param.orderBy = orderBy;
+                    param.orderDir = orderDir; //asc or desc
+                }
+                param.searchKey = _searchKey;
+                console.log(d);
+                return param;
+            }
+
+        },
+        "searching": false,
+        "serverSide": true, //启用服务器端分页
+        'autoWidth': true,
+        "sPaginationType": "full_numbers",
+        "oLanguage": {
+            "sProcessing": "请求数据中......",
+            "sLengthMenu": "每页显示 _MENU_ 条记录",
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+            "sSearch": "搜索",
+            "oPaginate": {
+                "sFirst": "<button type=\"button\" class=\"btn btn-primar\" >首页</button>",
+                "sPrevious": "<button type=\"button\" class=\"btn btn-primar\" >上一页</button>",
+                "sNext": "<button type=\"button\" class=\"btn btn-primar\" >后一页</button>",
+                "sLast": "<button type=\"button\" class=\"btn btn-primar\" >尾页</button>"
+            }
+        },
+        "sZeroRecords": "没有检索到数据",
+        "retrieve": true,
+        "paging": true,
+        "ordering": true,
+        "info": true,
+        "aoColumns": colums,
+        "order": [[1, "asc"]],
+    };
+    return $("#" + tableID).DataTable(config);
+}
+
+$.fn.dataTableExt.sErrMode = 'throw';
 //add this plug in
 //you can call the below function to reload the table with current state
 //Datatables刷新方法

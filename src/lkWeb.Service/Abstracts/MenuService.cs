@@ -15,7 +15,7 @@ namespace lkWeb.Service.Abstracts
         {
             using (var db = GetDb())
             {
-                var temp = db.Set<MenuEntity>().ToList();
+                var temp = db.Set<MenuEntity>().OrderBy(item=>item.Id).ToList();
                 var dtoData = MapTo<List<MenuEntity>, List<MenuDto>>(temp);
                 var result = new ResultDto<MenuDto>
                 {

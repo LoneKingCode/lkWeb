@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
+using System.Linq.Expressions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,6 +37,32 @@ namespace lkWeb.Areas.Admin.Controllers
         #endregion
 
         #region Ajax
+
+        [HttpGet]
+        public IActionResult GetPageData(QueryBase queryBase)
+        {
+            Expression<Func<MenuDto, bool>> where = item => !item.IsDeleted;
+            if (!(string.IsNullOrEmpty(queryBase.SearchKey)))
+                where = x => x.Name.Contains(queryBase.SearchKey) && !x.IsDeleted;
+            var dto = _menuService.GetPageData(queryBase, x => x.Id, where, true);
+            var data = new
+            {
+                draw = queryBase.Draw,
+                recordsTotal = dto.recordsTotal,
+                recordsFiltered = dto.recordsTotal,
+                data = dto.data.Select(d => new
+                {
+                    name = d.Name,
+                    parentID = d.ParentId,
+                    id = d.Id.ToString(),
+                    createDateTime = d.CreateDateTime.ToString(),
+                    type = d.TypeName,
+                    url = d.Url,
+                    order = d.Order
+                })
+            };
+            return Json(data);
+        }
 
         [HttpGet]
         public IActionResult GetList()

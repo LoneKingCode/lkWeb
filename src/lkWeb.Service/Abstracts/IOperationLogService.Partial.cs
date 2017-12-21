@@ -57,7 +57,21 @@ namespace lkWeb.Service.Abstracts
         /// <param name="dto">operationlog实体集合</param>
         /// <returns></returns>
 	    bool Update(List<OperationLogDto> dtos);
+		  /// <summary>
+        /// 获取分页数据
+        /// </summary>
+        /// <param name="queryBase">基础查询对象</param>
+        /// <param name="orderExp">orderExp</param>
+        /// <param name="queryExp">queryExp</param>
+        /// <param name="isAsc">是否升序</param>
+        /// <returns></returns>
+        ResultDto<OperationLogDto> GetPageData<Tkey>(QueryBase queryBase, Expression<Func<OperationLogDto, Tkey>> orderExp, Expression<Func<OperationLogDto, bool>> queryExp, bool isAsc);
 	}
 }
+
+
+
+
+
 
 
