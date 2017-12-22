@@ -9,6 +9,8 @@ using lkWeb.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using lkWeb.Service.Enum;
 using System.Linq.Expressions;
+using lkWeb.Entity;
+using lkWeb.Core.Extensions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -88,32 +90,12 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetList()
-        {
-            string start = Request.Query["start"];
-            var dto = _userService.GetList();
-            var data = dto.data.Select(d => new
-            {
-                loginName = d.LoginName,
-                realName = d.RealName,
-                email = d.Email,
-                statusName = d.StatusName,
-                id = d.Id.ToString(),
-                createDateTime = d.CreateDateTime.ToString(),
-            });
-            var result = Json(new
-            {
-                aaData = data
-            });
-            return result;
-        }
-        [HttpGet]
         public IActionResult GetPageData(QueryBase queryBase)
         {
-            Expression<Func<UserDto, bool>> where = item => !item.IsDeleted;
-            if (!(string.IsNullOrEmpty(queryBase.SearchKey)))
-                where = x =>(x.LoginName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
-            var dto = _userService.GetPageData(queryBase, x => x.LoginName, where, true);
+            Expression<Func<UserDto, bool>> queryExp = item => !item.IsDeleted;
+            if (queryBase.SearchKey.IsNotEmpty())
+                queryExp = x => (x.LoginName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+            var dto = _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
                 draw = queryBase.Draw,

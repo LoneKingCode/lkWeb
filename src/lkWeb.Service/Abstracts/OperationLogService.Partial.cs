@@ -135,24 +135,27 @@ namespace lkWeb.Service.Abstracts
                     return null;
             }
         }
-		 /// <summary>
+	 /// <summary>
         /// 获取operationlog分页数据
         /// </summary>
         /// <param name="queryBase">基础查询对象</param>
-        /// <param name="orderExp">orderExp</param>
         /// <param name="queryExp">queryExp</param>
-        /// <param name="isAsc">是否升序</param>
+         /// <param name="orderBy">要排序的列名</param>
+        /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-       public ResultDto<OperationLogDto> GetPageData<Tkey>(QueryBase queryBase, Expression<Func<OperationLogDto, Tkey>> orderExp, Expression<Func<OperationLogDto, bool>> queryExp, bool isAsc)
+        public ResultDto<OperationLogDto> GetPageData(QueryBase queryBase, Expression<Func<OperationLogDto, bool>> queryExp, string orderBy, string orderDir)
         {
-            using (var db =GetDb())
+            using (var db = GetDb())
             {
                 var ds = db.Set<OperationLogEntity>();
                 var result = new ResultDto<OperationLogDto>();
-                var order = orderExp.Cast<OperationLogDto, OperationLogEntity, Tkey>();
                 var where = queryExp.Cast<OperationLogDto, OperationLogEntity, bool>();
+                var isAsc = orderDir.ToLower() != "desc";
                 int recordsTotal;
-               var list = GetQuery(queryBase, ds,order, where, isAsc, out recordsTotal);
+                //暂时没用到这个
+                Expression<Func<OperationLogDto, int>> orderExp = item => item.Id;
+                var _orderExp = orderExp.Cast<OperationLogDto, OperationLogEntity, int>();
+                var list = GetQuery(queryBase, ds, _orderExp, where, isAsc, out recordsTotal);
                 result.data = MapTo<List<OperationLogEntity>, List<OperationLogDto>>(list);
                 result.recordsTotal = recordsTotal;
                 result.pageIndex = queryBase.Start;

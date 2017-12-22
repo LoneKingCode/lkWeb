@@ -57,16 +57,16 @@ namespace lkWeb.Service.Abstracts
         /// <param name="dto">rolemenu实体集合</param>
         /// <returns></returns>
 	    bool Update(List<RoleMenuDto> dtos);
-		  /// <summary>
-        /// 获取分页数据
+		         /// <summary>
+        /// 获取rolemenu分页数据
         /// </summary>
         /// <param name="queryBase">基础查询对象</param>
-        /// <param name="orderExp">orderExp</param>
         /// <param name="queryExp">queryExp</param>
-        /// <param name="isAsc">是否升序</param>
+        /// <param name="orderBy">要排序的列名</param>
+        /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        ResultDto<RoleMenuDto> GetPageData<Tkey>(QueryBase queryBase, Expression<Func<RoleMenuDto, Tkey>> orderExp, Expression<Func<RoleMenuDto, bool>> queryExp, bool isAsc);
-	}
+        ResultDto<RoleMenuDto> GetPageData(QueryBase queryBase, Expression<Func<RoleMenuDto, bool>> queryExp, string orderBy, string orderDir);
+ 	}
 }
 
 

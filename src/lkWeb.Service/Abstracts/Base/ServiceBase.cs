@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using lkWeb.Core.Extensions;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -67,7 +68,7 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         public List<T> GetQuery<Tkey>(QueryBase queryBase, DbSet<T> ds, Expression<Func<T, Tkey>> orderExp, Expression<Func<T, bool>> queryExp, bool isAsc, out int totalRecords)
         {
-            if (isAsc)
+             if (isAsc)
             {
                 var query = ds.Where(queryExp).OrderBy(orderExp);
                 totalRecords = query.Count();
@@ -85,53 +86,6 @@ namespace lkWeb.Service.Abstracts
             }
         }
 
-        ///// <summary>
-        ///// 获取分页数据
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <typeparam name="TKey"></typeparam>
-        ///// <param name="pageSize"></param>
-        ///// <param name="pageIndex"></param>
-        ///// <param name="whereExp"></param>
-        ///// <param name="orderExp"></param>
-        ///// <param name="isDesc"></param>
-        ///// <returns></returns>
-        //public ResultDto<T> GetPageData<T, TKey>(int pageSize, int pageIndex, Expression<Func<T, bool>> whereExp, Expression<Func<T, TKey>> orderExp, bool isDesc = true) where T : class
-        //{
-        //    using (var db = GetDb())
-        //    {
-        //        db.Set<T>().Where(whereExp).Count();
-        //        if (isDesc)
-        //        {
-        //            var temp = db.Set<T>().Where(whereExp)
-        //                .OrderByDescending<T, TKey>(orderExp)
-        //                .Skip(pageSize * (pageIndex - 1))
-        //                .Take(pageSize);
-        //            return new ResultDto<T>()
-        //            {
-        //                recordsTotal = db.Set<T>().Where(whereExp).Count(),
-        //                data = temp.ToList(),
-        //                pageSize = pageSize,
-        //                pageIndex = pageIndex
-        //            };
-        //        }
 
-        //        else
-        //        {
-        //            var temp = db.Set<T>().Where(whereExp)
-        //               .OrderBy<T, TKey>(orderExp)
-        //               .Skip(pageSize * (pageIndex - 1))
-        //               .Take(pageSize);
-        //            return new ResultDto<T>()
-        //            {
-        //                recordsTotal = db.Set<T>().Where(whereExp).Count(),
-        //                data = temp.ToList(),
-        //                pageSize = pageSize,
-        //                pageIndex = pageIndex
-        //            };
-        //        }
-        //    }
-        //    throw new NotImplementedException();
-        //}
     }
 }

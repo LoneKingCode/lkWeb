@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using System.Linq.Expressions;
+using lkWeb.Core.Extensions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -41,10 +42,10 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetPageData(QueryBase queryBase)
         {
-            Expression<Func<MenuDto, bool>> where = item => !item.IsDeleted;
-            if (!(string.IsNullOrEmpty(queryBase.SearchKey)))
-                where = x => x.Name.Contains(queryBase.SearchKey) && !x.IsDeleted;
-            var dto = _menuService.GetPageData(queryBase, x => x.Id, where, true);
+            Expression<Func<MenuDto, bool>> queryExp = item => !item.IsDeleted;
+            if (queryBase.SearchKey.IsNotEmpty())
+                queryExp = x => x.Name.Contains(queryBase.SearchKey) && !x.IsDeleted;
+            var dto = _menuService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
                 draw = queryBase.Draw,
@@ -64,26 +65,6 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(data);
         }
 
-        [HttpGet]
-        public IActionResult GetList()
-        {
-            var data = _menuService.GetList();
-            var strData = data.data.Select(d => new
-            {
-                name = d.Name,
-                parentID = d.ParentId,
-                id = d.Id.ToString(),
-                createDateTime = d.CreateDateTime.ToString(),
-                type=d.TypeName,
-                url = d.Url,
-                order=d.Order
-            });
-            var result = Json(new
-            {
-                aaData = strData
-            });
-            return result;
-        }
         [HttpPost]
         public IActionResult Edit(MenuDto menu)
         {

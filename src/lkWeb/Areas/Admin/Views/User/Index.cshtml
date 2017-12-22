@@ -67,12 +67,12 @@
                     },
                     "bSortable": false
                 },
-                { "mData": "id", "sClass": "text-center" },
-                { "mData": "loginName", "sClass": "text-center" },
-                { "mData": "realName", "sClass": "text-center" },
-                { "mData": "email", "sClass": "text-center", "bSortable": false },
-                { "mData": "statusName", "sClass": "text-center" },
-                { "mData": "createDateTime", "sClass": "text-center" },
+                { "mData": "id", "name":"Id", "sClass": "text-center" },
+                { "mData": "loginName", "name": "LoginName", "sClass": "text-center" },
+                { "mData": "realName", "name": "RealName", "sClass": "text-center" },
+                { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
+                { "mData": "statusName", "name": "StatusName","sClass": "text-center" },
+                { "mData": "createDateTime", "name": "CreateDateTime","sClass": "text-center" },
             ];
             table_user = lkWeb.LoadTable("table_user", columns, dataUrl)
     }

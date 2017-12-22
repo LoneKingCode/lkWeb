@@ -7,6 +7,7 @@ using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using lkWeb.Areas.Admin.Models;
 using System.Linq.Expressions;
+using lkWeb.Core.Extensions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -49,10 +50,10 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetPageData(QueryBase queryBase)
         {
-            Expression<Func<RoleDto, bool>> where = item => !item.IsDeleted;
-            if (!(string.IsNullOrEmpty(queryBase.SearchKey)))
-                where = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)) && !x.IsDeleted;
-            var dto = _roleService.GetPageData(queryBase, x => x.Id, where, true);
+            Expression<Func<RoleDto, bool>> queryExp = item => !item.IsDeleted;
+            if (queryBase.SearchKey.IsNotEmpty())
+                queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+            var dto = _roleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
                 draw = queryBase.Draw,
@@ -69,23 +70,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(data);
         }
 
-        [HttpGet]
-        public IActionResult GetList()
-        {
-            var data = _roleService.GetList();
-            var strData = data.data.Select(d => new
-            {
-                name = d.Name,
-                description = d.Description,
-                id = d.Id.ToString(),
-                createDateTime = d.CreateDateTime.ToString(),
-            });
-            var result = Json(new
-            {
-                aaData = strData
-            });
-            return result;
-        }
+
         [HttpPost]
         public IActionResult Edit(RoleDto role)
         {
