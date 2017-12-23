@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.ViewComponents;
 using SimpleInjector.Lifestyles;
 using lkWeb.Controllers;
 using Microsoft.AspNetCore.Routing;
+using Newtonsoft.Json.Serialization;
 
 namespace lkWeb
 {
@@ -47,7 +48,7 @@ namespace lkWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn")));
-           // services.AddEntityFrameworkSqlServer().AddDbContext<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn"), b => b.MigrationsAssembly("lkWeb")));
+            // services.AddEntityFrameworkSqlServer().AddDbContext<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn"), b => b.MigrationsAssembly("lkWeb")));
             // Add framework services.
             services.AddMvc();
             //automapper
@@ -56,6 +57,7 @@ namespace lkWeb
             services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(container));
             services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(container));
             services.UseSimpleInjectorAspNetRequestScoping(container);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,7 +90,11 @@ namespace lkWeb
 
             InitializeContainer(app);
 
+            //SimpleInjector
             container.Verify();
+
+            //初始数据库数据
+            SeedData.Initialize(app.ApplicationServices);
         }
         private void InitializeContainer(IApplicationBuilder app)
         {
@@ -103,6 +109,8 @@ namespace lkWeb
             container.Register<IMenuService, MenuService>(Lifestyle.Scoped);
             container.Register<IRoleMenuService, RoleMenuService>(Lifestyle.Scoped);
             container.Register<IUserRoleService, UserRoleService>(Lifestyle.Scoped);
+            container.Register<IDepartmentService, DepartmentService>(Lifestyle.Scoped);
+            container.Register<IUserDepartmentService, UserDepartmentService>(Lifestyle.Scoped);
 
             // Cross-wire ASP.NET services (if any). For instance:
             container.RegisterSingleton(app.ApplicationServices.GetService<ILoggerFactory>());

@@ -110,7 +110,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult GetRoleList()
         {
-            var list = _roleService.GetList();
+            var list = _roleService.GetList(item => !item.IsDeleted);
             var strData = list.data.Select(d => new
             {
                 id = d.Id,
@@ -120,23 +120,25 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(strData);
 
         }
-        [HttpPost]
+        [HttpPost, HttpGet]
         public IActionResult GetMenuList()
         {
-            var list = _menuService.GetList();
+            var list = _menuService.GetList(item => !item.IsDeleted);
             var strData = list.data.Select(d => new
             {
                 id = d.Id,
                 pId = d.ParentId,
                 name = d.Name,
+                typeName = d.TypeName,
+                url = d.Url,
                 open = true
             });
             return Json(strData);
         }
         [HttpPost]
-        public IActionResult GetRoleMenus(string roleId)
+        public IActionResult GetRoleMenus(int roleId)
         {
-            var list = _roleMenuService.GetList(int.Parse(roleId));
+            var list = _roleMenuService.GetList(item=>item.RoleId == roleId);
             var strData = list.data.Select(d => new
             {
                 id = d.Id,
@@ -148,24 +150,24 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult AuthMenus(AuthMenuDto dto)
         {
-            if(dto.RoleIds.Count == 1)
+            bool flag = false;
+            if (dto.RoleIds.Count == 1)
             {
-                var roleMenuIds = _roleMenuService.GetList(dto.RoleIds[0]).data.Select(x => x.Id).ToList();
-                _roleMenuService.DeleteMulti(roleMenuIds);
+
             }
             foreach (var roleId in dto.RoleIds)
             {
-
+                flag= _roleMenuService.Delete(item=>item.RoleId==roleId);
                 if (dto.MenuIds != null)
                 {
                     var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
-                    _roleMenuService.Add(newRoleMenus);
+                   flag =  _roleMenuService.Add(newRoleMenus);
                 }
             }
 
             var result = Json(new
             {
-                flag = true
+                flag = flag
             });
             return result;
         }

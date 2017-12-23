@@ -46,6 +46,12 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         bool Delete(OperationLogDto dto);
         /// <summary>
+        /// 根据条件删除operationlog数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        bool Delete(Expression<Func<OperationLogDto,bool>> exp);
+        /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">operationlog实体</param>
@@ -66,7 +72,13 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
         ResultDto<OperationLogDto> GetPageData(QueryBase queryBase, Expression<Func<OperationLogDto, bool>> queryExp, string orderBy, string orderDir);
- 	}
+ 		/// <summary>
+        /// 根据条件获取列表
+        /// </summary>
+        /// <param name="queryExp">条件</param>
+        /// <returns></returns>
+        ResultDto<OperationLogDto> GetList(Expression<Func<OperationLogDto,bool>> queryExp);
+	}
 }
 
 

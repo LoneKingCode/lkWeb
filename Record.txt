@@ -1,4 +1,19 @@
-1.datatable 搜索，排序 后台暂时写死不是根据前台参数修改的
+用户授权页面 删除有问题，增加批量删除 datatable后台返回问题
+Department 编辑 添加 未增加上级部门
+UserDepartment 添加用户到部门
+Delete DeleteMulti  自定义msg Result<T>
+
+datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name
+
+Depertment 页面  ，每次载入部门下用户时 都要执行下LoadDataTable 虽然没什么效果，但是如果放window.onload里初始化不知道为何就不行了 有空再说
+   function onNodeClick( treeId, treeNode, clickFlag) {
+            departmentID = treeNode.id;
+            LoadDataTable();
+            table_user.draw();
+        }
+
+lkWeb 获取table中选中的一行 或多行
+
 
 2.调整lkWeb.js 封装下ajax 为DoPost DoGet，等
 lkWeb = {

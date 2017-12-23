@@ -6,8 +6,7 @@
     <AssemblyName>lkWeb</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>lkWeb</PackageId>
-    <!--<PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>-->
-    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+     <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>

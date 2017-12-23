@@ -20,6 +20,34 @@ namespace lkWeb.Data.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("lkWeb.Entity.DepartmentEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreateDateTime");
+
+                    b.Property<int>("Creator");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<int>("Modifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int>("ParentID");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sys_Department");
+                });
+
             modelBuilder.Entity("lkWeb.Entity.LoginLogEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -167,6 +195,32 @@ namespace lkWeb.Data.Migrations
                     b.ToTable("Sys_RoleMenu");
                 });
 
+            modelBuilder.Entity("lkWeb.Entity.UserDepartmentEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreateDateTime");
+
+                    b.Property<int>("Creator");
+
+                    b.Property<int>("DepartmentID");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<int>("Modifier");
+
+                    b.Property<int>("UserID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Sys_UserDepartment");
+                });
+
             modelBuilder.Entity("lkWeb.Entity.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -234,6 +288,19 @@ namespace lkWeb.Data.Migrations
                     b.HasOne("lkWeb.Entity.RoleEntity", "Role")
                         .WithMany("RoleMenus")
                         .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("lkWeb.Entity.UserDepartmentEntity", b =>
+                {
+                    b.HasOne("lkWeb.Entity.DepartmentEntity", "Department")
+                        .WithMany("UserDepartments")
+                        .HasForeignKey("DepartmentID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("lkWeb.Entity.UserEntity", "User")
+                        .WithMany("UserDepartments")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

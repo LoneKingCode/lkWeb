@@ -31,6 +31,8 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new RoleMenuConfig());
             modelBuilder.ApplyConfiguration(new UserConfig());
             modelBuilder.ApplyConfiguration(new UserRoleConfig());
+            modelBuilder.ApplyConfiguration(new DepartmentConfig());
+            modelBuilder.ApplyConfiguration(new UserDepartmentConfig());
         }
         public override int SaveChanges()
         {

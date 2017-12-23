@@ -1,0 +1,52 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
+}
+@section Scripts{
+    <script type="text/javascript">
+        function Submit() {
+            var option = {
+                datatype: "json",
+                success: function (data) {
+                    if (data.flag == true) {
+                        parent.layer.alert("操作成功");
+                        lkWeb.GoAction("department", "index", 0);
+                    }
+                    else {
+                        alert(data.msg);
+                    }
+                },
+                error: function (error) {
+                    parent.layer.alert('提交请求失败');
+                    console.log(error);
+                }
+            };
+            $("#form-department").ajaxSubmit(option);
+        }
+    </script>
+}
+<form class="form-horizontal" action="@Url.Action("Add", "Department")" method="post" id="form-department">
+    <div class="form-group">
+        <input type="hidden" value="@ViewBag.ParentID" name="ParentID"/>
+        <label class="col-md-3 control-label">上级部门</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="ParentName" value="@ViewBag.ParentName"  readonly="readonly"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">部门名称</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="Name" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">部门说明</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="Description" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3 col-md-offset-3">
+            <button type="button" class="btn btn-success" onclick="Submit();">确定增加</button>
+        </div>
+    </div>
+</form>

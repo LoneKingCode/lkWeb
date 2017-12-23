@@ -163,6 +163,45 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
+		      /// <summary>
+        /// 根据条件获取列表
+        /// </summary>
+        /// <param name="queryExp">条件</param>
+        /// <returns></returns>
+       public ResultDto<UserRoleDto> GetList(Expression<Func<UserRoleDto, bool>> queryExp)
+        {
+            using (var db = GetDb())
+            {
+                var _queryExp = queryExp.Cast<UserRoleDto, UserRoleEntity, bool>();
+                var temp = db.Set<UserRoleEntity>().Where(_queryExp).OrderBy(item => item.Id).ToList();
+                var dtoData = MapTo<List<UserRoleEntity>, List<UserRoleDto>>(temp);
+                var result = new ResultDto<UserRoleDto>
+                {
+                    data = dtoData,
+                    recordsTotal = dtoData.Count,
+                    pageSize = 0,
+                    pageIndex = 0
+                };
+                return result;
+            }
+        }
+		 /// <summary>
+        /// 根据条件删除userrole数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        public bool Delete(Expression<Func<UserRoleDto,bool>> exp)
+        {
+            using (var db = GetDb())
+            {
+                var ds = GetDbSet(db);
+                var _exp = exp.Cast<UserRoleDto, UserRoleEntity, bool>();
+                var entities = ds.Where(_exp).ToList();
+                ds.RemoveRange(entities);
+                return db.SaveChanges() > 0;
+
+            }
+        }
 	}
 
 }

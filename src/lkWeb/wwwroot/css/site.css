@@ -129,9 +129,9 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     padding: 5px 0px 0px 15px;
 }
 
-.dropdown-menu {
+/*.dropdown-menu {
     background-color: #383838;
-}
+}*/
 
     .dropdown-menu > li > a {
         color: white;
@@ -234,7 +234,7 @@ nav.page-tabs {
     }
 
 #content-main {
-    height: calc(100% - 140px);
+    height: calc(100% - 100px);
     overflow: hidden;
 }
 

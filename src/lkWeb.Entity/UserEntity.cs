@@ -43,6 +43,11 @@ namespace lkWeb.Entity
         /// </summary>
         public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
 
+        /// <summary>
+        /// 用户所在的部门
+        /// </summary>
+        public virtual ICollection<UserDepartmentEntity> UserDepartments { get; set; }
+
 
     }
 }

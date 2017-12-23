@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 namespace lkWeb.Service
 {
     /// <summary>
@@ -22,12 +21,24 @@ namespace lkWeb.Service
         {
             CreateMap<UserEntity, UserDto>().ForMember(u => u.Status, e => e.MapFrom(s => (UserStatus)s.Status));
             CreateMap<UserDto, UserEntity>().ForMember(u => u.Status, e => e.MapFrom(s => (byte)s.Status));
-            CreateMap<RoleEntity, RoleDto>();
-            CreateMap<RoleDto, RoleEntity>();
             CreateMap<MenuDto, MenuEntity>().ForMember(u => u.Type, e => e.MapFrom(s => (byte)s.Type));
             CreateMap<MenuEntity, MenuDto>().ForMember(u => u.Type, e => e.MapFrom(s => (MenuType)s.Type));
+            CreateMap<DepartmentEntity, DepartmentDto>();
+            CreateMap<DepartmentDto, DepartmentEntity>();
+            CreateMap<LoginLogEntity, LoginLogDto>();
+            CreateMap<LoginLogDto, LoginLogEntity>();
+            //CreateMap<MenuEntity, MenuDto>();
+            //CreateMap<MenuDto, MenuEntity>();
+            CreateMap<OperationLogEntity, OperationLogDto>();
+            CreateMap<OperationLogDto, OperationLogEntity>();
+            CreateMap<RoleEntity, RoleDto>();
+            CreateMap<RoleDto, RoleEntity>();
             CreateMap<RoleMenuEntity, RoleMenuDto>();
             CreateMap<RoleMenuDto, RoleMenuEntity>();
+            CreateMap<UserDepartmentEntity, UserDepartmentDto>();
+            CreateMap<UserDepartmentDto, UserDepartmentEntity>();
+            //CreateMap<UserEntity, UserDto>();
+            //CreateMap<UserDto, UserEntity>();
             CreateMap<UserRoleEntity, UserRoleDto>();
             CreateMap<UserRoleDto, UserRoleEntity>();
         }

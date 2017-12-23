@@ -62,6 +62,12 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         bool Delete(<#=name#>Dto dto);
         /// <summary>
+        /// 根据条件删除<#=lowerName#>数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        bool Delete(Expression<Func<<#=name#>Dto,bool>> exp);
+        /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体</param>
@@ -82,7 +88,13 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
         ResultDto<<#=name#>Dto> GetPageData(QueryBase queryBase, Expression<Func<<#=name#>Dto, bool>> queryExp, string orderBy, string orderDir);
- 	}
+ 		/// <summary>
+        /// 根据条件获取列表
+        /// </summary>
+        /// <param name="queryExp">条件</param>
+        /// <returns></returns>
+        ResultDto<<#=name#>Dto> GetList(Expression<Func<<#=name#>Dto,bool>> queryExp);
+	}
 }
 
 
@@ -270,6 +282,45 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
+		      /// <summary>
+        /// 根据条件获取列表
+        /// </summary>
+        /// <param name="queryExp">条件</param>
+        /// <returns></returns>
+       public ResultDto<<#=name#>Dto> GetList(Expression<Func<<#=name#>Dto, bool>> queryExp)
+        {
+            using (var db = GetDb())
+            {
+                var _queryExp = queryExp.Cast<<#=name#>Dto, <#=name#>Entity, bool>();
+                var temp = db.Set<<#=name#>Entity>().Where(_queryExp).OrderBy(item => item.Id).ToList();
+                var dtoData = MapTo<List<<#=name#>Entity>, List<<#=name#>Dto>>(temp);
+                var result = new ResultDto<<#=name#>Dto>
+                {
+                    data = dtoData,
+                    recordsTotal = dtoData.Count,
+                    pageSize = 0,
+                    pageIndex = 0
+                };
+                return result;
+            }
+        }
+		 /// <summary>
+        /// 根据条件删除<#=lowerName#>数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        public bool Delete(Expression<Func<<#=name#>Dto,bool>> exp)
+        {
+            using (var db = GetDb())
+            {
+                var ds = GetDbSet(db);
+                var _exp = exp.Cast<<#=name#>Dto, <#=name#>Entity, bool>();
+                var entities = ds.Where(_exp).ToList();
+                ds.RemoveRange(entities);
+                return db.SaveChanges() > 0;
+
+            }
+        }
 	}
 
 }
@@ -289,12 +340,14 @@ namespace lkWeb.Service.Abstracts
 using AutoMapper;
 using lkWeb.Entity;
 using lkWeb.Service.Dto;
+namespace lkWeb.Service
+{
 public partial class AutoMapperConfiguration : Profile
 {
         /// <summary>
         /// 自定义AutoMapper配置
         /// </summary>
-     public void AutoMapperConfiguration_None()
+     public void AutoMapperConfiguration_Auto()
        {
 
 		  <#
@@ -313,6 +366,7 @@ public partial class AutoMapperConfiguration : Profile
 #>
 
         }
+}
 }
 
 <#

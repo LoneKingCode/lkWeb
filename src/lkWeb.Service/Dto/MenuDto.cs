@@ -15,7 +15,7 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 上级ID
         /// </summary>
-        [DisplayName("上级分类")]
+        [DisplayName("上级菜单")]
         public int ParentId { get; set; }
 
         /// <summary>

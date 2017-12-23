@@ -46,6 +46,12 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         bool Delete(LoginLogDto dto);
         /// <summary>
+        /// 根据条件删除loginlog数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        bool Delete(Expression<Func<LoginLogDto,bool>> exp);
+        /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">loginlog实体</param>
@@ -66,7 +72,13 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
         ResultDto<LoginLogDto> GetPageData(QueryBase queryBase, Expression<Func<LoginLogDto, bool>> queryExp, string orderBy, string orderDir);
- 	}
+ 		/// <summary>
+        /// 根据条件获取列表
+        /// </summary>
+        /// <param name="queryExp">条件</param>
+        /// <returns></returns>
+        ResultDto<LoginLogDto> GetList(Expression<Func<LoginLogDto,bool>> queryExp);
+	}
 }
 
 

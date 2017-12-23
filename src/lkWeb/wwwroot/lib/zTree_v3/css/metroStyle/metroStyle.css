@@ -16,7 +16,7 @@ website:    http://code.google.com/p/jquerytree/
 
 .ztree li a {padding-right:3px; margin:0; cursor:pointer; height:21px; color:#333; background-color: transparent; text-decoration:none; vertical-align:top; display: inline-block}
 .ztree li a:hover {text-decoration:underline}
-.ztree li a.curSelectedNode {padding-top:0px; background-color:#e5e5e5; color:black; height:21px; opacity:0.8;}
+    .ztree li a.curSelectedNode { padding-top: 0px; background-color: #cbe6f4; border-radius: 3px; color: black; height: 21px; opacity: 0.9; }
 .ztree li a.curSelectedNode_Edit {padding-top:0px; background-color:#e5e5e5; color:black; height:21px; border:1px #666 solid; opacity:0.8;}
 .ztree li a.tmpTargetNode_inner {padding-top:0px; background-color:#aaa; color:white; height:21px; border:1px #666 solid;
   opacity:0.8; filter:alpha(opacity=80)}

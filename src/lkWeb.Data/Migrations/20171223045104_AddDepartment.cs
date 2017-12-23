@@ -5,10 +5,28 @@ using System.Collections.Generic;
 
 namespace lkWeb.Data.Migrations
 {
-    public partial class lkWeb : Migration
+    public partial class AddDepartment : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "DepartmentEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CreateDateTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    Modifier = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DepartmentEntity", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Sys_LoginLog",
                 columns: table => new
@@ -164,6 +182,36 @@ namespace lkWeb.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserDepartmentEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CreateDateTime = table.Column<DateTime>(nullable: false),
+                    Creator = table.Column<int>(nullable: false),
+                    DepartmentID = table.Column<int>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    Modifier = table.Column<int>(nullable: false),
+                    UserID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserDepartmentEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserDepartmentEntity_DepartmentEntity_DepartmentID",
+                        column: x => x.DepartmentID,
+                        principalTable: "DepartmentEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserDepartmentEntity_Sys_User_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Sys_User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Sys_RoleMenu_RoleId",
                 table: "Sys_RoleMenu",
@@ -178,6 +226,16 @@ namespace lkWeb.Data.Migrations
                 name: "IX_Sys_UserRole_UserId",
                 table: "Sys_UserRole",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDepartmentEntity_DepartmentID",
+                table: "UserDepartmentEntity",
+                column: "DepartmentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDepartmentEntity_UserID",
+                table: "UserDepartmentEntity",
+                column: "UserID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -198,7 +256,13 @@ namespace lkWeb.Data.Migrations
                 name: "Sys_UserRole");
 
             migrationBuilder.DropTable(
+                name: "UserDepartmentEntity");
+
+            migrationBuilder.DropTable(
                 name: "Sys_Role");
+
+            migrationBuilder.DropTable(
+                name: "DepartmentEntity");
 
             migrationBuilder.DropTable(
                 name: "Sys_User");

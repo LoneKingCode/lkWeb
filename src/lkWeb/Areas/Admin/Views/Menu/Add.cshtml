@@ -2,7 +2,35 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
 }
 @section Scripts{
+    <script src="~/lib/bootstrap-suggest-plugin/dist/bootstrap-suggest.min.js"></script>
     <script type="text/javascript">
+        $(function () {
+
+            $("#menuList").keyup(function () {
+                 $("#menuList").bsSuggest('init', {
+                    allowNoKeyword: !0,
+                    multiWord: !0,
+                    showHeader: !0,
+                    effectiveFieldsAlias: {
+                        id: "Id",
+                        name: "名称",
+                        typeName: "类型",
+                        url: "URL地址"
+                    },
+                    effectiveFields: ["id", "name", "typeName", "url"],
+                    getDataMethod: "url",
+                    url: "@Url.Action("GetList", "Menu")?searchKey=",
+                    idField: "id",
+                    keyField: "name"
+                }).on('onDataRequestSuccess', function (e, result) {
+
+                }).on('onSetSelectValue', function (e, keyword, data) {
+                     $("#txtParentID").val(keyword.id);
+                }).on('onUnsetSelectValue', function () {
+                    console.log('onUnsetSelectValue');
+                });
+            })
+        })
         function Submit() {
             var option = {
                 datatype: "json",
@@ -27,8 +55,21 @@
 <form class="form-horizontal" action="@Url.Action("Add", "Menu")" method="post" id="form-addMenu">
     <div class="form-group">
         <label class="col-md-3 control-label">上级菜单</label>
-        <div class="col-md-3">
-            <input type="text" class="form-control" name="ParentID" />
+        <div class=" col-md-3">
+            <div class="input-group">
+                <input name="ParentID" type="hidden" id="txtParentID" />
+                <input class="form-control" type="text" autocomplete="off" id="menuList" />
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <li>asd</li>
+                        <li>asd</li>
+                        <li>asd</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <div class="form-group">

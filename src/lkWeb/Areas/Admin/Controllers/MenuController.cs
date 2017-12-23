@@ -33,12 +33,28 @@ namespace lkWeb.Areas.Admin.Controllers
         public IActionResult Edit(string id)
         {
             var menu = _menuService.GetById(int.Parse(id));
+            if (menu.ParentId > 0)
+                ViewBag.ParentName = _menuService.GetById(menu.ParentId).Name;
+            else
+                ViewBag.ParentName = "无";
             return View(menu);
         }
         #endregion
 
         #region Ajax
-
+        [HttpGet]
+        public IActionResult GetList(string searchKey)
+        {
+            Expression<Func<MenuDto, bool>> queryExp = item => !item.IsDeleted;
+            if (searchKey.IsNotEmpty())
+                queryExp = item => !item.IsDeleted && (item.Name.Contains(searchKey) || item.Url.Contains(searchKey));
+            var list = _menuService.GetList(queryExp);
+            var strData = new
+            {
+                value = list.data
+            };
+            return Json(strData);
+        }
         [HttpGet]
         public IActionResult GetPageData(QueryBase queryBase)
         {

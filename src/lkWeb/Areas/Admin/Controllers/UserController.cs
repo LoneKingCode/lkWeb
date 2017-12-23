@@ -20,11 +20,18 @@ namespace lkWeb.Areas.Admin.Controllers
     {
         public readonly IUserService _userService;
         public readonly IUserRoleService _userRoleService;
+        public readonly IDepartmentService _departmentService;
+        public readonly IUserDepartmentService _userDepartmentService;
 
-        public UserController(IUserService userService, IUserRoleService userRoleService)
+        public UserController(IUserService userService,
+            IUserRoleService userRoleService,
+            IDepartmentService departmentService,
+            IUserDepartmentService userDepartmentService)
         {
             _userService = userService;
             _userRoleService = userRoleService;
+            _departmentService = departmentService;
+            _userDepartmentService = userDepartmentService;
         }
         #region Page
         // GET: /<controller>/
@@ -50,9 +57,13 @@ namespace lkWeb.Areas.Admin.Controllers
 
         public IActionResult Add()
         {
+            ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View();
         }
-
+        public IActionResult Department()
+        {
+            return View();
+        }
         public IActionResult ForgetPwd()
         {
             return View();
@@ -220,6 +231,40 @@ namespace lkWeb.Areas.Admin.Controllers
                 flag = true
             });
             return result;
+        }
+        public IActionResult DelUserDepartment(List<int> ids)
+        {
+            var result = Json(new
+            {
+                flag = _userDepartmentService.Delete(item => ids.Contains(item.UserID))
+            });
+            return result;
+        }
+        [HttpGet]
+        public IActionResult GetListByDepartment(QueryBase queryBase)
+        {
+            if (queryBase.Value.IsEmpty())
+                return Json(new { });
+            var departmentID = Convert.ToInt32(queryBase.Value);
+            var users = _userDepartmentService.GetList(item => !item.IsDeleted && item.DepartmentID == departmentID).data.Select(item => item.UserID).ToList();
+            Expression<Func<UserDto, bool>> queryExp = item => !item.IsDeleted && users.Contains(item.Id);
+            var dto = _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var data = new
+            {
+                draw = queryBase.Draw,
+                recordsTotal = dto.recordsTotal,
+                recordsFiltered = dto.recordsTotal,
+                data = dto.data.Select(d => new
+                {
+                    loginName = d.LoginName,
+                    realName = d.RealName,
+                    email = d.Email,
+                    statusName = d.StatusName,
+                    id = d.Id.ToString(),
+                    createDateTime = d.CreateDateTime.ToString(),
+                })
+            };
+            return Json(data);
         }
         #endregion
     }

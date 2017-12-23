@@ -8,13 +8,9 @@
     <script src="~/lib/zTree_v3/js/jquery.ztree.excheck.js"></script>
 
     <script>
-        var zNodes_role = [
+        var zNodes_role = [];
 
-        ];
-
-        var zNodes_menu = [
-
-        ];
+        var zNodes_menu = [];
 
         function LoadData() {
             $.ajax({
@@ -119,6 +115,7 @@
         function InitMenuTree() {
             setCheck_menu();
             $.fn.zTree.init($("#menuTree"), setting_menu, zNodes_menu);
+            console.log(zNodes_menu);
             $("#py").bind("change", setCheck_menu);
             $("#sy").bind("change", setCheck_menu);
             $("#pn").bind("change", setCheck_menu);
@@ -126,7 +123,7 @@
         }
 
         function GetData() {
-                      var data = { RoleIds: [], MenuIds: [] };
+            var data = { RoleIds: [], MenuIds: [] };
             data.RoleIds.push(roleId);
             var treeObj = $.fn.zTree.getZTreeObj("menuTree");
             nodes = treeObj.getCheckedNodes(true);

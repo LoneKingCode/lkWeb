@@ -75,36 +75,8 @@
         //已拥有的角色
         var table_has_role;
         function InitDataTable() {
-            var url = '@Url.Action("GetMyRoles")?Id=' + @ViewBag.UserId;
-            $.fn.dataTableExt.sErrMode = 'throw';
-
-            var config = {
-            "processing": true,
-            "bInfo": true, //是否显示是否启用底边信息栏
-            "sAjaxSource": url,
-             'autoWidth': true,
-            "sPaginationType": "full_numbers",
-            "oLanguage": {
-                "sProcessing": "请求数据中......",
-                "sLengthMenu": "每页显示 _MENU_ 条记录",
-                "sZeroRecords": "抱歉， 没有找到",
-                "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
-                "sInfoEmpty": "没有数据",
-                "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
-                "sSearch": "搜索",
-                "oPaginate": {
-                    "sFirst": "<button type=\"button\" class=\"btn btn-primar\" >首页</button>",
-                    "sPrevious": "<button type=\"button\" class=\"btn btn-primar\" >上一页</button>",
-                    "sNext": "<button type=\"button\" class=\"btn btn-primar\" >后一页</button>",
-                    "sLast": "<button type=\"button\" class=\"btn btn-primar\" >尾页</button>"
-                }
-            },
-            "sZeroRecords": "没有检索到数据",
-            "retrieve": true,
-            "paging": true,
-            "ordering": true,
-            "info": true,
-            "aoColumns": [
+            var dataUrl = '@Url.Action("GetMyRoles")?Id=' + @ViewBag.UserId;
+            var columns = [
                 {
                     "sClass": "text-center",
                     "mData": "id",
@@ -116,82 +88,29 @@
                 { "mData": "rolename", "sClass": "text-center" },
                 { "mData": "delete", "sClass": "text-center", "bSortable": false }
 
-            ],
-            'columnDefs': [
-                {
-                    'targets': 0,
-                    'checkboxes': {
-                        'selectRow': true
-                    }
-                }
-            ],
-            'select': {
-                'style': 'multi'
-            },
-            'order': [[1, 'asc']]
-        };
-            table_has_role = $("#table_has_role").dataTable(config);
+            ];
+            table_has_role = lkWeb.LoadTable("table_has_role",columns,dataUrl)
         }
 
             //未拥有的角色
         var table_not_role;
          function InitDataTable_1() {
-       var url = '@Url.Action("GetNotMyRoles")?Id=' + @ViewBag.UserId;
+       var dataUrl = '@Url.Action("GetNotMyRoles")?Id=' + @ViewBag.UserId;
             $.fn.dataTableExt.sErrMode = 'throw';
-
-            var config = {
-            "processing": true,
-            "bInfo": true, //是否显示是否启用底边信息栏
-            "sAjaxSource": url,
-             'autoWidth': true,
-            "sPaginationType": "full_numbers",
-            "oLanguage": {
-                "sProcessing": "请求数据中......",
-                "sLengthMenu": "每页显示 _MENU_ 条记录",
-                "sZeroRecords": "抱歉， 没有找到",
-                "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
-                "sInfoEmpty": "没有数据",
-                "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
-                "sSearch": "搜索",
-                "oPaginate": {
-                    "sFirst": "<button type=\"button\" class=\"btn btn-primar\" >首页</button>",
-                    "sPrevious": "<button type=\"button\" class=\"btn btn-primar\" >上一页</button>",
-                    "sNext": "<button type=\"button\" class=\"btn btn-primar\" >后一页</button>",
-                    "sLast": "<button type=\"button\" class=\"btn btn-primar\" >尾页</button>"
-                }
-            },
-            "sZeroRecords": "没有检索到数据",
-            "retrieve": true,
-            "paging": true,
-            "ordering": true,
-            "info": true,
-            "aoColumns": [
+            var columns = [
                 {
                     "sClass": "text-center",
                     "mData": "id",
                     "mRender": function (data, type, row) {
-                        return '<input type="checkbox" class="checkChild"  value="' + data + '" />';
+                        return '<input type="checkbox" class="checkChild-1"  value="' + data + '" />';
                     },
                     "bSortable": false
                 },
                 { "mData": "rolename", "sClass": "text-center" },
                 { "mData": "auth", "sClass": "text-center", "bSortable": false }
 
-            ],
-            'columnDefs': [
-                {
-                    'targets': 0,
-                    'checkboxes': {
-                        'selectRow': true
-                    }
-                }
-            ],
-            'select': {
-                'style': 'multi'
-            },
-            'order': [[1, 'asc']]
-        };
-            table_not_role = $("#table_not_role").dataTable(config);
+            ];
+            table_not_role = lkWeb.LoadTable("table_not_role", columns,dataUrl)
         }
     </script>
 }

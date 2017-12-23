@@ -29,11 +29,17 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                 },
                 success: function (result) {
                     if (result.flag == true) {
-                        table.draw();//刷新datatable
                         parent.layer.alert("删除成功")
+                        if (table != null && table != undefined)
+                            table.draw(false);//刷新datatable
+                        else
+                            window.location.reload();
                     }
                     else {
-                        parent.layer.alert("删除失败");
+                        if (result.msg != null && result.msg != "" && result.msg != undefined && result.length > 1)
+                            parent.layer.alert(result.msg);
+                        else
+                            parent.layer.alert("删除失败");
                     }
                 },
                 error: function (err) {
@@ -51,6 +57,7 @@ lkWeb.DeleteMulti = function (ids, model, table) {
 
 //删除单个
 lkWeb.Delete = function (id, model, table) {
+    console.log("delete function")
     parent.layer.confirm("确认删除？", {
         btn: ["确认", "取消"]
     },
@@ -63,12 +70,19 @@ lkWeb.Delete = function (id, model, table) {
                         Id: id
                     },
                     success: function (result) {
+                        console.log("ajax success")
                         if (result.flag == true) {
-                            table.draw();//刷新datatable
                             parent.layer.alert("删除成功")
+                            if (table != null && table != undefined)
+                                table.draw(false);//刷新datatable
+                            else
+                                window.location.reload();
                         }
                         else {
-                            parent.layer.alert("删除失败");
+                            if (result.msg != null && result.msg != "" && result.msg != undefined && result.length > 1)
+                                parent.layer.alert(result.msg);
+                            else
+                                parent.layer.alert("删除失败");
                         }
                     },
                     error: function (err) {
@@ -97,7 +111,10 @@ lkWeb.Search = function (searchKey, table) {
     table.search(_searchKey).draw(); //！！！！！！！！！！！搜索暂时无效 很无奈！！！ 只能先这样代替了
 }
 var _searchKey = "";
-lkWeb.LoadTable = function (tableID, colums, dataUrl) {
+var _value = "";
+//控件ID，列集合，获取数据的URL，补充的值给后台(QueryBase)用
+lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
+    _value = value;
     var config = {
         "processing": true, //载入数据的时候是否显示“载入中”
         "bInfo": true, //是否显示是否启用底边信息栏
@@ -116,7 +133,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl) {
                     param.orderDir = orderDir; //asc or desc
                 }
                 param.searchKey = _searchKey;
-                console.log(d);
+                param.value = _value;
                 return param;
             }
 
@@ -146,6 +163,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl) {
         "ordering": true,
         "info": true,
         "aoColumns": colums,
+        "destroy": true,
         "order": [[1, "asc"]],
     };
     return $("#" + tableID).DataTable(config);

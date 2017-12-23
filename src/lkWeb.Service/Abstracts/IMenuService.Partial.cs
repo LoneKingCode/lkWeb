@@ -46,6 +46,12 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         bool Delete(MenuDto dto);
         /// <summary>
+        /// 根据条件删除menu数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        bool Delete(Expression<Func<MenuDto,bool>> exp);
+        /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">menu实体</param>
@@ -66,7 +72,13 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
         ResultDto<MenuDto> GetPageData(QueryBase queryBase, Expression<Func<MenuDto, bool>> queryExp, string orderBy, string orderDir);
- 	}
+ 		/// <summary>
+        /// 根据条件获取列表
+        /// </summary>
+        /// <param name="queryExp">条件</param>
+        /// <returns></returns>
+        ResultDto<MenuDto> GetList(Expression<Func<MenuDto,bool>> queryExp);
+	}
 }
 
 

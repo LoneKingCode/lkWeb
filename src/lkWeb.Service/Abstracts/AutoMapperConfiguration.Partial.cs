@@ -1,15 +1,19 @@
 using AutoMapper;
 using lkWeb.Entity;
 using lkWeb.Service.Dto;
+namespace lkWeb.Service
+{
 public partial class AutoMapperConfiguration : Profile
 {
         /// <summary>
         /// 自定义AutoMapper配置
         /// </summary>
-     public void AutoMapperConfiguration_None()
+     public void AutoMapperConfiguration_Auto()
        {
 
-		  					CreateMap<LoginLogEntity, LoginLogDto>();
+		  					CreateMap<DepartmentEntity, DepartmentDto>();
+					CreateMap<DepartmentDto, DepartmentEntity>();
+					CreateMap<LoginLogEntity, LoginLogDto>();
 					CreateMap<LoginLogDto, LoginLogEntity>();
 					CreateMap<MenuEntity, MenuDto>();
 					CreateMap<MenuDto, MenuEntity>();
@@ -19,11 +23,14 @@ public partial class AutoMapperConfiguration : Profile
 					CreateMap<RoleDto, RoleEntity>();
 					CreateMap<RoleMenuEntity, RoleMenuDto>();
 					CreateMap<RoleMenuDto, RoleMenuEntity>();
+					CreateMap<UserDepartmentEntity, UserDepartmentDto>();
+					CreateMap<UserDepartmentDto, UserDepartmentEntity>();
 					CreateMap<UserEntity, UserDto>();
 					CreateMap<UserDto, UserEntity>();
 					CreateMap<UserRoleEntity, UserRoleDto>();
 					CreateMap<UserRoleDto, UserRoleEntity>();
 
         }
+}
 }
 

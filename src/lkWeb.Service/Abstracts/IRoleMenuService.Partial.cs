@@ -46,6 +46,12 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         bool Delete(RoleMenuDto dto);
         /// <summary>
+        /// 根据条件删除rolemenu数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        bool Delete(Expression<Func<RoleMenuDto,bool>> exp);
+        /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">rolemenu实体</param>
@@ -66,7 +72,13 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
         ResultDto<RoleMenuDto> GetPageData(QueryBase queryBase, Expression<Func<RoleMenuDto, bool>> queryExp, string orderBy, string orderDir);
- 	}
+ 		/// <summary>
+        /// 根据条件获取列表
+        /// </summary>
+        /// <param name="queryExp">条件</param>
+        /// <returns></returns>
+        ResultDto<RoleMenuDto> GetList(Expression<Func<RoleMenuDto,bool>> queryExp);
+	}
 }
 
 

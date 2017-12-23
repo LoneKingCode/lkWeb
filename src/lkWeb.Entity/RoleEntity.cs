@@ -18,7 +18,7 @@ namespace lkWeb.Entity
         public string Name { get; set; }
 
         /// <summary>
-        /// 描述
+        /// 角色描述
         /// </summary>
         public string Description { get; set; }
 

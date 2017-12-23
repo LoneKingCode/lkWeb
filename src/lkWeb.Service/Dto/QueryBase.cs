@@ -33,5 +33,9 @@ namespace lkWeb.Service.Dto
         /// 次数 配合Datatables使用
         /// </summary>
         public int Draw { get; set; }
+        /// <summary>
+        /// 其他值 看需使用
+        /// </summary>
+        public string Value { get; set; }
     }
 }

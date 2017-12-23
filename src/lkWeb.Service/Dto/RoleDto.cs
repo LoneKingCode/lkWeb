@@ -19,9 +19,9 @@ namespace lkWeb.Service.Dto
         public string Name { get; set; }
 
         /// <summary>
-        /// 描述
+        /// 角色描述
         /// </summary>
-        [Required, DisplayName("描述"), MinLength(1), MaxLength(50)]
+        [Required, DisplayName("描述"), MinLength(1), MaxLength(200)]
         public string Description { get; set; }
     }
 }
