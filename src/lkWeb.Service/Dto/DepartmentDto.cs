@@ -20,6 +20,12 @@ namespace lkWeb.Service.Dto
         [Required, DisplayName("描述"), MinLength(1), MaxLength(200)]
         public string Description { get; set; }
 
+        [DisplayName("负责人")]
+        /// <summary>
+        /// 负责人
+        /// </summary>
+        public string Leader { get; set; }
+
         /// <summary>
         /// 上级部门
         /// </summary>

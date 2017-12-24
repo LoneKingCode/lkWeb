@@ -5,7 +5,27 @@
 body {
     padding-bottom: 20px;
     height: 100%;
+    background-color: #f1f1f1;
 }
+
+    body::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    /*滚动条头尾的两个按钮*/
+    body::-webkit-scrollbar-button {
+        background-color: #888888;
+    }
+    /*滚动条背景色*/
+    body::-webkit-scrollbar-track {
+        background: #3c3c3c;
+    }
+    /*条的颜色~*/
+    body::-webkit-scrollbar-thumb {
+        background: #7853ad;
+        border-radius: 4px;
+    }
+
 
 a {
     cursor: pointer;
@@ -16,11 +36,15 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     cursor: pointer;
 }
 
+textarea {
+    resize: none;
+}
+
 #wrapper {
     width: 100%;
     overflow-x: hidden;
     background-color: #eceded;
-    height: 100%;
+    height: calc(100% + 18px);
 }
 
 .border-bottom {
@@ -28,6 +52,7 @@ button, html input[type=button], input[type=reset], input[type=submit] {
 }
 
 /*#region 后台侧边栏样式*/
+
 .title {
     padding-top: 7px;
     width: 188px;
@@ -129,13 +154,32 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     padding: 5px 0px 0px 15px;
 }
 
+.sidebar-footer {
+    bottom: 2px;
+    height: 34px;
+    clear: both;
+    display: block;
+    padding: 5px 0 0 0;
+    position: fixed;
+    width: 200px;
+    background-color: #313131;
+}
+
+    .sidebar-footer a {
+        padding: 2px 0 3px 0;
+        text-align: center;
+        width: 25%;
+        font-size: 17px;
+        display: block;
+        float: left;
+    }
 /*.dropdown-menu {
     background-color: #383838;
 }*/
 
-    .dropdown-menu > li > a {
-        color: white;
-    }
+.dropdown-menu > li > a {
+    color: white;
+}
 /*#endregion */
 
 /*#region 后台右边内容样式*/
@@ -143,7 +187,7 @@ button, html input[type=button], input[type=reset], input[type=submit] {
     padding: 0 15px;
     position: inherit;
     margin: 0px 0 0 200px;
-    height: 100%;
+    height: calc(100% - 142px);
 }
 
 .navbar-static-top {
@@ -234,7 +278,7 @@ nav.page-tabs {
     }
 
 #content-main {
-    height: calc(100% - 100px);
+    height: 100%;
     overflow: hidden;
 }
 
@@ -247,53 +291,40 @@ nav.page-tabs {
     height: 36px;
 }
 
-.role-list {
-    border-right: 1px solid #583e7e;
-    height: 0px;
-    padding-bottom: 100%;
+.ibox {
+    margin-bottom: 25px;
+    margin-top: 0;
+    padding: 15px;
 }
 
-    .role-list > ul {
-        list-style-type: none;
-        padding-left: 15px;
-    }
+.ibox-title {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #fff;
+    border-color: #e7eaec;
+    -webkit-border-image: none;
+    -o-border-image: none;
+    border-image: none;
+    border-style: solid solid none;
+    border-width: 4px 0 0;
+    color: inherit;
+    margin-bottom: 0;
+    padding: 14px 15px 7px;
+    min-height: 48px;
+}
 
-        .role-list > ul > li {
-            background: url("../images/people.png") no-repeat 0px 0px;
-            padding: 6px 0px 0px 25px;
-            width: 125px;
-            position: relative;
-        }
-
-            .role-list > ul > li > a {
-                color: #000000;
-                position: relative;
-            }
-
-            .role-list > ul > li:before {
-                background-color: #DADADA;
-                content: '';
-                height: 105%;
-                left: 0;
-                position: absolute;
-                top: 0px;
-                width: 3px;
-                z-index: 0;
-                border-radius: 3px;
-            }
-
-            .role-list > ul > li > a:hover {
-                background-color: transparent;
-                color: #64468f;
-                text-decoration: none;
-                transition: all 0.5s ease;
-                border-radius: 5px;
-            }
-
-            .role-list > ul > li:hover:before {
-                transition: width 0.2s ease-in;
-                width: 67%;
-                left: 18%;
-            }
+.ibox-contnet {
+    background-color: #fff;
+    color: inherit;
+    padding: 15px 20px 20px;
+    border-color: #e7eaec;
+    -webkit-border-image: none;
+    -o-border-image: none;
+    border-image: none;
+    border-style: solid solid none;
+    border-width: 1px 0;
+}
 
 /*#endregion*/

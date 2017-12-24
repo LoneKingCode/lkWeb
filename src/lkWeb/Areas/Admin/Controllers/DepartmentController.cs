@@ -14,6 +14,7 @@ namespace lkWeb.Areas.Admin.Controllers
     public class DepartmentController : AdminBaseController
     {
         public readonly IDepartmentService _departmentService;
+
         public DepartmentController(IDepartmentService departmentService)
         {
             _departmentService = departmentService;
@@ -63,9 +64,10 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             Expression<Func<DepartmentDto, bool>> queryExp = item => !item.IsDeleted;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)) && !x.IsDeleted;
-            var allDepartment = _departmentService.GetList(item => !item.IsDeleted).data.ToDictionary(item=>item.Id,item=>item.Name);
-
+                queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)
+                || x.Leader.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+            //获取所有部门的id和部门名称
+            var allDepartment = _departmentService.GetList(item => !item.IsDeleted).data.ToDictionary(item => item.Id, item => item.Name);
             var dto = _departmentService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
@@ -75,7 +77,8 @@ namespace lkWeb.Areas.Admin.Controllers
                 data = dto.data.Select(d => new
                 {
                     parentID = d.ParentID,
-                    parentName = allDepartment.ContainsKey(d.ParentID)? allDepartment[d.ParentID]:"无",
+                    leader = d.Leader,
+                    parentName = allDepartment.ContainsKey(d.ParentID) ? allDepartment[d.ParentID] : "无",
                     name = d.Name,
                     description = d.Description,
                     id = d.Id.ToString(),
@@ -111,7 +114,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (dtos.Count > 0)
             {
                 result.flag = false;
-                result.msg = "部门 " + _departmentService.GetById(id).Name + " 下有子分类,删除失败";
+                result.msg = "部门 " + _departmentService.GetById(id).Name + " 下有子部门,删除失败";
             }
 
             else
@@ -131,7 +134,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 if (dtos.Count > 0)
                 {
                     result.flag = false;
-                    result.msg += "部门 " + _departmentService.GetById(id).Name + " 下有子分类,删除失败\n";
+                    result.msg += "部门 " + _departmentService.GetById(id).Name + " 下有子部门,删除失败<br/>";
                     flag = true;
                 }
             }

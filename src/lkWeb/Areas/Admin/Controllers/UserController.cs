@@ -126,34 +126,38 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetMyRoles(UserDto dto)
+        public IActionResult GetMyRoles(QueryBase queryBase,UserDto dto)
         {
             var list = _userService.GetUserRoles(dto.Id);
             var strData = list.data.Select(d => new
             {
                 id = d.Id,
-                rolename = d.Name,
-                delete = "<button type=\"button\" class=\"btn btn-danger\" onClick=\"DeleteRole(" + d.Id.ToString() + ")\">取消</button>",
+                rolename = d.Name
             });
             var result = Json(new
             {
-                aaData = strData
+                draw = queryBase.Draw,
+                recordsTotal = list.recordsTotal,
+                recordsFiltered = list.recordsTotal,
+                data = strData
             });
             return result;
         }
         [HttpGet]
-        public IActionResult GetNotMyRoles(UserDto dto)
+        public IActionResult GetNotMyRoles(QueryBase queryBase, UserDto dto)
         {
             var list = _userService.GetNotUserRoles(dto.Id);
             var strData = list.data.Select(d => new
             {
                 id = d.Id,
-                rolename = d.Name,
-                auth = "<button type=\"button\" class=\"btn btn-success\" onClick=\"AuthRole(" + d.Id.ToString() + ")\">授权</button>",
+                rolename = d.Name
             });
             var result = Json(new
             {
-                aaData = strData
+                draw = queryBase.Draw,
+                recordsTotal = list.recordsTotal,
+                recordsFiltered = list.recordsTotal,
+                data = strData
             });
             return result;
         }
@@ -202,12 +206,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             foreach (var roleId in dto.RoleIds)
             {
-                var d = new UserRoleDto
-                {
-                    UserId = dto.UserId,
-                    RoleId = roleId
-                };
-                _userRoleService.Delete(d);
+                _userRoleService.Delete(item => item.RoleId == roleId && item.UserId == dto.UserId);
             }
             var result = Json(new
             {

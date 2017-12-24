@@ -1,5 +1,6 @@
 ﻿@{
-    Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = "添加部门";
 }
 @section Scripts{
     <script type="text/javascript">
@@ -26,27 +27,34 @@
 }
 <form class="form-horizontal" action="@Url.Action("Add", "Department")" method="post" id="form-department">
     <div class="form-group">
-        <input type="hidden" value="@ViewBag.ParentID" name="ParentID"/>
+        <input type="hidden" value="@ViewBag.ParentID" name="ParentID" />
         <label class="col-md-3 control-label">上级部门</label>
-        <div class="col-md-3">
-            <input type="text" class="form-control" name="ParentName" value="@ViewBag.ParentName"  readonly="readonly"/>
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="ParentName" value="@ViewBag.ParentName" readonly="readonly" />
         </div>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">部门名称</label>
-        <div class="col-md-3">
+        <div class="col-md-7">
             <input type="text" class="form-control" name="Name" />
         </div>
     </div>
     <div class="form-group">
+        <label class="col-md-3 control-label">负责人</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="Leader" />
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-md-3 control-label">部门说明</label>
-        <div class="col-md-3">
-            <input type="text" class="form-control" name="Description" />
+        <div class="col-md-7">
+            <textarea class="form-control" name="Description"></textarea>
         </div>
     </div>
     <div class="form-group">
         <div class="col-md-3 col-md-offset-3">
-            <button type="button" class="btn btn-success" onclick="Submit();">确定增加</button>
+            <button type="button" class="btn btn-success" onclick="Submit();">确定</button>
+            <button type="button" class="btn btn-default" onclick="history.go(-1)">返回</button
         </div>
     </div>
 </form>

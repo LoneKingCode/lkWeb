@@ -1,5 +1,6 @@
 ﻿@{
-    Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = "部门管理";
 }
 @section Scripts{
     <script>
@@ -61,6 +62,7 @@
                 { "mData": "id", "sClass": "text-center" },
                 { "mData": "name", "sClass": "text-center" },
                 { "mData": "parentName", "sClass": "text-center" },
+                { "mData": "leader", "sClass": "text-center" },
                 { "mData": "description", "sClass": "text-center" },
                 { "mData": "createDateTime", "sClass": "text-center" },
             ];
@@ -70,9 +72,6 @@
 
     </script>
 }
-<div class="data-content" style="padding:15px 0 0 15px;">
-    <h2>部门管理</h2>
-    <hr />
     <div class="form-group">
         <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
         <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
@@ -95,11 +94,10 @@
                 <th>Id</th>
                 <th>部门名称</th>
                 <th>上级部门</th>
+                <th>负责人</th>
                 <th>部门描述</th>
                 <th>创建时间</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
-
-</div>

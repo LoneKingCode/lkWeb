@@ -1,5 +1,6 @@
 ﻿@{
-    Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title= "菜单管理";
 }
 @section Scripts{
     <script>
@@ -66,9 +67,6 @@
 
     </script>
 }
-<div class="data-content" style="padding:15px 0 0 15px;">
-    <h2>菜单管理</h2>
-    <hr />
     <div class="form-group">
         <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
         <button type="button" class="btn btn-primar" onclick="EditModel()">编辑</button>
@@ -99,5 +97,3 @@
         </thead>
         <tbody></tbody>
     </table>
-
-</div>

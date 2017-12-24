@@ -5,7 +5,7 @@ using System.Text;
 
 namespace lkWeb.Entity
 {
-   public class DepartmentEntity : BaseEntity
+    public class DepartmentEntity : BaseEntity
     {
         /// <summary>
         /// 部门名称
@@ -16,7 +16,10 @@ namespace lkWeb.Entity
         /// 部门描述
         /// </summary>
         public string Description { get; set; }
-
+        /// <summary>
+        /// 负责人
+        /// </summary>
+        public string Leader { get; set; }
         /// <summary>
         /// 上级部门
         /// </summary>

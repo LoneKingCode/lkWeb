@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
-    public class LogController : Controller
+    public class LogController : AdminBaseController
     {
         public readonly ILoginLogService _loginLogService;
         public readonly IOperationLogService _operationLogService;

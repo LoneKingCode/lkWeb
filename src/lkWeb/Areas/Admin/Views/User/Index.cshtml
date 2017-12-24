@@ -1,5 +1,6 @@
 ﻿@{
-    Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title= "用户管理";
 }
 @section Scripts{
     <script>
@@ -29,7 +30,7 @@
                 parent.layer.alert("请选择用户");
                 return;
             }
-              lkWeb.GoAction("user", "authen", userId);
+              lkWeb.GoAction("user", "authen", userId, true, "设置权限",'100%','100%');
         }
 
         function AddModel() {
@@ -80,37 +81,35 @@
 
     </script>
 }
-<div class="data-content" style="padding:15px 0 0 15px;">
-    <h2>用户管理</h2>
-    <hr />
-    <div class="form-group">
-        <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
-        <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
-        <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
-        <button type="button" class="btn btn-warning" onclick="RoleAuth()">角色授权</button>
-    </div>
-    <div class="form-group">
-        <div class="input-group">
-            <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
-            <span class="input-group-btn">
-                <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
-            </span>
-        </div>
-    </div>
-    <table class="table table-striped table-hover" id="table_user">
-        <thead>
-            <tr>
-                <th>
-                    <input type="checkbox" class="checkAll" />
-                </th>
-                <th>Id</th>
-                <th>用户名</th>
-                <th>姓名</th>
-                <th>电子邮箱</th>
-                <th>状态</th>
-                <th>创建日期</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+
+<div class="form-group">
+    <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
+    <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
+    <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+    <button type="button" class="btn btn-warning" onclick="RoleAuth()">角色授权</button>
+
 </div>
+<div class="form-group">
+    <div class="input-group">
+        <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
+        <span class="input-group-btn">
+            <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
+        </span>
+    </div>
+</div>
+<table class="table table-striped table-hover" id="table_user">
+    <thead>
+        <tr>
+            <th>
+                <input type="checkbox" class="checkAll" />
+            </th>
+            <th>Id</th>
+            <th>用户名</th>
+            <th>姓名</th>
+            <th>电子邮箱</th>
+            <th>状态</th>
+            <th>创建日期</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>

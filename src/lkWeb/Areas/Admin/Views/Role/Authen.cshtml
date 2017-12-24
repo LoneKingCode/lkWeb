@@ -1,5 +1,6 @@
 ﻿@{
-    Layout = "~/Areas/Admin/Views/Shared/_Layout_Body.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title= "角色授权";
 }
 
 @section Scripts{
@@ -181,35 +182,31 @@
     </script>
 }
 
-<div class="data-content" style="padding:15px 0 0 15px;">
-    <h2>角色授权</h2>
-    <hr />
-    <div class="row">
-        <div class="col-sm-12">
-            <button id="btnSave" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-save"></i> 保存</button>
-            <button id="btnClear" class="btn btn-w-m btn-danger" type="button"><i class="glyphicon glyphicon-remove-circle"></i> 清空</button>
-        </div>
+<div class="row">
+    <div class="col-sm-12">
+        <button id="btnSave" class="btn btn-primary" type="button"><i class="glyphicon glyphicon-save"></i> 保存</button>
+        <button id="btnClear" class="btn btn-w-m btn-danger" type="button"><i class="glyphicon glyphicon-remove-circle"></i> 清空</button>
     </div>
-    <hr />
-    <div class="row">
-        <div class="col-sm-4">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    角色列表
-                </div>
-                <div class="panel-body">
-                    <ul id="roleTree" class="ztree"></ul>
-                </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                角色列表
+            </div>
+            <div class="panel-body">
+                <ul id="roleTree" class="ztree"></ul>
             </div>
         </div>
-        <div class="col-sm-8">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    权限菜单
-                </div>
-                <div class="panel-body">
-                    <ul id="menuTree" class="ztree"></ul>
-                </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                权限菜单
+            </div>
+            <div class="panel-body">
+                <ul id="menuTree" class="ztree"></ul>
             </div>
         </div>
     </div>

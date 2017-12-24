@@ -1,20 +1,33 @@
 ﻿
 var lkWeb = {};
 
-lkWeb.GoAction = function (ctrl, action, values) {
+lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
     var curWwwPath = window.document.location.href;
     //获取主机地址之后的目录，如： uimcardprj/share/meun.jsp
     var pathName = window.document.location.pathname;
     var pos = curWwwPath.indexOf(pathName);
     //获取主机地址，如： http://localhost:8083
     var localhostPath = curWwwPath.substring(0, pos);
-    window.location.href = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
+    var url = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
+    if (isOpen == true)
+    {
+        layer.open({
+            type: 2,
+            title: title,
+            shadeClose: true,
+            shade: 0.8,
+            area: [width, height],
+            content: url
+        });
+    }
+     else
+        window.location.href = url;
 }
 
 //删除多个
 lkWeb.DeleteMulti = function (ids, model, table) {
     if (ids.length < 1) {
-        parent.layer.alert("请选择");
+        parent.layer.alert("请选择要删除的数据");
         return;
     }
     parent.layer.confirm("确认删除" + ids.length + "条数据？", {
@@ -36,7 +49,7 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                             window.location.reload();
                     }
                     else {
-                        if (result.msg != null && result.msg != "" && result.msg != undefined && result.length > 1)
+                        if (result.msg != "" && result.msg != null)
                             parent.layer.alert(result.msg);
                         else
                             parent.layer.alert("删除失败");
@@ -57,7 +70,6 @@ lkWeb.DeleteMulti = function (ids, model, table) {
 
 //删除单个
 lkWeb.Delete = function (id, model, table) {
-    console.log("delete function")
     parent.layer.confirm("确认删除？", {
         btn: ["确认", "取消"]
     },
@@ -79,7 +91,7 @@ lkWeb.Delete = function (id, model, table) {
                                 window.location.reload();
                         }
                         else {
-                            if (result.msg != null && result.msg != "" && result.msg != undefined && result.length > 1)
+                            if (result.msg != "" && result.msg != null)
                                 parent.layer.alert(result.msg);
                             else
                                 parent.layer.alert("删除失败");
