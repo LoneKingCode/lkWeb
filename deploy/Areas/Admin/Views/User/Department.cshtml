@@ -1,0 +1,174 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = "用户部门管理";
+
+}
+@section Scripts{
+    <link href="~/lib/zTree/css/metroStyle/metroStyle.css" rel="stylesheet" />
+    <script src="~/lib/zTree/js/jquery.ztree.core.js"></script>
+    <script src="~/lib/zTree/js/jquery.ztree.excheck.js"></script>
+
+    <script>
+        $(function () {
+            InitDepartmentTree();
+        })
+
+        var departmentID = "";
+        var table_user;
+
+        var zNodes_department = [];
+        var setting_department= {
+            check: {
+                enable: false,
+              },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+                beforeClick: onNodeClick
+            }
+        };
+
+        function onNodeClick( treeId, treeNode, clickFlag) {
+            departmentID = treeNode.id;
+            LoadDataTable();
+            table_user.draw();
+        }
+        function setCheck_department() {
+            var type = $("#level").attr("checked") ? "level" : "all";
+            setting_department.check.radioType = type;
+            $.fn.zTree.init($("#departmentTree"), setting_department, zNodes_department);
+        }
+        function InitDepartmentTree() {
+            LoadData();
+            setCheck_department();
+            $("#level").bind("change", setCheck_department);
+            $("#all").bind("change", setCheck_department);
+        }
+      function LoadData() {
+            $.ajax({
+                type: "post",
+                url:"@Url.Action("GetList", "Department")",
+                dataType:"json",
+                async: false,
+                success: function (data) {
+                    zNodes_department = data;
+
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+
+        }
+        function LoadDataTable() {
+            var dataUrl = '@Url.Action("GetListByDepartment")';
+            var columns = [
+                {
+                    "sClass": "text-center",
+                    "mData": "id",
+                    "mRender": function (data, type, row) {
+                        return '<input type="checkbox" class="checkChild"  value="' + data + '" />';
+                    },
+                    "bSortable": false
+                },
+                { "mData": "loginName", "name": "LoginName", "sClass": "text-center" },
+                { "mData": "realName", "name": "RealName", "sClass": "text-center" },
+                { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
+                { "mData": "statusName", "name": "StatusName","sClass": "text-center" },
+                { "mData": "createDateTime", "name": "CreateDateTime","sClass": "text-center" },
+            ];
+            table_user = lkWeb.LoadTable("table_user", columns, dataUrl, departmentID)
+         }
+
+        function DelUser() {
+            var ids = [];
+            $(":checkbox:checked", "#table_user").each(function (i, n) {
+                if ($(n).attr("class") == "checkAll") return true;//相当于continue
+                ids.push($(n).val());
+            })
+            if (ids.length < 1) {
+                parent.layer.alert("请选择");
+                return;
+            }
+            parent.layer.confirm("确认删除" + ids.length + "条数据？", {
+                btn: ["确认", "取消"]
+            }, function () {
+                $.ajax(
+                    {
+                        type: 'post',
+                        url: '@Url.Action("DelUserDepartment","User") ',
+                        data: {
+                            ids: ids
+                        },
+                        success: function (result) {
+                            if (result.flag == true) {
+                                parent.layer.alert("删除成功")
+                                table_user.draw(false);
+                            }
+                            else {
+                                parent.layer.alert("删除失败");
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err);
+                            parent.layer.alert("删除失败");
+                        }
+                    })
+            }, function () {
+
+            }
+            )
+        }
+
+        function AddUser() {
+
+        }
+
+
+    </script>
+}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                部门列表
+            </div>
+            <div class="panel-body">
+                <ul id="departmentTree" class="ztree"></ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="panel panel-info">
+
+            <div class="panel-heading">
+                用户列表
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <button type="button" class="btn btn-success" onclick="AddUser()">添加</button>
+                    <button type="button" class="btn btn-danger" onclick="DelUser()">删除</button>
+                </div>
+                <table class="table table-striped table-hover" id="table_user">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" class="checkAll" />
+                            </th>
+                            <th>用户名</th>
+                            <th>姓名</th>
+                            <th>电子邮箱</th>
+                            <th>状态</th>
+                            <th>创建日期</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

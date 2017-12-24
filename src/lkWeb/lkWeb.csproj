@@ -7,13 +7,8 @@
     <OutputType>Exe</OutputType>
     <PackageId>lkWeb</PackageId>
      <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="wwwroot\lib\jQuery\**" />
-    <EmbeddedResource Remove="wwwroot\lib\jQuery\**" />
-    <None Remove="wwwroot\lib\jQuery\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Remove="wwwroot/js\layer-v3.0.3.zip" />

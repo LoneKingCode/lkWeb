@@ -1,0 +1,183 @@
+﻿@using lkWeb.Service.Dto
+@model UserDto
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title= "用户授权";
+    ViewBag.RealName = Model.RealName;
+    ViewBag.UserId = Model.Id;
+}
+@section Scripts{
+    <script>
+        $(function () {
+            InitDataTable_role();
+            InitDataTable_auth();
+            $(".checkAll").click(function () {
+                var check = $(this).prop("checked");
+                $(".check_role").prop("checked", check);
+            });
+            $(".checkAll-1").click(function () {
+                var check = $(this).prop("checked");
+                $(".check_auth").prop("checked", check);
+            });
+        })
+        function DeleteRole(roleId) {
+            var data = { UserID:@ViewBag.UserId,RoleIds: [] }
+            if (roleId == undefined) {  //如果没有传roleId 说明是批量删除 获取选中的行
+                $(".check_role").each(function (i, n) {
+                    if ($(n).prop("checked"))
+                        data.RoleIds.push($(n).val());
+                })
+                if (data.RoleIds.length < 1) {
+                    parent.layer.alert("请选择要删除的角色");
+                }
+            }
+            else
+                data.RoleIds.push(roleId);
+                    $.ajax({
+                          url: "@Url.Action("DeleteRole", "User")",
+                          type: "post",
+                          dataType: "json",
+                          data: { dto:data},
+                          async: false,
+                          success: function (data) {
+                              if (data.flag == true)
+                              {
+                                  ReloadDataTable();
+                              }
+                              else {
+                                  parent.layer.alert("操作失败");
+                              }
+                          },
+                           err: function (err) {
+                              console.log(err);
+                          }
+
+                     })
+        }
+        function AuthRole(roleId) {
+            var data = { UserID:@ViewBag.UserId,RoleIds: [] }
+            if (roleId == undefined) {  //如果没有传roleId 说明是批量授权 获取选中的行
+                $(".check_auth").each(function (i, n) {
+                    if ($(n).prop("checked"))
+                        data.RoleIds.push($(n).val());
+                })
+                if (data.RoleIds.length < 1) {
+                    parent.layer.alert("请选择要授权的角色");
+                    return;
+                }
+            }
+            else
+                data.RoleIds.push(roleId);
+             $.ajax({
+                          url: "@Url.Action("AuthRole", "User")",
+                          type: "post",
+                          dataType: "json",
+                          data: { dto:data},
+                          async: false,
+                          success: function (data) {
+                              if (data.flag == true)
+                              {
+                                  ReloadDataTable();
+                              }
+                              else {
+                                  parent.layer.alert("操作失败");
+                              }
+                          },
+                           err: function (err) {
+                              console.log(err);
+                          }
+
+                     })
+        }
+        function ReloadDataTable() {
+            table_auth.draw(false);
+            table_role.draw(false);
+        }
+        //已拥有的角色
+        var table_role;
+        function InitDataTable_role() {
+            var dataUrl = '@Url.Action("GetMyRoles")/' + @ViewBag.UserId;
+            var columns = [
+                {
+                    "sClass": "text-center",
+                    "mData": "id",
+                    "mRender": function (data, type, row) {
+                        return '<input type="checkbox" class="check_role"  value="' + data + '" />';
+                    },
+                    "bSortable": false
+                },
+                { "mData": "rolename", "sClass": "text-center" },
+                {
+                    "sClass": "text-center", //自定义列内容
+                    "mData": "id",
+                    "mRender": function (data, type, row) {
+                        return "<button type=\"button\" class=\"btn btn-danger\" onClick=\"DeleteRole(" + data + ")\">取消</button>";
+                    },
+                    "bSortable": false
+                }
+            ];
+            table_role = lkWeb.LoadTable("table_role",columns,dataUrl)
+        }
+
+            //未拥有的角色
+        var table_auth;
+         function InitDataTable_auth() {
+       var dataUrl = '@Url.Action("GetNotMyRoles")/' + @ViewBag.UserId;
+            $.fn.dataTableExt.sErrMode = 'throw';
+            var columns = [
+                {
+                    "sClass": "text-center",
+                    "mData": "id",
+                    "mRender": function (data, type, row) {
+                        return '<input type="checkbox" class="check_auth"  value="' + data + '" />';
+                    },
+                    "bSortable": false
+                },
+                { "mData": "rolename", "sClass": "text-center" },
+                {
+                    "sClass": "text-center", //自定义列内容
+                    "mData": "id",
+                    "mRender": function (data, type, row) {
+                        return "<button type=\"button\" class=\"btn btn-success\" onClick=\"AuthRole(" + data + ")\">授权</button>";
+                    },
+                    "bSortable": false
+                }
+
+            ];
+            table_auth = lkWeb.LoadTable("table_auth", columns,dataUrl)
+        }
+    </script>
+}
+<div>
+    <h3>@ViewBag.RealName 已拥有的角色</h3>
+    <button type="button" class="btn btn-danger" onclick="DeleteRole()">批量取消</button>
+    <table class="table table-striped table-hover" id="table_role">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" class="checkAll" />
+                </th>
+                <th>角色名称</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<hr />
+<div>
+    <h3>@ViewBag.RealName 未拥有的角色</h3>
+    <button type="button" class="btn btn-success" onclick="AuthRole()">批量授权</button>
+    <table class="table table-striped table-hover" id="table_auth">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" class="checkAll-1" />
+                </th>
+                <th>角色名称</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>

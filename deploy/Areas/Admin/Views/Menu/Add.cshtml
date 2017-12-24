@@ -1,0 +1,100 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = "添加菜单";
+}
+@section Scripts{
+    <script src="~/lib/bootstrap-suggest-plugin/dist/bootstrap-suggest.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            $("#menuList").keyup(function () {
+                 $("#menuList").bsSuggest('init', {
+                    allowNoKeyword: !0,
+                    multiWord: !0,
+                    showHeader: !0,
+                    effectiveFieldsAlias: {
+                        id: "Id",
+                        name: "名称",
+                        typeName: "类型",
+                        url: "URL地址"
+                    },
+                    effectiveFields: ["id", "name", "typeName", "url"],
+                    getDataMethod: "url",
+                    url: "@Url.Action("GetList", "Menu")?searchKey=",
+                    idField: "id",
+                    keyField: "name"
+                }).on('onDataRequestSuccess', function (e, result) {
+
+                }).on('onSetSelectValue', function (e, keyword, data) {
+                     $("#txtParentID").val(keyword.id);
+                }).on('onUnsetSelectValue', function () {
+                    console.log('onUnsetSelectValue');
+                });
+            })
+        })
+        function Submit() {
+            var option = {
+                datatype: "json",
+                success: function (data) {
+                    if (data.flag == true) {
+                        parent.layer.alert("操作成功");
+                        lkWeb.GoAction("menu", "index", 0);
+                    }
+                    else {
+                        alert(data.msg);
+                    }
+                },
+                error: function (error) {
+                    parent.layer.alert('提交请求失败');
+                    console.log(error);
+                }
+            };
+            $("#form-addMenu").ajaxSubmit(option);
+        }
+    </script>
+}
+<form class="form-horizontal" action="@Url.Action("Add", "Menu")" method="post" id="form-addMenu">
+    <div class="form-group">
+        <label class="col-md-3 control-label">上级菜单</label>
+        <div class=" col-md-7">
+            <div class="input-group">
+                <input name="ParentID" type="hidden" id="txtParentID" />
+                <input class="form-control" type="text" autocomplete="off" id="menuList" />
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <li>asd</li>
+                        <li>asd</li>
+                        <li>asd</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">菜单名称</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="Name" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">URL地址</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="Url" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">排序</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="Order" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3 col-md-offset-3">
+            <button type="button" class="btn btn-success" onclick="Submit();">确定</button>
+            <button type="button" class="btn btn-default" onclick="history.go(-1)">返回</button>
+        </div>
+    </div>
+</form>
