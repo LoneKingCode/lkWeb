@@ -3,14 +3,20 @@
   "private": true,
   "dependencies": {
     "bootstrap": "3.3.6",
-    "jquery-validation": "1.14.0",
+    "jquery-validation": "1.17.0",
     "jquery-validation-unobtrusive": "3.2.6",
-    "layer": "3.0.3",
-    "DataTables": "datatable#RELEASE_1_9_4",
-    "jQuery": "2.2.4",
-    "jquery": "jQuery#2.1.1"
+    "layer": "v3.1.1",
+    "DataTables": "RELEASE_1_9_4",
+    "jquery": "3.2.1",
+    "font-awesome": "Font-Awesome#v4.7.0",
+    "zTree": "v3.5.29",
+    "jquery-form": "v4.2.2",
+    "bootstrap-suggest-plugin": "v0.0.2"
   },
   "resolutions": {
-    "jquery": ">= 1.7.2"
+    "jquery": "3.2.1",
+    "layer": "v3.1.1",
+    "jquery-validation": "1.17.0",
+    "jquery-form": "v4.2.2"
   }
 }

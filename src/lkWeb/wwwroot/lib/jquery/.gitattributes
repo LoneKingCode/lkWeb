@@ -1,7 +1,0 @@
-*     eol=lf
-*.jar binary
-nd perform LF normalization
-* text=auto
-
-# JS files must always use LF for tools to work
-*.js eol=lf
