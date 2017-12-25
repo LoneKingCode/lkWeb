@@ -40,8 +40,6 @@
     <Content Include="wwwroot\lib\bootstrap\dist\js\npm.js" />
     <Content Include="wwwroot\lib\bootstrap\LICENSE" />
     <Content Include="wwwroot\lib\DataTables\.bower.json" />
-    <Content Include="wwwroot\lib\DataTables\.gitignore" />
-    <Content Include="wwwroot\lib\DataTables\component.json" />
     <Content Include="wwwroot\lib\DataTables\examples\advanced_init\column_render.html" />
     <Content Include="wwwroot\lib\DataTables\examples\advanced_init\complex_header.html" />
     <Content Include="wwwroot\lib\DataTables\examples\advanced_init\defaults.html" />
@@ -186,11 +184,6 @@
     <Content Include="wwwroot\lib\DataTables\examples\server_side\scripts\server_processing.php" />
     <Content Include="wwwroot\lib\DataTables\examples\server_side\select_rows.html" />
     <Content Include="wwwroot\lib\DataTables\examples\server_side\server_side.html" />
-    <Content Include="wwwroot\lib\DataTables\license-bsd.txt" />
-    <Content Include="wwwroot\lib\DataTables\license-gpl2.txt" />
-    <Content Include="wwwroot\lib\DataTables\media\css\demo_page.css" />
-    <Content Include="wwwroot\lib\DataTables\media\css\demo_table.css" />
-    <Content Include="wwwroot\lib\DataTables\media\css\demo_table_jui.css" />
     <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables.css" />
     <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables.min.css" />
     <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables_themeroller.css" />
@@ -580,8 +573,6 @@
     <Content Include="wwwroot\lib\DataTables\media\unit_testing\tests_onhold\6_delayed_rendering\sPaginationType.js" />
     <Content Include="wwwroot\lib\DataTables\media\unit_testing\tests_onhold\6_delayed_rendering\_zero_config.js" />
     <Content Include="wwwroot\lib\DataTables\media\unit_testing\unit_test.js" />
-    <Content Include="wwwroot\lib\DataTables\package.json" />
-    <Content Include="wwwroot\lib\DataTables\Readme.txt" />
     <Content Include="wwwroot\lib\DataTables\scripts\jshint.config" />
     <Content Include="wwwroot\lib\DataTables\scripts\make.sh" />
     <Content Include="wwwroot\lib\DataTables\scripts\unit_tests.sh" />

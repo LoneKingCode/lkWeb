@@ -12,12 +12,13 @@
     "zTree": "v3.5.29",
     "jquery-form": "v4.2.2",
     "bootstrap-suggest-plugin": "v0.0.2",
-    "datatables": "DataTables#1.10.16"
+    "datatables": "DataTables#1.10.9"
   },
   "resolutions": {
     "jquery": "3.2.1",
     "layer": "v3.1.1",
     "jquery-validation": "1.17.0",
-    "jquery-form": "v4.2.2"
+    "jquery-form": "v4.2.2",
+    "datatables": "1.10.16"
   }
 }
