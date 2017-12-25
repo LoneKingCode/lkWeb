@@ -1,6 +1,8 @@
 ﻿
 var lkWeb = {};
 
+lkWeb.LayerIndex = 0;
+
 lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
     var curWwwPath = window.document.location.href;
     //获取主机地址之后的目录，如： uimcardprj/share/meun.jsp
@@ -11,7 +13,7 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
     var url = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
     if (isOpen == true)
     {
-        layer.open({
+        lkWeb.LayerIndex= layer.open({
             type: 2,
             title: title,
             shadeClose: true,
@@ -24,6 +26,9 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
         window.location.href = url;
 }
 
+lkWeb.CloseLayert = function () {
+    layer.close(lkWeb.LayerIndex);
+}
 //删除多个
 lkWeb.DeleteMulti = function (ids, model, table) {
     if (ids.length < 1) {
@@ -163,10 +168,10 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
             "sInfoFiltered": "(从 _MAX_ 条数据中检索)",
             "sSearch": "搜索",
             "oPaginate": {
-                "sFirst": "<button type=\"button\" class=\"btn btn-primar\" >首页</button>",
-                "sPrevious": "<button type=\"button\" class=\"btn btn-primar\" >上一页</button>",
-                "sNext": "<button type=\"button\" class=\"btn btn-primar\" >后一页</button>",
-                "sLast": "<button type=\"button\" class=\"btn btn-primar\" >尾页</button>"
+                "sFirst": "<span class=\"glyphicon glyphicon-step-backward\"></span>",
+                "sPrevious": "<span class=\"glyphicon glyphicon-backward\"></span>",
+                "sNext": "<span class=\"glyphicon glyphicon-forward\"></span>",
+                "sLast": "<span class=\"glyphicon glyphicon-step-forward\"></span>"
             }
         },
         "sZeroRecords": "没有检索到数据",

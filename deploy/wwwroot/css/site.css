@@ -326,5 +326,29 @@ nav.page-tabs {
     border-style: solid solid none;
     border-width: 1px 0;
 }
-
+.dataTables_paginate {
+    margin: 0 auto;
+    text-align: center;
+}
+.dataTables_paginate a{
+    margin:2px;
+}
+    .dataTables_paginate .glyphicon {
+        font-size: 1.2em;
+        color: #5a5a5a;
+        height: 23px;
+        width: 25px;
+        padding-top: 2.5px;
+        border-radius: 4px;
+    }
+        .dataTables_paginate .glyphicon:hover {
+            background-color: #d5d5d5;
+        }
+    .dataTables_paginate .paginate_button current {
+        width: 18px;
+        height: 23px;
+        display: inline-block;
+        color: #3a3a3a;
+        padding-top: 1px;
+    }
 /*#endregion*/

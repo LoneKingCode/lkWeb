@@ -48,9 +48,9 @@ namespace lkWeb.Areas.Admin.Controllers
             var user = _userService.GetById(int.Parse(id));
             return View(user);
         }
-        public IActionResult Edit(string id)
+        public IActionResult Edit(int id)
         {
-            var user = _userService.GetById(int.Parse(id));
+            var user = _userService.GetById(id);
             ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View(user);
         }
@@ -62,6 +62,11 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public IActionResult Department()
         {
+            return View();
+        }
+        public IActionResult SelectUser(int id)
+        {
+            ViewBag.DepartmentID = id;
             return View();
         }
         public IActionResult ForgetPwd()
@@ -126,7 +131,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetMyRoles(QueryBase queryBase,UserDto dto)
+        public IActionResult GetMyRoles(QueryBase queryBase, UserDto dto)
         {
             var list = _userService.GetUserRoles(dto.Id);
             var strData = list.data.Select(d => new
@@ -264,6 +269,52 @@ namespace lkWeb.Areas.Admin.Controllers
                 })
             };
             return Json(data);
+        }
+        public IActionResult GetListByNotDepartment(QueryBase queryBase)
+        {
+            if (queryBase.Value.IsEmpty())
+                return Json(new { });
+            var departmentID = Convert.ToInt32(queryBase.Value);
+            var users = _userDepartmentService.GetList(item => !item.IsDeleted && item.DepartmentID == departmentID).data.Select(item => item.UserID).ToList();
+            Expression<Func<UserDto, bool>> queryExp = item => !item.IsDeleted && !users.Contains(item.Id);
+            var dto = _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var data = new
+            {
+                draw = queryBase.Draw,
+                recordsTotal = dto.recordsTotal,
+                recordsFiltered = dto.recordsTotal,
+                data = dto.data.Select(d => new
+                {
+                    loginName = d.LoginName,
+                    realName = d.RealName,
+                    email = d.Email,
+                    statusName = d.StatusName,
+                    id = d.Id.ToString(),
+                    createDateTime = d.CreateDateTime.ToString(),
+                })
+            };
+            return Json(data);
+        }
+        [HttpPost]
+        public IActionResult SetDepartment(SetDepartmentDto dto)
+        {
+            if (dto.UserIDs.Count() < 1 || dto.DepartmentID < 1)
+            {
+                return Json(new { });
+            }
+            var result = new Result<string>();
+            var dtos = new List<UserDepartmentDto>();
+            foreach (int userID in dto.UserIDs)
+            {
+                dtos.Add(new UserDepartmentDto
+                {
+                    UserID = userID,
+                    DepartmentID = dto.DepartmentID
+                });
+            }
+
+            result.flag = _userDepartmentService.Add(dtos);
+            return Json(result);
         }
         #endregion
     }

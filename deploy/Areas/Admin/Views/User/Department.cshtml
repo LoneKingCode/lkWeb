@@ -10,6 +10,11 @@
 
     <script>
         $(function () {
+            $(".checkAll").click(function () {
+                var check = $(this).prop("checked");
+                $(".checkChild").prop("checked", check);
+            });
+
             InitDepartmentTree();
         })
 
@@ -124,9 +129,13 @@
         }
 
         function AddUser() {
-
+            lkWeb.GoAction("user", "selectUser", departmentID, true, "选择用户", "80%", "80%");
         }
-
+        //这个函数给 SelectUser子页面回调用
+        function SelectUser() {
+            lkWeb.CloseLayert();
+            table_user.draw();
+        }
 
     </script>
 }

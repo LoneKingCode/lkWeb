@@ -653,7 +653,7 @@
    </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="bower install" />
+    <!--<Exec Command="bower install" /> 烦死了 每次发布都要装一遍-->
     <Exec Command="dotnet bundle" />
   </Target>
 
