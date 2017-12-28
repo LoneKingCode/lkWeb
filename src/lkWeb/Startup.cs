@@ -20,6 +20,9 @@ using SimpleInjector.Lifestyles;
 using lkWeb.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace lkWeb
 {
@@ -48,11 +51,12 @@ namespace lkWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn")));
-            // services.AddEntityFrameworkSqlServer().AddDbContext<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn"), b => b.MigrationsAssembly("lkWeb")));
             // Add framework services.
             services.AddMvc();
+
             //automapper
             services.AddSingleton<IMapper>(sp => _mapperConfiguration.CreateMapper());
+
             //simpleinjector
             services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(container));
             services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(container));
@@ -61,8 +65,11 @@ namespace lkWeb
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider svp)
         {
+            //var accessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
+            //  WebHelper.HttpContext._httpContextAccessor = accessor;
+
             app.UseStaticFiles();//使用静态文件
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -113,9 +120,14 @@ namespace lkWeb
             container.Register<IUserRoleService, UserRoleService>(Lifestyle.Scoped);
             container.Register<IDepartmentService, DepartmentService>(Lifestyle.Scoped);
             container.Register<IUserDepartmentService, UserDepartmentService>(Lifestyle.Scoped);
+            container.Register<ILoginLogService, LoginLogService>(Lifestyle.Scoped);
+            container.Register<IOperationLogService, OperationLogService>(Lifestyle.Scoped);
+
+         //   container.Register<IHttpContextAccessor, HttpContextAccessor>(Lifestyle.Singleton);
 
             // Cross-wire ASP.NET services (if any). For instance:
             container.RegisterSingleton(app.ApplicationServices.GetService<ILoggerFactory>());
+
         }
     }
 }

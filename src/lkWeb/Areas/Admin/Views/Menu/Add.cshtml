@@ -58,8 +58,8 @@
         <label class="col-md-3 control-label">上级菜单</label>
         <div class=" col-md-7">
             <div class="input-group">
-                <input name="ParentID" type="hidden" id="txtParentID" />
-                <input class="form-control" type="text" autocomplete="off" id="menuList" />
+                <input name="ParentID" type="hidden" id="txtParentID" value="@ViewBag.ParentID" />
+                <input class="form-control" type="text" autocomplete="off" id="menuList" value="@ViewBag.ParentName"/>
                 <div class="input-group-btn">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle>
                         <span class="caret"></span>

@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Abstracts;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http;
+using lkWeb.Service;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -12,7 +15,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public readonly IUserService _userService;
         public HomeController(IUserService userService)
         {
-            _userService = userService;
+             _userService = userService;
         }
         public IActionResult Index()
         {

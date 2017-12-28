@@ -8,10 +8,12 @@ using lkWeb.Entity;
 using System.Linq.Expressions;
 using lkWeb.Service.Enum;
 using lkWeb.Core.Extensions;
+
 namespace lkWeb.Service.Abstracts
 {
     public partial class UserService : ServiceBase<UserEntity>, IUserService
     {
+        public ILoginLogService loginLogService;
         /// <summary>
         /// 获取用户菜单数据
         /// </summary>
@@ -73,13 +75,13 @@ namespace lkWeb.Service.Abstracts
                 else
                 {
                     //记录登录日志
-                    //loginLogService.Add(new LoginLogDto
-                    //{
-                    //    UserId = user.Id,
-                    //    LoginName = user.LoginName,
-                    //    IP = WebHelper.GetClientIP(),
-                    //    Mac = WebHelper.GetClientMACAddress()
-                    //});
+                    loginLogService.Add(new LoginLogDto
+                    {
+                        UserId = user.Id,
+                        LoginName = user.LoginName,
+                       // ClientIP = WebHelper.GetClientIP(),
+                       // ClientMac = WebHelper.GetClientIP()
+                    });
                     if (user.Password != dto.Password)
                     {
                         result.msg = " 密码错误";

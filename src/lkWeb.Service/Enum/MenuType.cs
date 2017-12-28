@@ -13,16 +13,16 @@ namespace lkWeb.Service.Enum
         /// <summary>
         /// 模块
         /// </summary>
-        模块 = 1,
+        模块 = 0,
 
         /// <summary>
         /// 菜单
         /// </summary>
-        菜单 = 2,
+        菜单 = 1,
 
         /// <summary>
         /// 按钮
         /// </summary>
-        按钮 = 3
+        按钮 = 2
     }
 }

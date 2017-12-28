@@ -18,18 +18,10 @@
 
         });
 
-        function DelModel() {
-            var ids = [];
-            $(":checkbox:checked", "#table_login").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                ids.push($(n).val());
-            })
-            lkWeb.DeleteMulti(ids, "menu", table_login);
-        }
 
         var table_login;
         function InitDataTable() {
-            var dataUrl = '@Url.Action("GetPageData")';   //后天获取json数据的地址
+            var dataUrl = '@Url.Action("GetPageDataWithLogin")';   //后天获取json数据的地址
             var columns = [
                 {
                     "sClass": "text-center",
@@ -40,11 +32,9 @@
                     "bSortable": false
                 },
                 { "mData": "id", "sClass": "text-center" },
-                { "mData": "parentID", "sClass": "text-center" },
-                { "mData": "type", "sClass": "text-center" },
-                { "mData": "name", "sClass": "text-center", "bSortable": false },
-                { "mData": "url", "sClass": "text-center", "bSortable": false },
-                { "mData": "order", "sClass": "text-center" },
+                { "mData": "loginName", "sClass": "text-center" },
+                { "mData": "clientIP", "sClass": "text-center" },
+                { "mData": "clientMac", "sClass": "text-center", "bSortable": false },
                 { "mData": "createDateTime", "sClass": "text-center" }
             ];
             table_login = lkWeb.LoadTable("table_login", columns, dataUrl);
@@ -54,11 +44,6 @@
     </script>
 }
 
-<div class="form-group">
-    <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
-    <button type="button" class="btn btn-primar" onclick="EditModel()">编辑</button>
-    <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
-</div>
 <div class="form-group">
     <div class="input-group">
         <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
@@ -74,12 +59,10 @@
                 <input type="checkbox" class="checkAll" />
             </th>
             <th>Id</th>
-            <th>上级菜单Id</th>
-            <th>类型</th>
-            <th>名称</th>
-            <th>URL地址</th>
-            <th>排序</th>
-            <th>创建时间</th>
+            <th>用户名</th>
+            <th>登陆IP</th>
+            <th>MAC地址</th>
+            <th>登陆时间</th>
         </tr>
     </thead>
     <tbody></tbody>

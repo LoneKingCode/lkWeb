@@ -23,11 +23,11 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 登录IP地址
         /// </summary>
-        public string IP { get; set; }
+        public string ClientIP { get; set; }
 
         /// <summary>
         /// 电脑的MAC地址
         /// </summary>
-        public string Mac { get; set; }
+        public string ClientMac { get; set; }
     }
 }

@@ -13,13 +13,19 @@ namespace lkWeb.Service.Dto
         public string UserId { get; set; }
 
         /// <summary>
+        /// 登陆账户
+        /// </summary>
+        public string LoginName { get; set; }
+
+        /// <summary>
         /// 操作页面地址
         /// </summary>
         public string OperationUrl { get; set; }
+
         /// <summary>
         /// 操作说明
         /// </summary>
-        public string OperationDesciption { get; set; }
+        public string OperationDescription { get; set; }
 
         /// <summary>
         /// 登录IP地址

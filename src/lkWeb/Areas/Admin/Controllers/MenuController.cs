@@ -26,8 +26,15 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Add()
+        public IActionResult Add(int id)
         {
+            if(id!=0)
+            {
+                var dto = _menuService.GetById(id);
+                ViewBag.ParentID = dto.Id;
+                ViewBag.ParentName = dto.Name;
+
+            }
             return View();
         }
         public IActionResult Edit(string id)
@@ -93,6 +100,26 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Add(MenuDto menu)
         {
+            menu.Id = 0; //似乎是因为地址传参， 默认都是id正好和dto里的id冲突 就赋值给dto里的id了
+            if (menu.ParentId > 0)
+            {
+                var parentMenu = _menuService.GetById(menu.ParentId);
+                switch (parentMenu.Type)
+                {
+                    case Service.Enum.MenuType.模块:
+                        menu.Type = Service.Enum.MenuType.菜单;
+                        break;
+                    case Service.Enum.MenuType.菜单:
+                        menu.Type = Service.Enum.MenuType.按钮;
+                        break;
+                    case Service.Enum.MenuType.按钮:
+                        menu.Type = Service.Enum.MenuType.按钮;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             var result = Json(new
             {
                 flag = _menuService.Add(menu)

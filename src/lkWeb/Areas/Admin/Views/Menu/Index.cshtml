@@ -38,7 +38,16 @@
             lkWeb.DeleteMulti(ids, "menu", table_menu);
         }
         function AddModel() {
-            lkWeb.GoAction("menu", "add", 0);
+            var id = "";
+            $(":checkbox:checked", "#table_menu").each(function (i, n) {
+                if ($(n).attr("class") == "checkAll") return true;//相当于continue
+                id = $(n).val();
+            })
+            //如果选中有菜单 直接默认为 添加为此菜单的子菜单
+            if(id!="")
+                lkWeb.GoAction("menu", "add", id);
+            else
+                lkWeb.GoAction("menu", "add", 0);
         }
 
         var table_menu;
