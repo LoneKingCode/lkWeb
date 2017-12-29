@@ -61,6 +61,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 recordsFiltered = dto.recordsTotal,
                 data = dto.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     name = d.Name,
                     description = d.Description,
                     id = d.Id.ToString(),
@@ -74,38 +75,38 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(RoleDto role)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _roleService.Update(role)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult Add(RoleDto role)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _roleService.Add(role)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _roleService.Delete(id)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult DeleteMulti(List<int> ids)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _roleService.DeleteMulti(ids)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult GetRoleList()
@@ -165,11 +166,11 @@ namespace lkWeb.Areas.Admin.Controllers
                 }
             }
 
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = flag
-            });
-            return result;
+            };
+            return Json(result);
         }
         #endregion
     }

@@ -54,7 +54,7 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                             window.location.reload();
                     }
                     else {
-                        if (result.msg != "" && result.msg != null)
+                        if (result.msg.notIsEmpty())
                             parent.layer.alert(result.msg);
                         else
                             parent.layer.alert("删除失败");
@@ -96,7 +96,7 @@ lkWeb.Delete = function (id, model, table) {
                                 window.location.reload();
                         }
                         else {
-                            if (result.msg != "" && result.msg != null)
+                            if (result.msg.notIsEmpty())
                                 parent.layer.alert(result.msg);
                             else
                                 parent.layer.alert("删除失败");
@@ -112,6 +112,8 @@ lkWeb.Delete = function (id, model, table) {
         }
     )
 }
+
+//Layer
 var layerIndex = -1;
 lkWeb.ShowLoad = function () {
     layerIndex = layer.load(1, {
@@ -122,6 +124,7 @@ lkWeb.CloseLoad = function () {
     layer.close(layerIndex);
 }
 
+//Datatable
 lkWeb.Search = function (searchKey, table) {
     console.log("searchKey:" + searchKey);
     _searchKey = searchKey;
@@ -183,7 +186,9 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
         "destroy": true,
         "order": [[1, "asc"]],
     };
-    return $("#" + tableID).DataTable(config);
+    var table = $("#" + tableID).DataTable(config);
+
+    return table;
 }
 
 $.fn.dataTableExt.sErrMode = 'throw';
@@ -207,6 +212,31 @@ $.fn.dataTableExt.oApi.fnReloadAjax = function (oSettings) {
         that.oApi._fnProcessingDisplay(oSettings, false);
     });
 }
+
+//获取checkbox集合选中的 第一个的value值
+lkWeb.GetCheckValue = function (chkList) {
+    var checkValue = "";
+    chkList.each(function (i, n) {
+        if ($(n).prop("checked")) {
+            checkValue = $(n).val();
+            return false; //break
+        }
+
+    })
+    return checkValue;
+}
+
+lkWeb.GetCheckValueList = function (chkList) {
+    var values = [];
+    chkList.each(function (i, n) {
+        if ($(n).prop("checked")) {
+            values.push($(n).val());
+        }
+    })
+    return values;
+}
+
+//扩展
 
 //两种调用方式
 //var template1 = "我是{0}，今年{1}了";
@@ -234,4 +264,12 @@ String.prototype.format = function (args) {
         }
     }
     return result;
+}
+
+String.prototype.isEmpty = function () {
+    return !this.notIsEmpty();
+}
+
+String.prototype.notIsEmpty = function () {
+    return this != "" && this != null && this != undefined;
 }

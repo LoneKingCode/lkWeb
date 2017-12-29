@@ -69,6 +69,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => x.Name.Contains(queryBase.SearchKey) && !x.IsDeleted;
             var dto = _menuService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var allMenu = _menuService.GetList(item => !item.IsDeleted).data.ToDictionary(item => item.Id, item => item.Name);
             var data = new
             {
                 draw = queryBase.Draw,
@@ -76,8 +77,10 @@ namespace lkWeb.Areas.Admin.Controllers
                 recordsFiltered = dto.recordsTotal,
                 data = dto.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     name = d.Name,
                     parentID = d.ParentId,
+                    parentName = allMenu.ContainsKey(d.ParentId)? allMenu[d.ParentId] : "无",
                     id = d.Id.ToString(),
                     createDateTime = d.CreateDateTime.ToString(),
                     type = d.TypeName,
@@ -91,11 +94,11 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(MenuDto menu)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _menuService.Update(menu)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult Add(MenuDto menu)
@@ -120,29 +123,29 @@ namespace lkWeb.Areas.Admin.Controllers
                 }
             }
 
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _menuService.Add(menu)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _menuService.Delete(id)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult DeleteMulti(List<int> ids)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _menuService.DeleteMulti(ids)
-            });
-            return result;
+            };
+            return Json(result);
         }
         #endregion
     }

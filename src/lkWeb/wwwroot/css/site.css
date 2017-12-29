@@ -136,7 +136,23 @@ textarea {
     }
 
     .sidebar-nav li:nth-child(7):before {
-        background-color: #7c5aae;
+        background-color: #7751c1;
+    }
+
+    .sidebar-nav li:nth-child(8):before {
+        background-color: #7d5aae;
+    }
+
+    .sidebar-nav li:nth-child(9):before {
+        background-color: #7e5aae;
+    }
+
+    .sidebar-nav li:nth-child(10):before {
+        background-color: #735aae;
+    }
+
+    .sidebar-nav li:nth-child(11):before {
+        background-color: #725aae;
     }
 
     .sidebar-nav li:hover:before {
@@ -155,8 +171,8 @@ textarea {
 }
 
 .sidebar-footer {
-    bottom: 2px;
-    height: 34px;
+    bottom: 1px;
+    height: 36px;
     clear: both;
     display: block;
     padding: 5px 0 0 0;
@@ -223,17 +239,20 @@ textarea {
     .content-tabs .roll-right {
         right: 0;
         border-left: solid 1px #eee;
-    }
+     }
 
 .roll-right.btn-group {
     width: 130px;
     padding: 0;
 }
 
+
 .roll-right.J_tabRight {
     right: 140px;
 }
-
+.roll-right li > a {
+    color: #333;
+}
 .btn-group button {
     width: 130px;
 }
@@ -326,13 +345,16 @@ nav.page-tabs {
     border-style: solid solid none;
     border-width: 1px 0;
 }
+
 .dataTables_paginate {
     margin: 0 auto;
     text-align: center;
 }
-.dataTables_paginate a{
-    margin:2px;
-}
+
+    .dataTables_paginate a {
+        margin: 2px;
+    }
+
     .dataTables_paginate .glyphicon {
         font-size: 1.2em;
         color: #5a5a5a;
@@ -341,9 +363,11 @@ nav.page-tabs {
         padding-top: 2.5px;
         border-radius: 4px;
     }
+
         .dataTables_paginate .glyphicon:hover {
             background-color: #d5d5d5;
         }
+
     .dataTables_paginate .paginate_button current {
         width: 18px;
         height: 23px;

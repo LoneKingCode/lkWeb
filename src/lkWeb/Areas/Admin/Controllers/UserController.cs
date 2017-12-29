@@ -84,15 +84,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public IActionResult Login(UserDto dto)
         {
             var result = _userService.Login(dto);
-            if (result.flag)
-            {
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                ModelState.AddModelError("Error", result.msg);
-                return View();
-            }
+            return Json(result);
         }
         [HttpPost]
         public IActionResult Register(UserDto dto)
@@ -119,6 +111,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 recordsFiltered = dto.recordsTotal,
                 data = dto.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     loginName = d.LoginName,
                     realName = d.RealName,
                     email = d.Email,
@@ -169,20 +162,20 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(UserDto user)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _userService.Update(user)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult Add(UserDto user)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _userService.Add(user)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult ForgetPwd(UserDto user)
@@ -192,20 +185,20 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Delete(int Id)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _userService.Delete(Id)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult DeleteMulti(List<int> ids)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _userService.DeleteMulti(ids)
-            });
-            return result;
+            };
+            return Json(result);
         }
         public IActionResult DeleteRole(AuthRoleDto dto)
         {
@@ -213,11 +206,11 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 _userRoleService.Delete(item => item.RoleId == roleId && item.UserId == dto.UserId);
             }
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = true
-            });
-            return result;
+            };
+            return Json(result);
         }
         public IActionResult AuthRole(AuthRoleDto dto)
         {
@@ -230,19 +223,19 @@ namespace lkWeb.Areas.Admin.Controllers
                 };
                 _userRoleService.Add(d);
             }
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = true
-            });
-            return result;
+            };
+            return Json(result);
         }
-        public IActionResult DelUserDepartment(List<int> ids)
+        public IActionResult DelUserDepartment(SetDepartmentDto dto)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
-                flag = _userDepartmentService.Delete(item => ids.Contains(item.UserID))
-            });
-            return result;
+                flag = _userDepartmentService.Delete(item => dto.UserIDs.Contains(item.UserID) && item.DepartmentID == dto.DepartmentID)
+            };
+            return Json(result);
         }
         [HttpGet]
         public IActionResult GetListByDepartment(QueryBase queryBase)
@@ -260,6 +253,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 recordsFiltered = dto.recordsTotal,
                 data = dto.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     loginName = d.LoginName,
                     realName = d.RealName,
                     email = d.Email,
@@ -285,6 +279,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 recordsFiltered = dto.recordsTotal,
                 data = dto.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     loginName = d.LoginName,
                     realName = d.RealName,
                     email = d.Email,

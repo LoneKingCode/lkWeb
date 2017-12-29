@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title= "角色管理";
+    ViewBag.Title = "角色管理";
 }
 @section Scripts{
     <script>
@@ -22,22 +22,15 @@
             lkWeb.GoAction("role", "add", 0);
         }
         function EditModel() {
-            var id = "";
-            $(":checkbox:checked", "#table_role").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                 id = $(n).val();
-                lkWeb.GoAction("role", "edit", id);
-            })
+            var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
+            else
+                lkWeb.GoAction("role", "edit", id);
         }
 
         function DelModel() {
-            var ids = [];
-            $(":checkbox:checked", "#table_role").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                ids.push($(n).val());
-            })
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
             lkWeb.DeleteMulti(ids, "role", table_role);
         }
 
@@ -53,7 +46,7 @@
                     },
                     "bSortable": false
                 },
-                { "mData": "id", "sClass": "text-center" },
+                { "mData": "rowNum", "sClass": "text-center" },
                 { "mData": "name", "sClass": "text-center" },
                 { "mData": "description", "sClass": "text-center" },
                 { "mData": "createDateTime", "sClass": "text-center" },
@@ -82,7 +75,7 @@
             <th>
                 <input type="checkbox" class="checkAll" />
             </th>
-            <th>Id</th>
+            <th>序号</th>
             <th>角色名称</th>
             <th>角色描述</th>
             <th>创建时间</th>

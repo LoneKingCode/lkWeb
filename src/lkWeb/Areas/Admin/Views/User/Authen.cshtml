@@ -57,10 +57,7 @@
         function AuthRole(roleId) {
             var data = { UserID:@ViewBag.UserId,RoleIds: [] }
             if (roleId == undefined) {  //如果没有传roleId 说明是批量授权 获取选中的行
-                $(".check_auth").each(function (i, n) {
-                    if ($(n).prop("checked"))
-                        data.RoleIds.push($(n).val());
-                })
+                data.RoleIds = lkWeb.GetCheckValueList($(".check_auth"));
                 if (data.RoleIds.length < 1) {
                     parent.layer.alert("请选择要授权的角色");
                     return;

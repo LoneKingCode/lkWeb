@@ -76,6 +76,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 recordsFiltered = dto.recordsTotal,
                 data = dto.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     parentID = d.ParentID,
                     leader = d.Leader,
                     parentName = allDepartment.ContainsKey(d.ParentID) ? allDepartment[d.ParentID] : "无",
@@ -90,26 +91,26 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(DepartmentDto dto)
         {
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _departmentService.Update(dto)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult Add(DepartmentDto dto)
         {
             dto.Id = 0;
-            var result = Json(new
+            var result = new Result<string>
             {
                 flag = _departmentService.Add(dto)
-            });
-            return result;
+            };
+            return Json(result);
         }
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            Result<string> result = new Result<string>();
+            var result = new Result<string>();
             var dtos = _departmentService.GetList(item => item.ParentID == id).data;
             if (dtos.Count > 0)
             {
@@ -126,7 +127,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult DeleteMulti(List<int> ids)
         {
-            Result<string> result = new Result<string>();
+            var result = new Result<string>();
             bool flag = false;
             foreach (var id in ids)
             {

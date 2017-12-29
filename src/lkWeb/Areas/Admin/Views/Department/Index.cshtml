@@ -20,30 +20,19 @@
         });
 
         function AddModel() {
-            $(":checkbox:checked", "#table_department").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                departmentID = $(n).val();
-            })
-
+            departmentID = lkWeb.GetCheckValue($(".checkChild"));
             lkWeb.GoAction("department", "add", departmentID);;
         }
         function EditModel() {
-            var id = "";
-            $(":checkbox:checked", "#table_department").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                 id = $(n).val();
-                lkWeb.GoAction("department", "edit", id);
-            })
+            var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
+            else
+                lkWeb.GoAction("department", "edit", id);
         }
 
         function DelModel() {
-            var ids = [];
-            $(":checkbox:checked", "#table_department").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                ids.push($(n).val());
-            })
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
             lkWeb.DeleteMulti(ids, "department", table_department);
         }
 
@@ -59,7 +48,7 @@
                     },
                     "bSortable": false
                 },
-                { "mData": "id", "sClass": "text-center" },
+                { "mData": "rowNum", "sClass": "text-center" },
                 { "mData": "name", "sClass": "text-center" },
                 { "mData": "parentName", "sClass": "text-center" },
                 { "mData": "leader", "sClass": "text-center" },
@@ -91,7 +80,7 @@
                 <th>
                     <input type="checkbox" class="checkAll" />
                 </th>
-                <th>Id</th>
+                <th>序号</th>
                 <th>部门名称</th>
                 <th>上级部门</th>
                 <th>负责人</th>

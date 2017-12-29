@@ -25,6 +25,7 @@
                     },
                     "bSortable": false
                 },
+                { "mData": "rowNum", "sClass": "text-center" },
                 { "mData": "loginName", "name": "LoginName", "sClass": "text-center" },
                 { "mData": "realName", "name": "RealName", "sClass": "text-center" },
                 { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
@@ -34,14 +35,10 @@
             table_user = lkWeb.LoadTable("table_user", columns, dataUrl,departmentID)
         }
           function Submit() {
-              var ids = new Array();
+              var ids = lkWeb.GetCheckValueList($(".checkChild"));
               var dto = {};
               dto.DepartmentID = departmentID;
               dto.UserIDs = ids;
-              $(".checkChild").each(function (i, n) {
-                  if ($(n).prop("checked"))
-                      ids.push($(n).val());
-              })
               $.ajax({
                   type: "post",
                   url: "@Url.Action("SetDepartment","User")",
@@ -54,7 +51,7 @@
                           parent.SelectUser();
                       }
                       else {
-                          if (result.msg != "" && result.msg != null)
+                          if (result.msg.notIsEmpty())
                               parent.layer.alert(result.msg);
                           else
                               parent.layer.alert("删除失败");
@@ -79,6 +76,7 @@
                 <th>
                     <input type="checkbox" class="checkAll" />
                 </th>
+                <th>序号</th>
                 <th>用户名</th>
                 <th>姓名</th>
                 <th>电子邮箱</th>

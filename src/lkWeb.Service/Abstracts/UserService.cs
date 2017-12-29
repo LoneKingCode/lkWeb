@@ -13,7 +13,11 @@ namespace lkWeb.Service.Abstracts
 {
     public partial class UserService : ServiceBase<UserEntity>, IUserService
     {
-        public ILoginLogService loginLogService;
+        public ILoginLogService _loginLogService;
+        public UserService(ILoginLogService loginLogService)
+        {
+            _loginLogService = loginLogService;
+        }
         /// <summary>
         /// 获取用户菜单数据
         /// </summary>
@@ -67,20 +71,21 @@ namespace lkWeb.Service.Abstracts
             {
                 var result = new Result<UserDto>();
                 var userEntity = db.Users.Where(x => x.LoginName == dto.LoginName).FirstOrDefault();
-                var user = MapTo<UserEntity, UserDto>(userEntity);
-                if (user == null)
+                if (userEntity == null)
                 {
                     result.msg = " 用户名不存在";
                 }
                 else
                 {
+                    var user = MapTo<UserEntity, UserDto>(userEntity);
+                    var loginLogDto =
                     //记录登录日志
-                    loginLogService.Add(new LoginLogDto
+                    _loginLogService.Add(new LoginLogDto
                     {
                         UserId = user.Id,
                         LoginName = user.LoginName,
-                       // ClientIP = WebHelper.GetClientIP(),
-                       // ClientMac = WebHelper.GetClientIP()
+                       ClientIP = WebHelper.GetClientIP(),
+                      ClientMac = WebHelper.GetClientMac()
                     });
                     if (user.Password != dto.Password)
                     {

@@ -1,11 +1,8 @@
-datatables 的table增加个行号
-
-Delete DeleteMulti  自定义msg Result<T>
-
 菜单管理 菜单现在是写死的 改成从数据库读取该角色菜单
+asp.net identity
 
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name
-* 获取客户端IP 为了记录日志
+
 
 Depertment 页面  ，每次载入部门下用户时 都要执行下LoadDataTable 虽然没什么效果，但是如果放window.onload里初始化不知道为何就不行了 有空再说
    function onNodeClick( treeId, treeNode, clickFlag) {
@@ -14,9 +11,8 @@ Depertment 页面  ，每次载入部门下用户时 都要执行下LoadDataTable 虽然没什么效果，
             table_user.draw();
         }
 
-lkWeb 获取table中选中的一行 或多行
 
-2.调整lkWeb.js 封装下ajax 为DoPost DoGet，等
+调整lkWeb.js 封装下ajax 为DoPost DoGet，等
 lkWeb = {
 	GoAction:function(){},
 	......

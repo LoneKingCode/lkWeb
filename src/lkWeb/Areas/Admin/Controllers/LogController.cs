@@ -49,6 +49,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 recordsFiltered = dto.recordsTotal,
                 data = dto.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     loginName = d.LoginName,
                     clientIP = d.ClientIP,
                     clientMac = d.ClientMac,
@@ -73,6 +74,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 recordsFiltered = dto.recordsTotal,
                 data = dto.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     loginName = d.LoginName,
                     operationUrl = d.OperationUrl,
                     operationDescription = d.OperationDescription,

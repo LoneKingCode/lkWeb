@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title= "用户管理";
+    ViewBag.Title = "用户管理";
 }
 @section Scripts{
     <script>
@@ -21,11 +21,7 @@
         });
 
         function RoleAuth() {
-            var userId = "";
-            $(":checkbox:checked", "#table_user").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                userId = $(n).val(); //只要一个用户ID 如果多选的话也只要最后一个
-            })
+            var userId = lkWeb.GetCheckValue($(".checkChild"));
             if (userId == "") {
                 parent.layer.alert("请选择用户");
                 return;
@@ -38,23 +34,17 @@
         }
         function DelModel()
         {
-            var ids = [];
-            $(":checkbox:checked", "#table_user").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                ids.push($(n).val());
-            })
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
             lkWeb.DeleteMulti(ids, "user", table_user);
         }
 
         function EditModel() {
-            var id = "";
-            $(":checkbox:checked", "#table_user").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                 id = $(n).val();
-                lkWeb.GoAction("user", "edit", id);
-            })
+            var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
+            else
+                lkWeb.GoAction("user", "edit", id);
+
         }
         var table_user;
         function InitDataTable() {
@@ -68,7 +58,7 @@
                     },
                     "bSortable": false
                 },
-                { "mData": "id", "name":"Id", "sClass": "text-center" },
+                { "mData": "rowNum", "name":"Id", "sClass": "text-center" },
                 { "mData": "loginName", "name": "LoginName", "sClass": "text-center" },
                 { "mData": "realName", "name": "RealName", "sClass": "text-center" },
                 { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
@@ -77,8 +67,6 @@
             ];
             table_user = lkWeb.LoadTable("table_user", columns, dataUrl)
         }
-
-
     </script>
 }
 
@@ -103,7 +91,7 @@
             <th>
                 <input type="checkbox" class="checkAll" />
             </th>
-            <th>Id</th>
+            <th>序号</th>
             <th>用户名</th>
             <th>姓名</th>
             <th>电子邮箱</th>

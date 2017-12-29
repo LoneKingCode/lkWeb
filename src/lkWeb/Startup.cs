@@ -23,6 +23,7 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace lkWeb
 {
@@ -53,6 +54,7 @@ namespace lkWeb
             services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn")));
             // Add framework services.
             services.AddMvc();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //automapper
             services.AddSingleton<IMapper>(sp => _mapperConfiguration.CreateMapper());
@@ -61,17 +63,16 @@ namespace lkWeb
             services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(container));
             services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(container));
             services.UseSimpleInjectorAspNetRequestScoping(container);
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider svp)
         {
-            //var accessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
-            //  WebHelper.HttpContext._httpContextAccessor = accessor;
+            var accessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
+            WebHelper._httpContextAccessor = accessor;
 
             app.UseStaticFiles();//使用静态文件
-
+           
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -122,8 +123,6 @@ namespace lkWeb
             container.Register<IUserDepartmentService, UserDepartmentService>(Lifestyle.Scoped);
             container.Register<ILoginLogService, LoginLogService>(Lifestyle.Scoped);
             container.Register<IOperationLogService, OperationLogService>(Lifestyle.Scoped);
-
-         //   container.Register<IHttpContextAccessor, HttpContextAccessor>(Lifestyle.Singleton);
 
             // Cross-wire ASP.NET services (if any). For instance:
             container.RegisterSingleton(app.ApplicationServices.GetService<ILoggerFactory>());
