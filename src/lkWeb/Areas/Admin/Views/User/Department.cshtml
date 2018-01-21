@@ -24,7 +24,8 @@
         var zNodes_department = [];
         var setting_department= {
             check: {
-                enable: false,
+                enable: false, //不开启
+                chkboxType: { "Y": "", "N": "" }
               },
             data: {
                 simpleData: {
@@ -41,14 +42,12 @@
             LoadDataTable();
             table_user.draw();
         }
-        function setCheck_department() {
-            var type = $("#level").attr("checked") ? "level" : "all";
-            setting_department.check.radioType = type;
-            $.fn.zTree.init($("#departmentTree"), setting_department, zNodes_department);
-        }
+
         function InitDepartmentTree() {
             LoadData();
-            setCheck_department();
+
+            $.fn.zTree.init($("#departmentTree"), setting_department, zNodes_department);
+
             $("#level").bind("change", setCheck_department);
             $("#all").bind("change", setCheck_department);
         }
