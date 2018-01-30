@@ -6,10 +6,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
 using lkWeb.Data.Config;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace lkWeb.Data
 {
-    public class lkWebContext : DbContext
+    public class lkWebContext : IdentityDbContext<AppUser>
     {
         public DbSet<LoginLogEntity> LoginLogs { get; set; }
         public DbSet<MenuEntity> Menus { get; set; }

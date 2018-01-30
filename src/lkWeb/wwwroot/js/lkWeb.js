@@ -28,6 +28,7 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
 
 lkWeb.CloseLayert = function () {
     layer.close(lkWeb.LayerIndex);
+    //    var index = parent.layer.getFrameIndex(window.name);
 }
 //删除多个
 lkWeb.DeleteMulti = function (ids, model, table) {

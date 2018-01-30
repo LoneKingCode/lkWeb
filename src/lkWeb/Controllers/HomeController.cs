@@ -8,18 +8,21 @@ using AutoMapper;
 using lkWeb.Entity;
 using lkWeb.Service.Dto;
 using lkWeb.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace lkWeb.Controllers
 {
     public class HomeController : Controller
     {
-        public readonly IUserService _userService;
-        public HomeController(IUserService userService)
+        private readonly UserManager<AppUser> _userManager;
+        public HomeController(UserManager<AppUser> userManager)
         {
-            _userService = userService;
+            _userManager = userManager;
+
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+ 
             return View();
         }
 
