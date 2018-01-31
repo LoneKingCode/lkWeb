@@ -3,7 +3,7 @@
     ViewBag.Title = "操作日志";
 }
 @section Scripts{
-    <script>
+<script>
         $(function () {
             InitDataTable();
             $(".checkAll").click(function () {
@@ -31,7 +31,7 @@
                     "bSortable": false
                 },
                 { "mData": "rowNum", "sClass": "text-center" },
-                { "mData": "loginName", "sClass": "text-center" },
+                { "mData": "userName", "sClass": "text-center" },
                 { "mData": "operationUrl", "sClass": "text-center" },
                 { "mData": "operationDescription", "sClass": "text-center" },
                 { "mData": "clientIP", "sClass": "text-center" },
@@ -42,7 +42,7 @@
     }
 
 
-    </script>
+</script>
 }
 
 

@@ -3,7 +3,7 @@
     ViewBag.Title = "用户管理";
 }
 @section Scripts{
-    <script>
+<script>
         $(function () {
 
             InitDataTable();
@@ -59,7 +59,7 @@
                     "bSortable": false
                 },
                 { "mData": "rowNum", "name":"Id", "sClass": "text-center" },
-                { "mData": "loginName", "name": "LoginName", "sClass": "text-center" },
+                { "mData": "userName", "name": "LoginName", "sClass": "text-center" },
                 { "mData": "realName", "name": "RealName", "sClass": "text-center" },
                 { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
                 { "mData": "statusName", "name": "StatusName","sClass": "text-center" },
@@ -67,7 +67,7 @@
             ];
             table_user = lkWeb.LoadTable("table_user", columns, dataUrl)
         }
-    </script>
+</script>
 }
 
 <div class="form-group">

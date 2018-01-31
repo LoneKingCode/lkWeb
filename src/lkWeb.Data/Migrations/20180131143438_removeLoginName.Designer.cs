@@ -11,9 +11,10 @@ using System;
 namespace lkWeb.Data.Migrations
 {
     [DbContext(typeof(lkWebContext))]
-    partial class lkWebContextModelSnapshot : ModelSnapshot
+    [Migration("20180131143438_removeLoginName")]
+    partial class removeLoginName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,8 +55,6 @@ namespace lkWeb.Data.Migrations
                     b.Property<string>("RealName");
 
                     b.Property<string>("SecurityStamp");
-
-                    b.Property<byte>("Status");
 
                     b.Property<bool>("TwoFactorEnabled");
 

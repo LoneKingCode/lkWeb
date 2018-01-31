@@ -15,7 +15,7 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 登陆账户
         /// </summary>
-        public string LoginName { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// 操作页面地址

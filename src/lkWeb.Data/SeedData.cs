@@ -20,7 +20,7 @@ namespace lkWeb.Data
                 return;
             }
             //添加User初始数据
-            db.Users.Add(new UserEntity { LoginName = "admin", Password = "admin", Email = "admin@admin.com", Status = 2, RealName = "管理员" });
+            db.Users.Add(new UserEntity { UserName = "admin", Password = "admin", Email = "admin@admin.com", Status = 2, RealName = "管理员" });
             db.SaveChanges();
 
         }

@@ -8,15 +8,21 @@ using lkWeb.Entity;
 using System.Linq.Expressions;
 using lkWeb.Service.Enum;
 using lkWeb.Core.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace lkWeb.Service.Abstracts
 {
     public partial class UserService : ServiceBase<UserEntity>, IUserService
     {
-        public ILoginLogService _loginLogService;
-        public UserService(ILoginLogService loginLogService)
+        public readonly ILoginLogService _loginLogService;
+        public readonly UserManager<AppUser> _userManager;
+        public readonly SignInManager<AppUser> _signInManager;
+
+        public UserService(ILoginLogService loginLogService, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _loginLogService = loginLogService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
         /// <summary>
         /// 获取用户菜单数据
@@ -67,55 +73,80 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         public Result<UserDto> Login(UserDto dto)
         {
-            using (var db = GetDb())
+            var result = new Result<UserDto>();
+            var user = MapTo<UserDto, AppUser>(dto);
+            var signInResult = _signInManager.PasswordSignInAsync(user, dto.Password, false, false).Result;
+            if (signInResult.Succeeded)
             {
-                var result = new Result<UserDto>();
-                var userEntity = db.Users.Where(x => x.LoginName == dto.LoginName).FirstOrDefault();
-                if (userEntity == null)
-                {
-                    result.msg = " 用户名不存在";
-                }
-                else
-                {
-                    var user = MapTo<UserEntity, UserDto>(userEntity);
-                    var loginLogDto =
-                    //记录登录日志
-                    _loginLogService.Add(new LoginLogDto
-                    {
-                        UserId = user.Id,
-                        LoginName = user.LoginName,
-                       ClientIP = WebHelper.GetClientIP(),
-                      ClientMac = WebHelper.GetClientMac()
-                    });
-                    if (user.Password != dto.Password)
-                    {
-                        result.msg = " 密码错误";
-                    }
-                    else if (user.IsDeleted)
-                    {
-                        result.msg = " 账户已删除";
-                    }
-                    else if (user.Status == UserStatus.未激活)
-                    {
-                        result.msg = "账户未激活";
-                    }
-                    else if (user.Status == UserStatus.禁用)
-                    {
-                        result.msg = "账户已禁用";
-                    }
-                    else
-                    {
-                        result.flag = true;
-                        result.msg = "登录成功";
-                        result.data = user;
-                        //...保存cookie等等 表单验证加密
-                    }
-                }
-                return result;
+                result.flag = true;
             }
+            else
+            {
+                //  if(signInResult.IsNotAllowed)
+                result.msg = "登陆失败";
+            }
+            return result;
+            //using (var db = GetDb())
+            //{
+            //    var result = new Result<UserDto>();
+            //    var userEntity = db.Users.Where(x => x.UserName == dto.UserName).FirstOrDefault();
+            //    if (userEntity == null)
+            //    {
+            //        result.msg = " 用户名不存在";
+            //    }
+            //    else
+            //    {
+            //        var user = MapTo<UserEntity, UserDto>(userEntity);
+            //        var loginLogDto =
+            //        //记录登录日志
+            //        _loginLogService.Add(new LoginLogDto
+            //        {
+            //            UserId = user.Id,
+            //            UserName = user.UserName,
+            //            ClientIP = WebHelper.GetClientIP(),
+            //            ClientMac = WebHelper.GetClientMac()
+            //        });
+            //        if (user.Password != dto.Password)
+            //        {
+            //            result.msg = " 密码错误";
+            //        }
+            //        else if (user.IsDeleted)
+            //        {
+            //            result.msg = " 账户已删除";
+            //        }
+            //        else if (user.Status == UserStatus.未激活)
+            //        {
+            //            result.msg = "账户未激活";
+            //        }
+            //        else if (user.Status == UserStatus.禁用)
+            //        {
+            //            result.msg = "账户已禁用";
+            //        }
+            //        else
+            //        {
+            //            result.flag = true;
+            //            result.msg = "登录成功";
+            //            result.data = user;
+            //            //...保存cookie等等 表单验证加密
+            //        }
+            //    }
+            //    return result;
+            //}
         }
 
-
+        public Result<UserDto> Register(UserDto dto)
+        {
+            var result = new Result<UserDto>();
+            var user = MapTo<UserDto, AppUser>(dto);
+            var regResult = _userManager.CreateAsync(user, dto.Password).Result;
+            if (regResult.Succeeded)
+                result.flag = true;
+            else
+            {
+                result.msg = regResult.Errors.ToString();
+            }
+            return result;
+        }
         /// <summary>
         /// 获取用户列表
         /// </summary>
@@ -124,7 +155,7 @@ namespace lkWeb.Service.Abstracts
         {
             using (var db = GetDb())
             {
-                var temp = db.Set<UserEntity>().OrderBy(item=>item.Id).ToList();
+                var temp = db.Set<UserEntity>().OrderBy(item => item.Id).ToList();
                 var dtoData = MapTo<List<UserEntity>, List<UserDto>>(temp);
                 var result = new ResultDto<UserDto>
                 {
@@ -132,7 +163,7 @@ namespace lkWeb.Service.Abstracts
                     d => new UserDto
                     {
                         Id = d.Id,
-                        LoginName = d.LoginName,
+                        UserName = d.UserName,
                         Email = d.Email == null ? "" : d.Email,
                         IsDeleted = d.IsDeleted,
                         Status = d.Status,

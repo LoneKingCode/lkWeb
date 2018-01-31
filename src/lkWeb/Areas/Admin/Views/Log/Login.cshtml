@@ -3,7 +3,7 @@
     ViewBag.Title= "登录日志";
 }
 @section Scripts{
-    <script>
+<script>
         $(function () {
             InitDataTable();
             $(".checkAll").click(function () {
@@ -32,7 +32,7 @@
                     "bSortable": false
                 },
                 { "mData": "rowNum", "sClass": "text-center" },
-                { "mData": "loginName", "sClass": "text-center" },
+                { "mData": "userName", "sClass": "text-center" },
                 { "mData": "clientIP", "sClass": "text-center" },
                 { "mData": "clientMac", "sClass": "text-center", "bSortable": false },
                 { "mData": "createDateTime", "sClass": "text-center" }
@@ -41,7 +41,7 @@
     }
 
 
-    </script>
+</script>
 }
 
 <div class="form-group">

@@ -11,6 +11,7 @@ using lkWeb.Service.Enum;
 using System.Linq.Expressions;
 using lkWeb.Entity;
 using lkWeb.Core.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,7 +27,9 @@ namespace lkWeb.Areas.Admin.Controllers
         public UserController(IUserService userService,
             IUserRoleService userRoleService,
             IDepartmentService departmentService,
-            IUserDepartmentService userDepartmentService)
+            IUserDepartmentService userDepartmentService,
+           UserManager<AppUser> userManager,
+           SignInManager<AppUser> signInManager)
         {
             _userService = userService;
             _userRoleService = userRoleService;
@@ -89,12 +92,9 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Register(UserDto dto)
         {
-            return RedirectToAction("Login");
-            //bool result= _userService.AddUser(dto);
-            //if(result)
-            //     return RedirectToAction("Login");
-            //else
-            //     return Content("<script>alert('注册失败！')</script>");
+            var result = _userService.Register(dto);
+            return Json(result);
+
         }
 
         [HttpGet]
@@ -102,7 +102,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             Expression<Func<UserDto, bool>> queryExp = item => !item.IsDeleted;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.LoginName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+                queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
             var dto = _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
@@ -112,7 +112,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 data = dto.data.Select(d => new
                 {
                     rowNum = ++queryBase.Start,
-                    loginName = d.LoginName,
+                    userName = d.UserName,
                     realName = d.RealName,
                     email = d.Email,
                     statusName = d.StatusName,
@@ -254,7 +254,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 data = dto.data.Select(d => new
                 {
                     rowNum = ++queryBase.Start,
-                    loginName = d.LoginName,
+                    userName = d.UserName,
                     realName = d.RealName,
                     email = d.Email,
                     statusName = d.StatusName,
@@ -280,7 +280,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 data = dto.data.Select(d => new
                 {
                     rowNum = ++queryBase.Start,
-                    loginName = d.LoginName,
+                    userName = d.UserName,
                     realName = d.RealName,
                     email = d.Email,
                     statusName = d.StatusName,

@@ -40,7 +40,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             Expression<Func<LoginLogDto, bool>> queryExp = item => !item.IsDeleted;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.LoginName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+                queryExp = x => (x.UserName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
             var dto = _loginLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
@@ -50,7 +50,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 data = dto.data.Select(d => new
                 {
                     rowNum = ++queryBase.Start,
-                    loginName = d.LoginName,
+                    userName = d.UserName,
                     clientIP = d.ClientIP,
                     clientMac = d.ClientMac,
                     id = d.Id.ToString(),
@@ -64,7 +64,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             Expression<Func<OperationLogDto, bool>> queryExp = item => !item.IsDeleted;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.LoginName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
+                queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
                 || x.OperationUrl.Contains(queryBase.SearchKey)) && !x.IsDeleted;
             var dto = _operationLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
@@ -75,7 +75,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 data = dto.data.Select(d => new
                 {
                     rowNum = ++queryBase.Start,
-                    loginName = d.LoginName,
+                    userName = d.UserName,
                     operationUrl = d.OperationUrl,
                     operationDescription = d.OperationDescription,
                     clientIP= d.ClientIP,

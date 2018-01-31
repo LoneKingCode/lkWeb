@@ -16,7 +16,13 @@ namespace lkWeb.Service.Abstracts
         /// <param name="dto">user实体</param>
         /// <returns></returns>
         Result<UserDto> Login(UserDto dto);
-         /// <summary>
+        /// <summary>
+        /// 注册
+        /// </summary>
+        /// <param name="dto">user实体</param>
+        /// <returns></returns>
+        Result<UserDto> Register(UserDto dto);
+        /// <summary>
         /// 获取用户菜单数据
         /// </summary>
         /// <param name="id">id</param>

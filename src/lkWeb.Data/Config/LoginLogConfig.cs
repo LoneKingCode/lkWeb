@@ -15,7 +15,7 @@ namespace lkWeb.Data.Config
             builder.HasKey(item => item.Id);
             builder.Property(item => item.Id).ValueGeneratedOnAdd();
             builder.Property(item => item.UserId).IsRequired();
-            builder.Property(item => item.LoginName).HasColumnType("varchar(20)").IsRequired();
+            builder.Property(item => item.UserName).HasColumnType("varchar(20)").IsRequired();
             builder.Property(item => item.ClientIP).HasColumnType("varchar(15)");
             builder.Property(item => item.ClientMac).HasColumnType("varchar(40)");
         }

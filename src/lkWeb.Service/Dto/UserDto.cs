@@ -17,7 +17,7 @@ namespace lkWeb.Service.Dto
         /// 登录账号
         /// </summary>
         [DisplayName("登录账号*"), Required, StringLength(20, MinimumLength = 5, ErrorMessage = "长度在5-20个字符之间")]
-        public string LoginName { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// 真实姓名

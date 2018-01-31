@@ -59,6 +59,17 @@ namespace lkWeb
             services.AddMvc();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            // Add application services. For instance:
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IRoleMenuService, RoleMenuService>();
+            services.AddScoped<IUserRoleService, UserRoleService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<IUserDepartmentService, UserDepartmentService>();
+            services.AddScoped<ILoginLogService, LoginLogService>();
+            services.AddScoped<IOperationLogService, OperationLogService>();
+
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<lkWebContext>()
                 .AddDefaultTokenProviders();
@@ -95,7 +106,6 @@ namespace lkWeb
 
             //automapper
             services.AddSingleton<IMapper>(sp => _mapperConfiguration.CreateMapper());
-            services.AddScoped<IUserService, UserService>();
 
             //simpleinjector
         //    services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(container));
@@ -163,6 +173,7 @@ namespace lkWeb
             container.Register<IUserDepartmentService, UserDepartmentService>(Lifestyle.Scoped);
             container.Register<ILoginLogService, LoginLogService>(Lifestyle.Scoped);
             container.Register<IOperationLogService, OperationLogService>(Lifestyle.Scoped);
+
              // Cross-wire ASP.NET services (if any). For instance:
             container.RegisterSingleton(app.ApplicationServices.GetService<ILoggerFactory>());
 

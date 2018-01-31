@@ -16,7 +16,7 @@ namespace lkWeb.Entity
         /// <summary>
         /// 登录账号
         /// </summary>
-        public string LoginName { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// 真实姓名

@@ -17,7 +17,7 @@
 
     <script type="text/javascript">
         function Login() {
-            if ($("#txtLoginName").val() == "" || $("#txtPwd").val() == "") {
+            if ($("#txtUserName").val() == "" || $("#txtPwd").val() == "") {
                 layer.alert("请输入账户和密码");
                 return;
             }
@@ -39,7 +39,22 @@
             $("#loginForm").ajaxSubmit(option);
         }
         function Register() {
-
+            var option = {
+                datatype: "json",
+                success: function (data) {
+                    if (data.flag == true) {
+                        lkWeb.GoAction("User", "Login", 0);
+                    }
+                    else {
+                        layer.alert(data.msg);
+                    }
+                },
+                error: function (error) {
+                    layer.alert('提交请求失败');
+                    console.log(error);
+                }
+            };
+            $("#registerForm").ajaxSubmit(option);
         }
         function Forget() {
 
@@ -48,26 +63,13 @@
 
 
     <style>
-        .container {
-            display: table;
-            height: 100%;
-        }
+        .container { display: table; height: 100%; }
 
-        .row {
-            display: table-cell;
-            vertical-align: middle;
-        }
+        .row { display: table-cell; vertical-align: middle; }
 
-        .row-centered {
-            text-align: center;
-        }
+        .row-centered { text-align: center; }
 
-        .col-centered {
-            display: inline-block;
-            float: none;
-            text-align: left;
-            margin-right: -4px;
-        }
+        .col-centered { display: inline-block; float: none; text-align: left; margin-right: -4px; }
     </style>
 </head>
 <body>
@@ -79,7 +81,7 @@
                     <div class="form-group">
                         <div class="input-group input-group-md">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" id="txtLoginName" name="LoginName" placeholder="请输入登陆账户" />
+                            <input type="text" class="form-control" id="txtUserName" name="UserName" placeholder="请输入登陆账户" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -107,7 +109,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <p>输入您的注册账号.</p>
-                                    <input type="text" name="LoginName" placeholder="账号" autocomplete="off" class="form-control" />
+                                    <input type="text" name="UserName" placeholder="账号" autocomplete="off" class="form-control" />
                                     <p>输入您的注册邮箱</p>
                                     <input type="text" name="Email" placeholder="邮箱" autocomplete="off" class="form-control" />
                                     <p>输入您的密码</p>
@@ -117,7 +119,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                    <button type="submit" class="btn btn-primary">确认注册</button>
+                                    <button type="button" class="btn btn-primary" onclick="Register()">确认注册</button>
                                 </div>
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal-dialog -->
@@ -134,7 +136,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <p>输入您的账号.</p>
-                                    <input type="text" name="LoginName" placeholder="账号" autocomplete="off" class="form-control" />
+                                    <input type="text" name="UserName" placeholder="账号" autocomplete="off" class="form-control" />
                                     <p>输入您的邮箱</p>
                                     <input type="text" name="Email" placeholder="邮箱" autocomplete="off" class="form-control" />
                                 </div>
