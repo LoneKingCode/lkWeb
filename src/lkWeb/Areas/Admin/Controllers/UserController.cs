@@ -28,8 +28,8 @@ namespace lkWeb.Areas.Admin.Controllers
             IUserRoleService userRoleService,
             IDepartmentService departmentService,
             IUserDepartmentService userDepartmentService,
-           UserManager<AppUser> userManager,
-           SignInManager<AppUser> signInManager)
+           UserManager<UserEntity> userManager,
+           SignInManager<UserEntity> signInManager)
         {
             _userService = userService;
             _userRoleService = userRoleService;
@@ -100,9 +100,9 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetPageData(QueryBase queryBase)
         {
-            Expression<Func<UserDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<UserDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+                queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey)) ;
             var dto = _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
@@ -243,8 +243,8 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.Value.IsEmpty())
                 return Json(new { });
             var departmentID = Convert.ToInt32(queryBase.Value);
-            var users = _userDepartmentService.GetList(item => !item.IsDeleted && item.DepartmentID == departmentID).data.Select(item => item.UserID).ToList();
-            Expression<Func<UserDto, bool>> queryExp = item => !item.IsDeleted && users.Contains(item.Id);
+            var users = _userDepartmentService.GetList(item => item.Id >= 0 && item.DepartmentID == departmentID).data.Select(item => item.UserID).ToList();
+            Expression<Func<UserDto, bool>> queryExp = item => item.Id >= 0 && users.Contains(item.Id);
             var dto = _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
@@ -269,8 +269,8 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.Value.IsEmpty())
                 return Json(new { });
             var departmentID = Convert.ToInt32(queryBase.Value);
-            var users = _userDepartmentService.GetList(item => !item.IsDeleted && item.DepartmentID == departmentID).data.Select(item => item.UserID).ToList();
-            Expression<Func<UserDto, bool>> queryExp = item => !item.IsDeleted && !users.Contains(item.Id);
+            var users = _userDepartmentService.GetList(item => item.Id >= 0 && item.DepartmentID == departmentID).data.Select(item => item.UserID).ToList();
+            Expression<Func<UserDto, bool>> queryExp = item => item.Id >= 0 && !users.Contains(item.Id);
             var dto = _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {

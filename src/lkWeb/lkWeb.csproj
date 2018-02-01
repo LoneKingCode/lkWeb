@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Areas\Admin\Controllers\ve-1F23.tmp" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="wwwroot\js\contabs.js" />
     <Content Include="wwwroot\js\lkWeb.js" />
     <Content Include="wwwroot\js\login.js" />

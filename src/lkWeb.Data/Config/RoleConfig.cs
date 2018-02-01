@@ -12,10 +12,8 @@ namespace lkWeb.Data.Config
         public void Configure(EntityTypeBuilder<RoleEntity> builder)
         {
             builder.ToTable("Sys_Role");
-            builder.HasKey(item => item.Id);
-            builder.Property(item => item.Id).ValueGeneratedOnAdd();
-            builder.Property(item => item.Name).HasColumnType("varchar(20)").IsRequired();
-            builder.Property(item => item.Description).HasColumnType("varchar(100)").IsRequired();
+            builder.Property(item => item.Description).HasColumnType("varchar(30)").IsRequired();
+
         }
     }
 }

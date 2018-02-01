@@ -10,7 +10,6 @@ namespace lkWeb.Service.Dto
         public BaseDto()
         {
             CreateDateTime = DateTime.Now;
-            IsDeleted = false;
         }
         /// <summary>
         /// 主键
@@ -22,9 +21,5 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public DateTime CreateDateTime { get; set; }
 
-        /// <summary>
-        /// 是否删除
-        /// </summary>
-        public bool IsDeleted { get; set; }
     }
 }

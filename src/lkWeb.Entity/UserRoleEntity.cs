@@ -1,35 +1,16 @@
-﻿using lkWeb.Entity.Base;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace lkWeb.Entity
 {
-    /// <summary>
-    /// 用户角色关系实体
-    /// </summary>
-    public class UserRoleEntity : BaseEntity
-    {
+    public class UserRoleEntity : IdentityUserRole<int> {
 
         /// <summary>
-        /// 用户ID
+        ///     identity默认是没有这个id的
         /// </summary>
-        public int UserId { get; set; }
-
-        /// <summary>
-        /// 角色ID
-        /// </summary>
-        public int RoleId { get; set; }
-
-        /// <summary>
-        /// 所属用户  virtual开启lazyload
-        /// </summary>
-        public virtual UserEntity User { get; set; }
-
-        /// <summary>
-        /// 所属角色
-        /// </summary>
-        public virtual RoleEntity Role { get; set; }
+        public int Id { get; set; }
     }
+
 }

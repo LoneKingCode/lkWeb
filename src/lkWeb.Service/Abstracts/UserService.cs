@@ -15,10 +15,10 @@ namespace lkWeb.Service.Abstracts
     public partial class UserService : ServiceBase<UserEntity>, IUserService
     {
         public readonly ILoginLogService _loginLogService;
-        public readonly UserManager<AppUser> _userManager;
-        public readonly SignInManager<AppUser> _signInManager;
+        public readonly UserManager<UserEntity> _userManager;
+        public readonly SignInManager<UserEntity> _signInManager;
 
-        public UserService(ILoginLogService loginLogService, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public UserService(ILoginLogService loginLogService, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager)
         {
             _loginLogService = loginLogService;
             _userManager = userManager;
@@ -36,10 +36,10 @@ namespace lkWeb.Service.Abstracts
 
                 var roleResult = GetUserRoles(id);
                 var roleIds = roleResult.data.Select(x => x.Id).ToList();
-                Expression<Func<RoleMenuEntity, bool>> exp = item => (!item.IsDeleted && roleIds.Contains(item.RoleId));
+                Expression<Func<RoleMenuEntity, bool>> exp = item => roleIds.Contains(item.RoleId);
                 var roleMenus = db.RoleMenus.Where(exp).ToList();
                 var menuIds = roleMenus.Select(x => x.MenuId).ToList();
-                Expression<Func<MenuEntity, bool>> expMenu = item => (!item.IsDeleted && menuIds.Contains(item.Id));
+                Expression<Func<MenuEntity, bool>> expMenu = item => menuIds.Contains(item.Id);
                 var menus = db.Menus.Where(expMenu).ToList();
                 return MapTo<List<MenuEntity>, List<MenuDto>>(menus);
             }
@@ -55,7 +55,7 @@ namespace lkWeb.Service.Abstracts
             {
                 var userRoles = db.UserRoles.Where(x => x.UserId == id).ToList();
                 var roleIds = userRoles.Select(x => x.RoleId).ToList();
-                Expression<Func<RoleEntity, bool>> exp = item => (!item.IsDeleted && roleIds.Contains(item.Id));
+                Expression<Func<RoleEntity, bool>> exp = item => roleIds.Contains(item.Id);
                 var roles = db.Roles.Where(exp).ToList();
                 var result = new ResultDto<RoleDto>
                 {
@@ -74,8 +74,9 @@ namespace lkWeb.Service.Abstracts
         public Result<UserDto> Login(UserDto dto)
         {
             var result = new Result<UserDto>();
-            var user = MapTo<UserDto, AppUser>(dto);
-            var signInResult = _signInManager.PasswordSignInAsync(user, dto.Password, false, false).Result;
+            var signedUser = _userManager.FindByNameAsync(dto.UserName).Result;
+
+            var signInResult = _signInManager.PasswordSignInAsync(signedUser, dto.Password, false, false).Result;
             if (signInResult.Succeeded)
             {
                 result.flag = true;
@@ -137,13 +138,16 @@ namespace lkWeb.Service.Abstracts
         public Result<UserDto> Register(UserDto dto)
         {
             var result = new Result<UserDto>();
-            var user = MapTo<UserDto, AppUser>(dto);
+            var user = MapTo<UserDto, UserEntity>(dto);
             var regResult = _userManager.CreateAsync(user, dto.Password).Result;
             if (regResult.Succeeded)
                 result.flag = true;
             else
             {
-                result.msg = regResult.Errors.ToString();
+                foreach (var err in regResult.Errors)
+                {
+                    result.msg += err.Description + "\n";
+                }
             }
             return result;
         }
@@ -165,7 +169,6 @@ namespace lkWeb.Service.Abstracts
                         Id = d.Id,
                         UserName = d.UserName,
                         Email = d.Email == null ? "" : d.Email,
-                        IsDeleted = d.IsDeleted,
                         Status = d.Status,
                         RealName = d.RealName == null ? "" : d.RealName,
                         CreateDateTime = d.CreateDateTime,
@@ -194,7 +197,7 @@ namespace lkWeb.Service.Abstracts
                 var userRoles = db.UserRoles.Where(x => x.UserId == userID).ToList();
                 var userRoleIds = userRoles.Select(x => x.RoleId).ToList();
 
-                Expression<Func<RoleEntity, bool>> exp = item => (!item.IsDeleted && !userRoleIds.Contains(item.Id));
+                Expression<Func<RoleEntity, bool>> exp = item => !userRoleIds.Contains(item.Id);
                 var notRoles = db.Roles.Where(exp).ToList();
                 var result = new ResultDto<RoleDto>
                 {

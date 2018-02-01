@@ -70,7 +70,7 @@ namespace lkWeb
             services.AddScoped<ILoginLogService, LoginLogService>();
             services.AddScoped<IOperationLogService, OperationLogService>();
 
-            services.AddIdentity<AppUser, IdentityRole>()
+            services.AddIdentity<UserEntity, RoleEntity>()
                 .AddEntityFrameworkStores<lkWebContext>()
                 .AddDefaultTokenProviders();
 
@@ -78,9 +78,9 @@ namespace lkWeb
             {
                 // Password settings
                 options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
+                options.Password.RequiredLength = 5;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
+                options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequiredUniqueChars = 6;
 

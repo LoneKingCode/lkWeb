@@ -43,6 +43,7 @@
                 datatype: "json",
                 success: function (data) {
                     if (data.flag == true) {
+                        layer.alert("注册成功");
                         lkWeb.GoAction("User", "Login", 0);
                     }
                     else {

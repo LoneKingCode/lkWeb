@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace lkWeb.Data.Config
 {
-    public class UserRoleConfig : IEntityTypeConfiguration<UserRoleEntity>
+    public class UserClaimConfig : IEntityTypeConfiguration<UserClaimEntity>
     {
-        public void Configure(EntityTypeBuilder<UserRoleEntity> builder)
+        public void Configure(EntityTypeBuilder<UserClaimEntity> builder)
         {
-            builder.ToTable("Sys_UserRole");
-         }
+            builder.ToTable("Sys_UserClaim");
+        }
     }
 }

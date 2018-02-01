@@ -4,22 +4,23 @@ using System.Collections.Generic;
 
 namespace lkWeb.Data.Migrations
 {
-    public partial class AddStatus : Migration
+    public partial class addRoleDesc : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<byte>(
-                name: "Status",
-                table: "AspNetUsers",
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "Sys_Role",
+                type: "varchar(30)",
                 nullable: false,
-                defaultValue: (byte)0);
+                defaultValue: "");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Status",
-                table: "AspNetUsers");
+                name: "Description",
+                table: "Sys_Role");
         }
     }
 }

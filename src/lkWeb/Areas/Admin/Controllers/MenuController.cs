@@ -52,9 +52,9 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetList(string searchKey)
         {
-            Expression<Func<MenuDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<MenuDto, bool>> queryExp = item => item.Id >= 0;
             if (searchKey.IsNotEmpty())
-                queryExp = item => !item.IsDeleted && (item.Name.Contains(searchKey) || item.Url.Contains(searchKey));
+                queryExp = item => item.Id >= 0 && (item.Name.Contains(searchKey) || item.Url.Contains(searchKey));
             var list = _menuService.GetList(queryExp);
             var strData = new
             {
@@ -65,11 +65,11 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetPageData(QueryBase queryBase)
         {
-            Expression<Func<MenuDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<MenuDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => x.Name.Contains(queryBase.SearchKey) && !x.IsDeleted;
+                queryExp = x => x.Name.Contains(queryBase.SearchKey) ;
             var dto = _menuService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var allMenu = _menuService.GetList(item => !item.IsDeleted).data.ToDictionary(item => item.Id, item => item.Name);
+            var allMenu = _menuService.GetList(item => item.Id >= 0).data.ToDictionary(item => item.Id, item => item.Name);
             var data = new
             {
                 draw = queryBase.Draw,

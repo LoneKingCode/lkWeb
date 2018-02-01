@@ -21,8 +21,8 @@ namespace lkWeb.Service
         {
             CreateMap<UserEntity, UserDto>().ForMember(u => u.Status, e => e.MapFrom(s => (UserStatus)s.Status));
             CreateMap<UserDto, UserEntity>().ForMember(u => u.Status, e => e.MapFrom(s => (byte)s.Status));
-            CreateMap<AppUser, UserDto>().ForMember(u => u.Status, e => e.MapFrom(s => (UserStatus)s.Status));
-            CreateMap<UserDto, AppUser>().ForMember(u => u.Status, e => e.MapFrom(s => (byte)s.Status));
+            CreateMap<UserEntity, UserDto>().ForMember(u => u.Status, e => e.MapFrom(s => (UserStatus)s.Status));
+            CreateMap<UserDto, UserEntity>().ForMember(u => u.Status, e => e.MapFrom(s => (byte)s.Status));
             CreateMap<MenuDto, MenuEntity>().ForMember(u => u.Type, e => e.MapFrom(s => (byte)s.Type));
             CreateMap<MenuEntity, MenuDto>().ForMember(u => u.Type, e => e.MapFrom(s => (MenuType)s.Type));
             CreateMap<DepartmentEntity, DepartmentDto>();

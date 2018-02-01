@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace lkWeb.Data.Config
 {
-    public class UserRoleConfig : IEntityTypeConfiguration<UserRoleEntity>
+    public class UserLoginConfig : IEntityTypeConfiguration<UserLoginEntity>
     {
-        public void Configure(EntityTypeBuilder<UserRoleEntity> builder)
+        public void Configure(EntityTypeBuilder<UserLoginEntity> builder)
         {
-            builder.ToTable("Sys_UserRole");
-         }
+            builder.ToTable("Sys_UserLogin");
+        }
     }
 }

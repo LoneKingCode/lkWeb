@@ -1,35 +1,17 @@
-﻿using lkWeb.Entity.Base;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace lkWeb.Entity
 {
-    /// <summary>
-    /// 角色实体
-    /// </summary>
-    public class RoleEntity : BaseEntity
+    public class RoleEntity : IdentityRole<int>
     {
-
-        /// <summary>
-        /// 角色名称
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 角色描述
-        /// </summary>
         public string Description { get; set; }
-
         /// <summary>
         /// 角色菜单权限
         /// </summary>
         public virtual ICollection<RoleMenuEntity> RoleMenus { get; set; }
-
-        /// <summary>
-        /// 用户角色
-        /// </summary>
-        public virtual ICollection<UserRoleEntity> UserRoles { get; set; }
     }
+
 }

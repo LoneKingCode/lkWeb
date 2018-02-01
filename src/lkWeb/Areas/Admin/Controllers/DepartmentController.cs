@@ -62,12 +62,12 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetPageData(QueryBase queryBase)
         {
-            Expression<Func<DepartmentDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<DepartmentDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)
-                || x.Leader.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+                || x.Leader.Contains(queryBase.SearchKey)) ;
             //获取所有部门的id和部门名称
-            var allDepartment = _departmentService.GetList(item => !item.IsDeleted).data.ToDictionary(item => item.Id, item => item.Name);
+            var allDepartment = _departmentService.GetList(item => item.Id >= 0).data.ToDictionary(item => item.Id, item => item.Name);
             var dto = _departmentService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
@@ -147,7 +147,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult GetList()
         {
-            var list = _departmentService.GetList(item => !item.IsDeleted);
+            var list = _departmentService.GetList(item => item.Id >= 0);
             var strData = list.data.Select(d => new
             {
                 id = d.Id,

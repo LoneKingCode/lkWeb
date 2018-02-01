@@ -11,15 +11,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace lkWeb.Data
 {
-    public class lkWebContext : IdentityDbContext<AppUser>
+    public class lkWebContext : IdentityDbContext<UserEntity, RoleEntity, int>
     {
         public DbSet<LoginLogEntity> LoginLogs { get; set; }
         public DbSet<MenuEntity> Menus { get; set; }
         public DbSet<RoleMenuEntity> RoleMenus { get; set; }
         public DbSet<OperationLogEntity> OperationLogs { get; set; }
-        public DbSet<RoleEntity> Roles { get; set; }
-        public DbSet<UserEntity> Users { get; set; }
-        public DbSet<UserRoleEntity> UserRoles { get; set; }
+        //public DbSet<RoleEntity> Roles { get; set; }  asp.net core identity里已经有
+        //public DbSet<UserEntity> Users { get; set; }
+        //public DbSet<UserRoleEntity> UserRoles { get; set; }
         public lkWebContext(DbContextOptions<lkWebContext> options) : base(options)
         {
         }
@@ -35,6 +35,11 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new UserRoleConfig());
             modelBuilder.ApplyConfiguration(new DepartmentConfig());
             modelBuilder.ApplyConfiguration(new UserDepartmentConfig());
+            modelBuilder.ApplyConfiguration(new UserLoginConfig());
+            modelBuilder.ApplyConfiguration(new UserTokenConfig());
+            modelBuilder.ApplyConfiguration(new RoleClaimConfig());
+            modelBuilder.ApplyConfiguration(new UserClaimConfig());
+
         }
         public override int SaveChanges()
         {

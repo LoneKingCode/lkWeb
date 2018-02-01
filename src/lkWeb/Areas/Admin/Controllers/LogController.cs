@@ -38,9 +38,9 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetPageDataWithLogin(QueryBase queryBase)
         {
-            Expression<Func<LoginLogDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<LoginLogDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.UserName.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+                queryExp = x => (x.UserName.Contains(queryBase.SearchKey)) ;
             var dto = _loginLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
@@ -62,10 +62,10 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetPageDataWithOperation(QueryBase queryBase)
         {
-            Expression<Func<OperationLogDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<OperationLogDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
-                || x.OperationUrl.Contains(queryBase.SearchKey)) && !x.IsDeleted;
+                || x.OperationUrl.Contains(queryBase.SearchKey)) ;
             var dto = _operationLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
