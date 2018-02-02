@@ -10,6 +10,15 @@ namespace lkWeb.Service.Abstracts
 {
     public partial interface IUserService
     {
+        Result<UserDto> _GetById(int id);
+        Result<UserDto> _Add(UserDto dto);
+        Result<UserDto> _Update(UserDto dto);
+        Result<UserDto> _Delete(UserDto dto);
+        Result<UserDto> _Delete(int id);
+        Result<UserDto> _DeleteMulti(List<int> ids);
+        Result<UserDto> AddRoles(int userID, List<int> roleIds);
+        Result<UserDto> RemoveRoles(int userID, List<int> roleIds);
+
         /// <summary>
         /// 登陆
         /// </summary>
@@ -40,11 +49,5 @@ namespace lkWeb.Service.Abstracts
         /// <param name="id">id</param>
         /// <returns></returns>
         ResultDto<RoleDto> GetNotUserRoles(int id);
-        /// <summary>
-        /// 获取所有用户数据
-        /// </summary>
-        /// <returns></returns>
-        ResultDto<UserDto> GetList();
-
-        }
+    }
 }

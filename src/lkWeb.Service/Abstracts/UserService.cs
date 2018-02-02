@@ -17,12 +17,182 @@ namespace lkWeb.Service.Abstracts
         public readonly ILoginLogService _loginLogService;
         public readonly UserManager<UserEntity> _userManager;
         public readonly SignInManager<UserEntity> _signInManager;
+        public readonly RoleManager<RoleEntity> _roleManage;
 
-        public UserService(ILoginLogService loginLogService, UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager)
+        public UserService(ILoginLogService loginLogService,
+            UserManager<UserEntity> userManager,
+            SignInManager<UserEntity> signInManager,
+            RoleManager<RoleEntity> roleManage)
         {
             _loginLogService = loginLogService;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManage = roleManage;
+        }
+
+        public Result<UserDto> AddRoles(int userID, List<int> roleIds)
+        {
+            var result = new Result<UserDto>();
+            List<string> roleNames = new List<string>();
+            var user = _userManager.FindByIdAsync(userID.ToString()).Result;
+            if (user == null)
+            {
+                result.msg = "用户不存在";
+                return result;
+            }
+            if (roleIds.Count <= 0)
+            {
+                result.msg = "请选择要添加的角色";
+                return result;
+            }
+            foreach (var roleId in roleIds)
+            {
+                roleNames.Add(_roleManage.FindByIdAsync(roleId.ToString()).Result.Name);
+            }
+            var _result = _userManager.AddToRolesAsync(user, roleNames).Result;
+            if (_result.Succeeded)
+            {
+                result.flag = true;
+            }
+            else
+            {
+                foreach (var err in _result.Errors)
+                {
+                    result.msg += err.Description + "\n";
+                }
+            }
+            return result;
+        }
+        public Result<UserDto> RemoveRoles(int userID, List<int> roleIds)
+        {
+            var result = new Result<UserDto>();
+            List<string> roleNames = new List<string>();
+            var user = _userManager.FindByIdAsync(userID.ToString()).Result;
+            if (user == null)
+            {
+                result.msg = "用户不存在";
+                return result;
+            }
+            if (roleIds.Count <= 0)
+            {
+                result.msg = "请选择要移除的角色";
+                return result;
+            }
+            foreach (var roleId in roleIds)
+            {
+                roleNames.Add(_roleManage.FindByIdAsync(roleId.ToString()).Result.Name);
+            }
+            var _result = _userManager.RemoveFromRolesAsync(user, roleNames).Result;
+            if (_result.Succeeded)
+            {
+                result.flag = true;
+            }
+            else
+            {
+                foreach (var err in _result.Errors)
+                {
+                    result.msg += err.Description + "\n";
+                }
+            }
+            return result;
+        }
+
+        public Result<UserDto> _GetById(int id)
+        {
+            var result = new Result<UserDto>();
+            result.flag = true;
+            var entity = _userManager.FindByIdAsync(id.ToString()).Result;
+            result.data = MapTo<UserEntity, UserDto>(entity);
+            return result;
+
+        }
+
+        public Result<UserDto> _Add(UserDto dto)
+        {
+            var result = new Result<UserDto>();
+            var entity = MapTo<UserDto, UserEntity>(dto);
+            var _result = _userManager.CreateAsync(entity, dto.Password).Result;
+            if (_result.Succeeded)
+                result.flag = true;
+            else
+            {
+                foreach (var err in _result.Errors)
+                {
+                    result.msg += err.Description + "\n";
+                }
+            }
+            return result;
+        }
+        public Result<UserDto> _Update(UserDto dto)
+        {
+            var result = new Result<UserDto>();
+            var entity = _userManager.FindByIdAsync(dto.Id.ToString()).Result;
+            _mapper.Map(dto, entity, typeof(UserDto), typeof(UserEntity));
+            if (dto.Password.IsNotEmpty())
+                entity.PasswordHash = _userManager.PasswordHasher.HashPassword(entity, dto.Password);
+            var _result = _userManager.UpdateAsync(entity).Result;
+            if (_result.Succeeded)
+                result.flag = true;
+            else
+            {
+                foreach (var err in _result.Errors)
+                {
+                    result.msg += err.Description + "\n";
+                }
+            }
+            return result;
+
+        }
+        public Result<UserDto> _Delete(UserDto dto)
+        {
+            var result = new Result<UserDto>();
+            var entity = MapTo<UserDto, UserEntity>(dto);
+            var _result = _userManager.DeleteAsync(entity).Result;
+            if (_result.Succeeded)
+                result.flag = true;
+            else
+            {
+                foreach (var err in _result.Errors)
+                {
+                    result.msg += err.Description + "\n";
+                }
+            }
+            return result;
+        }
+        public Result<UserDto> _Delete(int id)
+        {
+            var result = new Result<UserDto>();
+            var entity = _userManager.FindByIdAsync(id.ToString()).Result;
+            var _result = _userManager.DeleteAsync(entity).Result;
+            if (_result.Succeeded)
+                result.flag = true;
+            else
+            {
+                foreach (var err in _result.Errors)
+                {
+                    result.msg += err.Description + "\n";
+                }
+            }
+            return result;
+        }
+        public Result<UserDto> _DeleteMulti(List<int> ids)
+        {
+            var result = new Result<UserDto>();
+            foreach (var id in ids)
+            {
+                var entity = _userManager.FindByIdAsync(id.ToString()).Result;
+                var _result = _userManager.DeleteAsync(entity).Result;
+                if (_result.Succeeded)
+                    result.flag = true;
+                else
+                {
+                    foreach (var err in _result.Errors)
+                    {
+                        result.msg += err.Description + "\n";
+                    }
+                }
+            }
+            return result;
         }
         /// <summary>
         /// 获取用户菜单数据
@@ -152,37 +322,6 @@ namespace lkWeb.Service.Abstracts
             return result;
         }
         /// <summary>
-        /// 获取用户列表
-        /// </summary>
-        /// <returns></returns>
-        public ResultDto<UserDto> GetList()
-        {
-            using (var db = GetDb())
-            {
-                var temp = db.Set<UserEntity>().OrderBy(item => item.Id).ToList();
-                var dtoData = MapTo<List<UserEntity>, List<UserDto>>(temp);
-                var result = new ResultDto<UserDto>
-                {
-                    data = dtoData.Select(
-                    d => new UserDto
-                    {
-                        Id = d.Id,
-                        UserName = d.UserName,
-                        Email = d.Email == null ? "" : d.Email,
-                        Status = d.Status,
-                        RealName = d.RealName == null ? "" : d.RealName,
-                        CreateDateTime = d.CreateDateTime,
-                        Password = "",
-                    }
-                    ).ToList(),
-                    recordsTotal = dtoData.Count,
-                    pageSize = 15,
-                    pageIndex = 0
-                };
-                return result;
-            }
-        }
-        /// <summary>
         /// 获取不是用户所属的角色数据
         /// </summary>
         /// <param name="id">id</param>
@@ -193,7 +332,6 @@ namespace lkWeb.Service.Abstracts
             {
                 var roles = db.Roles.ToList();
                 var roleIds = roles.Select(x => x.Id).ToList();
-
                 var userRoles = db.UserRoles.Where(x => x.UserId == userID).ToList();
                 var userRoleIds = userRoles.Select(x => x.RoleId).ToList();
 

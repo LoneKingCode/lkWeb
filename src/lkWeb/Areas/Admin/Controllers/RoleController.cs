@@ -27,7 +27,7 @@ namespace lkWeb.Areas.Admin.Controllers
             _roleService = roleService;
             _menuService = menuService;
             _roleMenuService = roleMenuService;
-         }
+        }
         #region Page
         // GET: /<controller>/
         public IActionResult Index()
@@ -38,9 +38,9 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Edit(string id)
+        public IActionResult Edit(int id)
         {
-            var role = _roleService.GetById(int.Parse(id));
+            var role = _roleService._GetById(id).data;
             return View(role);
         }
         public IActionResult Authen()
@@ -79,37 +79,28 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(RoleDto role)
         {
-            var result = new Result<string>
-            {
-                flag = _roleService.Update(role)
-            };
+            var result = _roleService._Update(role);
             return Json(result);
         }
         [HttpPost]
         public IActionResult Add(RoleDto role)
         {
-            var result = new Result<string>
-            {
-                flag = _roleService.Add(role)
-            };
+            var result = _roleService._Add(role);
+
             return Json(result);
         }
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            var result = new Result<string>
-            {
-                flag = _roleService.Delete(id)
-            };
+            var result = _roleService._Delete(id);
+
             return Json(result);
         }
         [HttpPost]
         public IActionResult DeleteMulti(List<int> ids)
         {
-            var result = new Result<string>
-            {
-                flag = _roleService.DeleteMulti(ids)
-            };
+            var result = _roleService._DeleteMulti(ids);
+
             return Json(result);
         }
         [HttpPost]

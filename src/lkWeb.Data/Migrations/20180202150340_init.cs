@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace lkWeb.Data.Migrations
 {
-    public partial class initIdentity : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -87,6 +87,7 @@ namespace lkWeb.Data.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(type: "varchar(30)", nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true)
                 },
@@ -124,21 +125,20 @@ namespace lkWeb.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "Sys_RoleClaim",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false),
                     RoleId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_Sys_RoleClaim", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_Sys_Role_RoleId",
+                        name: "FK_Sys_RoleClaim_Sys_Role_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Sys_Role",
                         principalColumn: "Id",
@@ -167,89 +167,20 @@ namespace lkWeb.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
+                name: "Sys_UserClaim",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false),
                     UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.PrimaryKey("PK_Sys_UserClaim", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_Sys_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Sys_User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
-                columns: table => new
-                {
-                    LoginProvider = table.Column<string>(nullable: false),
-                    ProviderKey = table.Column<string>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
-                    ProviderDisplayName = table.Column<string>(nullable: true),
-                    UserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserLogins_Sys_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Sys_User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: true),
-                    UserId = table.Column<int>(nullable: false),
-                    RoleId = table.Column<int>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_Sys_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Sys_Role",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_Sys_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Sys_User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(nullable: false),
-                    LoginProvider = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
-                    Value = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserTokens_Sys_User_UserId",
+                        name: "FK_Sys_UserClaim_Sys_User_UserId",
                         column: x => x.UserId,
                         principalTable: "Sys_User",
                         principalColumn: "Id",
@@ -283,25 +214,69 @@ namespace lkWeb.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
-                table: "AspNetRoleClaims",
-                column: "RoleId");
+            migrationBuilder.CreateTable(
+                name: "Sys_UserLogin",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(nullable: false),
+                    ProviderKey = table.Column<string>(nullable: false),
+                    ProviderDisplayName = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sys_UserLogin", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_Sys_UserLogin_Sys_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Sys_User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims_UserId",
-                table: "AspNetUserClaims",
-                column: "UserId");
+            migrationBuilder.CreateTable(
+                name: "Sys_UserRole",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false),
+                    RoleId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sys_UserRole", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_Sys_UserRole_Sys_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Sys_Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Sys_UserRole_Sys_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Sys_User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins_UserId",
-                table: "AspNetUserLogins",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
-                column: "RoleId");
+            migrationBuilder.CreateTable(
+                name: "Sys_UserToken",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false),
+                    LoginProvider = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sys_UserToken", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_Sys_UserToken_Sys_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Sys_User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -309,6 +284,11 @@ namespace lkWeb.Data.Migrations
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sys_RoleClaim_RoleId",
+                table: "Sys_RoleClaim",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sys_RoleMenu_RoleId",
@@ -328,6 +308,11 @@ namespace lkWeb.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sys_UserClaim_UserId",
+                table: "Sys_UserClaim",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sys_UserDepartment_DepartmentID",
                 table: "Sys_UserDepartment",
                 column: "DepartmentID");
@@ -336,25 +321,20 @@ namespace lkWeb.Data.Migrations
                 name: "IX_Sys_UserDepartment_UserID",
                 table: "Sys_UserDepartment",
                 column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sys_UserLogin_UserId",
+                table: "Sys_UserLogin",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sys_UserRole_RoleId",
+                table: "Sys_UserRole",
+                column: "RoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
-
             migrationBuilder.DropTable(
                 name: "Sys_LoginLog");
 
@@ -365,16 +345,31 @@ namespace lkWeb.Data.Migrations
                 name: "Sys_OperationLog");
 
             migrationBuilder.DropTable(
+                name: "Sys_RoleClaim");
+
+            migrationBuilder.DropTable(
                 name: "Sys_RoleMenu");
+
+            migrationBuilder.DropTable(
+                name: "Sys_UserClaim");
 
             migrationBuilder.DropTable(
                 name: "Sys_UserDepartment");
 
             migrationBuilder.DropTable(
-                name: "Sys_Role");
+                name: "Sys_UserLogin");
+
+            migrationBuilder.DropTable(
+                name: "Sys_UserRole");
+
+            migrationBuilder.DropTable(
+                name: "Sys_UserToken");
 
             migrationBuilder.DropTable(
                 name: "Sys_Department");
+
+            migrationBuilder.DropTable(
+                name: "Sys_Role");
 
             migrationBuilder.DropTable(
                 name: "Sys_User");

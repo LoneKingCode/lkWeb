@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 using lkWeb.Entity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace lkWeb.Data.Config
 {
-    public class UserTokenConfig : IEntityTypeConfiguration<UserTokenEntity>
+    public class UserTokenConfig : IEntityTypeConfiguration<IdentityUserToken<int>>
     {
-        public void Configure(EntityTypeBuilder<UserTokenEntity> builder)
+        public void Configure(EntityTypeBuilder<IdentityUserToken<int>> builder)
         {
-            builder.ToTable("Sys_UserTaken");
+            builder.ToTable("Sys_UserToken");
         }
     }
 }

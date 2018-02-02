@@ -359,8 +359,9 @@ public partial class AutoMapperConfiguration : Profile
 				var lowerName =name.ToLower();
 				//定义输出文件
 #>
-					CreateMap<<#=name#>Entity, <#=name#>Dto>();
+				/*	CreateMap<<#=name#>Entity, <#=name#>Dto>();
 					CreateMap<<#=name#>Dto, <#=name#>Entity>();
+					*/
 <#
 			}
 #>

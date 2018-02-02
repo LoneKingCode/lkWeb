@@ -20,19 +20,16 @@ namespace lkWeb.Areas.Admin.Controllers
     public class UserController : AdminBaseController
     {
         public readonly IUserService _userService;
-        public readonly IUserRoleService _userRoleService;
         public readonly IDepartmentService _departmentService;
         public readonly IUserDepartmentService _userDepartmentService;
 
         public UserController(IUserService userService,
-            IUserRoleService userRoleService,
             IDepartmentService departmentService,
             IUserDepartmentService userDepartmentService,
            UserManager<UserEntity> userManager,
            SignInManager<UserEntity> signInManager)
         {
             _userService = userService;
-            _userRoleService = userRoleService;
             _departmentService = departmentService;
             _userDepartmentService = userDepartmentService;
         }
@@ -46,14 +43,14 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Authen(string id)
+        public IActionResult Authen(int id)
         {
-            var user = _userService.GetById(int.Parse(id));
+            var user = _userService.GetById(id);
             return View(user);
         }
         public IActionResult Edit(int id)
         {
-            var user = _userService.GetById(id);
+            var user = _userService._GetById(id).data;
             ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View(user);
         }
@@ -94,7 +91,6 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var result = _userService.Register(dto);
             return Json(result);
-
         }
 
         [HttpGet]
@@ -102,7 +98,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             Expression<Func<UserDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey)) ;
+                queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey));
             var dto = _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new
             {
@@ -124,7 +120,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetMyRoles(QueryBase queryBase, UserDto dto)
+        public IActionResult GetMyRoles(QueryBase queryBase, RoleDto dto)
         {
             var list = _userService.GetUserRoles(dto.Id);
             var strData = list.data.Select(d => new
@@ -142,7 +138,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return result;
         }
         [HttpGet]
-        public IActionResult GetNotMyRoles(QueryBase queryBase, UserDto dto)
+        public IActionResult GetNotMyRoles(QueryBase queryBase, RoleDto dto)
         {
             var list = _userService.GetNotUserRoles(dto.Id);
             var strData = list.data.Select(d => new
@@ -162,19 +158,14 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(UserDto user)
         {
-            var result = new Result<string>
-            {
-                flag = _userService.Update(user)
-            };
+            var result = _userService._Update(user);
             return Json(result);
         }
         [HttpPost]
         public IActionResult Add(UserDto user)
         {
-            var result = new Result<string>
-            {
-                flag = _userService.Add(user)
-            };
+            var result = _userService._Add(user);
+
             return Json(result);
         }
         [HttpPost]
@@ -185,48 +176,23 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Delete(int Id)
         {
-            var result = new Result<string>
-            {
-                flag = _userService.Delete(Id)
-            };
+            var result = _userService._Delete(Id);
             return Json(result);
         }
         [HttpPost]
         public IActionResult DeleteMulti(List<int> ids)
         {
-            var result = new Result<string>
-            {
-                flag = _userService.DeleteMulti(ids)
-            };
+            var result = _userService._DeleteMulti(ids);
             return Json(result);
         }
         public IActionResult DeleteRole(AuthRoleDto dto)
         {
-            foreach (var roleId in dto.RoleIds)
-            {
-                _userRoleService.Delete(item => item.RoleId == roleId && item.UserId == dto.UserId);
-            }
-            var result = new Result<string>
-            {
-                flag = true
-            };
+            var result = _userService.RemoveRoles(dto.UserId, dto.RoleIds);
             return Json(result);
         }
         public IActionResult AuthRole(AuthRoleDto dto)
         {
-            foreach (var roleId in dto.RoleIds)
-            {
-                var d = new UserRoleDto
-                {
-                    UserId = dto.UserId,
-                    RoleId = roleId
-                };
-                _userRoleService.Add(d);
-            }
-            var result = new Result<string>
-            {
-                flag = true
-            };
+            var result = _userService.AddRoles(dto.UserId, dto.RoleIds);
             return Json(result);
         }
         public IActionResult DelUserDepartment(SetDepartmentDto dto)

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
-using Microsoft.EntityFrameworkCore.ValueGeneration;
 using System;
 
 namespace lkWeb.Data.Migrations
@@ -258,18 +257,13 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<string>("ClaimValue");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.Property<int>("RoleId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRoleClaim<int>");
+                    b.ToTable("Sys_RoleClaim");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
@@ -281,18 +275,13 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<string>("ClaimValue");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.Property<int>("UserId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserClaim<int>");
+                    b.ToTable("Sys_UserClaim");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
@@ -300,9 +289,6 @@ namespace lkWeb.Data.Migrations
                     b.Property<string>("LoginProvider");
 
                     b.Property<string>("ProviderKey");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
 
                     b.Property<string>("ProviderDisplayName");
 
@@ -312,9 +298,7 @@ namespace lkWeb.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserLogin<int>");
+                    b.ToTable("Sys_UserLogin");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
@@ -323,16 +307,11 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<int>("RoleId");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<int>");
+                    b.ToTable("Sys_UserRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -343,67 +322,11 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.Property<string>("Value");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserToken<int>");
-                });
-
-            modelBuilder.Entity("lkWeb.Entity.RoleClaimEntity", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>");
-
-
-                    b.ToTable("Sys_RoleClaim");
-
-                    b.HasDiscriminator().HasValue("RoleClaimEntity");
-                });
-
-            modelBuilder.Entity("lkWeb.Entity.UserClaimEntity", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>");
-
-
-                    b.ToTable("Sys_UserClaim");
-
-                    b.HasDiscriminator().HasValue("UserClaimEntity");
-                });
-
-            modelBuilder.Entity("lkWeb.Entity.UserLoginEntity", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>");
-
-
-                    b.ToTable("Sys_UserLogin");
-
-                    b.HasDiscriminator().HasValue("UserLoginEntity");
-                });
-
-            modelBuilder.Entity("lkWeb.Entity.UserRoleEntity", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<int>");
-
-                    b.Property<int>("Id");
-
-                    b.ToTable("Sys_UserRole");
-
-                    b.HasDiscriminator().HasValue("UserRoleEntity");
-                });
-
-            modelBuilder.Entity("lkWeb.Entity.UserTokenEntity", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserToken<int>");
-
-
-                    b.ToTable("Sys_UserTaken");
-
-                    b.HasDiscriminator().HasValue("UserTokenEntity");
+                    b.ToTable("Sys_UserToken");
                 });
 
             modelBuilder.Entity("lkWeb.Entity.RoleMenuEntity", b =>

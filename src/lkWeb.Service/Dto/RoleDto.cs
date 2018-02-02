@@ -23,5 +23,10 @@ namespace lkWeb.Service.Dto
         /// </summary>
         [Required, DisplayName("描述"), MinLength(1), MaxLength(200)]
         public string Description { get; set; }
+
+        /// <summary>
+        /// ASP.NET Identity 所需要。。Guid
+        /// </summary>
+        public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
     }
 }

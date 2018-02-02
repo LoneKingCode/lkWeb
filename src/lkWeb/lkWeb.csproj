@@ -628,8 +628,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\lkWeb.Service\lkWeb.Service.csproj" />
     <ProjectReference Include="..\lkWeb.Data\lkWeb.Data.csproj" />
+    <ProjectReference Include="..\lkWeb.Service\lkWeb.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -36,8 +36,7 @@ namespace lkWeb.Service.Dto
         /// </summary>
         [DisplayName("登录密码*"), Required, StringLength(36, MinimumLength = 6, ErrorMessage = "长度在6-36个字符之间")]
         public string Password { get; set; }
-
-        /// <summary>
+         /// <summary>
         /// 用户状态
         /// </summary>
         [DisplayName("用户状态*"), Required]
@@ -50,6 +49,13 @@ namespace lkWeb.Service.Dto
         {
             get { return Status.ToString(); }
         }
+
+        public string SecurityStamp { get; set; }
+
+        /// <summary>
+        /// ASP.NET Identity 所需要。。Guid
+        /// </summary>
+        public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// 记住我

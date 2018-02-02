@@ -64,7 +64,6 @@ namespace lkWeb
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IRoleMenuService, RoleMenuService>();
-            services.AddScoped<IUserRoleService, UserRoleService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IUserDepartmentService, UserDepartmentService>();
             services.AddScoped<ILoginLogService, LoginLogService>();
@@ -168,7 +167,6 @@ namespace lkWeb
             container.Register<IRoleService, RoleService>(Lifestyle.Scoped);
             container.Register<IMenuService, MenuService>(Lifestyle.Scoped);
             container.Register<IRoleMenuService, RoleMenuService>(Lifestyle.Scoped);
-            container.Register<IUserRoleService, UserRoleService>(Lifestyle.Scoped);
             container.Register<IDepartmentService, DepartmentService>(Lifestyle.Scoped);
             container.Register<IUserDepartmentService, UserDepartmentService>(Lifestyle.Scoped);
             container.Register<ILoginLogService, LoginLogService>(Lifestyle.Scoped);

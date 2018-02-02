@@ -53,6 +53,15 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IService.cs</LastGenOutput>
     </None>
+    <None Update="Abstracts\TT\Service.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Service.txt</LastGenOutput>
+    </None>
+    <None Update="Abstracts\TT\Service.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Service.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
 </Project>

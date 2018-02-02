@@ -1,4 +1,7 @@
 asp.net identity 整体调整下代码，，屎一样 表名自定义~ 有的不行比如RoleUsers
+不单独写UserService了， 都改成UserManage，XXManage，这种和Identity有关的，Service就还当通用的在那放着吧
+统一写返回结果  update  。。。 add  del 用Result<>
+!!! Expression  item=> item.id >= 0 。。。。真TM
 菜单管理 菜单现在是写死的 改成从数据库读取该角色菜单
 mapper serviceBase  startUP已经AddSingleton了 不过如果servicebase构造函数接收的话 他的所有子类service。。。。。就也得接收再传了
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name
