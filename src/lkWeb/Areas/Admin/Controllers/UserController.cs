@@ -80,6 +80,11 @@ namespace lkWeb.Areas.Admin.Controllers
         #endregion
 
         #region Ajax
+        public IActionResult Logout()
+        {
+            var result = _userService.Logout();
+            return Content("<script>window.lcation.href='" + Url.Action("Login") + "'</script>");
+        }
         [HttpPost]
         public IActionResult Login(UserDto dto)
         {
@@ -113,7 +118,6 @@ namespace lkWeb.Areas.Admin.Controllers
                     email = d.Email,
                     statusName = d.StatusName,
                     id = d.Id.ToString(),
-                    createDateTime = d.CreateDateTime.ToString(),
                 })
             };
             return Json(data);
@@ -225,7 +229,6 @@ namespace lkWeb.Areas.Admin.Controllers
                     email = d.Email,
                     statusName = d.StatusName,
                     id = d.Id.ToString(),
-                    createDateTime = d.CreateDateTime.ToString(),
                 })
             };
             return Json(data);
@@ -251,7 +254,6 @@ namespace lkWeb.Areas.Admin.Controllers
                     email = d.Email,
                     statusName = d.StatusName,
                     id = d.Id.ToString(),
-                    createDateTime = d.CreateDateTime.ToString(),
                 })
             };
             return Json(data);

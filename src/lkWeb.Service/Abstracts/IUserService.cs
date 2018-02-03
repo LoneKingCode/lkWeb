@@ -10,6 +10,7 @@ namespace lkWeb.Service.Abstracts
 {
     public partial interface IUserService
     {
+        Result<string> Logout();
         Result<UserDto> _GetById(int id);
         Result<UserDto> _Add(UserDto dto);
         Result<UserDto> _Update(UserDto dto);

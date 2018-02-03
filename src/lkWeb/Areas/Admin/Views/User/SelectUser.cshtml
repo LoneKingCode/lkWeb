@@ -29,9 +29,8 @@
                 { "mData": "userName", "name": "LoginName", "sClass": "text-center" },
                 { "mData": "realName", "name": "RealName", "sClass": "text-center" },
                 { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
-                { "mData": "statusName", "name": "StatusName","sClass": "text-center" },
-                { "mData": "createDateTime", "name": "CreateDateTime","sClass": "text-center" },
-            ];
+                { "mData": "statusName", "name": "StatusName","sClass": "text-center" }
+        ];
             table_user = lkWeb.LoadTable("table_user", columns, dataUrl,departmentID)
         }
           function Submit() {
@@ -81,7 +80,6 @@
                 <th>姓名</th>
                 <th>电子邮箱</th>
                 <th>状态</th>
-                <th>创建日期</th>
             </tr>
         </thead>
         <tbody></tbody>

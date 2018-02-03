@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using lkWeb.Service.Enum;
 using lkWeb.Core.Extensions;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -29,7 +30,14 @@ namespace lkWeb.Service.Abstracts
             _signInManager = signInManager;
             _roleManage = roleManage;
         }
-
+        public Result<string> Logout()
+        {
+            var result = new Result<string>();
+            _signInManager.SignOutAsync();
+            result.flag = true;
+            result.msg = "注销成功";
+            return result;
+        }
         public Result<UserDto> AddRoles(int userID, List<int> roleIds)
         {
             var result = new Result<UserDto>();
@@ -249,6 +257,14 @@ namespace lkWeb.Service.Abstracts
             var signInResult = _signInManager.PasswordSignInAsync(signedUser, dto.Password, false, false).Result;
             if (signInResult.Succeeded)
             {
+                //记录登录日志
+                _loginLogService.Add(new LoginLogDto
+                {
+                    UserId = dto.Id,
+                    UserName = dto.UserName,
+                    ClientIP = WebHelper.GetClientIP(),
+                    ClientMac = WebHelper.GetClientMac()
+                });
                 result.flag = true;
             }
             else

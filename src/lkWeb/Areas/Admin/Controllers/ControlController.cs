@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service;
+using Microsoft.AspNetCore.Authorization;
+using lkWeb.Core.Extensions;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -16,16 +18,22 @@ namespace lkWeb.Areas.Admin.Controllers
             _userService = userService;
         }
         // GET: /<controller>/
+
         public IActionResult Index()
         {
-            if(IsLogined)
+            if (IsLogined)
             {
                 var userId = CurrentUser.Id;
                 ViewBag.Menus = _userService.GetUserMenu(userId);
             }
             return View();
         }
+
         public IActionResult Welcome()
+        {
+            return View();
+        }
+        public IActionResult AccessDenied(string returnUrl)
         {
             return View();
         }

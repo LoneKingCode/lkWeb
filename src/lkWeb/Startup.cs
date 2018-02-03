@@ -27,6 +27,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using lkWeb.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace lkWeb
 {
@@ -55,8 +57,16 @@ namespace lkWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn")));
+
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                            .RequireAuthenticatedUser()
+                            .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+            });
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Add application services. For instance:
@@ -97,9 +107,9 @@ namespace lkWeb
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
                 options.Cookie.Expiration = TimeSpan.FromDays(150);
-                options.LoginPath = "/Account/Login"; // If the LoginPath is not set here, ASP.NET Core will default to /Account/Login
-                options.LogoutPath = "/Account/Logout"; // If the LogoutPath is not set here, ASP.NET Core will default to /Account/Logout
-                options.AccessDeniedPath = "/Account/AccessDenied"; // If the AccessDeniedPath is not set here, ASP.NET Core will default to /Account/AccessDenied
+                options.LoginPath = "/admin/user/login"; // If the LoginPath is not set here, ASP.NET Core will default to /Account/Login
+                options.LogoutPath = "/admin/user/logout"; // If the LogoutPath is not set here, ASP.NET Core will default to /Account/Logout
+                options.AccessDeniedPath = "/admin/control/AccessDenied"; // If the AccessDeniedPath is not set here, ASP.NET Core will default to /Account/AccessDenied
                 options.SlidingExpiration = true;
             });
 
@@ -107,9 +117,9 @@ namespace lkWeb
             services.AddSingleton<IMapper>(sp => _mapperConfiguration.CreateMapper());
 
             //simpleinjector
-        //    services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(container));
-           // services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(container));
-          //  services.UseSimpleInjectorAspNetRequestScoping(container);
+            //    services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(container));
+            // services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(container));
+            //  services.UseSimpleInjectorAspNetRequestScoping(container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -147,10 +157,10 @@ namespace lkWeb
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-        //    InitializeContainer(app);
+            //    InitializeContainer(app);
 
             //SimpleInjector
-          //  container.Verify();
+            //  container.Verify();
 
             //初始数据库数据
             SeedData.Initialize(app.ApplicationServices);
@@ -172,7 +182,7 @@ namespace lkWeb
             container.Register<ILoginLogService, LoginLogService>(Lifestyle.Scoped);
             container.Register<IOperationLogService, OperationLogService>(Lifestyle.Scoped);
 
-             // Cross-wire ASP.NET services (if any). For instance:
+            // Cross-wire ASP.NET services (if any). For instance:
             container.RegisterSingleton(app.ApplicationServices.GetService<ILoggerFactory>());
 
         }

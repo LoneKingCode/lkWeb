@@ -69,7 +69,6 @@ namespace lkWeb.Areas.Admin.Controllers
                     name = d.Name,
                     description = d.Description,
                     id = d.Id.ToString(),
-                    createDateTime = d.CreateDateTime.ToString(),
                 })
             };
             return Json(data);
