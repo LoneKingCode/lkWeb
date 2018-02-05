@@ -46,7 +46,7 @@
                     <a data-url="@Url.Action("Index", "Menu")" class="J_menuItem" data-index="4"><i class="glyphicon glyphicon-trash"></i> 菜单管理</a>
                 </li>
                 <li>
-                    <a data-url="@Url.Action("Edit", "User",new { id=1 })" class="J_menuItem" data-index="5"><i class="glyphicon glyphicon-trash"></i> 修改信息</a>
+                    <a data-url="@Url.Action("Edit", "User", new { id = ViewBag.UserID })" class="J_menuItem" data-index="5"><i class="glyphicon glyphicon-trash"></i> 修改信息</a>
                 </li>
                 <li>
                     <a data-url="@Url.Action("Login", "Log")" class="J_menuItem" data-index="6"><i class="glyphicon glyphicon-trash"></i> 登录日志</a>

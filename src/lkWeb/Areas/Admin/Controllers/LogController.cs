@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using lkWeb.Areas.Admin.Models;
 using lkWeb.Core.Extensions;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
@@ -14,11 +15,12 @@ namespace lkWeb.Areas.Admin.Controllers
     {
         public readonly ILoginLogService _loginLogService;
         public readonly IOperationLogService _operationLogService;
-        public LogController(ILoginLogService loginLogService,IOperationLogService operationLogService)
+        public LogController(ILoginLogService loginLogService, IOperationLogService operationLogService)
         {
             _loginLogService = loginLogService;
             _operationLogService = operationLogService;
         }
+
         #region Page
         public IActionResult Index()
         {
@@ -36,13 +38,13 @@ namespace lkWeb.Areas.Admin.Controllers
 
         #region Ajax
         [HttpGet]
-        public IActionResult GetPageDataWithLogin(QueryBase queryBase)
+        public async Task<IActionResult> GetPageDataWithLogin(QueryBase queryBase)
         {
             Expression<Func<LoginLogDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.UserName.Contains(queryBase.SearchKey)) ;
-            var dto = _loginLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new
+                queryExp = x => (x.UserName.Contains(queryBase.SearchKey));
+            var dto = await _loginLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var data = new DataTableDto
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,
@@ -55,19 +57,20 @@ namespace lkWeb.Areas.Admin.Controllers
                     clientMac = d.ClientMac,
                     id = d.Id.ToString(),
                     createDateTime = d.CreateDateTime.ToString(),
+                    description= d.Description
                 })
             };
             return Json(data);
         }
         [HttpGet]
-        public IActionResult GetPageDataWithOperation(QueryBase queryBase)
+        public async Task<IActionResult> GetPageDataWithOperation(QueryBase queryBase)
         {
             Expression<Func<OperationLogDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
-                || x.OperationUrl.Contains(queryBase.SearchKey)) ;
-            var dto = _operationLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new
+                || x.OperationUrl.Contains(queryBase.SearchKey));
+            var dto = await _operationLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var data = new DataTableDto
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,
@@ -78,10 +81,11 @@ namespace lkWeb.Areas.Admin.Controllers
                     userName = d.UserName,
                     operationUrl = d.OperationUrl,
                     operationDescription = d.OperationDescription,
-                    clientIP= d.ClientIP,
+                    clientIP = d.ClientIP,
                     clientMac = d.ClientMac,
                     id = d.Id.ToString(),
                     createDateTime = d.CreateDateTime.ToString(),
+                    description = d.Description
                 })
             };
             return Json(data);

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using lkWeb.Core.Extensions;
+using Newtonsoft.Json;
+
 namespace lkWeb.Service
 {
 
@@ -18,12 +20,49 @@ namespace lkWeb.Service
         static extern Int32 inet_addr(string ipaddr);
 
         public static IHttpContextAccessor _httpContextAccessor;
+        public static ISession _session
+        {
+            get
+            {
+                return _httpContextAccessor.HttpContext.Session;
+            }
+        }
+        public static HttpContext _httpContext
+        {
+            get
+            {
+                return _httpContextAccessor.HttpContext;
+            }
+        }
+
+        /// <summary>
+        /// 设置Session
+        /// </summary>
+        /// <typeparam name="T">存储的对象类型</typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void SetSession<T>(string key, T value)
+        {
+            _session.SetString(key, JsonConvert.SerializeObject(value));
+        }
+
+        /// <summary>
+        /// 获取Session
+        /// </summary>
+        /// <typeparam name="T">获取的对象类型</typeparam>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static T GetSession<T>(string key)
+        {
+            var value = _session.GetString(key);
+            return value == null ? default(T) : JsonConvert.DeserializeObject<T>(value);
+        }
 
         /// <summary>
         /// 获取客户端IP地址
         /// </summary>
         /// <returns></returns>
-        public static  string GetClientIP()
+        public static string GetClientIP()
         {
             if (_httpContextAccessor == null)
             {

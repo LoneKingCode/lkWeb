@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -15,21 +16,21 @@ namespace lkWeb.Service.Abstracts
             _roleManager = roleManager;
         }
 
-        public Result<RoleDto> _GetById(int id)
+        public async Task<Result<RoleDto>> _GetById(int id)
         {
             var result = new Result<RoleDto>();
             result.flag = true;
-            var entity = _roleManager.FindByIdAsync(id.ToString()).Result;
+            var entity = await _roleManager.FindByIdAsync(id.ToString());
             result.data = MapTo<RoleEntity, RoleDto>(entity);
             return result;
 
         }
 
-        public Result<RoleDto> _Add(RoleDto dto)
+        public async Task<Result<RoleDto>> _Add(RoleDto dto)
         {
             var result = new Result<RoleDto>();
             var entity = MapTo<RoleDto, RoleEntity>(dto);
-            var _result = _roleManager.CreateAsync(entity).Result;
+            var _result = await _roleManager.CreateAsync(entity);
             if (_result.Succeeded)
                 result.flag = true;
             else
@@ -41,11 +42,12 @@ namespace lkWeb.Service.Abstracts
             }
             return result;
         }
-        public Result<RoleDto> _Update(RoleDto dto)
+        public async Task<Result<RoleDto>> _Update(RoleDto dto)
         {
             var result = new Result<RoleDto>();
-            var entity = MapTo<RoleDto, RoleEntity>(dto);
-            var _result = _roleManager.UpdateAsync(entity).Result;
+            var entity = await _roleManager.FindByIdAsync(dto.Id.ToString());
+            Map(dto, entity, typeof(RoleDto), typeof(RoleEntity));
+            var _result = await _roleManager.UpdateAsync(entity);
             if (_result.Succeeded)
                 result.flag = true;
             else
@@ -58,11 +60,11 @@ namespace lkWeb.Service.Abstracts
             return result;
 
         }
-        public Result<RoleDto> _Delete(RoleDto dto)
+        public async Task<Result<RoleDto>> _Delete(RoleDto dto)
         {
             var result = new Result<RoleDto>();
             var entity = MapTo<RoleDto, RoleEntity>(dto);
-            var _result = _roleManager.DeleteAsync(entity).Result;
+            var _result = await _roleManager.DeleteAsync(entity);
             if (_result.Succeeded)
                 result.flag = true;
             else
@@ -74,10 +76,10 @@ namespace lkWeb.Service.Abstracts
             }
             return result;
         }
-        public Result<RoleDto> _Delete(int id)
+        public async Task<Result<RoleDto>> _Delete(int id)
         {
             var result = new Result<RoleDto>();
-            var entity = _roleManager.FindByIdAsync(id.ToString()).Result;
+            var entity = await _roleManager.FindByIdAsync(id.ToString());
             var _result = _roleManager.DeleteAsync(entity).Result;
             if (_result.Succeeded)
                 result.flag = true;
@@ -90,13 +92,13 @@ namespace lkWeb.Service.Abstracts
             }
             return result;
         }
-        public Result<RoleDto> _DeleteMulti(List<int> ids)
+        public async Task<Result<RoleDto>> _Delete(List<int> ids)
         {
             var result = new Result<RoleDto>();
             foreach (var id in ids)
             {
-                var entity = _roleManager.FindByIdAsync(id.ToString()).Result;
-                var _result = _roleManager.DeleteAsync(entity).Result;
+                var entity = await _roleManager.FindByIdAsync(id.ToString());
+                var _result = await _roleManager.DeleteAsync(entity);
                 if (_result.Succeeded)
                     result.flag = true;
                 else

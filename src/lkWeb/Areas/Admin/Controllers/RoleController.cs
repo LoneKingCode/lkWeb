@@ -28,6 +28,7 @@ namespace lkWeb.Areas.Admin.Controllers
             _menuService = menuService;
             _roleMenuService = roleMenuService;
         }
+
         #region Page
         // GET: /<controller>/
         public IActionResult Index()
@@ -38,9 +39,9 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var role = _roleService._GetById(id).data;
+            var role = (await _roleService._GetById(id)).data;
             return View(role);
         }
         public IActionResult Authen()
@@ -52,18 +53,18 @@ namespace lkWeb.Areas.Admin.Controllers
         #region Ajax
 
         [HttpGet]
-        public IActionResult GetPageData(QueryBase queryBase)
+        public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
             Expression<Func<RoleDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
-            var dto = _roleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new
+            var result = await _roleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var data = new DataTableDto
             {
                 draw = queryBase.Draw,
-                recordsTotal = dto.recordsTotal,
-                recordsFiltered = dto.recordsTotal,
-                data = dto.data.Select(d => new
+                recordsTotal = result.recordsTotal,
+                recordsFiltered = result.recordsTotal,
+                data = result.data.Select(d => new
                 {
                     rowNum = ++queryBase.Start,
                     name = d.Name,
@@ -76,37 +77,37 @@ namespace lkWeb.Areas.Admin.Controllers
 
 
         [HttpPost]
-        public IActionResult Edit(RoleDto role)
+        public async Task<IActionResult> Edit(RoleDto role)
         {
-            var result = _roleService._Update(role);
+            var result = await _roleService._Update(role);
             return Json(result);
         }
         [HttpPost]
-        public IActionResult Add(RoleDto role)
+        public async Task<IActionResult> Add(RoleDto role)
         {
-            var result = _roleService._Add(role);
+            var result = await _roleService._Add(role);
 
             return Json(result);
         }
         [HttpPost]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = _roleService._Delete(id);
+            var result = await _roleService._Delete(id);
 
             return Json(result);
         }
         [HttpPost]
-        public IActionResult DeleteMulti(List<int> ids)
+        public async Task<IActionResult> DeleteMulti(List<int> ids)
         {
-            var result = _roleService._DeleteMulti(ids);
+            var result = await _roleService._Delete(ids);
 
             return Json(result);
         }
         [HttpPost]
-        public IActionResult GetRoleList()
+        public async Task<IActionResult> GetRoleList()
         {
-            var list = _roleService.GetList(item => item.Id >= 0);
-            var strData = list.data.Select(d => new
+            var result = await _roleService.GetList(item => item.Id >= 0);
+            var strData = result.data.Select(d => new
             {
                 id = d.Id,
                 pid = 0,
@@ -116,10 +117,10 @@ namespace lkWeb.Areas.Admin.Controllers
 
         }
         [HttpPost, HttpGet]
-        public IActionResult GetMenuList()
+        public async Task<IActionResult> GetMenuList()
         {
-            var list = _menuService.GetList(item => item.Id >= 0);
-            var strData = list.data.Select(d => new
+            var result = await _menuService.GetList(item => item.Id >= 0);
+            var strData = result.data.Select(d => new
             {
                 id = d.Id,
                 pId = d.ParentId,
@@ -131,39 +132,36 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(strData);
         }
         [HttpPost]
-        public IActionResult GetRoleMenus(int roleId)
+        public async Task<IActionResult> GetRoleMenus(int roleId)
         {
-            var list = _roleMenuService.GetList(item => item.RoleId == roleId);
-            var strData = list.data.Select(d => new
+            var result = await _roleMenuService.GetList(item => item.RoleId == roleId);
+            var strData = result.data.Select(d => new
             {
                 id = d.Id,
                 menuId = d.MenuId,
-                recordsTotal = list.recordsTotal
+                recordsTotal = result.recordsTotal
             });
             return Json(strData);
         }
         [HttpPost]
-        public IActionResult AuthMenus(AuthMenuDto dto)
+        public async Task<IActionResult> AuthMenus(AuthMenuDto dto)
         {
-            bool flag = false;
-            if (dto.RoleIds.Count == 1)
-            {
-
-            }
+            var result = new Result<RoleMenuDto>();
             foreach (var roleId in dto.RoleIds)
             {
-                flag = _roleMenuService.Delete(item => item.RoleId == roleId);
+                var delResult = await _roleMenuService.Delete(item => item.RoleId == roleId);
+                if (!delResult.flag)
+                    result.msg += delResult.msg + "\n";
                 if (dto.MenuIds != null)
                 {
                     var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
-                    flag = _roleMenuService.Add(newRoleMenus);
+                    var addResult = await _roleMenuService.Add(newRoleMenus);
+                    if (!addResult.flag)
+                        result.msg += addResult.msg + "\n";
+                                  //有时会清空权限，menuIds数量也就为0
+                    result.flag = addResult.flag || (dto.MenuIds.Count == 0 && delResult.flag);
                 }
             }
-
-            var result = new Result<string>
-            {
-                flag = flag
-            };
             return Json(result);
         }
         #endregion

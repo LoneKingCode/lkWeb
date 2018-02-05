@@ -23,32 +23,17 @@ public partial class AutoMapperConfiguration : Profile
 				/*	CreateMap<OperationLogEntity, OperationLogDto>();
 					CreateMap<OperationLogDto, OperationLogEntity>();
 					*/
-				/*	CreateMap<RoleClaimEntity, RoleClaimDto>();
-					CreateMap<RoleClaimDto, RoleClaimEntity>();
-					*/
 				/*	CreateMap<RoleEntity, RoleDto>();
 					CreateMap<RoleDto, RoleEntity>();
 					*/
 				/*	CreateMap<RoleMenuEntity, RoleMenuDto>();
 					CreateMap<RoleMenuDto, RoleMenuEntity>();
 					*/
-				/*	CreateMap<UserClaimEntity, UserClaimDto>();
-					CreateMap<UserClaimDto, UserClaimEntity>();
-					*/
 				/*	CreateMap<UserDepartmentEntity, UserDepartmentDto>();
 					CreateMap<UserDepartmentDto, UserDepartmentEntity>();
 					*/
 				/*	CreateMap<UserEntity, UserDto>();
 					CreateMap<UserDto, UserEntity>();
-					*/
-				/*	CreateMap<UserLoginEntity, UserLoginDto>();
-					CreateMap<UserLoginDto, UserLoginEntity>();
-					*/
-				/*	CreateMap<UserRoleEntity, UserRoleDto>();
-					CreateMap<UserRoleDto, UserRoleEntity>();
-					*/
-				/*	CreateMap<UserTokenEntity, UserTokenDto>();
-					CreateMap<UserTokenDto, UserTokenEntity>();
 					*/
 
         }

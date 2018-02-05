@@ -17,14 +17,16 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             _userService = userService;
         }
-        // GET: /<controller>/
 
-        public IActionResult Index()
+        #region Page
+        // GET: /<controller>/
+        public async Task<IActionResult> Index()
         {
             if (IsLogined)
             {
                 var userId = CurrentUser.Id;
-                ViewBag.Menus = _userService.GetUserMenu(userId);
+                ViewBag.UserID = userId;
+                ViewBag.Menus = (await _userService.GetUserMenu(userId)).data;
             }
             return View();
         }
@@ -37,5 +39,6 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
+        #endregion
     }
 }

@@ -34,7 +34,7 @@
 
     </script>
 }
-    <form class="form-horizontal" action="@Url.Action("Edit", "User");" method="post" id="form-editUser">
+    <form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="form-editUser">
         @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
         @Html.HiddenFor(item => item.ConcurrencyStamp, new { @class = "form-control" })
         @Html.HiddenFor(item => item.SecurityStamp, new { @class = "form-control" })

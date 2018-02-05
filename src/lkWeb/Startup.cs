@@ -57,6 +57,7 @@ namespace lkWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn")));
+            services.AddSession();
 
             // Add framework services.
             services.AddMvc(config =>
@@ -131,6 +132,8 @@ namespace lkWeb
             app.UseStaticFiles();//使用静态文件
 
             app.UseAuthentication(); //使用Identity
+
+            app.UseSession();
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();

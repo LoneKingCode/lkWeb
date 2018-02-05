@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Dto;
 using lkWeb.Service.Abstracts;
 using Microsoft.AspNetCore.Mvc.Filters;
+using lkWeb.Service;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,12 +18,25 @@ namespace lkWeb.Areas.Admin.Controllers
         /// <summary>
         /// 当前登录用户
         /// </summary>
-        protected UserDto CurrentUser { get; private set; }
+        protected UserDto CurrentUser
+        {
+            get
+            {
+                return WebHelper.GetSession<UserDto>("CurrentUser");
+
+            }
+        }
 
         /// <summary>
         /// 是否登录
         /// </summary>
-        protected bool IsLogined { get; set; }
+        protected bool IsLogined
+        {
+            get
+            {
+                return CurrentUser != null;
+            }
+        }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

@@ -7,24 +7,28 @@ using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
 using lkWeb.Core.Extensions;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace lkWeb.Service.Abstracts
 {
     public partial class MenuService : ServiceBase<MenuEntity>, IMenuService
     {
-		/// <summary>
+		    /// <summary>
         ///添加menu
         /// </summary>
         /// <param name="dto">menu实体</param>
         /// <returns></returns>
-        public bool Add(MenuDto dto)
+        public async Task<Result<MenuDto>> Add(MenuDto dto)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
+                var result = new Result<MenuDto>();
+                var ds = GetDbSet(db);
                 var entity = MapTo<MenuDto, MenuEntity>(dto);
-                ds.Add(entity);
-                return db.SaveChanges() > 0;
+                await ds.AddAsync(entity);
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -32,42 +36,48 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">menu集合</param>
         /// <returns></returns>
-        public bool Add(List<MenuDto> dtos)
+        public async Task<Result<List<MenuDto>>> Add(List<MenuDto> dtos)
         {
             using (var db = GetDb())
             {
-			    var ds = GetDbSet(db);
-                var entities =  MapTo<List<MenuDto>, List<MenuEntity>>(dtos);
+                var result = new Result<List<MenuDto>>();
+                var ds = GetDbSet(db);
+                var entities = MapTo<List<MenuDto>, List<MenuEntity>>(dtos);
                 ds.AddRange(entities);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
-		   /// <summary>
+        /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">menu实体</param>
         /// <returns></returns>
-        public bool Update(MenuDto dto)
+        public async Task<Result<MenuDto>> Update(MenuDto dto)
         {
             using (var db = GetDb())
             {
+                var result = new Result<MenuDto>();
                 db.Update(MapTo<MenuDto, MenuEntity>(dto));
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
-		   /// <summary>
+        /// <summary>
         /// 批量更新menu
         /// </summary>
         /// <param name="dtos">menu集合</param>
         /// <returns></returns>
-        public bool Update(List<MenuDto> dtos)
+        public async Task<Result<List<MenuDto>>> Update(List<MenuDto> dtos)
         {
             using (var db = GetDb())
             {
-			    var ds = GetDbSet(db);
-                var entities =  MapTo<List<MenuDto>, List<MenuEntity>>(dtos);
+                var result = new Result<List<MenuDto>>();
+                var ds = GetDbSet(db);
+                var entities = MapTo<List<MenuDto>, List<MenuEntity>>(dtos);
                 ds.UpdateRange(entities);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -75,14 +85,16 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public bool Delete(int id)
+        public async Task<Result<MenuDto>> Delete(int id)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
-                var entity =ds.FirstOrDefault(item => item.Id == id);
+                var result = new Result<MenuDto>();
+                var ds = GetDbSet(db);
+                var entity = ds.FirstOrDefault(item => item.Id == id);
                 ds.Remove(entity);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -90,17 +102,19 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public bool DeleteMulti(List<int> ids)
+        public async Task<Result<List<MenuDto>>> Delete(List<int> ids)
         {
             using (var db = GetDb())
             {
+                var result = new Result<List<MenuDto>>();
                 foreach (var id in ids)
                 {
-					var ds = GetDbSet(db);
-                    var entity =ds.FirstOrDefault(item => item.Id ==id);
+                    var ds = GetDbSet(db);
+                    var entity = await ds.FindAsync(id);
                     ds.Remove(entity);
                 }
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -108,14 +122,16 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">menu实体</param>
         /// <returns></returns>
-        public bool Delete(MenuDto dto)
+        public async Task<Result<MenuDto>> Delete(MenuDto dto)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
+                var result = new Result<MenuDto>();
+                var ds = GetDbSet(db);
                 var entity = MapTo<MenuDto, MenuEntity>(dto);
                 ds.Remove(entity);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -123,27 +139,27 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public MenuDto GetById(int id)
+        public async Task<Result<MenuDto>> GetById(int id)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
-                var entity = ds.FirstOrDefault(item => item.Id == id);
-                if (entity != null)
-                    return MapTo<MenuEntity, MenuDto>(entity);
-                else
-                    return null;
+                var result = new Result<MenuDto>();
+                var ds = GetDbSet(db);
+                var entity = await ds.FindAsync(id);
+                result.data = MapTo<MenuEntity, MenuDto>(entity);
+                result.flag = true;
+                return result;
             }
         }
-	 /// <summary>
+        /// <summary>
         /// 获取menu分页数据
         /// </summary>
         /// <param name="queryBase">基础查询对象</param>
         /// <param name="queryExp">queryExp</param>
-         /// <param name="orderBy">要排序的列名</param>
+        /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public ResultDto<MenuDto> GetPageData(QueryBase queryBase, Expression<Func<MenuDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<MenuDto>> GetPageData(QueryBase queryBase, Expression<Func<MenuDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -151,29 +167,29 @@ namespace lkWeb.Service.Abstracts
                 var result = new ResultDto<MenuDto>();
                 var where = queryExp.Cast<MenuDto, MenuEntity, bool>();
                 var isAsc = orderDir.ToLower() != "desc";
-                int recordsTotal;
                 //暂时没用到这个
                 Expression<Func<MenuDto, int>> orderExp = item => item.Id;
                 var _orderExp = orderExp.Cast<MenuDto, MenuEntity, int>();
-                var list = GetQuery(queryBase, ds, _orderExp, where, isAsc, out recordsTotal);
-                result.data = MapTo<List<MenuEntity>, List<MenuDto>>(list);
-                result.recordsTotal = recordsTotal;
+                var list = await GetQuery(queryBase, ds, _orderExp, where, isAsc);
+                result.data = MapTo<List<MenuEntity>, List<MenuDto>>(list.Item1);
+                result.recordsTotal = list.Item2;
                 result.pageIndex = queryBase.Start;
                 result.pageSize = queryBase.Length;
                 return result;
             }
         }
-		      /// <summary>
+        /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-       public ResultDto<MenuDto> GetList(Expression<Func<MenuDto, bool>> queryExp)
+        public async Task<ResultDto<MenuDto>> GetList(Expression<Func<MenuDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
                 var _queryExp = queryExp.Cast<MenuDto, MenuEntity, bool>();
-                var temp = db.Set<MenuEntity>().Where(_queryExp).OrderBy(item => item.Id).ToList();
+                var ds = GetDbSet(db);
+                var temp = await ds.Where(_queryExp).OrderBy(item => item.Id).ToListAsync();
                 var dtoData = MapTo<List<MenuEntity>, List<MenuDto>>(temp);
                 var result = new ResultDto<MenuDto>
                 {
@@ -185,21 +201,22 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
-		 /// <summary>
+        /// <summary>
         /// 根据条件删除menu数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public bool Delete(Expression<Func<MenuDto,bool>> exp)
+        public async Task<Result<MenuDto>> Delete(Expression<Func<MenuDto, bool>> exp)
         {
             using (var db = GetDb())
             {
+                var result = new Result<MenuDto>();
                 var ds = GetDbSet(db);
                 var _exp = exp.Cast<MenuDto, MenuEntity, bool>();
-                var entities = ds.Where(_exp).ToList();
+                var entities = await ds.Where(_exp).ToListAsync();
                 ds.RemoveRange(entities);
-                return db.SaveChanges() > 0;
-
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
 	}

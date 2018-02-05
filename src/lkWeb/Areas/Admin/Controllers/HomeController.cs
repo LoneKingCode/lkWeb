@@ -15,8 +15,10 @@ namespace lkWeb.Areas.Admin.Controllers
         public readonly IUserService _userService;
         public HomeController(IUserService userService)
         {
-             _userService = userService;
+            _userService = userService;
         }
+
+        #region Page
         public IActionResult Index()
         {
             return View();
@@ -40,5 +42,6 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
+        #endregion
     }
 }

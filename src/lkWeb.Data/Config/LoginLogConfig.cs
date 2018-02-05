@@ -18,6 +18,8 @@ namespace lkWeb.Data.Config
             builder.Property(item => item.UserName).HasColumnType("varchar(20)").IsRequired();
             builder.Property(item => item.ClientIP).HasColumnType("varchar(15)");
             builder.Property(item => item.ClientMac).HasColumnType("varchar(40)");
+            builder.Property(item => item.Description).HasColumnType("varchar(40)");
+
         }
     }
 }

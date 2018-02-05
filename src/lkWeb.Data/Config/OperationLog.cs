@@ -18,6 +18,7 @@ namespace lkWeb.Data.Config
             builder.Property(item => item.OperationDescription).HasColumnType("varchar(100)").IsRequired();
             builder.Property(item => item.ClientIP).HasColumnType("varchar(15)").IsRequired();
             builder.Property(item => item.ClientMac).HasColumnType("varchar(40)").IsRequired();
+            builder.Property(item => item.Description).HasColumnType("varchar(40)");
         }
     }
 }

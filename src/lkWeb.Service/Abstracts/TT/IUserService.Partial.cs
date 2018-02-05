@@ -4,66 +4,67 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace lkWeb.Service.Abstracts
 {
     public partial interface IUserService
     {
-		 /// <summary>
+	  /// <summary>
         /// 添加user
         /// </summary>
         /// <param name="dto">user实体</param>
         /// <returns></returns>
-        bool Add(UserDto dto);
-		/// <summary>
+        Task<Result<UserDto>> Add(UserDto dto);
+        /// <summary>
         /// 批量添加user
         /// </summary>
         /// <param name="dto">user实体集合</param>
         /// <returns></returns>
-        bool Add(List<UserDto> dtos);
+        Task<Result<List<UserDto>>> Add(List<UserDto> dtos);
         /// <summary>
         /// 根据id获取user数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        UserDto GetById(int id);
+        Task<Result<UserDto>> GetById(int id);
         /// <summary>
         /// 根据id删除user数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        bool Delete(int id);
+        Task<Result<UserDto>> Delete(int id);
         /// <summary>
         /// 批量删除user数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        bool DeleteMulti(List<int> ids);
+        Task<Result<List<UserDto>>> Delete(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto">user实体</param>
         /// <returns></returns>
-        bool Delete(UserDto dto);
+        Task<Result<UserDto>> Delete(UserDto dto);
         /// <summary>
         /// 根据条件删除user数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        bool Delete(Expression<Func<UserDto,bool>> exp);
+        Task<Result<UserDto>> Delete(Expression<Func<UserDto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">user实体</param>
         /// <returns></returns>
-        bool Update(UserDto dto);
-		     /// <summary>
+        Task<Result<UserDto>> Update(UserDto dto);
+        /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto">user实体集合</param>
         /// <returns></returns>
-	    bool Update(List<UserDto> dtos);
-		         /// <summary>
+        Task<Result<List<UserDto>>> Update(List<UserDto> dtos);
+        /// <summary>
         /// 获取user分页数据
         /// </summary>
         /// <param name="queryBase">基础查询对象</param>
@@ -71,19 +72,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        ResultDto<UserDto> GetPageData(QueryBase queryBase, Expression<Func<UserDto, bool>> queryExp, string orderBy, string orderDir);
- 		/// <summary>
+        Task<ResultDto<UserDto>> GetPageData(QueryBase queryBase,
+            Expression<Func<UserDto, bool>> queryExp, string orderBy, string orderDir);
+        /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        ResultDto<UserDto> GetList(Expression<Func<UserDto,bool>> queryExp);
+        Task<ResultDto<UserDto>> GetList(Expression<Func<UserDto, bool>> queryExp);
 	}
 }
-
-
-
-
-
-
 

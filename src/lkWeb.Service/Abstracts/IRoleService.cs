@@ -2,16 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace lkWeb.Service.Abstracts
 {
     public partial interface IRoleService
     {
-        Result<RoleDto> _GetById(int id);
-        Result<RoleDto> _Add(RoleDto dto);
-        Result<RoleDto> _Update(RoleDto dto);
-        Result<RoleDto> _Delete(RoleDto dto);
-        Result<RoleDto> _Delete(int id);
-        Result<RoleDto> _DeleteMulti(List<int> ids);
+        Task<Result<RoleDto>> _GetById(int id);
+        Task<Result<RoleDto>> _Add(RoleDto dto);
+        Task<Result<RoleDto>> _Update(RoleDto dto);
+        Task<Result<RoleDto>> _Delete(RoleDto dto);
+        Task<Result<RoleDto>> _Delete(int id);
+        Task<Result<RoleDto>> _Delete(List<int> ids);
     }
 }

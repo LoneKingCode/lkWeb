@@ -31,8 +31,7 @@
                 }).on('onSetSelectValue', function (e, keyword, data) {
                      $("#txtParentID").val(keyword.id);
                 }).on('onUnsetSelectValue', function () {
-                    console.log('onUnsetSelectValue');
-                });
+                 });
             })
         })
         function Save() {
@@ -56,7 +55,7 @@
         }
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Edit", "Menu");" method="post" id="form-editMenu">
+<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="form-editMenu">
     @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
     <div class="form-group">
         <label class="col-md-3 control-label">上级菜单</label>

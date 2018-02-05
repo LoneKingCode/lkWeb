@@ -7,24 +7,28 @@ using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
 using lkWeb.Core.Extensions;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace lkWeb.Service.Abstracts
 {
     public partial class DepartmentService : ServiceBase<DepartmentEntity>, IDepartmentService
     {
-		/// <summary>
+		    /// <summary>
         ///添加department
         /// </summary>
         /// <param name="dto">department实体</param>
         /// <returns></returns>
-        public bool Add(DepartmentDto dto)
+        public async Task<Result<DepartmentDto>> Add(DepartmentDto dto)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
+                var result = new Result<DepartmentDto>();
+                var ds = GetDbSet(db);
                 var entity = MapTo<DepartmentDto, DepartmentEntity>(dto);
-                ds.Add(entity);
-                return db.SaveChanges() > 0;
+                await ds.AddAsync(entity);
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -32,42 +36,48 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">department集合</param>
         /// <returns></returns>
-        public bool Add(List<DepartmentDto> dtos)
+        public async Task<Result<List<DepartmentDto>>> Add(List<DepartmentDto> dtos)
         {
             using (var db = GetDb())
             {
-			    var ds = GetDbSet(db);
-                var entities =  MapTo<List<DepartmentDto>, List<DepartmentEntity>>(dtos);
+                var result = new Result<List<DepartmentDto>>();
+                var ds = GetDbSet(db);
+                var entities = MapTo<List<DepartmentDto>, List<DepartmentEntity>>(dtos);
                 ds.AddRange(entities);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
-		   /// <summary>
+        /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">department实体</param>
         /// <returns></returns>
-        public bool Update(DepartmentDto dto)
+        public async Task<Result<DepartmentDto>> Update(DepartmentDto dto)
         {
             using (var db = GetDb())
             {
+                var result = new Result<DepartmentDto>();
                 db.Update(MapTo<DepartmentDto, DepartmentEntity>(dto));
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
-		   /// <summary>
+        /// <summary>
         /// 批量更新department
         /// </summary>
         /// <param name="dtos">department集合</param>
         /// <returns></returns>
-        public bool Update(List<DepartmentDto> dtos)
+        public async Task<Result<List<DepartmentDto>>> Update(List<DepartmentDto> dtos)
         {
             using (var db = GetDb())
             {
-			    var ds = GetDbSet(db);
-                var entities =  MapTo<List<DepartmentDto>, List<DepartmentEntity>>(dtos);
+                var result = new Result<List<DepartmentDto>>();
+                var ds = GetDbSet(db);
+                var entities = MapTo<List<DepartmentDto>, List<DepartmentEntity>>(dtos);
                 ds.UpdateRange(entities);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -75,14 +85,16 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public bool Delete(int id)
+        public async Task<Result<DepartmentDto>> Delete(int id)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
-                var entity =ds.FirstOrDefault(item => item.Id == id);
+                var result = new Result<DepartmentDto>();
+                var ds = GetDbSet(db);
+                var entity = ds.FirstOrDefault(item => item.Id == id);
                 ds.Remove(entity);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -90,17 +102,19 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public bool DeleteMulti(List<int> ids)
+        public async Task<Result<List<DepartmentDto>>> Delete(List<int> ids)
         {
             using (var db = GetDb())
             {
+                var result = new Result<List<DepartmentDto>>();
                 foreach (var id in ids)
                 {
-					var ds = GetDbSet(db);
-                    var entity =ds.FirstOrDefault(item => item.Id ==id);
+                    var ds = GetDbSet(db);
+                    var entity = await ds.FindAsync(id);
                     ds.Remove(entity);
                 }
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -108,14 +122,16 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">department实体</param>
         /// <returns></returns>
-        public bool Delete(DepartmentDto dto)
+        public async Task<Result<DepartmentDto>> Delete(DepartmentDto dto)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
+                var result = new Result<DepartmentDto>();
+                var ds = GetDbSet(db);
                 var entity = MapTo<DepartmentDto, DepartmentEntity>(dto);
                 ds.Remove(entity);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -123,27 +139,27 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public DepartmentDto GetById(int id)
+        public async Task<Result<DepartmentDto>> GetById(int id)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
-                var entity = ds.FirstOrDefault(item => item.Id == id);
-                if (entity != null)
-                    return MapTo<DepartmentEntity, DepartmentDto>(entity);
-                else
-                    return null;
+                var result = new Result<DepartmentDto>();
+                var ds = GetDbSet(db);
+                var entity = await ds.FindAsync(id);
+                result.data = MapTo<DepartmentEntity, DepartmentDto>(entity);
+                result.flag = true;
+                return result;
             }
         }
-	 /// <summary>
+        /// <summary>
         /// 获取department分页数据
         /// </summary>
         /// <param name="queryBase">基础查询对象</param>
         /// <param name="queryExp">queryExp</param>
-         /// <param name="orderBy">要排序的列名</param>
+        /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public ResultDto<DepartmentDto> GetPageData(QueryBase queryBase, Expression<Func<DepartmentDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<DepartmentDto>> GetPageData(QueryBase queryBase, Expression<Func<DepartmentDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -151,29 +167,29 @@ namespace lkWeb.Service.Abstracts
                 var result = new ResultDto<DepartmentDto>();
                 var where = queryExp.Cast<DepartmentDto, DepartmentEntity, bool>();
                 var isAsc = orderDir.ToLower() != "desc";
-                int recordsTotal;
                 //暂时没用到这个
                 Expression<Func<DepartmentDto, int>> orderExp = item => item.Id;
                 var _orderExp = orderExp.Cast<DepartmentDto, DepartmentEntity, int>();
-                var list = GetQuery(queryBase, ds, _orderExp, where, isAsc, out recordsTotal);
-                result.data = MapTo<List<DepartmentEntity>, List<DepartmentDto>>(list);
-                result.recordsTotal = recordsTotal;
+                var list = await GetQuery(queryBase, ds, _orderExp, where, isAsc);
+                result.data = MapTo<List<DepartmentEntity>, List<DepartmentDto>>(list.Item1);
+                result.recordsTotal = list.Item2;
                 result.pageIndex = queryBase.Start;
                 result.pageSize = queryBase.Length;
                 return result;
             }
         }
-		      /// <summary>
+        /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-       public ResultDto<DepartmentDto> GetList(Expression<Func<DepartmentDto, bool>> queryExp)
+        public async Task<ResultDto<DepartmentDto>> GetList(Expression<Func<DepartmentDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
                 var _queryExp = queryExp.Cast<DepartmentDto, DepartmentEntity, bool>();
-                var temp = db.Set<DepartmentEntity>().Where(_queryExp).OrderBy(item => item.Id).ToList();
+                var ds = GetDbSet(db);
+                var temp = await ds.Where(_queryExp).OrderBy(item => item.Id).ToListAsync();
                 var dtoData = MapTo<List<DepartmentEntity>, List<DepartmentDto>>(temp);
                 var result = new ResultDto<DepartmentDto>
                 {
@@ -185,21 +201,22 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
-		 /// <summary>
+        /// <summary>
         /// 根据条件删除department数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public bool Delete(Expression<Func<DepartmentDto,bool>> exp)
+        public async Task<Result<DepartmentDto>> Delete(Expression<Func<DepartmentDto, bool>> exp)
         {
             using (var db = GetDb())
             {
+                var result = new Result<DepartmentDto>();
                 var ds = GetDbSet(db);
                 var _exp = exp.Cast<DepartmentDto, DepartmentEntity, bool>();
-                var entities = ds.Where(_exp).ToList();
+                var entities = await ds.Where(_exp).ToListAsync();
                 ds.RemoveRange(entities);
-                return db.SaveChanges() > 0;
-
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
 	}

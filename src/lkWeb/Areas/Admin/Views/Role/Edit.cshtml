@@ -27,7 +27,7 @@
         }
     </script>
 }
-    <form class="form-horizontal" action="@Url.Action("Edit", "Role");" method="post" id="form-editRole">
+    <form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="form-editRole">
         @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
         @Html.HiddenFor(item => item.ConcurrencyStamp, new { @class = "form-control" })
         <div class="form-group">

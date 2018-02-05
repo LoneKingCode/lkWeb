@@ -10,6 +10,7 @@ using lkWeb.Service.Enum;
 using lkWeb.Core.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -30,19 +31,79 @@ namespace lkWeb.Service.Abstracts
             _signInManager = signInManager;
             _roleManage = roleManage;
         }
-        public Result<string> Logout()
+
+        /// <summary>
+        /// 登陆
+        /// </summary>
+        /// <param name="dto">user实体</param>
+        /// <returns></returns>
+        public async Task<Result<UserDto>> Login(UserDto dto)
+        {
+            var result = new Result<UserDto>();
+            var signedUser = await _userManager.FindByNameAsync(dto.UserName);
+            var signInResult = await _signInManager.PasswordSignInAsync(signedUser, dto.Password, false, false);
+            if (signInResult.Succeeded)
+            {
+                var signedUserDto = MapTo<UserEntity, UserDto>(signedUser);
+                if (signedUserDto.Status == UserStatus.未激活)
+                    result.msg = "登陆失败，账户未激活";
+                else if (signedUserDto.Status == UserStatus.禁用)
+                    result.msg = "登陆失败，账户已禁用";
+                else if (signedUserDto.Status == UserStatus.已激活)
+                    result.flag = true;
+                WebHelper.SetSession("CurrentUser", signedUserDto);
+            }
+            else
+            {
+                if (signInResult.IsNotAllowed)
+                    result.msg = "登陆失败,不被允许";
+                else if (signInResult.IsLockedOut)
+                    result.msg = "登陆失败，账户被锁";
+                else
+                    result.msg = "登陆失败,请检查输入的信息";
+            }
+            //记录登录日志
+            await _loginLogService.Add(new LoginLogDto
+            {
+                UserId = dto.Id,
+                UserName = dto.UserName,
+                ClientIP = WebHelper.GetClientIP(),
+                ClientMac = WebHelper.GetClientMac(),
+                Description = result.msg
+            });
+            return result;
+
+        }
+
+        public async Task<Result<UserDto>> Register(UserDto dto)
+        {
+            var result = new Result<UserDto>();
+            var user = MapTo<UserDto, UserEntity>(dto);
+            var regResult = await _userManager.CreateAsync(user, dto.Password);
+            if (regResult.Succeeded)
+                result.flag = true;
+            else
+            {
+                foreach (var err in regResult.Errors)
+                {
+                    result.msg += err.Description + "\n";
+                }
+            }
+            return result;
+        }
+        public async Task<Result<string>> Logout()
         {
             var result = new Result<string>();
-            _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             result.flag = true;
             result.msg = "注销成功";
             return result;
         }
-        public Result<UserDto> AddRoles(int userID, List<int> roleIds)
+        public async Task<Result<UserDto>> AddRoles(int userID, List<int> roleIds)
         {
             var result = new Result<UserDto>();
             List<string> roleNames = new List<string>();
-            var user = _userManager.FindByIdAsync(userID.ToString()).Result;
+            var user = await _userManager.FindByIdAsync(userID.ToString());
             if (user == null)
             {
                 result.msg = "用户不存在";
@@ -55,9 +116,10 @@ namespace lkWeb.Service.Abstracts
             }
             foreach (var roleId in roleIds)
             {
-                roleNames.Add(_roleManage.FindByIdAsync(roleId.ToString()).Result.Name);
+                var role = await _roleManage.FindByIdAsync(roleId.ToString());
+                roleNames.Add(role.Name);
             }
-            var _result = _userManager.AddToRolesAsync(user, roleNames).Result;
+            var _result = await _userManager.AddToRolesAsync(user, roleNames);
             if (_result.Succeeded)
             {
                 result.flag = true;
@@ -71,11 +133,11 @@ namespace lkWeb.Service.Abstracts
             }
             return result;
         }
-        public Result<UserDto> RemoveRoles(int userID, List<int> roleIds)
+        public async Task<Result<UserDto>> RemoveRoles(int userID, List<int> roleIds)
         {
             var result = new Result<UserDto>();
             List<string> roleNames = new List<string>();
-            var user = _userManager.FindByIdAsync(userID.ToString()).Result;
+            var user = await _userManager.FindByIdAsync(userID.ToString());
             if (user == null)
             {
                 result.msg = "用户不存在";
@@ -88,9 +150,10 @@ namespace lkWeb.Service.Abstracts
             }
             foreach (var roleId in roleIds)
             {
-                roleNames.Add(_roleManage.FindByIdAsync(roleId.ToString()).Result.Name);
+                var role = await _roleManage.FindByIdAsync(roleId.ToString());
+                roleNames.Add(role.Name);
             }
-            var _result = _userManager.RemoveFromRolesAsync(user, roleNames).Result;
+            var _result = await _userManager.RemoveFromRolesAsync(user, roleNames);
             if (_result.Succeeded)
             {
                 result.flag = true;
@@ -105,21 +168,21 @@ namespace lkWeb.Service.Abstracts
             return result;
         }
 
-        public Result<UserDto> _GetById(int id)
+        public async Task<Result<UserDto>> _GetById(int id)
         {
             var result = new Result<UserDto>();
             result.flag = true;
-            var entity = _userManager.FindByIdAsync(id.ToString()).Result;
+            var entity = await _userManager.FindByIdAsync(id.ToString());
             result.data = MapTo<UserEntity, UserDto>(entity);
             return result;
 
         }
 
-        public Result<UserDto> _Add(UserDto dto)
+        public async Task<Result<UserDto>> _Add(UserDto dto)
         {
             var result = new Result<UserDto>();
             var entity = MapTo<UserDto, UserEntity>(dto);
-            var _result = _userManager.CreateAsync(entity, dto.Password).Result;
+            var _result = await _userManager.CreateAsync(entity, dto.Password);
             if (_result.Succeeded)
                 result.flag = true;
             else
@@ -131,14 +194,14 @@ namespace lkWeb.Service.Abstracts
             }
             return result;
         }
-        public Result<UserDto> _Update(UserDto dto)
+        public async Task<Result<UserDto>> _Update(UserDto dto)
         {
             var result = new Result<UserDto>();
-            var entity = _userManager.FindByIdAsync(dto.Id.ToString()).Result;
-            _mapper.Map(dto, entity, typeof(UserDto), typeof(UserEntity));
+            var entity = await _userManager.FindByIdAsync(dto.Id.ToString());
+            Map(dto, entity, typeof(UserDto), typeof(UserEntity));
             if (dto.Password.IsNotEmpty())
                 entity.PasswordHash = _userManager.PasswordHasher.HashPassword(entity, dto.Password);
-            var _result = _userManager.UpdateAsync(entity).Result;
+            var _result = await _userManager.UpdateAsync(entity);
             if (_result.Succeeded)
                 result.flag = true;
             else
@@ -151,11 +214,11 @@ namespace lkWeb.Service.Abstracts
             return result;
 
         }
-        public Result<UserDto> _Delete(UserDto dto)
+        public async Task<Result<UserDto>> _Delete(UserDto dto)
         {
             var result = new Result<UserDto>();
             var entity = MapTo<UserDto, UserEntity>(dto);
-            var _result = _userManager.DeleteAsync(entity).Result;
+            var _result = await _userManager.DeleteAsync(entity);
             if (_result.Succeeded)
                 result.flag = true;
             else
@@ -167,10 +230,10 @@ namespace lkWeb.Service.Abstracts
             }
             return result;
         }
-        public Result<UserDto> _Delete(int id)
+        public async Task<Result<UserDto>> _Delete(int id)
         {
             var result = new Result<UserDto>();
-            var entity = _userManager.FindByIdAsync(id.ToString()).Result;
+            var entity = await _userManager.FindByIdAsync(id.ToString());
             var _result = _userManager.DeleteAsync(entity).Result;
             if (_result.Succeeded)
                 result.flag = true;
@@ -183,12 +246,12 @@ namespace lkWeb.Service.Abstracts
             }
             return result;
         }
-        public Result<UserDto> _DeleteMulti(List<int> ids)
+        public async Task<Result<UserDto>> _Delete(List<int> ids)
         {
             var result = new Result<UserDto>();
             foreach (var id in ids)
             {
-                var entity = _userManager.FindByIdAsync(id.ToString()).Result;
+                var entity = await _userManager.FindByIdAsync(id.ToString());
                 var _result = _userManager.DeleteAsync(entity).Result;
                 if (_result.Succeeded)
                     result.flag = true;
@@ -207,19 +270,21 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public List<MenuDto> GetUserMenu(int id)
+        public async Task<Result<List<MenuDto>>> GetUserMenu(int id)
         {
             using (var db = GetDb())
             {
-
-                var roleResult = GetUserRoles(id);
+                var result = new Result<List<MenuDto>>();
+                var roleResult = await GetUserRoles(id);
                 var roleIds = roleResult.data.Select(x => x.Id).ToList();
                 Expression<Func<RoleMenuEntity, bool>> exp = item => roleIds.Contains(item.RoleId);
-                var roleMenus = db.RoleMenus.Where(exp).ToList();
+                var roleMenus = await db.RoleMenus.Where(exp).ToListAsync();
                 var menuIds = roleMenus.Select(x => x.MenuId).ToList();
                 Expression<Func<MenuEntity, bool>> expMenu = item => menuIds.Contains(item.Id);
-                var menus = db.Menus.Where(expMenu).ToList();
-                return MapTo<List<MenuEntity>, List<MenuDto>>(menus);
+                var menus = await db.Menus.Where(expMenu).ToListAsync();
+                result.flag = true;
+                result.data = MapTo<List<MenuEntity>, List<MenuDto>>(menus);
+                return result;
             }
         }
         /// <summary>
@@ -227,14 +292,14 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public ResultDto<RoleDto> GetUserRoles(int id)
+        public async Task<ResultDto<RoleDto>> GetUserRoles(int id)
         {
             using (var db = GetDb())
             {
-                var userRoles = db.UserRoles.Where(x => x.UserId == id).ToList();
+                var userRoles = await db.UserRoles.Where(x => x.UserId == id).ToListAsync();
                 var roleIds = userRoles.Select(x => x.RoleId).ToList();
                 Expression<Func<RoleEntity, bool>> exp = item => roleIds.Contains(item.Id);
-                var roles = db.Roles.Where(exp).ToList();
+                var roles = await db.Roles.Where(exp).ToListAsync();
                 var result = new ResultDto<RoleDto>
                 {
                     recordsTotal = roles.Count,
@@ -245,114 +310,21 @@ namespace lkWeb.Service.Abstracts
         }
 
         /// <summary>
-        /// 登陆
-        /// </summary>
-        /// <param name="dto">user实体</param>
-        /// <returns></returns>
-        public Result<UserDto> Login(UserDto dto)
-        {
-            var result = new Result<UserDto>();
-            var signedUser = _userManager.FindByNameAsync(dto.UserName).Result;
-
-            var signInResult = _signInManager.PasswordSignInAsync(signedUser, dto.Password, false, false).Result;
-            if (signInResult.Succeeded)
-            {
-                //记录登录日志
-                _loginLogService.Add(new LoginLogDto
-                {
-                    UserId = dto.Id,
-                    UserName = dto.UserName,
-                    ClientIP = WebHelper.GetClientIP(),
-                    ClientMac = WebHelper.GetClientMac()
-                });
-                result.flag = true;
-            }
-            else
-            {
-                //  if(signInResult.IsNotAllowed)
-                result.msg = "登陆失败";
-            }
-            return result;
-            //using (var db = GetDb())
-            //{
-            //    var result = new Result<UserDto>();
-            //    var userEntity = db.Users.Where(x => x.UserName == dto.UserName).FirstOrDefault();
-            //    if (userEntity == null)
-            //    {
-            //        result.msg = " 用户名不存在";
-            //    }
-            //    else
-            //    {
-            //        var user = MapTo<UserEntity, UserDto>(userEntity);
-            //        var loginLogDto =
-            //        //记录登录日志
-            //        _loginLogService.Add(new LoginLogDto
-            //        {
-            //            UserId = user.Id,
-            //            UserName = user.UserName,
-            //            ClientIP = WebHelper.GetClientIP(),
-            //            ClientMac = WebHelper.GetClientMac()
-            //        });
-            //        if (user.Password != dto.Password)
-            //        {
-            //            result.msg = " 密码错误";
-            //        }
-            //        else if (user.IsDeleted)
-            //        {
-            //            result.msg = " 账户已删除";
-            //        }
-            //        else if (user.Status == UserStatus.未激活)
-            //        {
-            //            result.msg = "账户未激活";
-            //        }
-            //        else if (user.Status == UserStatus.禁用)
-            //        {
-            //            result.msg = "账户已禁用";
-            //        }
-            //        else
-            //        {
-            //            result.flag = true;
-            //            result.msg = "登录成功";
-            //            result.data = user;
-            //            //...保存cookie等等 表单验证加密
-            //        }
-            //    }
-            //    return result;
-            //}
-        }
-
-        public Result<UserDto> Register(UserDto dto)
-        {
-            var result = new Result<UserDto>();
-            var user = MapTo<UserDto, UserEntity>(dto);
-            var regResult = _userManager.CreateAsync(user, dto.Password).Result;
-            if (regResult.Succeeded)
-                result.flag = true;
-            else
-            {
-                foreach (var err in regResult.Errors)
-                {
-                    result.msg += err.Description + "\n";
-                }
-            }
-            return result;
-        }
-        /// <summary>
         /// 获取不是用户所属的角色数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public ResultDto<RoleDto> GetNotUserRoles(int userID)
+        public async Task<ResultDto<RoleDto>> GetNotUserRoles(int userID)
         {
             using (var db = GetDb())
             {
-                var roles = db.Roles.ToList();
+                var roles = await db.Roles.ToListAsync();
                 var roleIds = roles.Select(x => x.Id).ToList();
-                var userRoles = db.UserRoles.Where(x => x.UserId == userID).ToList();
+                var userRoles = await db.UserRoles.Where(x => x.UserId == userID).ToListAsync();
                 var userRoleIds = userRoles.Select(x => x.RoleId).ToList();
 
                 Expression<Func<RoleEntity, bool>> exp = item => !userRoleIds.Contains(item.Id);
-                var notRoles = db.Roles.Where(exp).ToList();
+                var notRoles = await db.Roles.Where(exp).ToListAsync();
                 var result = new ResultDto<RoleDto>
                 {
                     recordsTotal = notRoles.Count,

@@ -129,6 +129,7 @@
                           data: { dto:data},
                           async: false,
                           success: function (data) {
+                              console.log(data)
                               if (data.flag == true)
                               {
                                   parent.layer.alert("操作成功");

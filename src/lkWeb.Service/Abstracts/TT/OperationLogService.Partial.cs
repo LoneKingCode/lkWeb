@@ -7,24 +7,28 @@ using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
 using lkWeb.Core.Extensions;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace lkWeb.Service.Abstracts
 {
     public partial class OperationLogService : ServiceBase<OperationLogEntity>, IOperationLogService
     {
-		/// <summary>
+		    /// <summary>
         ///添加operationlog
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        public bool Add(OperationLogDto dto)
+        public async Task<Result<OperationLogDto>> Add(OperationLogDto dto)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
+                var result = new Result<OperationLogDto>();
+                var ds = GetDbSet(db);
                 var entity = MapTo<OperationLogDto, OperationLogEntity>(dto);
-                ds.Add(entity);
-                return db.SaveChanges() > 0;
+                await ds.AddAsync(entity);
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -32,42 +36,48 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">operationlog集合</param>
         /// <returns></returns>
-        public bool Add(List<OperationLogDto> dtos)
+        public async Task<Result<List<OperationLogDto>>> Add(List<OperationLogDto> dtos)
         {
             using (var db = GetDb())
             {
-			    var ds = GetDbSet(db);
-                var entities =  MapTo<List<OperationLogDto>, List<OperationLogEntity>>(dtos);
+                var result = new Result<List<OperationLogDto>>();
+                var ds = GetDbSet(db);
+                var entities = MapTo<List<OperationLogDto>, List<OperationLogEntity>>(dtos);
                 ds.AddRange(entities);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
-		   /// <summary>
+        /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        public bool Update(OperationLogDto dto)
+        public async Task<Result<OperationLogDto>> Update(OperationLogDto dto)
         {
             using (var db = GetDb())
             {
+                var result = new Result<OperationLogDto>();
                 db.Update(MapTo<OperationLogDto, OperationLogEntity>(dto));
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
-		   /// <summary>
+        /// <summary>
         /// 批量更新operationlog
         /// </summary>
         /// <param name="dtos">operationlog集合</param>
         /// <returns></returns>
-        public bool Update(List<OperationLogDto> dtos)
+        public async Task<Result<List<OperationLogDto>>> Update(List<OperationLogDto> dtos)
         {
             using (var db = GetDb())
             {
-			    var ds = GetDbSet(db);
-                var entities =  MapTo<List<OperationLogDto>, List<OperationLogEntity>>(dtos);
+                var result = new Result<List<OperationLogDto>>();
+                var ds = GetDbSet(db);
+                var entities = MapTo<List<OperationLogDto>, List<OperationLogEntity>>(dtos);
                 ds.UpdateRange(entities);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -75,14 +85,16 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public bool Delete(int id)
+        public async Task<Result<OperationLogDto>> Delete(int id)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
-                var entity =ds.FirstOrDefault(item => item.Id == id);
+                var result = new Result<OperationLogDto>();
+                var ds = GetDbSet(db);
+                var entity = ds.FirstOrDefault(item => item.Id == id);
                 ds.Remove(entity);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -90,17 +102,19 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public bool DeleteMulti(List<int> ids)
+        public async Task<Result<List<OperationLogDto>>> Delete(List<int> ids)
         {
             using (var db = GetDb())
             {
+                var result = new Result<List<OperationLogDto>>();
                 foreach (var id in ids)
                 {
-					var ds = GetDbSet(db);
-                    var entity =ds.FirstOrDefault(item => item.Id ==id);
+                    var ds = GetDbSet(db);
+                    var entity = await ds.FindAsync(id);
                     ds.Remove(entity);
                 }
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -108,14 +122,16 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        public bool Delete(OperationLogDto dto)
+        public async Task<Result<OperationLogDto>> Delete(OperationLogDto dto)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
+                var result = new Result<OperationLogDto>();
+                var ds = GetDbSet(db);
                 var entity = MapTo<OperationLogDto, OperationLogEntity>(dto);
                 ds.Remove(entity);
-                return db.SaveChanges() > 0;
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
         /// <summary>
@@ -123,27 +139,27 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public OperationLogDto GetById(int id)
+        public async Task<Result<OperationLogDto>> GetById(int id)
         {
             using (var db = GetDb())
             {
-				var ds = GetDbSet(db);
-                var entity = ds.FirstOrDefault(item => item.Id == id);
-                if (entity != null)
-                    return MapTo<OperationLogEntity, OperationLogDto>(entity);
-                else
-                    return null;
+                var result = new Result<OperationLogDto>();
+                var ds = GetDbSet(db);
+                var entity = await ds.FindAsync(id);
+                result.data = MapTo<OperationLogEntity, OperationLogDto>(entity);
+                result.flag = true;
+                return result;
             }
         }
-	 /// <summary>
+        /// <summary>
         /// 获取operationlog分页数据
         /// </summary>
         /// <param name="queryBase">基础查询对象</param>
         /// <param name="queryExp">queryExp</param>
-         /// <param name="orderBy">要排序的列名</param>
+        /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public ResultDto<OperationLogDto> GetPageData(QueryBase queryBase, Expression<Func<OperationLogDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<OperationLogDto>> GetPageData(QueryBase queryBase, Expression<Func<OperationLogDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -151,29 +167,29 @@ namespace lkWeb.Service.Abstracts
                 var result = new ResultDto<OperationLogDto>();
                 var where = queryExp.Cast<OperationLogDto, OperationLogEntity, bool>();
                 var isAsc = orderDir.ToLower() != "desc";
-                int recordsTotal;
                 //暂时没用到这个
                 Expression<Func<OperationLogDto, int>> orderExp = item => item.Id;
                 var _orderExp = orderExp.Cast<OperationLogDto, OperationLogEntity, int>();
-                var list = GetQuery(queryBase, ds, _orderExp, where, isAsc, out recordsTotal);
-                result.data = MapTo<List<OperationLogEntity>, List<OperationLogDto>>(list);
-                result.recordsTotal = recordsTotal;
+                var list = await GetQuery(queryBase, ds, _orderExp, where, isAsc);
+                result.data = MapTo<List<OperationLogEntity>, List<OperationLogDto>>(list.Item1);
+                result.recordsTotal = list.Item2;
                 result.pageIndex = queryBase.Start;
                 result.pageSize = queryBase.Length;
                 return result;
             }
         }
-		      /// <summary>
+        /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-       public ResultDto<OperationLogDto> GetList(Expression<Func<OperationLogDto, bool>> queryExp)
+        public async Task<ResultDto<OperationLogDto>> GetList(Expression<Func<OperationLogDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
                 var _queryExp = queryExp.Cast<OperationLogDto, OperationLogEntity, bool>();
-                var temp = db.Set<OperationLogEntity>().Where(_queryExp).OrderBy(item => item.Id).ToList();
+                var ds = GetDbSet(db);
+                var temp = await ds.Where(_queryExp).OrderBy(item => item.Id).ToListAsync();
                 var dtoData = MapTo<List<OperationLogEntity>, List<OperationLogDto>>(temp);
                 var result = new ResultDto<OperationLogDto>
                 {
@@ -185,21 +201,22 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
-		 /// <summary>
+        /// <summary>
         /// 根据条件删除operationlog数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public bool Delete(Expression<Func<OperationLogDto,bool>> exp)
+        public async Task<Result<OperationLogDto>> Delete(Expression<Func<OperationLogDto, bool>> exp)
         {
             using (var db = GetDb())
             {
+                var result = new Result<OperationLogDto>();
                 var ds = GetDbSet(db);
                 var _exp = exp.Cast<OperationLogDto, OperationLogEntity, bool>();
-                var entities = ds.Where(_exp).ToList();
+                var entities = await ds.Where(_exp).ToListAsync();
                 ds.RemoveRange(entities);
-                return db.SaveChanges() > 0;
-
+                result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
         }
 	}

@@ -53,10 +53,10 @@
         }
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Add", "Menu")" method="post" id="form-addMenu">
+<form class="form-horizontal" action="@Url.Action("Add"))" method="post" id="form-addMenu">
     <div class="form-group">
         <label class="col-md-3 control-label">上级菜单</label>
-        <div class=" col-md-7">
+        <div class="col-md-7">
             <div class="input-group">
                 <input name="ParentID" type="hidden" id="txtParentID" value="@ViewBag.ParentID" />
                 <input class="form-control" type="text" autocomplete="off" id="menuList" value="@ViewBag.ParentName"/>

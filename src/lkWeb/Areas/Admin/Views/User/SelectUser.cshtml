@@ -35,6 +35,10 @@
         }
           function Submit() {
               var ids = lkWeb.GetCheckValueList($(".checkChild"));
+              if (ids.length < 1) {
+                  parent.layer.alert("请选择");
+                  return; 
+              }
               var dto = {};
               dto.DepartmentID = departmentID;
               dto.UserIDs = ids;

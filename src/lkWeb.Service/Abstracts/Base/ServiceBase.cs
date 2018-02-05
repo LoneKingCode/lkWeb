@@ -56,7 +56,10 @@ namespace lkWeb.Service.Abstracts
             if (source == null) throw new ArgumentNullException();
             return _mapper.Map<TSource, TDestination>(source);
         }
-
+        public object Map(object source, object destination,Type sourceType,Type destinationType)
+        {
+            return _mapper.Map(source, destination, sourceType, destinationType);
+        }
         /// <summary>
         /// 获取查询结果
         /// </summary>
@@ -66,23 +69,23 @@ namespace lkWeb.Service.Abstracts
         /// <param name="queryExp">queryExp</param>
         /// <param name="isAsc">是否升序</param>
         /// <returns></returns>
-        public List<T> GetQuery<Tkey>(QueryBase queryBase, DbSet<T> ds, Expression<Func<T, Tkey>> orderExp, Expression<Func<T, bool>> queryExp, bool isAsc, out int totalRecords)
+        public async Task<Tuple<List<T>, int>> GetQuery<Tkey>(QueryBase queryBase, DbSet<T> ds, Expression<Func<T, Tkey>> orderExp, Expression<Func<T, bool>> queryExp, bool isAsc)
         {
-             if (isAsc)
+            if (isAsc)
             {
                 var query = ds.Where(queryExp).OrderBy(orderExp);
-                totalRecords = query.Count();
-                var list = query.Skip(queryBase.Start)
-                   .Take(queryBase.Length).ToList();
-                return list;
+                int totalRecords = query.Count();
+                var list = await query.Skip(queryBase.Start)
+                   .Take(queryBase.Length).ToListAsync();
+                return Tuple.Create(list, totalRecords);
             }
             else
             {
                 var query = ds.Where(queryExp).OrderByDescending(orderExp);
-                totalRecords = query.Count();
-                var list = query.Skip(queryBase.Start)
-                 .Take(queryBase.Length).ToList();
-                return list;
+                int totalRecords = query.Count();
+                var list = await query.Skip(queryBase.Start)
+                 .Take(queryBase.Length).ToListAsync();
+                return Tuple.Create(list, totalRecords);
             }
         }
 
