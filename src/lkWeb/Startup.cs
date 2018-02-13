@@ -29,6 +29,7 @@ using lkWeb.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using lkWeb.Core.Extensions;
 
 namespace lkWeb
 {
@@ -136,7 +137,11 @@ namespace lkWeb
             app.UseSession();
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+
             loggerFactory.AddDebug();
+
+            //异常处理中间件
+           // app.UseMiddleware(typeof(ExceptionHandlerMiddleWare));
 
             if (env.IsDevelopment())
             {
@@ -145,7 +150,7 @@ namespace lkWeb
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Admin/Control/Error");
             }
 
             app.UseStaticFiles();

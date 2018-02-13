@@ -1,4 +1,5 @@
 model验证 form验证 [ValidateAntiForgeryToken]
+登陆页面的注册没加validate
 
 !!! Expression  item=> item.id >= 0 。。。。真TM
 

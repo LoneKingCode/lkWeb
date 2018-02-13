@@ -10,10 +10,13 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
     var pos = curWwwPath.indexOf(pathName);
     //获取主机地址，如： http://localhost:8083
     var localhostPath = curWwwPath.substring(0, pos);
-    var url = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
-    if (isOpen == true)
-    {
-        lkWeb.LayerIndex= layer.open({
+    var url = "";
+    if (NotIsEmpty(values))
+        url = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
+    else
+        url = localhostPath + "/admin/" + ctrl + "/" + action;
+    if (isOpen == true) {
+        lkWeb.LayerIndex = layer.open({
             type: 2,
             title: title,
             shadeClose: true,
@@ -22,7 +25,7 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
             content: url
         });
     }
-     else
+    else
         window.location.href = url;
 }
 
@@ -55,7 +58,7 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                             window.location.reload();
                     }
                     else {
-                        if (result.msg.notIsEmpty())
+                        if (NotIsEmpty(result.msg))
                             parent.layer.alert(result.msg);
                         else
                             parent.layer.alert("删除失败");
@@ -97,7 +100,7 @@ lkWeb.Delete = function (id, model, table) {
                                 window.location.reload();
                         }
                         else {
-                            if (result.msg.notIsEmpty())
+                            if (NotIsEmpty(result.msg))
                                 parent.layer.alert(result.msg);
                             else
                                 parent.layer.alert("删除失败");
@@ -112,6 +115,40 @@ lkWeb.Delete = function (id, model, table) {
 
         }
     )
+}
+
+//form validation
+lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
+    var option = {
+        datatype: "json",
+        success: function (data) {
+            if (data.flag == true) {
+                if (NotIsEmpty(successMsg)) {
+                    layer.alert(successMsg);
+                    setTimeout(function () {
+                        if (IsFunction(successCallBack))
+                            successCallBack();
+                    }, 1200)
+                }
+                else {
+                    if (IsFunction(successCallBack))
+                        successCallBack();
+                }
+            }
+            else {
+                layer.alert(data.msg);
+            }
+        },
+        error: function (error) {
+            layer.alert("提交请求失败");
+            // console.log(error);
+        }
+    };
+    // jQuery Unobtrusive Validation 只能这样设置才有效
+    validationForm.data("validator").settings.submitHandler = function (form) {
+        $(form).ajaxSubmit(option);
+        return false;
+    };
 }
 
 //Layer
@@ -192,27 +229,6 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
     return table;
 }
 
-$.fn.dataTableExt.sErrMode = 'throw';
-//add this plug in
-//you can call the below function to reload the table with current state
-//Datatables刷新方法
-//oTable.fnReloadAjax(oTable.fnSettings());
-$.fn.dataTableExt.oApi.fnReloadAjax = function (oSettings) {
-    //oSettings.sAjaxSource = sNewSource;
-    this.fnClearTable(this);
-    this.oApi._fnProcessingDisplay(oSettings, true);
-    var that = this;
-
-    $.getJSON(oSettings.sAjaxSource, null, function (json) {
-        /* Got the data - add it to the table */
-        for (var i = 0; i < json.aaData.length; i++) {
-            that.oApi._fnAddData(oSettings, json.aaData[i]);
-        }
-        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
-        that.fnDraw(that);
-        that.oApi._fnProcessingDisplay(oSettings, false);
-    });
-}
 
 //获取checkbox集合选中的 第一个的value值
 lkWeb.GetCheckValue = function (chkList) {
@@ -267,10 +283,13 @@ String.prototype.format = function (args) {
     return result;
 }
 
-String.prototype.isEmpty = function () {
-    return !this.notIsEmpty();
+function IsEmpty(value) {
+    return !NotIsEmpty(value);
 }
 
-String.prototype.notIsEmpty = function () {
-    return this != "" && this != null && this != undefined;
+function NotIsEmpty(value) {
+    return value != "" && value != null && value != undefined;
+}
+function IsFunction(func) {
+    return typeof func == "function";
 }

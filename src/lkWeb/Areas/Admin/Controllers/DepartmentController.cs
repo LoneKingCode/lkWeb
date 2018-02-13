@@ -99,7 +99,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(DepartmentDto dto)
         {
-             var result = await _departmentService.Add(dto);
+            var result = await _departmentService.Add(dto);
             return Json(result);
         }
         [HttpPost]

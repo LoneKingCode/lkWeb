@@ -7,6 +7,7 @@ using lkWeb.Service.Abstracts;
 using lkWeb.Service;
 using Microsoft.AspNetCore.Authorization;
 using lkWeb.Core.Extensions;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -38,6 +39,12 @@ namespace lkWeb.Areas.Admin.Controllers
         public IActionResult AccessDenied(string returnUrl)
         {
             return View();
+        }
+        public IActionResult Error()
+        {
+            var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
+            var error = feature?.Error;
+            return View("~/Areas/Views/Shared/Error.cshtml", error);
         }
         #endregion
     }

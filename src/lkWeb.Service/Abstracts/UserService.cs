@@ -41,26 +41,38 @@ namespace lkWeb.Service.Abstracts
         {
             var result = new Result<UserDto>();
             var signedUser = await _userManager.FindByNameAsync(dto.UserName);
-            var signInResult = await _signInManager.PasswordSignInAsync(signedUser, dto.Password, false, false);
-            if (signInResult.Succeeded)
+            if (signedUser != null)
             {
-                var signedUserDto = MapTo<UserEntity, UserDto>(signedUser);
-                if (signedUserDto.Status == UserStatus.未激活)
-                    result.msg = "登陆失败，账户未激活";
-                else if (signedUserDto.Status == UserStatus.禁用)
-                    result.msg = "登陆失败，账户已禁用";
-                else if (signedUserDto.Status == UserStatus.已激活)
-                    result.flag = true;
-                WebHelper.SetSession("CurrentUser", signedUserDto);
+                var signInResult = await _signInManager.PasswordSignInAsync(signedUser, dto.Password, false, false);
+                if (signInResult.Succeeded)
+                {
+                    var signedUserDto = MapTo<UserEntity, UserDto>(signedUser);
+                    if (signedUserDto.Status == UserStatus.未激活)
+                        result.msg = "登陆失败，账户未激活";
+                    else if (signedUserDto.Status == UserStatus.禁用)
+                        result.msg = "登陆失败，账户已禁用";
+                    else if (signedUserDto.Status == UserStatus.已激活)
+                    {
+                        result.flag = true;
+                        WebHelper.SetSession("CurrentUser", signedUserDto);
+                    }
+                    else
+                        result.msg = "登陆失败，账户状态未知";
+                }
+                else
+                {
+                    if (signInResult.IsNotAllowed)
+                        result.msg = "登陆失败,不被允许";
+                    else if (signInResult.IsLockedOut)
+                        result.msg = "登陆失败，账户被锁";
+                    else
+                        result.msg = "登陆失败,请检查输入的信息";
+                }
             }
             else
             {
-                if (signInResult.IsNotAllowed)
-                    result.msg = "登陆失败,不被允许";
-                else if (signInResult.IsLockedOut)
-                    result.msg = "登陆失败，账户被锁";
-                else
-                    result.msg = "登陆失败,请检查输入的信息";
+                result.flag = false;
+                result.msg = "登陆失败,用户不存在";
             }
             //记录登录日志
             await _loginLogService.Add(new LoginLogDto
