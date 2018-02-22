@@ -9,11 +9,15 @@ using System.Linq;
 using lkWeb.Core.Extensions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
+using AutoMapper;
 namespace lkWeb.Service.Abstracts
 {
     public partial class LoginLogService : ServiceBase<LoginLogEntity>, ILoginLogService
     {
+		public LoginLogService(IMapper mapper):base(mapper)
+		{
+
+		}
 		    /// <summary>
         ///添加loginlog
         /// </summary>

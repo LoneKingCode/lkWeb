@@ -1,25 +1,5 @@
-model验证 form验证 [ValidateAntiForgeryToken]
-登陆页面的注册没加validate
-
 !!! Expression  item=> item.id >= 0 。。。。真TM
 
 权限管理 && 菜单管理 菜单现在是写死的 改成从数据库读取该角色菜单，获取菜单记得按order排序。。。
 
-mapper serviceBase  startUP已经AddSingleton了 servicebase用构造函数接收，servicebase的子类的构造函数也要接收然后base(mapper)
-
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name
-
-Depertment 页面  ，每次载入部门下用户时 都要执行下LoadDataTable 虽然没什么效果，但是如果放window.onload里初始化不知道为何就不行了 有空再说
-   function onNodeClick( treeId, treeNode, clickFlag) {
-            departmentID = treeNode.id;
-            LoadDataTable();
-            table_user.draw();
-        }
-
-
-调整lkWeb.js 封装下ajax 为DoPost DoGet，等
-lkWeb = {
-	GoAction:function(){},
-	......
-}
-

@@ -90,19 +90,24 @@ namespace lkWeb.Areas.Admin.Controllers
             };
             return Json(data);
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(DepartmentDto dto)
         {
             var result = await _departmentService.Update(dto);
             return Json(result);
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(DepartmentDto dto)
         {
             var result = await _departmentService.Add(dto);
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var result = new Result<DepartmentDto>();
@@ -121,6 +126,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMulti(List<int> ids)
         {
             var result = new Result<List<DepartmentDto>>();

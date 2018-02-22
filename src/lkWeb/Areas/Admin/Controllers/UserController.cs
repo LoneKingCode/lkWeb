@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
+    [Authorize]
     public class UserController : AdminBaseController
     {
         public readonly IUserService _userService;
@@ -90,12 +91,15 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserDto dto)
         {
             var result = await _userService.Login(dto);
             return Json(result);
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(UserDto dto)
         {
             var result = await _userService.Register(dto);
@@ -164,29 +168,34 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserDto user)
         {
             var result = await _userService._Update(user);
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UserDto user)
         {
             var result = await _userService._Add(user);
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult ForgetPwd(UserDto user)
         {
             return View();
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int Id)
         {
             var result = await _userService._Delete(Id);
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMulti(List<int> ids)
         {
             var result = await _userService._Delete(ids);

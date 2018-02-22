@@ -47,6 +47,7 @@
             <div class="well col-md-6 col-centered">
                 <h2>欢迎登录</h2>
                 <form action="@Url.Action("Login")" method="post" role="form" id="loginForm">
+                    @Html.AntiForgeryToken()
                     <div class="form-group">
                         <div class="input-group input-group-md">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user" aria-hidden="true"></i></span>
@@ -76,6 +77,7 @@
                 </form>
                 <div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <form action="@Url.Action("Register")" method="post" role="form" id="registerForm">
+                        @Html.AntiForgeryToken()
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -113,6 +115,7 @@
 
                 <div class="modal fade" id="forgetPwd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <form action="@Url.Action("ForgetPwd")" method="post" role="form" id="forgetPwdForm">
+                        @Html.AntiForgeryToken()
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">

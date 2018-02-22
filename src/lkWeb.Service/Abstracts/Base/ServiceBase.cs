@@ -18,13 +18,9 @@ namespace lkWeb.Service.Abstracts
         static string connectionString = "Password=hacker5402;Persist Security Info=True;User ID=sa;Initial Catalog=lkWeb;Data Source=.";
         static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
         static DbContextOptionsBuilder<lkWebContext> dbContextOptionBuilder = new DbContextOptionsBuilder<lkWebContext>(dbContextOption);
-        public ServiceBase()
+        public ServiceBase(IMapper mapper)
         {
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new AutoMapperConfiguration());
-            });
-            _mapper = mapperConfiguration.CreateMapper();
+            _mapper = mapper;
         }
         /// <summary>
         /// 获取db

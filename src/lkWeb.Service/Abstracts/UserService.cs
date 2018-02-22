@@ -24,7 +24,8 @@ namespace lkWeb.Service.Abstracts
         public UserService(ILoginLogService loginLogService,
             UserManager<UserEntity> userManager,
             SignInManager<UserEntity> signInManager,
-            RoleManager<RoleEntity> roleManage)
+            RoleManager<RoleEntity> roleManage,
+            IMapper mapper) : base(mapper)
         {
             _loginLogService = loginLogService;
             _userManager = userManager;

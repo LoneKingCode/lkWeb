@@ -14,6 +14,7 @@
     </script>
 }
 <form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="form-department">
+    @Html.AntiForgeryToken()
     @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
     <div class="form-group">
         <input type="hidden" asp-for="ParentID" />

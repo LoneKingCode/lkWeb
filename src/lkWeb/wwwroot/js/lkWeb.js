@@ -47,7 +47,8 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                 type: 'post',
                 url: '/Admin/' + model + '/DeleteMulti',
                 data: {
-                    ids: ids
+                    ids: ids,
+                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
                 },
                 success: function (result) {
                     if (result.flag == true) {
@@ -88,7 +89,8 @@ lkWeb.Delete = function (id, model, table) {
                     type: 'post',
                     url: '/Admin/' + model + '/Delete',
                     data: {
-                        Id: id
+                        Id: id,
+                        __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
                     },
                     success: function (result) {
                         console.log("ajax success")
@@ -170,7 +172,7 @@ lkWeb.Search = function (searchKey, table) {
 }
 var _searchKey = "";
 var _value = "";
-//控件ID，列集合，获取数据的URL，补充的值给后台(QueryBase)用
+//tableID:控件ID，columns:列集合，dataUrl:获取数据的URL，value:补充的值给后台(QueryBase)用
 lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
     _value = value;
     var config = {

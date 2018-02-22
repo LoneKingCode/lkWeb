@@ -50,6 +50,7 @@ namespace lkWeb.Areas.Admin.Controllers
         #endregion
 
         #region Ajax
+
         [HttpGet]
         public async Task<IActionResult> GetList(string searchKey)
         {
@@ -63,6 +64,7 @@ namespace lkWeb.Areas.Admin.Controllers
             };
             return Json(strData);
         }
+
         [HttpGet]
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
@@ -94,6 +96,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(MenuDto menu)
         {
             var result = await _menuService.Update(menu);
@@ -101,11 +104,9 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(MenuDto menu)
         {
-            //因为form表单用的url.action方法会带上当前Url的参数 比如/admin/menu/add/2
-            //因为地址传参， 默认都是id正好和dto里的id冲突 就赋值给dto里的id了
-            menu.Id = 0;
             if (menu.ParentId > 0)
             {
                 var parentMenu = (await _menuService.GetById(menu.ParentId)).data;
@@ -130,12 +131,14 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _menuService.Delete(id);
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMulti(List<int> ids)
         {
             var result = await _menuService.Delete(ids);

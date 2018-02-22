@@ -77,12 +77,14 @@ namespace lkWeb.Areas.Admin.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(RoleDto role)
         {
             var result = await _roleService._Update(role);
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(RoleDto role)
         {
             var result = await _roleService._Add(role);
@@ -90,6 +92,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _roleService._Delete(id);
@@ -97,6 +100,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMulti(List<int> ids)
         {
             var result = await _roleService._Delete(ids);

@@ -1,4 +1,5 @@
-﻿using lkWeb.Entity;
+﻿using AutoMapper;
+using lkWeb.Entity;
 using lkWeb.Service.Dto;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -11,7 +12,7 @@ namespace lkWeb.Service.Abstracts
     public partial class RoleService : ServiceBase<RoleEntity>, IRoleService
     {
         public readonly RoleManager<RoleEntity> _roleManager;
-        public RoleService(RoleManager<RoleEntity> roleManager)
+        public RoleService(RoleManager<RoleEntity> roleManager, IMapper mapper) : base(mapper)
         {
             _roleManager = roleManager;
         }
