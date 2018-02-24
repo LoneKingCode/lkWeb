@@ -18,6 +18,11 @@ namespace lkWeb.Entity
         public int ParentId { get; set; }
 
         /// <summary>
+        /// 所属模块ID
+        /// </summary>
+        public int ModuleId { get; set; }
+
+        /// <summary>
         /// 类型
         /// </summary>
         public byte Type { get; set; }
@@ -35,6 +40,6 @@ namespace lkWeb.Entity
         /// <summary>
         /// 排序越大越靠后
         /// </summary>
-        public int Order { get; set; }
+        public int ListOrder { get; set; }
     }
 }

@@ -11,9 +11,10 @@ using System;
 namespace lkWeb.Data.Migrations
 {
     [DbContext(typeof(lkWebContext))]
-    partial class lkWebContextModelSnapshot : ModelSnapshot
+    [Migration("20180224122052_addModule")]
+    partial class addModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,13 +81,13 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<DateTime>("CreateDateTime");
 
-                    b.Property<int>("ListOrder");
-
                     b.Property<int>("ModuleId");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(18)");
+
+                    b.Property<int>("Order");
 
                     b.Property<int>("ParentId");
 
@@ -99,26 +100,6 @@ namespace lkWeb.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Sys_Menu");
-                });
-
-            modelBuilder.Entity("lkWeb.Entity.ModuleEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreateDateTime");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("varchar(30)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(18)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sys_Module");
                 });
 
             modelBuilder.Entity("lkWeb.Entity.OperationLogEntity", b =>

@@ -39,9 +39,11 @@ namespace lkWeb.Service
             CreateMap<RoleMenuDto, RoleMenuEntity>();
             CreateMap<UserDepartmentEntity, UserDepartmentDto>();
             CreateMap<UserDepartmentDto, UserDepartmentEntity>();
+            CreateMap<ModuleEntity, ModuleDto>();
+            CreateMap<ModuleDto, ModuleEntity>();
             //CreateMap<UserEntity, UserDto>();
             //CreateMap<UserDto, UserEntity>();
-          
+
         }
     }
 }

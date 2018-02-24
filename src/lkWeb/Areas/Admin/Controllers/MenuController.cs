@@ -8,6 +8,7 @@ using lkWeb.Service.Dto;
 using System.Linq.Expressions;
 using lkWeb.Core.Extensions;
 using lkWeb.Areas.Admin.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,9 +17,11 @@ namespace lkWeb.Areas.Admin.Controllers
     public class MenuController : AdminBaseController
     {
         public readonly IMenuService _menuService;
-        public MenuController(IMenuService roleService)
+        public readonly IModuleService _moduleService;
+        public MenuController(IMenuService menuService, IModuleService moduleService)
         {
-            _menuService = roleService;
+            _menuService = menuService;
+            _moduleService = moduleService;
         }
 
         #region Page
@@ -34,8 +37,11 @@ namespace lkWeb.Areas.Admin.Controllers
                 var menu = (await _menuService.GetById(id)).data;
                 ViewBag.ParentID = menu.Id;
                 ViewBag.ParentName = menu.Name;
-
             }
+            var result = await _moduleService.GetList(item => item.Id >= 0);
+            ViewBag.Modules = new SelectList(result.data, "Id", "Name");
+            if (result.data.Count > 0)
+                ViewBag.ModuleID = result.data.First().Id;
             return View();
         }
         public async Task<IActionResult> Edit(int id)
@@ -45,6 +51,9 @@ namespace lkWeb.Areas.Admin.Controllers
                 ViewBag.ParentName = (await _menuService.GetById(menu.ParentId)).data.Name;
             else
                 ViewBag.ParentName = "无";
+            var result = await _moduleService.GetList(item => item.Id >= 0);
+            ViewBag.Modules = new SelectList(result.data, "Id", "Name", menu.ModuleID);
+            ViewBag.ModuleID = menu.ModuleID;
             return View(menu);
         }
         #endregion
@@ -74,6 +83,8 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _menuService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var allMenu = (await _menuService.GetList(item => item.Id >= 0))
                             .data.ToDictionary(item => item.Id, item => item.Name);
+            var allModule = (await _moduleService.GetList(item => item.Id >= 0))
+                            .data.ToDictionary(item => item.Id, item => item.Name);
             var data = new DataTableDto
             {
                 draw = queryBase.Draw,
@@ -83,13 +94,15 @@ namespace lkWeb.Areas.Admin.Controllers
                 {
                     rowNum = ++queryBase.Start,
                     name = d.Name,
+                    moduleID = d.ModuleID,
+                    moduleName = allModule.ContainsKey(d.ModuleID) ? allModule[d.ModuleID] : "无",
                     parentID = d.ParentId,
                     parentName = allMenu.ContainsKey(d.ParentId) ? allMenu[d.ParentId] : "无",
                     id = d.Id.ToString(),
                     createDateTime = d.CreateDateTime.ToString(),
                     type = d.TypeName,
                     url = d.Url,
-                    order = d.Order
+                    order = d.ListOrder
                 })
             };
             return Json(data);

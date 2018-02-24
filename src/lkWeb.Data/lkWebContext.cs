@@ -17,6 +17,7 @@ namespace lkWeb.Data
         public DbSet<MenuEntity> Menus { get; set; }
         public DbSet<RoleMenuEntity> RoleMenus { get; set; }
         public DbSet<OperationLogEntity> OperationLogs { get; set; }
+        public DbSet<ModuleEntity> Modules { get; set; }
         //public DbSet<RoleEntity> Roles { get; set; }  asp.net core identity里已经有
         //public DbSet<UserEntity> Users { get; set; }
         //public DbSet<UserRoleEntity> UserRoles { get; set; }
@@ -39,7 +40,7 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new UserTokenConfig());
             modelBuilder.ApplyConfiguration(new RoleClaimConfig());
             modelBuilder.ApplyConfiguration(new UserClaimConfig());
-
+            modelBuilder.ApplyConfiguration(new ModuleConfig());
         }
         public override int SaveChanges()
         {

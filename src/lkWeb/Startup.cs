@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -12,24 +9,14 @@ using lkWeb.Service;
 using lkWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using lkWeb.Service.Abstracts;
-using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.ViewComponents;
 using SimpleInjector.Lifestyles;
-using lkWeb.Controllers;
 using Microsoft.AspNetCore.Routing;
-using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using lkWeb.Entity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using lkWeb.Core.Extensions;
 
 namespace lkWeb
 {
@@ -80,6 +67,7 @@ namespace lkWeb
             services.AddScoped<IUserDepartmentService, UserDepartmentService>();
             services.AddScoped<ILoginLogService, LoginLogService>();
             services.AddScoped<IOperationLogService, OperationLogService>();
+            services.AddScoped<IModuleService, ModuleService>();
 
             services.AddIdentity<UserEntity, RoleEntity>()
                 .AddEntityFrameworkStores<lkWebContext>()

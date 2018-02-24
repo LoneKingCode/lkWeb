@@ -124,7 +124,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetMenuList()
         {
             var result = await _menuService.GetList(item => item.Id >= 0);
-            var strData = result.data.Select(d => new
+            var list = result.data.Select(d => new
             {
                 id = d.Id,
                 pId = d.ParentId,
@@ -133,7 +133,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 url = d.Url,
                 open = true
             });
-            return Json(strData);
+            return Json(list);
         }
         [HttpPost]
         public async Task<IActionResult> GetRoleMenus(int roleId)

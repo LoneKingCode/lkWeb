@@ -20,6 +20,9 @@ public partial class AutoMapperConfiguration : Profile
 				/*	CreateMap<MenuEntity, MenuDto>();
 					CreateMap<MenuDto, MenuEntity>();
 					*/
+				/*	CreateMap<ModuleEntity, ModuleDto>();
+					CreateMap<ModuleDto, ModuleEntity>();
+					*/
 				/*	CreateMap<OperationLogEntity, OperationLogDto>();
 					CreateMap<OperationLogDto, OperationLogEntity>();
 					*/

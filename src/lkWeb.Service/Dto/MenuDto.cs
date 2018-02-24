@@ -19,6 +19,11 @@ namespace lkWeb.Service.Dto
         public int ParentId { get; set; }
 
         /// <summary>
+        /// 所属模块ID
+        /// </summary>
+        [DisplayName("所属模块")]
+        public int ModuleID { get; set; }
+        /// <summary>
         /// 类型
         /// </summary>
         [DisplayName("类型")]
@@ -45,6 +50,6 @@ namespace lkWeb.Service.Dto
         public string Url { get; set; }
 
         [DisplayName("排序")]
-        public int Order { get; set; }
+        public int ListOrder { get; set; }
     }
 }

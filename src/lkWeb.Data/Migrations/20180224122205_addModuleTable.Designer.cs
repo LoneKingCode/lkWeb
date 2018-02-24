@@ -11,9 +11,10 @@ using System;
 namespace lkWeb.Data.Migrations
 {
     [DbContext(typeof(lkWebContext))]
-    partial class lkWebContextModelSnapshot : ModelSnapshot
+    [Migration("20180224122205_addModuleTable")]
+    partial class addModuleTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,13 +81,13 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<DateTime>("CreateDateTime");
 
-                    b.Property<int>("ListOrder");
-
                     b.Property<int>("ModuleId");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(18)");
+
+                    b.Property<int>("Order");
 
                     b.Property<int>("ParentId");
 
@@ -115,6 +116,8 @@ namespace lkWeb.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(18)");
+
+                    b.Property<int>("Order");
 
                     b.HasKey("Id");
 
