@@ -53,19 +53,23 @@
             },
            callback: {
                 onCheck: onRoleCheck
-            }
+            },
+           view: {
+               },
         };
 
         var setting_menu = {
             check: {
                 enable: true,
-                chkboxType: { "Y": "", "N": "" }
+                chkboxType: { "Y": "p", "N": "s" }
             },
             data: {
                 simpleData: {
                     enable: true
                 }
             },
+            view: {
+             },
         };
 
         var roleId="";
@@ -78,7 +82,6 @@
                 data: { roleId: roleId },
                 async: false,
                 success: function (data) {
-                    console.log(data)
                     var treeObj = $.fn.zTree.getZTreeObj("menuTree");
                     treeObj.checkAllNodes(false);
                     $.each(data,function (n,value) {
@@ -98,7 +101,9 @@
             var treeObj = $.fn.zTree.getZTreeObj("menuTree");
             nodes = treeObj.getCheckedNodes(true);
             for (var i = 0; i < nodes.length; i++) {
-                data.MenuIds.push(nodes[i].id);
+                console.log(nodes[i].type);
+                if(nodes[i].type!="module") //防止 第一级节点的模块的ID被设置权限 这个模块是总的系统里的模块
+                    data.MenuIds.push(nodes[i].id);
             }
             return data;
         }

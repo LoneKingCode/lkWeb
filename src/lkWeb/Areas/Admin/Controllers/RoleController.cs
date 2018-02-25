@@ -20,13 +20,16 @@ namespace lkWeb.Areas.Admin.Controllers
         public readonly IRoleService _roleService;
         public readonly IMenuService _menuService;
         public readonly IRoleMenuService _roleMenuService;
+        public readonly IModuleService _moduleService;
         public RoleController(IRoleService roleService,
            IMenuService menuService,
-           IRoleMenuService roleMenuService)
+           IRoleMenuService roleMenuService,
+           IModuleService moduleService)
         {
             _roleService = roleService;
             _menuService = menuService;
             _roleMenuService = roleMenuService;
+            _moduleService = moduleService;
         }
 
         #region Page
@@ -123,17 +126,29 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost, HttpGet]
         public async Task<IActionResult> GetMenuList()
         {
-            var result = await _menuService.GetList(item => item.Id >= 0);
-            var list = result.data.Select(d => new
+            var result = new List<object>();
+            var moduleList = (await _moduleService.GetList(item => item.Id >= 0)).data;
+            var menuList = (await _menuService.GetList(item => item.Id >= 0)).data;
+            var menus = menuList.Select(d => new
             {
                 id = d.Id,
-                pId = d.ParentId,
+                pId = d.Type == Service.Enum.MenuType.模块 ? d.ModuleID + 100 : d.ParentId,
                 name = d.Name,
-                typeName = d.TypeName,
-                url = d.Url,
-                open = true
+                open = d.Type == Service.Enum.MenuType.模块
             });
-            return Json(list);
+            var modules = moduleList.Select(d => new
+            {
+                id = d.Id + 100,
+                pid = 0,
+                name = d.Name,
+                open = false,
+                type = "module"
+            });
+            //因为这个管理系统里又分了一个模块， 而菜单里里也有模块
+            //防止设置权限时设置错误，前台会判断下是否有type=module
+            result.AddRange(menus);
+            result.AddRange(modules);
+            return Json(result);
         }
         [HttpPost]
         public async Task<IActionResult> GetRoleMenus(int roleId)
@@ -158,16 +173,27 @@ namespace lkWeb.Areas.Admin.Controllers
                     result.msg += delResult.msg + "\n";
                 if (dto.MenuIds != null)
                 {
-                    var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
-                    var addResult = await _roleMenuService.Add(newRoleMenus);
-                    if (!addResult.flag)
-                        result.msg += addResult.msg + "\n";
-                                  //有时会清空权限，menuIds数量也就为0
-                    result.flag = addResult.flag || (dto.MenuIds.Count == 0 && delResult.flag);
+                    if (dto.MenuIds.Any())
+                    {
+                        var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
+                        var addResult = await _roleMenuService.Add(newRoleMenus);
+                        if (!addResult.flag)
+                            result.msg += addResult.msg + "\n";
+                        result.flag = addResult.flag && delResult.flag;
+                    }
+                    else
+                    {
+                        result.flag = true; //清空权限 没设置有菜单
+                    }
+                }
+                else
+                {
+                    result.flag = true;
                 }
             }
             return Json(result);
         }
+
         #endregion
     }
 }

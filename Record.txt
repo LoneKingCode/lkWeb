@@ -1,5 +1,7 @@
+设置权限那的模块ID  目前是+100....
+登陆授权问题
 授权页面 设置成模块-菜单 显示
-权限管理
+权限管理 添加 删除 编辑
 hangfire 定时任务
 * !!! Expression  item=> item.id >= 0 。。。。真TM
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name.
