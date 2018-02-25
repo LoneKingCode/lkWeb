@@ -38,6 +38,11 @@ namespace lkWeb.Entity
         public string Url { get; set; }
 
         /// <summary>
+        /// 菜单图标
+        /// </summary>
+        public string Icon { get; set; }
+
+        /// <summary>
         /// 排序越大越靠后
         /// </summary>
         public int ListOrder { get; set; }

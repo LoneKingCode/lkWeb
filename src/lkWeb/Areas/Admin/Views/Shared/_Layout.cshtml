@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using System.Text;
+@using lkWeb.Service.Dto;
+@using lkWeb.Service.Enum;
+@using lkWeb.Core.Extensions;
+@{
+    List<MenuDto> myMenus = ViewBag.Menus;
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -14,6 +21,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
+
 </head>
 <body>
     <div id="wrapper">
@@ -22,42 +30,41 @@
             <div class="navbar-header profile">
                 <h2 class="title"><a href="#">lkWeb </a></h2>
                 <img src="~/images/head.jpg" alt="..." class="img-circle profile_img">
-                <br />
-                <label id="lblUserName" class="glyphicon glyphicon-user">管理员</label>
+
+                <div style="padding:3px;">
+                    <i class="fa fa-user"></i>
+                    @ViewBag.UserName
+                </div>
             </div>
             <div class="clearfix"></div>
-            <ul class="nav sidebar-nav" id="lkMenu">
-                <li>
-                    <a data-url="@Url.Action("Index", "Role")" class="J_menuItem" data-index="1"><i class="glyphicon glyphicon-cloud-upload"></i> 角色管理</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Index", "Department")" class="J_menuItem" data-index="8"><i class="glyphicon glyphicon-cloud-upload"></i> 部门管理</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Authen", "Role")" class="J_menuItem" data-index="2"><i class="glyphicon glyphicon-cog"></i> 角色授权</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Index", "User")" class="J_menuItem" data-index="3"><i class="glyphicon glyphicon-trash"></i> 用户管理</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Department", "User")" class="J_menuItem" data-index="3"><i class="glyphicon glyphicon-trash"></i> 用户部门</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Index", "Module")" class="J_menuItem" data-index="4"><i class="glyphicon glyphicon-trash"></i> 模块管理</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Index", "Menu")" class="J_menuItem" data-index="4"><i class="glyphicon glyphicon-trash"></i> 菜单管理</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Edit", "User", new { id = ViewBag.UserID })" class="J_menuItem" data-index="5"><i class="glyphicon glyphicon-trash"></i> 修改信息</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Login", "Log")" class="J_menuItem" data-index="6"><i class="glyphicon glyphicon-trash"></i> 登录日志</a>
-                </li>
-                <li>
-                    <a data-url="@Url.Action("Operation", "Log")" class="J_menuItem" data-index="7"><i class="glyphicon glyphicon-trash"></i> 操作日志</a>
-                </li>
-            </ul>
+            <div class="sidebar-menu">
+                @if (myMenus != null && myMenus.Any())
+                {
+                    StringBuilder sb = new StringBuilder();
+                    var modules = myMenus.Where(item => item.Type == MenuType.模块);
+                    foreach (var module in modules)
+                    {
+                        var id = "a" + module.Id.ToString(); // CnToPinyin.convertCh(module.Name);
+                        sb.Append(string.Format("<a href=\"#{0}\" class=\"nav-header menu-first collapsed\" data-toggle=\"collapse\">" + "<i class=\"{1}\"></i>{2}</a>",
+                           id, module.Icon, module.Name));
+                        var menus = myMenus.Where(item => item.ParentId == module.Id && item.Type == MenuType.菜单);
+                        if (menus.Any())
+                        {
+                            sb.Append(string.Format("<ul id=\"{0}\" class=\"nav nav-list collapse menu-second\">", id));
+
+                            foreach (var menu in menus)
+                            {
+                                sb.Append(string.Format("<li><a data-index=\"{0}\" data-url=\"{1}\" class=\"J_menuItem\"><i class=\"fa fa-chevron-right\"></i>{3}</a></li>",
+                                    menu.ListOrder, menu.Url, menu.Icon, menu.Name));
+                            }
+
+                            sb.Append("</ul>");
+                        }
+                    }
+                    @Html.Raw(sb.ToString());
+                }
+            </div>
+
             <div class="sidebar-footer">
                 <a><span class="fa fa-telegram"></span></a>
                 <a><span class="fa fa-lock"></span></a>

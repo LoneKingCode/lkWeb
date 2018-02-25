@@ -31,8 +31,19 @@ namespace lkWeb.Service.Abstracts
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManage = roleManage;
+            _userManager.GetUserAsync(WebHelper._httpContext.User);
         }
 
+        public async Task<Result<UserDto>> GetCurrentUser()
+        {
+            var result = new Result<UserDto>();
+            var user = await _userManager.GetUserAsync(WebHelper._httpContext.User);
+            if (user != null)
+            {
+                result.data = MapTo<UserEntity, UserDto>(user);
+            }
+            return result;
+        }
         /// <summary>
         /// 登陆
         /// </summary>
@@ -294,7 +305,7 @@ namespace lkWeb.Service.Abstracts
                 var roleMenus = await db.RoleMenus.Where(exp).ToListAsync();
                 var menuIds = roleMenus.Select(x => x.MenuId).ToList();
                 Expression<Func<MenuEntity, bool>> expMenu = item => menuIds.Contains(item.Id);
-                var menus = await db.Menus.Where(expMenu).ToListAsync();
+                var menus = await db.Menus.Where(expMenu).OrderBy(item=>item.ListOrder).ToListAsync();
                 result.flag = true;
                 result.data = MapTo<List<MenuEntity>, List<MenuDto>>(menus);
                 return result;

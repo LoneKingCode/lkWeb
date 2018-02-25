@@ -54,7 +54,11 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(int id)
         {
-            var user = (await _userService._GetById(id)).data;
+            UserDto user = new UserDto();
+            if (id != 0)
+                user = (await _userService._GetById(id)).data;
+            else
+                user = CurrentUser;
             ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View(user);
         }

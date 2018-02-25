@@ -15,6 +15,8 @@ namespace lkWeb.Areas.Admin.Controllers
     [Area("Admin")]
     public class AdminBaseController : Controller
     {
+        public IUserService _userService;
+
         /// <summary>
         /// 当前登录用户
         /// </summary>
@@ -23,7 +25,6 @@ namespace lkWeb.Areas.Admin.Controllers
             get
             {
                 return WebHelper.GetSession<UserDto>("CurrentUser");
-
             }
         }
 

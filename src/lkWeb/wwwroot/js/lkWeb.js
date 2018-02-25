@@ -29,6 +29,17 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
         window.location.href = url;
 }
 
+lkWeb.OpenLayer = function (url,title,width,height) {
+    lkWeb.LayerIndex = layer.open({
+        type: 2,
+        title: title,
+        shadeClose: true,
+        shade: 0.8,
+        area: [width, height],
+        content: url
+    });
+}
+
 lkWeb.CloseLayert = function () {
     layer.close(lkWeb.LayerIndex);
     //    var index = parent.layer.getFrameIndex(window.name);

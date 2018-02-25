@@ -19,6 +19,7 @@ namespace lkWeb.Service.Abstracts
         Task<Result<UserDto>> _Delete(List<int> ids);
         Task<Result<UserDto>> AddRoles(int userID, List<int> roleIds);
         Task<Result<UserDto>> RemoveRoles(int userID, List<int> roleIds);
+        Task<Result<UserDto>> GetCurrentUser();
 
         /// <summary>
         /// 登陆

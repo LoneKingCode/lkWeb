@@ -16,6 +16,7 @@ namespace lkWeb.Data.Config
             builder.Property(item => item.Id).ValueGeneratedOnAdd();
             builder.Property(item => item.Type).IsRequired();
             builder.Property(item => item.Name).HasColumnType("varchar(18)").IsRequired();
+            builder.Property(item => item.Icon).HasColumnType("varchar(50)").IsRequired();
             builder.Property(item => item.Url).HasColumnType("varchar(300)").IsRequired();
         }
     }

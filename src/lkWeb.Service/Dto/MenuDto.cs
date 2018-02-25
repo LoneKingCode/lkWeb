@@ -44,6 +44,12 @@ namespace lkWeb.Service.Dto
         public string Name { get; set; }
 
         /// <summary>
+        /// 菜单图标
+        /// </summary>
+        [DisplayName("菜单图标")]
+        public string Icon { get; set; }
+
+        /// <summary>
         /// URL
         /// </summary>
         [DisplayName("URL")]

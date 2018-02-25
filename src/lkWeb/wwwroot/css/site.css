@@ -71,6 +71,25 @@ textarea { resize: none; }
 
 .sidebar-nav > li { padding: 5px 0px 0px 15px; }
 
+/*左侧菜单*/
+.sidebar-menu { border-right: 1px solid #c4c8cb; }
+.sidebar-menu  i{ padding:3px;}
+/*一级菜单*/
+.menu-first { display: block; height: 45px; line-height: 45px; background-color: #3f3f3f; color: white; padding: 0 20px 0 0; font-size: 14px; font-weight: normal; text-align: center; }
+    /*一级菜单鼠标划过状态*/
+    .menu-first:hover { text-decoration: none; background-color: #d6d4d5; }
+    .menu-first:focus { text-decoration: none; background-color: #d6d4d5; }
+/*二级菜单*/
+.menu-second li a { background-color: #515050; color: #e3e1e1; height: 31px; line-height: 31px; font-size: 12px; text-align: center; }
+    /*二级菜单鼠标划过样式*/
+    .menu-second li a:hover { text-decoration: none; background-color: #686868; }
+    .menu-second li a:focus { text-decoration: none; background-color: #686868; }
+/*二级菜单选中状态*/
+.menu-second-selected { background-color: #686868; height: 31px; line-height: 31px; text-align: center; }
+/*覆盖bootstrap的样式*/
+.nav-list, .nav-list li a { padding: 0px; margin: 0px; }
+
+
 .sidebar-footer { bottom: 1px; height: 36px; clear: both; display: block; padding: 5px 0 0 0; position: fixed; width: 200px; background-color: #313131; }
 
     .sidebar-footer a { padding: 2px 0 3px 0; text-align: center; width: 25%; font-size: 17px; display: block; float: left; }

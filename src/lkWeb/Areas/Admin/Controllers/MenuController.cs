@@ -102,7 +102,8 @@ namespace lkWeb.Areas.Admin.Controllers
                     createDateTime = d.CreateDateTime.ToString(),
                     type = d.TypeName,
                     url = d.Url,
-                    order = d.ListOrder
+                    order = d.ListOrder,
+                    icon = d.Icon
                 })
             };
             return Json(data);

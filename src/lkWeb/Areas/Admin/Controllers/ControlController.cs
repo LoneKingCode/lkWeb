@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Diagnostics;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
+    [Authorize]
     public class ControlController : AdminBaseController
     {
         public readonly IUserService _userService;
@@ -27,8 +28,12 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 var userId = CurrentUser.Id;
                 ViewBag.UserID = userId;
+                ViewBag.UserName = CurrentUser.UserName;
                 ViewBag.Menus = (await _userService.GetUserMenu(userId)).data;
             }
+            else
+                RedirectToAction("Login", "user");
+            //   var a = await _userService.GetCurrentUser();
             return View();
         }
 
