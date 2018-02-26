@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title= "菜单管理";
+    ViewBag.Title = "菜单管理";
 }
 @section Scripts{
     <script>
@@ -19,31 +19,29 @@
         });
 
         function EditModel() {
-            var id = "";
-            $(":checkbox:checked", "#table_menu").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                id = $(n).val();
-                lkWeb.GoAction("menu", "edit", id);
-            })
+            var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
+            else
+                lkWeb.GoAction("menu", "edit", id);
         }
 
         function DelModel() {
-            var ids = [];
-            $(":checkbox:checked", "#table_menu").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                ids.push($(n).val());
-            })
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
             lkWeb.DeleteMulti(ids, "menu", table_menu);
         }
         function AddModel() {
-            lkWeb.GoAction("menu", "add", 0);
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            //如果选中有菜单 直接默认为 添加为此菜单的子菜单
+            if(id != "")
+                lkWeb.GoAction("menu", "add", id);
+            else
+                lkWeb.GoAction("menu", "add", 0);
         }
 
         var table_menu;
         function InitDataTable() {
-            var dataUrl = '@Url.Action("GetPageData")';   //后天获取json数据的地址
+            var dataUrl = '@Url.Action("GetPageData")';   //后台获取json数据的地址
             var columns = [
                 {
                     "sClass": "text-center",
@@ -53,11 +51,20 @@
                     },
                     "bSortable": false
                 },
-                { "mData": "id", "sClass": "text-center" },
-                { "mData": "parentID", "sClass": "text-center" },
+                { "mData": "rowNum", "sClass": "text-center" },
+                { "mData": "moduleName", "sClass": "text-center" },
+                { "mData": "parentName", "sClass": "text-center" },
                 { "mData": "type", "sClass": "text-center" },
                 { "mData": "name", "sClass": "text-center", "bSortable": false },
                 { "mData": "url", "sClass": "text-center", "bSortable": false },
+                {
+                    "sClass": "text-center",
+                    "mData": "icon",
+                    "mRender": function (data, type, row) {
+                        return ' <i class="' + data + '"></i>';
+                    },
+                    "bSortable": false
+                },
                 { "mData": "order", "sClass": "text-center" },
                 { "mData": "createDateTime", "sClass": "text-center" }
             ];
@@ -67,33 +74,36 @@
 
     </script>
 }
-    <div class="form-group">
-        <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
-        <button type="button" class="btn btn-primar" onclick="EditModel()">编辑</button>
-        <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+<div class="form-group">
+    <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
+    <button type="button" class="btn btn-primar" onclick="EditModel()">编辑</button>
+    <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
+        <span class="input-group-btn">
+            <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
+        </span>
     </div>
-    <div class="form-group">
-        <div class="input-group">
-            <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
-            <span class="input-group-btn">
-                <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
-            </span>
-        </div>
-    </div>
-    <table class="table table-striped table-hover" id="table_menu">
-        <thead>
-            <tr>
-                <th>
-                    <input type="checkbox" class="checkAll" />
-                </th>
-                <th>Id</th>
-                <th>上级菜单Id</th>
-                <th>类型</th>
-                <th>名称</th>
-                <th>URL地址</th>
-                <th>排序</th>
-                <th>创建时间</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+</div>
+@Html.AntiForgeryToken()
+<table class="table table-striped table-hover" id="table_menu">
+    <thead>
+        <tr>
+            <th>
+                <input type="checkbox" class="checkAll" />
+            </th>
+            <th>序号</th>
+            <th>所属模块</th>
+            <th>上级菜单</th>
+            <th>类型</th>
+            <th>名称</th>
+            <th>URL地址</th>
+            <th>图标</th>
+            <th>排序</th>
+            <th>创建时间</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>

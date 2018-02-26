@@ -11,6 +11,7 @@ using lkWeb.Core.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using lkWeb.Data;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -41,6 +42,7 @@ namespace lkWeb.Service.Abstracts
             if (user != null)
             {
                 result.data = MapTo<UserEntity, UserDto>(user);
+                result.flag = true;
             }
             return result;
         }
@@ -66,7 +68,7 @@ namespace lkWeb.Service.Abstracts
                     else if (signedUserDto.Status == UserStatus.已激活)
                     {
                         result.flag = true;
-                        WebHelper.SetSession("CurrentUser", signedUserDto);
+                        // WebHelper.SetSession("CurrentUser", signedUserDto);
                     }
                     else
                         result.msg = "登陆失败，账户状态未知";
@@ -86,15 +88,23 @@ namespace lkWeb.Service.Abstracts
                 result.flag = false;
                 result.msg = "登陆失败,用户不存在";
             }
-            //记录登录日志
-            await _loginLogService.Add(new LoginLogDto
+            try
             {
-                UserId = dto.Id,
-                UserName = dto.UserName,
-                ClientIP = WebHelper.GetClientIP(),
-                ClientMac = WebHelper.GetClientMac(),
-                Description = result.msg
-            });
+                //记录登录日志
+                await _loginLogService.Add(new LoginLogDto
+                {
+                    UserId = dto.Id,
+                    UserName = dto.UserName,
+                    ClientIP = WebHelper.GetClientIP(),
+                    ClientMac = WebHelper.GetClientMac(),
+                    Description = result.msg
+                });
+            }
+            catch (Exception)
+            {
+
+
+            }
             return result;
 
         }
@@ -305,7 +315,7 @@ namespace lkWeb.Service.Abstracts
                 var roleMenus = await db.RoleMenus.Where(exp).ToListAsync();
                 var menuIds = roleMenus.Select(x => x.MenuId).ToList();
                 Expression<Func<MenuEntity, bool>> expMenu = item => menuIds.Contains(item.Id);
-                var menus = await db.Menus.Where(expMenu).OrderBy(item=>item.ListOrder).ToListAsync();
+                var menus = await db.Menus.Where(expMenu).OrderBy(item => item.ListOrder).ToListAsync();
                 result.flag = true;
                 result.data = MapTo<List<MenuEntity>, List<MenuDto>>(menus);
                 return result;

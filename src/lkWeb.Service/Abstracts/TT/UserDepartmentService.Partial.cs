@@ -10,6 +10,7 @@ using lkWeb.Core.Extensions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+
 namespace lkWeb.Service.Abstracts
 {
     public partial class UserDepartmentService : ServiceBase<UserDepartmentEntity>, IUserDepartmentService

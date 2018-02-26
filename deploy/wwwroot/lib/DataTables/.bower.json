@@ -1,25 +1,22 @@
 {
-  "name": "datatables",
-  "version": "1.10.9",
+  "name": "DataTables",
   "main": [
-    "media/js/jquery.dataTables.js",
-    "media/css/jquery.dataTables.css",
-    "media/images/sort_asc.png",
-    "media/images/sort_asc_disabled.png",
-    "media/images/sort_both.png",
-    "media/images/sort_desc.png",
-    "media/images/sort_desc_disabled.png"
+    "./media/js/jquery.dataTables.js",
+    "./media/css/jquery.dataTables.css"
   ],
   "dependencies": {
-    "jquery": ">=1.7.0"
+    "jquery": "~1.8.0"
   },
-  "license": "MIT",
-  "keywords": [
-    "jquery",
-    "datatables",
-    "table",
-    "javascript",
-    "library"
+  "homepage": "https://github.com/DataTables/DataTables",
+  "_release": "RELEASE_1_9_4",
+  "_resolution": {
+    "type": "tag",
+    "tag": "RELEASE_1_9_4",
+    "commit": "6426b28468f893e51efe48bc93ffe9c449b62f45"
+  },
+  "_source": "https://github.com/DataTables/DataTables.git",
+  "_target": "RELEASE_1_9_4"
+} "library"
   ],
   "ignore": [
     "/.*",
@@ -37,6 +34,5 @@
     "commit": "ab6f46122d593c082ca78d57e727c2dc12a6bc6d"
   },
   "_source": "https://github.com/DataTables/DataTables.git",
-  "_target": "1.10.9",
-  "_originalSource": "DataTables"
+  "_target": "1.10.9"
 }

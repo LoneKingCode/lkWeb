@@ -24,17 +24,20 @@ namespace lkWeb.Areas.Admin.Controllers
         // GET: /<controller>/
         public async Task<IActionResult> Index()
         {
-            if (IsLogined)
+         
+            var result = await _userService.GetCurrentUser();
+            if (result.flag)
             {
-                var userId = CurrentUser.Id;
+                var user = result.data;
+                var userId = user.Id;
                 ViewBag.UserID = userId;
-                ViewBag.UserName = CurrentUser.UserName;
+                ViewBag.UserName = user.UserName;
                 ViewBag.Menus = (await _userService.GetUserMenu(userId)).data;
+                return View();
             }
             else
-                RedirectToAction("Login", "user");
-            //   var a = await _userService.GetCurrentUser();
-            return View();
+                return RedirectToAction("Login", "user");
+
         }
 
         public IActionResult Welcome()

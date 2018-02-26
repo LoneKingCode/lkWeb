@@ -15,27 +15,27 @@ namespace lkWeb.Areas.Admin.Controllers
     [Area("Admin")]
     public class AdminBaseController : Controller
     {
-        /// <summary>
-        /// 当前登录用户
-        /// </summary>
-        protected UserDto CurrentUser
-        {
-            get
-            {
-                return WebHelper.GetSession<UserDto>("CurrentUser");
-            }
-        }
+        ///// <summary>
+        ///// 当前登录用户
+        ///// </summary>
+        //protected UserDto CurrentUser
+        //{
+        //    get
+        //    {
+        //        return WebHelper.GetSession<UserDto>("CurrentUser");
+        //    }
+        //}
 
-        /// <summary>
-        /// 是否登录
-        /// </summary>
-        protected bool IsLogined
-        {
-            get
-            {
-                return CurrentUser != null;
-            }
-        }
+        ///// <summary>
+        ///// 是否登录
+        ///// </summary>
+        //protected bool IsLogined
+        //{
+        //    get
+        //    {
+        //        return CurrentUser != null;
+        //    }
+        //}
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

@@ -15,8 +15,7 @@ namespace lkWeb.Service.Abstracts
     public abstract class ServiceBase<T> where T : class
     {
         public readonly IMapper _mapper;
-        static string connectionString = "Password=hacker5402;Persist Security Info=True;User ID=sa;Initial Catalog=lkWeb;Data Source=.";
-        static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
+         static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
         static DbContextOptionsBuilder<lkWebContext> dbContextOptionBuilder = new DbContextOptionsBuilder<lkWebContext>(dbContextOption);
         public ServiceBase(IMapper mapper)
         {
@@ -28,7 +27,7 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         public lkWebContext GetDb()
         {
-            return new lkWebContext(dbContextOptionBuilder.UseSqlServer(connectionString, b => b.MigrationsAssembly("lkWeb")).Options);
+            return new lkWebContext(dbContextOptionBuilder.UseSqlServer(lkWebContext.connectionString).Options);
         }
         /// <summary>
         /// 获取DbSet

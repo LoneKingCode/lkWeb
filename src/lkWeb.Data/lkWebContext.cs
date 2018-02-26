@@ -13,6 +13,8 @@ namespace lkWeb.Data
 {
     public class lkWebContext : IdentityDbContext<UserEntity, RoleEntity, int>
     {
+        //数据库连接串
+        public static string connectionString = "";
         public DbSet<LoginLogEntity> LoginLogs { get; set; }
         public DbSet<MenuEntity> Menus { get; set; }
         public DbSet<RoleMenuEntity> RoleMenus { get; set; }

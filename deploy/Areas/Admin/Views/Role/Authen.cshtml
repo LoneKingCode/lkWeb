@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title= "角色授权";
+    ViewBag.Title = "角色授权";
 }
 
 @section Scripts{
@@ -53,18 +53,23 @@
             },
            callback: {
                 onCheck: onRoleCheck
-            }
+            },
+           view: {
+               },
         };
 
         var setting_menu = {
             check: {
-                enable: true
+                enable: true,
+                chkboxType: { "Y": "p", "N": "s" }
             },
             data: {
                 simpleData: {
                     enable: true
                 }
             },
+            view: {
+             },
         };
 
         var roleId="";
@@ -90,53 +95,25 @@
             })
         }
 
-
-        function setCheck_role() {
-            var type = $("#level").attr("checked") ? "level" : "all";
-            setting_role.check.radioType = type;
-            $.fn.zTree.init($("#roleTree"), setting_role, zNodes_role);
-        }
-
-        function setCheck_menu() {
-            var zTree = $.fn.zTree.getZTreeObj("menuTree"),
-                py = $("#py").attr("checked") ? "p" : "",
-                sy = $("#sy").attr("checked") ? "s" : "",
-                pn = $("#pn").attr("checked") ? "p" : "",
-                sn = $("#sn").attr("checked") ? "s" : "",
-                type = { "Y": py + sy, "N": pn + sn };
-            setting_menu.check.chkboxType = type;
-        }
-
-        function InitRoleTree() {
-            setCheck_role();
-            $("#level").bind("change", setCheck_role);
-            $("#all").bind("change", setCheck_role);
-        }
-
-        function InitMenuTree() {
-            setCheck_menu();
-            $.fn.zTree.init($("#menuTree"), setting_menu, zNodes_menu);
-             $("#py").bind("change", setCheck_menu);
-            $("#sy").bind("change", setCheck_menu);
-            $("#pn").bind("change", setCheck_menu);
-            $("#sn").bind("change", setCheck_menu);
-        }
-
         function GetData() {
             var data = { RoleIds: [], MenuIds: [] };
             data.RoleIds.push(roleId);
             var treeObj = $.fn.zTree.getZTreeObj("menuTree");
             nodes = treeObj.getCheckedNodes(true);
             for (var i = 0; i < nodes.length; i++) {
-                data.MenuIds.push(nodes[i].id);
+                console.log(nodes[i].type);
+                if(nodes[i].type!="module") //防止 第一级节点的模块的ID被设置权限 这个模块是总的系统里的模块
+                    data.MenuIds.push(nodes[i].id);
             }
             return data;
         }
 
         $(function () {
+
             LoadData();
-            InitRoleTree();
-            InitMenuTree();
+
+            $.fn.zTree.init($("#menuTree"), setting_menu, zNodes_menu);
+            $.fn.zTree.init($("#roleTree"), setting_role, zNodes_role);
 
             $("#btnClear").click(function () {
                 var treeObj = $.fn.zTree.getZTreeObj("menuTree");
@@ -150,13 +127,14 @@
                 parent.layer.confirm("确认保存", { btn: ["确认", "取消"] },
                     function () {
                         var data = GetData();
-                     $.ajax({
+                      $.ajax({
                           url: "@Url.Action("AuthMenus", "Role")",
                           type: "post",
                           dataType: "json",
                           data: { dto:data},
                           async: false,
                           success: function (data) {
+                              console.log(data)
                               if (data.flag == true)
                               {
                                   parent.layer.alert("操作成功");

@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
-    [Authorize]
     public class UserController : AdminBaseController
     {
         public readonly IUserService _userService;
@@ -58,7 +57,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (id != 0)
                 user = (await _userService._GetById(id)).data;
             else
-                user = CurrentUser;
+                user = (await _userService.GetCurrentUser()).data;
             ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View(user);
         }
@@ -94,8 +93,8 @@ namespace lkWeb.Areas.Admin.Controllers
             return Content("<script>window.lcation.href='" + Url.Action("Login") + "'</script>");
         }
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(UserDto dto)
         {
             var result = await _userService.Login(dto);
@@ -104,6 +103,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(UserDto dto)
         {
             var result = await _userService.Register(dto);

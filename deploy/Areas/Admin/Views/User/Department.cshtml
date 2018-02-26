@@ -24,7 +24,8 @@
         var zNodes_department = [];
         var setting_department= {
             check: {
-                enable: false,
+                enable: false, //不开启
+                chkboxType: { "Y": "", "N": "" }
               },
             data: {
                 simpleData: {
@@ -41,14 +42,12 @@
             LoadDataTable();
             table_user.draw();
         }
-        function setCheck_department() {
-            var type = $("#level").attr("checked") ? "level" : "all";
-            setting_department.check.radioType = type;
-            $.fn.zTree.init($("#departmentTree"), setting_department, zNodes_department);
-        }
+
         function InitDepartmentTree() {
             LoadData();
-            setCheck_department();
+
+            $.fn.zTree.init($("#departmentTree"), setting_department, zNodes_department);
+
             $("#level").bind("change", setCheck_department);
             $("#all").bind("change", setCheck_department);
         }
@@ -79,21 +78,17 @@
                     },
                     "bSortable": false
                 },
-                { "mData": "loginName", "name": "LoginName", "sClass": "text-center" },
+                { "mData": "rowNum", "sClass": "text-center" },
+                { "mData": "userName", "name": "LoginName", "sClass": "text-center" },
                 { "mData": "realName", "name": "RealName", "sClass": "text-center" },
                 { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
-                { "mData": "statusName", "name": "StatusName","sClass": "text-center" },
-                { "mData": "createDateTime", "name": "CreateDateTime","sClass": "text-center" },
+                { "mData": "statusName", "name": "StatusName", "sClass": "text-center" }
             ];
             table_user = lkWeb.LoadTable("table_user", columns, dataUrl, departmentID)
          }
 
         function DelUser() {
-            var ids = [];
-            $(":checkbox:checked", "#table_user").each(function (i, n) {
-                if ($(n).attr("class") == "checkAll") return true;//相当于continue
-                ids.push($(n).val());
-            })
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
             if (ids.length < 1) {
                 parent.layer.alert("请选择");
                 return;
@@ -101,13 +96,13 @@
             parent.layer.confirm("确认删除" + ids.length + "条数据？", {
                 btn: ["确认", "取消"]
             }, function () {
+                var data =  { UserIDs: [], DepartmentID: departmentID };
+                data.UserIDs = ids;
                 $.ajax(
                     {
                         type: 'post',
                         url: '@Url.Action("DelUserDepartment","User") ',
-                        data: {
-                            ids: ids
-                        },
+                        data: data,
                         success: function (result) {
                             if (result.flag == true) {
                                 parent.layer.alert("删除成功")
@@ -167,11 +162,11 @@
                             <th>
                                 <input type="checkbox" class="checkAll" />
                             </th>
+                            <th>序号</th>
                             <th>用户名</th>
                             <th>姓名</th>
                             <th>电子邮箱</th>
                             <th>状态</th>
-                            <th>创建日期</th>
                         </tr>
                     </thead>
                     <tbody></tbody>

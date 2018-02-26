@@ -7,6 +7,8 @@ using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using System.Linq.Expressions;
 using lkWeb.Core.Extensions;
+using lkWeb.Areas.Admin.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,9 +17,11 @@ namespace lkWeb.Areas.Admin.Controllers
     public class MenuController : AdminBaseController
     {
         public readonly IMenuService _menuService;
-        public MenuController(IMenuService roleService)
+        public readonly IModuleService _moduleService;
+        public MenuController(IMenuService menuService, IModuleService moduleService)
         {
-            _menuService = roleService;
+            _menuService = menuService;
+            _moduleService = moduleService;
         }
 
         #region Page
@@ -26,96 +30,133 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Add()
+        public async Task<IActionResult> Add(int id)
         {
+            if (id != 0)
+            {
+                var menu = (await _menuService.GetById(id)).data;
+                ViewBag.ParentID = menu.Id;
+                ViewBag.ParentName = menu.Name;
+            }
+            var result = await _moduleService.GetList(item => item.Id >= 0);
+            ViewBag.Modules = new SelectList(result.data, "Id", "Name");
+            if (result.data.Count > 0)
+                ViewBag.ModuleID = result.data.First().Id;
             return View();
         }
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var menu = _menuService.GetById(int.Parse(id));
+            var menu = (await _menuService.GetById(id)).data;
             if (menu.ParentId > 0)
-                ViewBag.ParentName = _menuService.GetById(menu.ParentId).Name;
+                ViewBag.ParentName = (await _menuService.GetById(menu.ParentId)).data.Name;
             else
                 ViewBag.ParentName = "无";
+            var result = await _moduleService.GetList(item => item.Id >= 0);
+            ViewBag.Modules = new SelectList(result.data, "Id", "Name", menu.ModuleID);
+            ViewBag.ModuleID = menu.ModuleID;
             return View(menu);
         }
         #endregion
 
         #region Ajax
+
         [HttpGet]
-        public IActionResult GetList(string searchKey)
+        public async Task<IActionResult> GetList(string searchKey)
         {
-            Expression<Func<MenuDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<MenuDto, bool>> queryExp = item => item.Id >= 0;
             if (searchKey.IsNotEmpty())
-                queryExp = item => !item.IsDeleted && (item.Name.Contains(searchKey) || item.Url.Contains(searchKey));
-            var list = _menuService.GetList(queryExp);
+                queryExp = item => item.Id >= 0 && (item.Name.Contains(searchKey) || item.Url.Contains(searchKey));
+            var result = await _menuService.GetList(queryExp);
             var strData = new
             {
-                value = list.data
+                value = result.data
             };
             return Json(strData);
         }
+
         [HttpGet]
-        public IActionResult GetPageData(QueryBase queryBase)
+        public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
-            Expression<Func<MenuDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<MenuDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => x.Name.Contains(queryBase.SearchKey) && !x.IsDeleted;
-            var dto = _menuService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new
+                queryExp = x => x.Name.Contains(queryBase.SearchKey);
+            var result = await _menuService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var allMenu = (await _menuService.GetList(item => item.Id >= 0))
+                            .data.ToDictionary(item => item.Id, item => item.Name);
+            var allModule = (await _moduleService.GetList(item => item.Id >= 0))
+                            .data.ToDictionary(item => item.Id, item => item.Name);
+            var data = new DataTableDto
             {
                 draw = queryBase.Draw,
-                recordsTotal = dto.recordsTotal,
-                recordsFiltered = dto.recordsTotal,
-                data = dto.data.Select(d => new
+                recordsTotal = result.recordsTotal,
+                recordsFiltered = result.recordsTotal,
+                data = result.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     name = d.Name,
+                    moduleID = d.ModuleID,
+                    moduleName = allModule.ContainsKey(d.ModuleID) ? allModule[d.ModuleID] : "无",
                     parentID = d.ParentId,
+                    parentName = allMenu.ContainsKey(d.ParentId) ? allMenu[d.ParentId] : "无",
                     id = d.Id.ToString(),
                     createDateTime = d.CreateDateTime.ToString(),
                     type = d.TypeName,
                     url = d.Url,
-                    order = d.Order
+                    order = d.ListOrder,
+                    icon = d.Icon
                 })
             };
             return Json(data);
         }
 
         [HttpPost]
-        public IActionResult Edit(MenuDto menu)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(MenuDto menu)
         {
-            var result = Json(new
-            {
-                flag = _menuService.Update(menu)
-            });
-            return result;
+            var result = await _menuService.Update(menu);
+
+            return Json(result);
         }
         [HttpPost]
-        public IActionResult Add(MenuDto menu)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(MenuDto menu)
         {
-            var result = Json(new
+            if (menu.ParentId > 0)
             {
-                flag = _menuService.Add(menu)
-            });
-            return result;
+                var parentMenu = (await _menuService.GetById(menu.ParentId)).data;
+                switch (parentMenu.Type)
+                {
+                    case Service.Enum.MenuType.模块:
+                        menu.Type = Service.Enum.MenuType.菜单;
+                        break;
+                    case Service.Enum.MenuType.菜单:
+                        menu.Type = Service.Enum.MenuType.按钮;
+                        break;
+                    case Service.Enum.MenuType.按钮:
+                        menu.Type = Service.Enum.MenuType.按钮;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            var result = await _menuService.Add(menu);
+
+            return Json(result);
         }
         [HttpPost]
-        public IActionResult Delete(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = Json(new
-            {
-                flag = _menuService.Delete(id)
-            });
-            return result;
+            var result = await _menuService.Delete(id);
+            return Json(result);
         }
         [HttpPost]
-        public IActionResult DeleteMulti(List<int> ids)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteMulti(List<int> ids)
         {
-            var result = Json(new
-            {
-                flag = _menuService.DeleteMulti(ids)
-            });
-            return result;
+            var result = await _menuService.Delete(ids);
+            return Json(result);
         }
         #endregion
     }

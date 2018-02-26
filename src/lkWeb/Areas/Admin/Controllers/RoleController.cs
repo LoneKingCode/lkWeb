@@ -131,16 +131,16 @@ namespace lkWeb.Areas.Admin.Controllers
             var menuList = (await _menuService.GetList(item => item.Id >= 0)).data;
             var menus = menuList.Select(d => new
             {
-                id = d.Id,
-                pId = d.Type == Service.Enum.MenuType.模块 ? d.ModuleID + 100 : d.ParentId,
+                id = d.Id.ToString(),
+                pId = d.Type == Service.Enum.MenuType.模块 ? d.ModuleID.ToString() + "_m" : d.ParentId.ToString(),
                 name = d.Name,
                 open = d.Type == Service.Enum.MenuType.模块
             });
             var modules = moduleList.Select(d => new
             {
-                id = d.Id + 100,
-                pid = 0,
-                name = d.Name,
+                id = d.Id.ToString() + "_m",
+                pid = "0",
+                name = "---------" + d.Name + "---------",
                 open = false,
                 type = "module"
             });

@@ -8,6 +8,8 @@ using lkWeb.Service.Dto;
 using lkWeb.Areas.Admin.Models;
 using System.Linq.Expressions;
 using lkWeb.Core.Extensions;
+using Microsoft.AspNetCore.Identity;
+using lkWeb.Entity;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,12 +20,18 @@ namespace lkWeb.Areas.Admin.Controllers
         public readonly IRoleService _roleService;
         public readonly IMenuService _menuService;
         public readonly IRoleMenuService _roleMenuService;
-        public RoleController(IRoleService roleService, IMenuService menuService, IRoleMenuService roleMenuService)
+        public readonly IModuleService _moduleService;
+        public RoleController(IRoleService roleService,
+           IMenuService menuService,
+           IRoleMenuService roleMenuService,
+           IModuleService moduleService)
         {
             _roleService = roleService;
             _menuService = menuService;
             _roleMenuService = roleMenuService;
+            _moduleService = moduleService;
         }
+
         #region Page
         // GET: /<controller>/
         public IActionResult Index()
@@ -34,9 +42,9 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Edit(string id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var role = _roleService.GetById(int.Parse(id));
+            var role = (await _roleService._GetById(id)).data;
             return View(role);
         }
         public IActionResult Authen()
@@ -48,23 +56,23 @@ namespace lkWeb.Areas.Admin.Controllers
         #region Ajax
 
         [HttpGet]
-        public IActionResult GetPageData(QueryBase queryBase)
+        public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
-            Expression<Func<RoleDto, bool>> queryExp = item => !item.IsDeleted;
+            Expression<Func<RoleDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)) && !x.IsDeleted;
-            var dto = _roleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new
+                queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
+            var result = await _roleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var data = new DataTableDto
             {
                 draw = queryBase.Draw,
-                recordsTotal = dto.recordsTotal,
-                recordsFiltered = dto.recordsTotal,
-                data = dto.data.Select(d => new
+                recordsTotal = result.recordsTotal,
+                recordsFiltered = result.recordsTotal,
+                data = result.data.Select(d => new
                 {
+                    rowNum = ++queryBase.Start,
                     name = d.Name,
                     description = d.Description,
                     id = d.Id.ToString(),
-                    createDateTime = d.CreateDateTime.ToString(),
                 })
             };
             return Json(data);
@@ -72,46 +80,41 @@ namespace lkWeb.Areas.Admin.Controllers
 
 
         [HttpPost]
-        public IActionResult Edit(RoleDto role)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(RoleDto role)
         {
-            var result = Json(new
-            {
-                flag = _roleService.Update(role)
-            });
-            return result;
+            var result = await _roleService._Update(role);
+            return Json(result);
         }
         [HttpPost]
-        public IActionResult Add(RoleDto role)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(RoleDto role)
         {
-            var result = Json(new
-            {
-                flag = _roleService.Add(role)
-            });
-            return result;
+            var result = await _roleService._Add(role);
+
+            return Json(result);
         }
         [HttpPost]
-        public IActionResult Delete(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = Json(new
-            {
-                flag = _roleService.Delete(id)
-            });
-            return result;
+            var result = await _roleService._Delete(id);
+
+            return Json(result);
         }
         [HttpPost]
-        public IActionResult DeleteMulti(List<int> ids)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteMulti(List<int> ids)
         {
-            var result = Json(new
-            {
-                flag = _roleService.DeleteMulti(ids)
-            });
-            return result;
+            var result = await _roleService._Delete(ids);
+
+            return Json(result);
         }
         [HttpPost]
-        public IActionResult GetRoleList()
+        public async Task<IActionResult> GetRoleList()
         {
-            var list = _roleService.GetList(item => !item.IsDeleted);
-            var strData = list.data.Select(d => new
+            var result = await _roleService.GetList(item => item.Id >= 0);
+            var strData = result.data.Select(d => new
             {
                 id = d.Id,
                 pid = 0,
@@ -121,56 +124,76 @@ namespace lkWeb.Areas.Admin.Controllers
 
         }
         [HttpPost, HttpGet]
-        public IActionResult GetMenuList()
+        public async Task<IActionResult> GetMenuList()
         {
-            var list = _menuService.GetList(item => !item.IsDeleted);
-            var strData = list.data.Select(d => new
+            var result = new List<object>();
+            var moduleList = (await _moduleService.GetList(item => item.Id >= 0)).data;
+            var menuList = (await _menuService.GetList(item => item.Id >= 0)).data;
+            var menus = menuList.Select(d => new
             {
-                id = d.Id,
-                pId = d.ParentId,
+                id = d.Id.ToString(),
+                pId = d.Type == Service.Enum.MenuType.模块 ? d.ModuleID.ToString() + "_m" : d.ParentId.ToString(),
                 name = d.Name,
-                typeName = d.TypeName,
-                url = d.Url,
-                open = true
+                open = d.Type == Service.Enum.MenuType.模块
             });
-            return Json(strData);
+            var modules = moduleList.Select(d => new
+            {
+                id = d.Id.ToString() + "_m",
+                pid = "0",
+                name = "---------" + d.Name + "---------",
+                open = false,
+                type = "module"
+            });
+            //因为这个管理系统里又分了一个模块， 而菜单里里也有模块
+            //防止设置权限时设置错误，前台会判断下是否有type=module
+            result.AddRange(menus);
+            result.AddRange(modules);
+            return Json(result);
         }
         [HttpPost]
-        public IActionResult GetRoleMenus(int roleId)
+        public async Task<IActionResult> GetRoleMenus(int roleId)
         {
-            var list = _roleMenuService.GetList(item=>item.RoleId == roleId);
-            var strData = list.data.Select(d => new
+            var result = await _roleMenuService.GetList(item => item.RoleId == roleId);
+            var strData = result.data.Select(d => new
             {
                 id = d.Id,
                 menuId = d.MenuId,
-                recordsTotal = list.recordsTotal
+                recordsTotal = result.recordsTotal
             });
             return Json(strData);
         }
         [HttpPost]
-        public IActionResult AuthMenus(AuthMenuDto dto)
+        public async Task<IActionResult> AuthMenus(AuthMenuDto dto)
         {
-            bool flag = false;
-            if (dto.RoleIds.Count == 1)
-            {
-
-            }
+            var result = new Result<RoleMenuDto>();
             foreach (var roleId in dto.RoleIds)
             {
-                flag= _roleMenuService.Delete(item=>item.RoleId==roleId);
+                var delResult = await _roleMenuService.Delete(item => item.RoleId == roleId);
+                if (!delResult.flag)
+                    result.msg += delResult.msg + "\n";
                 if (dto.MenuIds != null)
                 {
-                    var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
-                   flag =  _roleMenuService.Add(newRoleMenus);
+                    if (dto.MenuIds.Any())
+                    {
+                        var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
+                        var addResult = await _roleMenuService.Add(newRoleMenus);
+                        if (!addResult.flag)
+                            result.msg += addResult.msg + "\n";
+                        result.flag = addResult.flag && delResult.flag;
+                    }
+                    else
+                    {
+                        result.flag = true; //清空权限 没设置有菜单
+                    }
+                }
+                else
+                {
+                    result.flag = true;
                 }
             }
-
-            var result = Json(new
-            {
-                flag = flag
-            });
-            return result;
+            return Json(result);
         }
+
         #endregion
     }
 }

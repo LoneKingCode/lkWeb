@@ -25,6 +25,7 @@ namespace lkWeb
         private MapperConfiguration _mapperConfiguration { get; set; }
         //SimpleInjector
         private Container container = new Container();
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -44,17 +45,24 @@ namespace lkWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(Configuration.GetConnectionString("lkWebConn")));
-            services.AddSession();
+            lkWebContext.connectionString = Configuration.GetConnectionString("lkWebConn");
+            services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString));
+            services.AddSession(config =>
+            {
+                config.Cookie.Name = "lkWeb.Session";
+                config.IdleTimeout = TimeSpan.FromMinutes(15);
+            });
+
 
             // Add framework services.
             services.AddMvc(config =>
             {
-                var policy = new AuthorizationPolicyBuilder()
-                            .RequireAuthenticatedUser()
-                            .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
+                //var policy = new AuthorizationPolicyBuilder()
+                //            .RequireAuthenticatedUser()
+                //            .Build();
+                //config.Filters.Add(new AuthorizeFilter(policy));
             });
+            services.AddAuthentication();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -129,7 +137,7 @@ namespace lkWeb
             loggerFactory.AddDebug();
 
             //异常处理中间件
-           // app.UseMiddleware(typeof(ExceptionHandlerMiddleWare));
+            // app.UseMiddleware(typeof(ExceptionHandlerMiddleWare));
 
             if (env.IsDevelopment())
             {
