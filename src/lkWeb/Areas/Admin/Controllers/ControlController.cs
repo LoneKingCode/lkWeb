@@ -8,10 +8,10 @@ using lkWeb.Service;
 using Microsoft.AspNetCore.Authorization;
 using lkWeb.Core.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
+using lkWeb.Filter;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
-    [Authorize]
     public class ControlController : AdminBaseController
     {
         public readonly IUserService _userService;
@@ -24,15 +24,11 @@ namespace lkWeb.Areas.Admin.Controllers
         // GET: /<controller>/
         public async Task<IActionResult> Index()
         {
-         
-            var result = await _userService.GetCurrentUser();
-            if (result.flag)
+            if (IsLogined)
             {
-                var user = result.data;
-                var userId = user.Id;
-                ViewBag.UserID = userId;
-                ViewBag.UserName = user.UserName;
-                ViewBag.Menus = (await _userService.GetUserMenu(userId)).data;
+                ViewBag.UserID = CurrentUser.Id;
+                ViewBag.UserName = CurrentUser.UserName;
+                ViewBag.Menus = (await _userService.GetUserMenu(CurrentUser.Id)).data;
                 return View();
             }
             else
@@ -44,10 +40,12 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
+        [AllowAnonymous]
         public IActionResult AccessDenied(string returnUrl)
         {
             return View();
         }
+        [AllowAnonymous]
         public IActionResult Error()
         {
             var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();

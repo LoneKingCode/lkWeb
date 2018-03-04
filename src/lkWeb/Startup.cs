@@ -124,7 +124,9 @@ namespace lkWeb
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider svp)
         {
             var accessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
+
             WebHelper._httpContextAccessor = accessor;
+            ServiceLocator.Instance = app.ApplicationServices;
 
             app.UseStaticFiles();//使用静态文件
 
@@ -153,13 +155,47 @@ namespace lkWeb
 
             app.UseMvc(routes =>
             {
+                //routes.MapRoute(
+                //    name: "Admin",
+                //    //template: "{area:exists}/{controller=Control}/{action=Index}/{id?}");
+                //    template: "{area:exists}/{controller}/{action}/{moduleId?}/{menuId?}/{btnId?}/{id?}",
+                //    defaults: new
+                //    {
+                //        controller = "Control",
+                //        action = "Index",
+                //    }
+                //    );
+
                 routes.MapRoute(
                     name: "Admin",
-                    template: "{area:exists}/{controller=Control}/{action=Index}/{id?}");
+                    //template: "{area:exists}/{controller=Control}/{action=Index}/{id?}");
+                    template: "{area:exists}/{controller}/{action}/{moduleId?}/{menuId?}",
+                    defaults: new
+                    {
+                        controller = "Control",
+                        action = "Index",
+                    }
+                    );
+
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{area:exists}/{controller=Control}/{action=Index}/{id?}");
             });
+
+            //context.MapRoute(
+            //    name: "JuCheap-Default",
+            //    url: "Adm/{controller}/{action}/{moudleId}/{menuId}/{btnId}/{id}",
+            //    defaults:
+            //        new
+            //        {
+            //            controller = "Control",
+            //            action = "Index",
+            //            moudleId = UrlParameter.Optional,
+            //            menuId = UrlParameter.Optional,
+            //            btnId = UrlParameter.Optional,
+            //            id = UrlParameter.Optional
+            //        }
+            //    );
 
             //    InitializeContainer(app);
 

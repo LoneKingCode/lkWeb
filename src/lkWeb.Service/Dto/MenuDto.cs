@@ -53,7 +53,8 @@ namespace lkWeb.Service.Dto
         /// URL
         /// </summary>
         [DisplayName("URL")]
-        public string Url { get; set; }
+        public string Url { get { return url; } set { url = value.TrimEnd('/'); } }
+        private string url;
 
         [DisplayName("排序")]
         public int ListOrder { get; set; }

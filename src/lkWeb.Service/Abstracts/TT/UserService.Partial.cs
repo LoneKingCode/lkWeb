@@ -20,7 +20,7 @@ namespace lkWeb.Service.Abstracts
 
 		}
 		    /// <summary>
-        ///添加user
+        ///添加单个user
         /// </summary>
         /// <param name="dto">user实体</param>
         /// <returns></returns>
@@ -86,7 +86,7 @@ namespace lkWeb.Service.Abstracts
             }
         }
         /// <summary>
-        /// 根据id删除user
+        /// 根据id删除单个user
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
@@ -140,7 +140,7 @@ namespace lkWeb.Service.Abstracts
             }
         }
         /// <summary>
-        /// 根据id获取单条数据
+        /// 根据id获取单个数据
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -151,6 +151,7 @@ namespace lkWeb.Service.Abstracts
                 var result = new Result<UserDto>();
                 var ds = GetDbSet(db);
                 var entity = await ds.FindAsync(id);
+				   if (entity != null)
                 result.data = MapTo<UserEntity, UserDto>(entity);
                 result.flag = true;
                 return result;
@@ -203,6 +204,24 @@ namespace lkWeb.Service.Abstracts
                     pageSize = 0,
                     pageIndex = 0
                 };
+                return result;
+            }
+        }
+		 /// <summary>
+        /// 根据条件获取单个user数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        public async Task<Result<UserDto>> GetByExp(Expression<Func<UserDto, bool>> exp)
+        {
+            using (var db = GetDb())
+            {
+                var result = new Result<UserDto>();
+                var ds = GetDbSet(db);
+                var _exp = exp.Cast<UserDto, UserEntity, bool>();
+                var entity = await ds.Where(_exp).FirstOrDefaultAsync();
+				   if (entity != null)
+                 result.data = MapTo<UserEntity,UserDto>(entity);
                 return result;
             }
         }

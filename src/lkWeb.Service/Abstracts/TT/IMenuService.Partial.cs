@@ -11,7 +11,7 @@ namespace lkWeb.Service.Abstracts
     public partial interface IMenuService
     {
 	  /// <summary>
-        /// 添加menu
+        /// 添加单个menu
         /// </summary>
         /// <param name="dto">menu实体</param>
         /// <returns></returns>
@@ -23,11 +23,17 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<MenuDto>>> Add(List<MenuDto> dtos);
         /// <summary>
-        /// 根据id获取menu数据
+        /// 根据id获取单个menu数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<Result<MenuDto>> GetById(int id);
+		 /// <summary>
+        /// 根据条件获取单个menu数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        Task<Result<MenuDto>> GetByExp(Expression<Func<MenuDto, bool>> exp);
         /// <summary>
         /// 根据id删除menu数据
         /// </summary>

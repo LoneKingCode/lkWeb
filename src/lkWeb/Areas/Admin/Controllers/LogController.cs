@@ -38,7 +38,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         #region Ajax
         [HttpGet]
-        public async Task<IActionResult> GetPageDataWithLogin(QueryBase queryBase)
+        public async Task<IActionResult> GetPageDataWithLogin(int moduleId, int menuId, int btnId, QueryBase queryBase)
         {
             Expression<Func<LoginLogDto, bool>> queryExp = item => item.Id >= 0;
             if (queryBase.SearchKey.IsNotEmpty())

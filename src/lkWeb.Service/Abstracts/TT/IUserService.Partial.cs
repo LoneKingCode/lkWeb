@@ -11,7 +11,7 @@ namespace lkWeb.Service.Abstracts
     public partial interface IUserService
     {
 	  /// <summary>
-        /// 添加user
+        /// 添加单个user
         /// </summary>
         /// <param name="dto">user实体</param>
         /// <returns></returns>
@@ -23,11 +23,17 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<UserDto>>> Add(List<UserDto> dtos);
         /// <summary>
-        /// 根据id获取user数据
+        /// 根据id获取单个user数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<Result<UserDto>> GetById(int id);
+		 /// <summary>
+        /// 根据条件获取单个user数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        Task<Result<UserDto>> GetByExp(Expression<Func<UserDto, bool>> exp);
         /// <summary>
         /// 根据id删除user数据
         /// </summary>

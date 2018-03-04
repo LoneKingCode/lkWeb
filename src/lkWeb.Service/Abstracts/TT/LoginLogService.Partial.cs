@@ -20,7 +20,7 @@ namespace lkWeb.Service.Abstracts
 
 		}
 		    /// <summary>
-        ///添加loginlog
+        ///添加单个loginlog
         /// </summary>
         /// <param name="dto">loginlog实体</param>
         /// <returns></returns>
@@ -86,7 +86,7 @@ namespace lkWeb.Service.Abstracts
             }
         }
         /// <summary>
-        /// 根据id删除loginlog
+        /// 根据id删除单个loginlog
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
@@ -140,7 +140,7 @@ namespace lkWeb.Service.Abstracts
             }
         }
         /// <summary>
-        /// 根据id获取单条数据
+        /// 根据id获取单个数据
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -151,6 +151,7 @@ namespace lkWeb.Service.Abstracts
                 var result = new Result<LoginLogDto>();
                 var ds = GetDbSet(db);
                 var entity = await ds.FindAsync(id);
+				   if (entity != null)
                 result.data = MapTo<LoginLogEntity, LoginLogDto>(entity);
                 result.flag = true;
                 return result;
@@ -203,6 +204,24 @@ namespace lkWeb.Service.Abstracts
                     pageSize = 0,
                     pageIndex = 0
                 };
+                return result;
+            }
+        }
+		 /// <summary>
+        /// 根据条件获取单个loginlog数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        public async Task<Result<LoginLogDto>> GetByExp(Expression<Func<LoginLogDto, bool>> exp)
+        {
+            using (var db = GetDb())
+            {
+                var result = new Result<LoginLogDto>();
+                var ds = GetDbSet(db);
+                var _exp = exp.Cast<LoginLogDto, LoginLogEntity, bool>();
+                var entity = await ds.Where(_exp).FirstOrDefaultAsync();
+				   if (entity != null)
+                 result.data = MapTo<LoginLogEntity,LoginLogDto>(entity);
                 return result;
             }
         }

@@ -11,7 +11,7 @@ namespace lkWeb.Service.Abstracts
     public partial interface IRoleMenuService
     {
 	  /// <summary>
-        /// 添加rolemenu
+        /// 添加单个rolemenu
         /// </summary>
         /// <param name="dto">rolemenu实体</param>
         /// <returns></returns>
@@ -23,11 +23,17 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<RoleMenuDto>>> Add(List<RoleMenuDto> dtos);
         /// <summary>
-        /// 根据id获取rolemenu数据
+        /// 根据id获取单个rolemenu数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<Result<RoleMenuDto>> GetById(int id);
+		 /// <summary>
+        /// 根据条件获取单个rolemenu数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        Task<Result<RoleMenuDto>> GetByExp(Expression<Func<RoleMenuDto, bool>> exp);
         /// <summary>
         /// 根据id删除rolemenu数据
         /// </summary>

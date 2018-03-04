@@ -11,7 +11,7 @@ namespace lkWeb.Service.Abstracts
     public partial interface IRoleService
     {
 	  /// <summary>
-        /// 添加role
+        /// 添加单个role
         /// </summary>
         /// <param name="dto">role实体</param>
         /// <returns></returns>
@@ -23,11 +23,17 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<RoleDto>>> Add(List<RoleDto> dtos);
         /// <summary>
-        /// 根据id获取role数据
+        /// 根据id获取单个role数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<Result<RoleDto>> GetById(int id);
+		 /// <summary>
+        /// 根据条件获取单个role数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        Task<Result<RoleDto>> GetByExp(Expression<Func<RoleDto, bool>> exp);
         /// <summary>
         /// 根据id删除role数据
         /// </summary>

@@ -20,7 +20,7 @@ namespace lkWeb.Service.Abstracts
 
 		}
 		    /// <summary>
-        ///添加role
+        ///添加单个role
         /// </summary>
         /// <param name="dto">role实体</param>
         /// <returns></returns>
@@ -86,7 +86,7 @@ namespace lkWeb.Service.Abstracts
             }
         }
         /// <summary>
-        /// 根据id删除role
+        /// 根据id删除单个role
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
@@ -140,7 +140,7 @@ namespace lkWeb.Service.Abstracts
             }
         }
         /// <summary>
-        /// 根据id获取单条数据
+        /// 根据id获取单个数据
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -151,6 +151,7 @@ namespace lkWeb.Service.Abstracts
                 var result = new Result<RoleDto>();
                 var ds = GetDbSet(db);
                 var entity = await ds.FindAsync(id);
+				   if (entity != null)
                 result.data = MapTo<RoleEntity, RoleDto>(entity);
                 result.flag = true;
                 return result;
@@ -203,6 +204,24 @@ namespace lkWeb.Service.Abstracts
                     pageSize = 0,
                     pageIndex = 0
                 };
+                return result;
+            }
+        }
+		 /// <summary>
+        /// 根据条件获取单个role数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        public async Task<Result<RoleDto>> GetByExp(Expression<Func<RoleDto, bool>> exp)
+        {
+            using (var db = GetDb())
+            {
+                var result = new Result<RoleDto>();
+                var ds = GetDbSet(db);
+                var _exp = exp.Cast<RoleDto, RoleEntity, bool>();
+                var entity = await ds.Where(_exp).FirstOrDefaultAsync();
+				   if (entity != null)
+                 result.data = MapTo<RoleEntity,RoleDto>(entity);
                 return result;
             }
         }

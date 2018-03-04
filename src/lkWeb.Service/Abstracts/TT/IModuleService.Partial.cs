@@ -11,7 +11,7 @@ namespace lkWeb.Service.Abstracts
     public partial interface IModuleService
     {
 	  /// <summary>
-        /// 添加module
+        /// 添加单个module
         /// </summary>
         /// <param name="dto">module实体</param>
         /// <returns></returns>
@@ -23,11 +23,17 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<ModuleDto>>> Add(List<ModuleDto> dtos);
         /// <summary>
-        /// 根据id获取module数据
+        /// 根据id获取单个module数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<Result<ModuleDto>> GetById(int id);
+		 /// <summary>
+        /// 根据条件获取单个module数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        Task<Result<ModuleDto>> GetByExp(Expression<Func<ModuleDto, bool>> exp);
         /// <summary>
         /// 根据id删除module数据
         /// </summary>

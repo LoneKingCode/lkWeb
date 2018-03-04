@@ -11,7 +11,7 @@ namespace lkWeb.Service.Abstracts
     public partial interface IDepartmentService
     {
 	  /// <summary>
-        /// 添加department
+        /// 添加单个department
         /// </summary>
         /// <param name="dto">department实体</param>
         /// <returns></returns>
@@ -23,11 +23,17 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<DepartmentDto>>> Add(List<DepartmentDto> dtos);
         /// <summary>
-        /// 根据id获取department数据
+        /// 根据id获取单个department数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<Result<DepartmentDto>> GetById(int id);
+		 /// <summary>
+        /// 根据条件获取单个department数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        Task<Result<DepartmentDto>> GetByExp(Expression<Func<DepartmentDto, bool>> exp);
         /// <summary>
         /// 根据id删除department数据
         /// </summary>

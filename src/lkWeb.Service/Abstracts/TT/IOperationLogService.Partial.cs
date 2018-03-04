@@ -11,7 +11,7 @@ namespace lkWeb.Service.Abstracts
     public partial interface IOperationLogService
     {
 	  /// <summary>
-        /// 添加operationlog
+        /// 添加单个operationlog
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
@@ -23,11 +23,17 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<OperationLogDto>>> Add(List<OperationLogDto> dtos);
         /// <summary>
-        /// 根据id获取operationlog数据
+        /// 根据id获取单个operationlog数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<Result<OperationLogDto>> GetById(int id);
+		 /// <summary>
+        /// 根据条件获取单个operationlog数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        Task<Result<OperationLogDto>> GetByExp(Expression<Func<OperationLogDto, bool>> exp);
         /// <summary>
         /// 根据id删除operationlog数据
         /// </summary>

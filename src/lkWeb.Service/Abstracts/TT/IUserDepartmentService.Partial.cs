@@ -11,7 +11,7 @@ namespace lkWeb.Service.Abstracts
     public partial interface IUserDepartmentService
     {
 	  /// <summary>
-        /// 添加userdepartment
+        /// 添加单个userdepartment
         /// </summary>
         /// <param name="dto">userdepartment实体</param>
         /// <returns></returns>
@@ -23,11 +23,17 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<UserDepartmentDto>>> Add(List<UserDepartmentDto> dtos);
         /// <summary>
-        /// 根据id获取userdepartment数据
+        /// 根据id获取单个userdepartment数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<Result<UserDepartmentDto>> GetById(int id);
+		 /// <summary>
+        /// 根据条件获取单个userdepartment数据
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        Task<Result<UserDepartmentDto>> GetByExp(Expression<Func<UserDepartmentDto, bool>> exp);
         /// <summary>
         /// 根据id删除userdepartment数据
         /// </summary>
