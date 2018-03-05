@@ -69,6 +69,9 @@ namespace lkWeb.Filter
             else //已登陆
             {
                 var user = userResult.data;
+                var roles = _userService.GetUserRoles(user.Id).Result.data.Select(item => item.Name).ToList();
+                if (roles.Contains("超级管理员"))
+                    return;
                 //判断用户状态
                 if (user.Status == Service.Enum.UserStatus.禁用 || user.Status == Service.Enum.UserStatus.未激活)
                 {
@@ -89,37 +92,55 @@ namespace lkWeb.Filter
                 }
                 else //判断权限
                 {
-                    var moduleId = httpContext.GetRouteValue("moduleId");
-                    var menuId = httpContext.GetRouteValue("menuId");
-                    var btnId = httpContext.GetRouteValue("btnId");
-                    if (menuId == null)
+                    var menuUrl = "/admin/" + httpContext.GetRouteValue("controller") + "/" + httpContext.GetRouteValue("action");
+                    var menuService = ServiceLocator.Get<IMenuService>();
+                    var menu = menuService.GetByExp(item => item.Url == menuUrl).Result;
+                    if (menu.data == null)
                     {
                         return;
                     }
                     else
                     {
-                        // 因为 按钮 与 菜单 都是在一张表里 如果btnId存在，说明是点击菜单页面内按钮了
-                        //如果不存在 说明就是访问了菜单
-                        var authId = 0;
-                        if (btnId == null)
-                            authId = menuId.ObjToInt();
-                        else
-                            authId = btnId.ObjToInt();
                         var _roleMenuService = ServiceLocator.Get<IRoleMenuService>();
                         var userRoles = _userService.GetUserRoles(user.Id).Result;
                         if (userRoles.data != null && userRoles.data.Any())
                         {
                             var userRoleIds = userRoles.data.Select(item => item.Id).ToList();
-                            var roleMenu = _roleMenuService.GetByExp(item => item.MenuId == authId && userRoleIds.Contains(item.RoleId)).Result;
+                            var roleMenu = _roleMenuService.GetByExp(item => item.MenuId == menu.data.Id && userRoleIds.Contains(item.RoleId)).Result;
                             if (roleMenu.data != null)
                             {
                                 return;
                             }
-                            filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Control", Action = "AccessDenied" }));
+                            if (isAjax)
+                            {
+                                var result = new Result<string>
+                                {
+                                    msg = "无权限"
+                                };
+                                var jsonResult = new JsonResult(result);
+                                filterContext.Result = jsonResult;
+                            }
+                            else
+                            {
+                                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Control", Action = "AccessDenied" }));
+
+                            }
                         }
                         else
                         {
-                            filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Control", Action = "AccessDenied" }));
+                             if(isAjax)
+                            {
+                                var result = new Result<string>
+                                {
+                                    msg = "无权限"
+                                };
+                                var jsonResult = new JsonResult(result);
+                                filterContext.Result = jsonResult;
+                            }
+                             else
+                            {
+                                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "Control", Action = "AccessDenied" }));
+                            }
                         }
                     }
 

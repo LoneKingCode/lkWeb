@@ -56,7 +56,7 @@ lkWeb.DeleteMulti = function (ids, model, table) {
         $.ajax(
             {
                 type: 'post',
-                url: '/Admin/' + model + '/DeleteMulti',
+                url: '/Admin/' + model + '/Delete',
                 data: {
                     ids: ids,
                     __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()

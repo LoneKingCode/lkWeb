@@ -26,9 +26,9 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> Add(int id)
+        public async Task<IActionResult> Add(UrlParameter param)
         {
-            var parentID = id;
+            var parentID = param.id;
             if (parentID > 0)
             {
                 ViewBag.ParentID = parentID;
@@ -41,9 +41,9 @@ namespace lkWeb.Areas.Admin.Controllers
             }
             return View();
         }
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var department = (await _departmentService.GetById(id)).data;
+            var department = (await _departmentService.GetById(param.id)).data;
             var parentID = department.ParentID;
             if (parentID > 0)
             {
@@ -62,14 +62,14 @@ namespace lkWeb.Areas.Admin.Controllers
         #region Ajax
 
         [HttpGet]
-        public async Task<IActionResult> GetPageData(QueryBase queryBase)
+        public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<DepartmentDto, bool>> queryExp = item => item.Id >= 0;
+            Expression<Func<DepartmentDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)
                 || x.Leader.Contains(queryBase.SearchKey));
             //获取所有部门的id和部门名称
-            var allDepartment = (await _departmentService.GetList(item => item.Id >= 0))
+            var allDepartment = (await _departmentService.GetList(item => item.Id > 0))
                                 .data.ToDictionary(item => item.Id, item => item.Name);
             var dto = await _departmentService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableDto
@@ -93,7 +93,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(DepartmentDto dto)
+        public async Task<IActionResult> Edit(UrlParameter param, DepartmentDto dto)
         {
             var result = await _departmentService.Update(dto);
             return Json(result);
@@ -101,56 +101,59 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(DepartmentDto dto)
+        public async Task<IActionResult> Add(UrlParameter param, DepartmentDto dto)
         {
             var result = await _departmentService.Add(dto);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(UrlParameter param)
         {
-            var result = new Result<DepartmentDto>();
-            var dtos = (await _departmentService.GetList(item => item.ParentID == id)).data;
-            if (dtos.Count > 0)
+            if (param.ids != null && param.ids.Any())
             {
-                result.flag = false;
-                var department = (await _departmentService.GetById(id)).data;
-                result.msg = "部门 " + department.Name + " 下有子部门,删除失败";
-            }
+                var result = new Result<List<DepartmentDto>>();
+                bool flag = false;
+                foreach (var id in param.ids)
+                {
+                    var dtos = (await _departmentService.GetList(item => item.ParentID == id)).data;
+                    if (dtos.Count > 0)
+                    {
+                        var department = (await _departmentService.GetById(id)).data;
+                        result.flag = false;
+                        result.msg += "部门 " + department.Name + " 下有子部门,删除失败<br/>";
+                        flag = true;
+                    }
+                }
 
+                if (!flag)
+                    result = await _departmentService.Delete(param.ids);
+                return Json(result);
+            }
             else
             {
-                result = await _departmentService.Delete(id);
-            }
-            return Json(result);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteMulti(List<int> ids)
-        {
-            var result = new Result<List<DepartmentDto>>();
-            bool flag = false;
-            foreach (var id in ids)
-            {
-                var dtos = (await _departmentService.GetList(item => item.ParentID == id)).data;
+                var result = new Result<DepartmentDto>();
+                var dtos = (await _departmentService.GetList(item => item.ParentID == param.id)).data;
                 if (dtos.Count > 0)
                 {
-                    var department = (await _departmentService.GetById(id)).data;
                     result.flag = false;
-                    result.msg += "部门 " + department.Name + " 下有子部门,删除失败<br/>";
-                    flag = true;
+                    var department = (await _departmentService.GetById(param.id)).data;
+                    result.msg = "部门 " + department.Name + " 下有子部门,删除失败";
                 }
+
+                else
+                {
+                    result = await _departmentService.Delete(param.id);
+                }
+                return Json(result);
             }
 
-            if (!flag)
-                result = await _departmentService.Delete(ids);
-            return Json(result);
+
         }
         [HttpPost]
-        public async Task<IActionResult> GetList()
+        public async Task<IActionResult> GetList(UrlParameter param)
         {
-            var result = await _departmentService.GetList(item => item.Id >= 0);
+            var result = await _departmentService.GetList(item => item.Id > 0);
             var strData = result.data.Select(d => new
             {
                 id = d.Id,

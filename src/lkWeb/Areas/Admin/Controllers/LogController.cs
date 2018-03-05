@@ -22,15 +22,15 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         #region Page
-        public IActionResult Index()
+        public IActionResult Index(UrlParameter param)
         {
             return View();
         }
-        public IActionResult Login()
+        public IActionResult Login(UrlParameter param)
         {
             return View();
         }
-        public IActionResult Operation()
+        public IActionResult Operation(UrlParameter param)
         {
             return View();
         }
@@ -38,9 +38,9 @@ namespace lkWeb.Areas.Admin.Controllers
 
         #region Ajax
         [HttpGet]
-        public async Task<IActionResult> GetPageDataWithLogin(int moduleId, int menuId, int btnId, QueryBase queryBase)
+        public async Task<IActionResult> GetPageDataWithLogin(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<LoginLogDto, bool>> queryExp = item => item.Id >= 0;
+            Expression<Func<LoginLogDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey));
             var dto = await _loginLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
@@ -63,9 +63,9 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(data);
         }
         [HttpGet]
-        public async Task<IActionResult> GetPageDataWithOperation(QueryBase queryBase)
+        public async Task<IActionResult> GetPageDataWithOperation(UrlParameter param,QueryBase queryBase)
         {
-            Expression<Func<OperationLogDto, bool>> queryExp = item => item.Id >= 0;
+            Expression<Func<OperationLogDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
                 || x.OperationUrl.Contains(queryBase.SearchKey));

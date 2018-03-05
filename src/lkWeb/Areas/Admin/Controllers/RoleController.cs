@@ -63,7 +63,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<RoleDto, bool>> queryExp = item => item.Id >= 0;
+            Expression<Func<RoleDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var result = await _roleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
@@ -103,22 +103,16 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(UrlParameter param)
         {
-            var result = await _roleService._Delete(param.id);
-
-            return Json(result);
+            if (param.ids != null && param.ids.Any())
+                return Json(await _roleService._Delete(param.ids));
+            else
+                return Json(await _roleService._Delete(param.id));
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteMulti(UrlParameter param)
-        {
-            var result = await _roleService._Delete(param.ids);
 
-            return Json(result);
-        }
         [HttpPost]
         public async Task<IActionResult> GetRoleList(UrlParameter param)
         {
-            var result = await _roleService.GetList(item => item.Id >= 0);
+            var result = await _roleService.GetList(item => item.Id > 0);
             var strData = result.data.Select(d => new
             {
                 id = d.Id,
@@ -132,8 +126,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetMenuList(UrlParameter param)
         {
             var result = new List<object>();
-            var moduleList = (await _moduleService.GetList(item => item.Id >= 0)).data;
-            var menuList = (await _menuService.GetList(item => item.Id >= 0)).data;
+            var moduleList = (await _moduleService.GetList(item => item.Id > 0)).data;
+            var menuList = (await _menuService.GetList(item => item.Id > 0)).data;
             var menus = menuList.Select(d => new
             {
                 id = d.Id.ToString(),
@@ -157,7 +151,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        private async Task<IActionResult> GetRoleMenus(int roleId)
+        public async Task<IActionResult> GetRoleMenus(int roleId)
         {
             var result = await _roleMenuService.GetList(item => item.RoleId == roleId);
             var strData = result.data.Select(d => new
@@ -169,7 +163,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(strData);
         }
         [HttpPost]
-        private async Task<IActionResult> AuthMenus(UrlParameter param, AuthMenuDto dto)
+        public async Task<IActionResult> AuthMenus(UrlParameter param, AuthMenuDto dto)
         {
             var result = new Result<RoleMenuDto>();
             foreach (var roleId in dto.RoleIds)
