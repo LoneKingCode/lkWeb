@@ -10,6 +10,7 @@ using lkWeb.Service.Dto;
 using lkWeb.Data;
 using Microsoft.AspNetCore.Identity;
 using NLog;
+using Hangfire;
 
 namespace lkWeb.Controllers
 {
@@ -18,14 +19,16 @@ namespace lkWeb.Controllers
         static Logger Logger = LogManager.GetCurrentClassLogger();
         public IActionResult Index()
         {
-            Logger.Info("普通信息日志-----------");
-            Logger.Debug("调试日志-----------");
-            Logger.Error("错误日志-----------");
-            Logger.Fatal("异常日志-----------");
-            Logger.Warn("警告日志-----------");
-            Logger.Trace("跟踪日志-----------");
-            Logger.Log(NLog.LogLevel.Warn, "Log日志------------------");
+            //Logger.Info("普通信息日志-----------");
+            //Logger.Debug("调试日志-----------");
+            //Logger.Error("错误日志-----------");
+            //Logger.Fatal("异常日志-----------");
+            //Logger.Warn("警告日志-----------");
+            //Logger.Trace("跟踪日志-----------");
+            //Logger.Log(NLog.LogLevel.Warn, "Log日志------------------");
+    //        var jobId = BackgroundJob.Enqueue(
 
+    //() => Console.WriteLine("Fire-and-forget!"));
             return View();
         }
 

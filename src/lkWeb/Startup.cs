@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using Hangfire;
+using lkWeb.Filter;
 
 namespace lkWeb
 {
@@ -51,14 +53,12 @@ namespace lkWeb
                 config.IdleTimeout = TimeSpan.FromMinutes(15);
             });
 
+            //Add Hangfire
+            services.AddHangfire(x => x.UseSqlServerStorage(lkWebContext.connectionString));
+
             // Add framework services.
-            services.AddMvc(config =>
-            {
-                //var policy = new AuthorizationPolicyBuilder()
-                //            .RequireAuthenticatedUser()
-                //            .Build();
-                //config.Filters.Add(new AuthorizeFilter(policy));
-            });
+            services.AddMvc();
+
             services.AddAuthentication();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -101,7 +101,7 @@ namespace lkWeb
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
-                options.Cookie.Expiration = TimeSpan.FromDays(150);
+                options.Cookie.Expiration = TimeSpan.FromDays(7);
                 options.LoginPath = "/admin/user/login"; // If the LoginPath is not set here, ASP.NET Core will default to /Account/Login
                 options.LogoutPath = "/admin/user/logout"; // If the LogoutPath is not set here, ASP.NET Core will default to /Account/Logout
                 options.AccessDeniedPath = "/admin/control/AccessDenied"; // If the AccessDeniedPath is not set here, ASP.NET Core will default to /Account/AccessDenied
@@ -109,7 +109,7 @@ namespace lkWeb
             });
 
             //automapper
-            services.AddSingleton<IMapper>(sp => _mapperConfiguration.CreateMapper());
+            services.AddSingleton(sp => _mapperConfiguration.CreateMapper());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -129,10 +129,6 @@ namespace lkWeb
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 
             loggerFactory.AddDebug();
-
-            loggerFactory.AddNLog();//添加NLog
-
-            env.ConfigureNLog("nlog.config");//读取Nlog配置文件
 
             //异常处理中间件
             // app.UseMiddleware(typeof(ExceptionHandlerMiddleWare));
@@ -158,7 +154,23 @@ namespace lkWeb
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            loggerFactory.AddNLog();//添加NLog
 
+            env.ConfigureNLog("nlog.config");//读取Nlog配置文件
+
+            //使用hangfire
+            var jobOptions = new BackgroundJobServerOptions
+            {
+                Queues = new[] { "Job" },//队列名称，只能为小写
+                WorkerCount = Environment.ProcessorCount * 5, //并发任务数
+                ServerName = "lkJob",//服务器名称
+            };
+            app.UseHangfireServer(jobOptions);
+            var options = new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            };
+            app.UseHangfireDashboard("/jobs", options);
             //初始数据库数据
             SeedData.Initialize(app.ApplicationServices);
         }

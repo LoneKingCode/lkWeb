@@ -30,6 +30,10 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
+        public IActionResult Chart(UrlParameter param)
+        {
+            return View();
+        }
         public IActionResult Operation(UrlParameter param)
         {
             return View();
