@@ -133,7 +133,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.1" />
-    <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="4.0.12" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.4.1" />
    </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">

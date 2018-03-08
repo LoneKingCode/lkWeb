@@ -9,22 +9,20 @@ using lkWeb.Service;
 using lkWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using lkWeb.Service.Abstracts;
-using SimpleInjector;
-using SimpleInjector.Lifestyles;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using lkWeb.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using NLog.Extensions.Logging;
+using NLog.Web;
 
 namespace lkWeb
 {
     public class Startup
     {
         private MapperConfiguration _mapperConfiguration { get; set; }
-        //SimpleInjector
-        private Container container = new Container();
 
         public Startup(IHostingEnvironment env)
         {
@@ -52,7 +50,6 @@ namespace lkWeb
                 config.Cookie.Name = "lkWeb.Session";
                 config.IdleTimeout = TimeSpan.FromMinutes(15);
             });
-
 
             // Add framework services.
             services.AddMvc(config =>
@@ -113,11 +110,6 @@ namespace lkWeb
 
             //automapper
             services.AddSingleton<IMapper>(sp => _mapperConfiguration.CreateMapper());
-
-            //simpleinjector
-            //    services.AddSingleton<IControllerActivator>(new SimpleInjectorControllerActivator(container));
-            // services.AddSingleton<IViewComponentActivator>(new SimpleInjectorViewComponentActivator(container));
-            //  services.UseSimpleInjectorAspNetRequestScoping(container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,6 +130,10 @@ namespace lkWeb
 
             loggerFactory.AddDebug();
 
+            loggerFactory.AddNLog();//添加NLog
+
+            env.ConfigureNLog("nlog.config");//读取Nlog配置文件
+
             //异常处理中间件
             // app.UseMiddleware(typeof(ExceptionHandlerMiddleWare));
 
@@ -156,51 +152,15 @@ namespace lkWeb
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                    name: "Admin-Menu",
-                    //template: "{area:exists}/{controller=Control}/{action=Index}/{id?}");
-                    template: "{area:exists}/{controller}/{action}/{id?}",
-                    defaults: new
-                    {
-                        controller = "Control",
-                        action = "Index",
-                    }
-                    );
-
+                  name: "Admin",
+                  template: "{area:exists}/{controller=Control}/{action=Index}/{id?}");
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Control}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-
-
-            //    InitializeContainer(app);
-
-            //SimpleInjector
-            //  container.Verify();
 
             //初始数据库数据
             SeedData.Initialize(app.ApplicationServices);
-        }
-        private void InitializeContainer(IApplicationBuilder app)
-        {
-            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-            // Add application presentation components:
-            container.RegisterMvcControllers(app);
-            container.RegisterMvcViewComponents(app);
-
-            // Add application services. For instance:
-            container.Register<IUserService, UserService>(Lifestyle.Scoped);
-            container.Register<IRoleService, RoleService>(Lifestyle.Scoped);
-            container.Register<IMenuService, MenuService>(Lifestyle.Scoped);
-            container.Register<IRoleMenuService, RoleMenuService>(Lifestyle.Scoped);
-            container.Register<IDepartmentService, DepartmentService>(Lifestyle.Scoped);
-            container.Register<IUserDepartmentService, UserDepartmentService>(Lifestyle.Scoped);
-            container.Register<ILoginLogService, LoginLogService>(Lifestyle.Scoped);
-            container.Register<IOperationLogService, OperationLogService>(Lifestyle.Scoped);
-
-            // Cross-wire ASP.NET services (if any). For instance:
-            container.RegisterSingleton(app.ApplicationServices.GetService<ILoggerFactory>());
-
         }
     }
 }

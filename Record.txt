@@ -1,7 +1,4 @@
 数据库 初始化代码 初始 数据
-自定定义UserRoleEntity 继承  IdentityUserRole 无效
-日志加上清空
-异常捕获 log4net
 登陆时根据模块。。。
 图表统计
 hangfire 定时任务
