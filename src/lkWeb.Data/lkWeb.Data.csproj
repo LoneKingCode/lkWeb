@@ -25,6 +25,12 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="lkWeb.Service">
+      <HintPath>..\lkWeb.Service\bin\Debug\netcoreapp2.0\lkWeb.Service.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 
 
 </Project>

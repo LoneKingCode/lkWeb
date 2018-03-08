@@ -44,6 +44,27 @@ namespace lkWeb.Service.Abstracts
             }
             return result;
         }
+
+        public async Task<Result<List<RoleDto>>> _Add(List<RoleDto> dtos)
+        {
+            var result = new Result<List<RoleDto>>();
+            var entities = MapTo<List<RoleDto>, List<RoleEntity>>(dtos);
+            foreach (var entity in entities)
+            {
+                var _result = await _roleManager.CreateAsync(entity);
+                if (_result.Succeeded)
+                    result.flag = true;
+                else
+                {
+                    foreach (var err in _result.Errors)
+                    {
+                        result.msg += err.Description + "\n";
+                    }
+                }
+            }
+            return result;
+        }
+
         public async Task<Result<RoleDto>> _Update(RoleDto dto)
         {
             var result = new Result<RoleDto>();
