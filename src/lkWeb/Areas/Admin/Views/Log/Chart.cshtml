@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "统计图表";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+}
+
+@section Scripts{
+    <script src="~/lib/echart/echarts-all.js"></script>
+    <script>
+        $(function () {
+            LoadChart();
+        })
+        function LoadChart() {
+            var myChart = echarts.init(document.getElementById('chart'));
+            option = {
+                title: {
+                    text: '最近一周站点数据统计',
+                    subtext: ''
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['注册人数', '参与课程人数']
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        mark: { show: true },
+                        dataView: { show: true, readOnly: false },
+                        magicType: { show: true, type: ['line', 'bar'] },
+                        restore: { show: true },
+                        saveAsImage: { show: true }
+                    }
+                },
+                calculable: true,
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: '注册人数',
+                        type: 'bar',
+                        data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
+                        markPoint: {
+                            data: [
+                                { type: 'max', name: '最大值' },
+                                { type: 'min', name: '最小值' }
+                            ]
+                        },
+                        markLine: {
+                            data: [
+                                { type: 'average', name: '平均值' }
+                            ]
+                        }
+                    },
+                    {
+                        name: '参与课程人数',
+                        type: 'bar',
+                        data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
+                        markPoint: {
+                            data: [
+                                { name: '年最高', value: 182.2, xAxis: 7, yAxis: 183, symbolSize: 18 },
+                                { name: '年最低', value: 2.3, xAxis: 11, yAxis: 3 }
+                            ]
+                        },
+                        markLine: {
+                            data: [
+                                { type: 'average', name: '平均值' }
+                            ]
+                        }
+                    }
+                ]
+            };
+
+            myChart.setOption(option);
+        }
+    </script>
+}
+
+<div id="chart" style="width: 90%; height: 400px;"></div>
+
