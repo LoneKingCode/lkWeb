@@ -154,6 +154,7 @@ namespace lkWeb
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
             loggerFactory.AddNLog();//添加NLog
 
             env.ConfigureNLog("nlog.config");//读取Nlog配置文件

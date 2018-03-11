@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\lkWeb.Core\lkWeb.Core.csproj" />
     <ProjectReference Include="..\lkWeb.Entity\lkWeb.Entity.csproj" />
   </ItemGroup>
 
@@ -23,12 +24,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="lkWeb.Service">
-      <HintPath>..\lkWeb.Service\bin\Debug\netcoreapp2.0\lkWeb.Service.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 

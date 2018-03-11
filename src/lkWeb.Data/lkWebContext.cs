@@ -8,6 +8,8 @@ using System.Data;
 using lkWeb.Data.Config;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.Text;
+using lkWeb.Core.Extensions;
 
 namespace lkWeb.Data
 {
@@ -43,6 +45,9 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new RoleClaimConfig());
             modelBuilder.ApplyConfiguration(new UserClaimConfig());
             modelBuilder.ApplyConfiguration(new ModuleConfig());
+            modelBuilder.ApplyConfiguration(new TableListConfig());
+            modelBuilder.ApplyConfiguration(new TableColumnConfig());
+
         }
         public override int SaveChanges()
         {
@@ -50,18 +55,23 @@ namespace lkWeb.Data
             {
                 return base.SaveChanges();
             }
+            catch (DbUpdateException ex)
+            {
+                LoggerHelper.Logger.Error(ex);
+                return 0;
+
+                //Add your code to inspect the inner exception and/or
+                //e.Entries here.
+                //Or just use the debugger.
+                //Added this catch (after the comments below) to make it more obvious
+                //how this code might help this specific problem
+                //throw;
+            }
             catch (Exception ex)
             {
-                //var sb = new StringBuilder();
-                //foreach (var error in ex.EntityValidationErrors)
-                //{
-                //    foreach (var item in error.ValidationErrors)
-                //    {
-                //        sb.AppendLine(item.PropertyName + ": " + item.ErrorMessage);
-                //    }
-                //}
-                //Logger.Error("SaveChanges.DbEntityValidation", ex.GetAllMessages() + sb);
-                throw;
+                LoggerHelper.Logger.Error(ex);
+                return 0;
+                //throw;
             }
         }
 

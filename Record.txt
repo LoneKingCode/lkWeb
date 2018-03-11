@@ -1,5 +1,9 @@
+tablelist - ImportType 做成enum  DTO
+tablelist  - tablecolumn 外键
+
 数据库 初始化代码 初始 数据
 登陆时根据模块。。。
 图表统计
 hangfire 定时任务
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name.
+  试试直接用SQL 语句?

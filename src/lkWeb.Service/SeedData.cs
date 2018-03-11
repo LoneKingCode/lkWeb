@@ -1,4 +1,5 @@
-﻿using lkWeb.Entity;
+﻿using lkWeb.Data;
+using lkWeb.Entity;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using lkWeb.Service.Enum;
@@ -8,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-namespace lkWeb.Data
+namespace lkWeb.Service
 {
     /// <summary>
     /// 数据库初始化数据
