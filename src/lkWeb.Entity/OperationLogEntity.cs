@@ -37,10 +37,5 @@ namespace lkWeb.Entity
         /// 电脑的MAC地址
         /// </summary>
         public string ClientMac { get; set; }
-
-        /// <summary>
-        /// 说明
-        /// </summary>
-        public string Description { get; set; }
     }
 }

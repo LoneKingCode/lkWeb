@@ -140,9 +140,6 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<DateTime>("CreateDateTime");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("varchar(40)");
-
                     b.Property<string>("OperationDescription")
                         .IsRequired()
                         .HasColumnType("varchar(100)");
