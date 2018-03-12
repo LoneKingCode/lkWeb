@@ -11,9 +11,10 @@ using System;
 namespace lkWeb.Data.Migrations
 {
     [DbContext(typeof(lkWebContext))]
-    partial class lkWebContextModelSnapshot : ModelSnapshot
+    [Migration("20180311120120_201803112001")]
+    partial class _201803112001
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,8 +272,6 @@ namespace lkWeb.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TableID");
-
                     b.ToTable("Sys_TableColumn");
                 });
 
@@ -280,6 +279,8 @@ namespace lkWeb.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<byte>("AddColumns");
 
                     b.Property<DateTime>("CreateDateTime");
 
@@ -290,6 +291,8 @@ namespace lkWeb.Data.Migrations
                     b.Property<string>("DeleteTableName");
 
                     b.Property<string>("Description");
+
+                    b.Property<byte>("EditColumns");
 
                     b.Property<string>("ExtendFunction");
 
@@ -305,7 +308,11 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<byte>("SearchColumns");
+
                     b.Property<string>("ViewEditDeleteSet");
+
+                    b.Property<string>("ViewEditDeleteWidthHeight");
 
                     b.HasKey("Id");
 
@@ -473,14 +480,6 @@ namespace lkWeb.Data.Migrations
                     b.HasOne("lkWeb.Entity.RoleEntity", "Role")
                         .WithMany("RoleMenus")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("lkWeb.Entity.TableColumnEntity", b =>
-                {
-                    b.HasOne("lkWeb.Entity.TableListEntity", "Table")
-                        .WithMany("TableColumns")
-                        .HasForeignKey("TableID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

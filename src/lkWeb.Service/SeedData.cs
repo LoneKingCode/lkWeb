@@ -147,7 +147,7 @@ namespace lkWeb.Service
                     ModuleId = 1,
                     Name = "修改信息",
                     Icon = "",
-                    ListOrder = 8,
+                    ListOrder = 9,
                     ParentId = 1,
                     Type = (byte)MenuType.菜单,
                     Url = "/admin/user/edit"
@@ -214,7 +214,7 @@ namespace lkWeb.Service
                     Type = (byte)MenuType.按钮,
                     Url = "/admin/role/delete"
                 },
-            };
+            };// id:15
             var departmentManageBtns = new List<MenuEntity>
             {
                 new MenuEntity
@@ -247,7 +247,7 @@ namespace lkWeb.Service
                     Type = (byte)MenuType.按钮,
                     Url = "/admin/department/delete"
                 },
-            };
+            };// id:18
             var roleAuthBtns = new List<MenuEntity>
             {
                 new MenuEntity
@@ -260,7 +260,7 @@ namespace lkWeb.Service
                     Type = (byte)MenuType.按钮,
                     Url = "/admin/role/AuthMenus"
                 }
-            };
+            };// id:19
             var userManageBtns = new List<MenuEntity>
             {
                 new MenuEntity
@@ -303,7 +303,7 @@ namespace lkWeb.Service
                     Type = (byte)MenuType.按钮,
                     Url = "/admin/user/authen"
                 },
-            };
+            };// id:23
             var userDepartmentBtns = new List<MenuEntity>
             {
                 new MenuEntity
@@ -326,7 +326,7 @@ namespace lkWeb.Service
                     Type = (byte)MenuType.按钮,
                     Url = "/admin/User/DelUserDepartment"
                 },
-            };
+            };// id:25
             var moduleManageBtns = new List<MenuEntity>
             {
                 new MenuEntity
@@ -359,7 +359,7 @@ namespace lkWeb.Service
                     Type = (byte)MenuType.按钮,
                     Url = "/admin/module/delete"
                 },
-            };
+            };// id:28
             var menuManageBtns = new List<MenuEntity>
             {
                 new MenuEntity
@@ -392,7 +392,7 @@ namespace lkWeb.Service
                     Type = (byte)MenuType.按钮,
                     Url = "/admin/menu/delete"
                 },
-            };
+            };// id:31
 
             menuList.AddRange(roleManageBtns);
             menuList.AddRange(departmentManageBtns);
@@ -401,6 +401,89 @@ namespace lkWeb.Service
             menuList.AddRange(userDepartmentBtns);
             menuList.AddRange(moduleManageBtns);
             menuList.AddRange(menuManageBtns);
+            menuList.AddRange(new List<MenuEntity>{
+                new MenuEntity
+                {
+                    ModuleId = 1,
+                    Name = "表管理",
+                    Icon = "",
+                    ListOrder = 7,
+                    ParentId = 1,
+                    Type = (byte)MenuType.菜单,
+                    Url = "/admin/table/index"
+                },//id: 32
+                  new MenuEntity
+                {
+                    ModuleId = 1,
+                    Name = "添加",
+                    Icon = "",
+                    ListOrder = 1,
+                    ParentId = 32,
+                    Type = (byte)MenuType.按钮,
+                    Url = "/admin/table/add"
+                },//id: 33
+                   new MenuEntity
+                {
+                    ModuleId = 1,
+                    Name = "编辑",
+                    Icon = "",
+                    ListOrder = 2,
+                    ParentId = 32,
+                    Type = (byte)MenuType.按钮,
+                    Url = "/admin/table/edit"
+                },//id: 34
+                    new MenuEntity
+                {
+                    ModuleId = 1,
+                    Name = "删除",
+                    Icon = "",
+                    ListOrder = 3,
+                    ParentId = 32,
+                    Type = (byte)MenuType.按钮,
+                    Url = "/admin/table/delete"
+                },//id: 35
+
+                  new MenuEntity
+                {
+                    ModuleId = 1,
+                    Name = "表结构管理",
+                    Icon = "",
+                    ListOrder = 8,
+                    ParentId = 1,
+                    Type = (byte)MenuType.菜单,
+                    Url = "/admin/tablecolumn/index"
+                },//id: 36
+                    new MenuEntity
+                {
+                    ModuleId = 1,
+                    Name = "添加",
+                    Icon = "",
+                    ListOrder = 1,
+                    ParentId = 36,
+                    Type = (byte)MenuType.按钮,
+                    Url = "/admin/tablecolumn/add"
+                },//id: 33
+                   new MenuEntity
+                {
+                    ModuleId = 1,
+                    Name = "编辑",
+                    Icon = "",
+                    ListOrder = 2,
+                    ParentId = 36,
+                    Type = (byte)MenuType.按钮,
+                    Url = "/admin/tablecolumn/edit"
+                },//id: 34
+                    new MenuEntity
+                {
+                    ModuleId = 1,
+                    Name = "删除",
+                    Icon = "",
+                    ListOrder = 3,
+                    ParentId = 36,
+                    Type = (byte)MenuType.按钮,
+                    Url = "/admin/tablecolumn/delete"
+                },//id: 35
+            });
 
             db.AddRange(menuList);
             #endregion

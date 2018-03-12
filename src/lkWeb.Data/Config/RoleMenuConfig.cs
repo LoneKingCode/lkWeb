@@ -14,7 +14,7 @@ namespace lkWeb.Data.Config
             builder.ToTable("Sys_RoleMenu");
             builder.HasKey(item => item.Id);
             builder.Property(item => item.Id).ValueGeneratedOnAdd();
-          builder.HasOne(item => item.Role).WithMany(item => item.RoleMenus).HasForeignKey(item => item.RoleId);
+            builder.HasOne(item => item.Role).WithMany(item => item.RoleMenus).HasForeignKey(item => item.RoleId);
             builder.Property(item => item.RoleId).IsRequired();
             builder.Property(item => item.MenuId).IsRequired();
         }

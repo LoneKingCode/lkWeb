@@ -1,11 +1,11 @@
-﻿using lkWeb.Entity.Base;
+﻿using lkWeb.Service.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace lkWeb.Entity
+namespace lkWeb.Service.Dto
 {
-    public class TableListEntity : BaseEntity
+    public class TableListDto : BaseDto
     {
         /// <summary>
         /// 表说明
@@ -19,12 +19,13 @@ namespace lkWeb.Entity
         /// 是否视图
         /// </summary>
         public byte IsView { get; set; }
+
         /// <summary>
-        /// 默认过滤条件
+        /// 过滤条件
         /// </summary>
         public string DefaultFilter { get; set; }
         /// <summary>
-        /// 默认排序条件
+        /// 排序条件
         /// </summary>
         public string DefaultSort { get; set; }
         /// <summary>
@@ -44,19 +45,22 @@ namespace lkWeb.Entity
         /// </summary>
         public string ExtendFunction { get; set; }
         /// <summary>
-        /// 查看|编辑|删除 可见  1,1,1
+        /// 查看，编辑，删除是否可见  1,1,1
         /// </summary>
         public string ViewEditDeleteSet { get; set; }
         /// <summary>
+        /// 查看，编辑，删除 宽高   width,height|width,height|width,height
+        /// </summary>
+        public string ViewEditDeleteWidthHeight { get; set; }
+        /// <summary>
         /// 导入类型  更新，插入，更新或插入
         /// </summary>
-        public byte ImportType { get; set; }
+        public TableImportType ImportType { get; set; }
+
+        public string ImportTypeName { get { return ImportType.ToString(); } }
         /// <summary>
         /// 删除表名
         /// </summary>
         public string DeleteTableName { get; set; }
-
-        public virtual ICollection<TableColumnEntity> TableColumns { get; set; }
-
     }
 }

@@ -21,16 +21,23 @@ namespace lkWeb.Service
         {
             CreateMap<UserEntity, UserDto>().ForMember(u => u.Status, e => e.MapFrom(s => (UserStatus)s.Status));
             CreateMap<UserDto, UserEntity>().ForMember(u => u.Status, e => e.MapFrom(s => (byte)s.Status));
+
             CreateMap<UserEntity, UserDto>().ForMember(u => u.Status, e => e.MapFrom(s => (UserStatus)s.Status));
             CreateMap<UserDto, UserEntity>().ForMember(u => u.Status, e => e.MapFrom(s => (byte)s.Status));
+
             CreateMap<MenuDto, MenuEntity>().ForMember(u => u.Type, e => e.MapFrom(s => (byte)s.Type));
             CreateMap<MenuEntity, MenuDto>().ForMember(u => u.Type, e => e.MapFrom(s => (MenuType)s.Type));
+
+            CreateMap<TableListDto, TableListEntity>().ForMember(u => u.ImportType, e => e.MapFrom(s => (byte)s.ImportType));
+            CreateMap<TableListEntity, TableListDto>().ForMember(u => u.ImportType, e => e.MapFrom(s => (TableImportType)s.ImportType));
+
+            CreateMap<TableColumnDto, TableColumnEntity>().ForMember(u => u.DataType, e => e.MapFrom(s => (byte)s.DataType));
+            CreateMap<TableColumnEntity, TableColumnDto>().ForMember(u => u.DataType, e => e.MapFrom(s => (ColumnDataType)s.DataType));
+
             CreateMap<DepartmentEntity, DepartmentDto>();
             CreateMap<DepartmentDto, DepartmentEntity>();
             CreateMap<LoginLogEntity, LoginLogDto>();
             CreateMap<LoginLogDto, LoginLogEntity>();
-            //CreateMap<MenuEntity, MenuDto>();
-            //CreateMap<MenuDto, MenuEntity>();
             CreateMap<OperationLogEntity, OperationLogDto>();
             CreateMap<OperationLogDto, OperationLogEntity>();
             CreateMap<RoleEntity, RoleDto>();
@@ -41,6 +48,8 @@ namespace lkWeb.Service
             CreateMap<UserDepartmentDto, UserDepartmentEntity>();
             CreateMap<ModuleEntity, ModuleDto>();
             CreateMap<ModuleDto, ModuleEntity>();
+            CreateMap<SystemOptionEntity, SystemOptionDto>();
+            CreateMap<SystemOptionDto, SystemOptionEntity>();
             //CreateMap<UserEntity, UserDto>();
             //CreateMap<UserDto, UserEntity>();
 

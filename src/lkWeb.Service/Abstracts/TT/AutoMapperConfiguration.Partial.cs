@@ -32,6 +32,15 @@ public partial class AutoMapperConfiguration : Profile
 				/*	CreateMap<RoleMenuEntity, RoleMenuDto>();
 					CreateMap<RoleMenuDto, RoleMenuEntity>();
 					*/
+				/*	CreateMap<SystemOptionEntity, SystemOptionDto>();
+					CreateMap<SystemOptionDto, SystemOptionEntity>();
+					*/
+				/*	CreateMap<TableColumnEntity, TableColumnDto>();
+					CreateMap<TableColumnDto, TableColumnEntity>();
+					*/
+				/*	CreateMap<TableListEntity, TableListDto>();
+					CreateMap<TableListDto, TableListEntity>();
+					*/
 				/*	CreateMap<UserDepartmentEntity, UserDepartmentDto>();
 					CreateMap<UserDepartmentDto, UserDepartmentEntity>();
 					*/

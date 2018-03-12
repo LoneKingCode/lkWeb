@@ -73,6 +73,9 @@ namespace lkWeb
             services.AddScoped<ILoginLogService, LoginLogService>();
             services.AddScoped<IOperationLogService, OperationLogService>();
             services.AddScoped<IModuleService, ModuleService>();
+            services.AddScoped<ITableListService, TableListService>();
+            services.AddScoped<ITableColumnService, TableColumnService>();
+
 
             services.AddIdentity<UserEntity, RoleEntity>()
                 .AddEntityFrameworkStores<lkWebContext>()

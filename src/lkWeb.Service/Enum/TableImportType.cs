@@ -7,7 +7,7 @@ namespace lkWeb.Service.Enum
     /// <summary>
     /// 导入类型
     /// </summary>
-    public enum ImportType
+    public enum TableImportType
     {
         /// <summary>
         /// 插入

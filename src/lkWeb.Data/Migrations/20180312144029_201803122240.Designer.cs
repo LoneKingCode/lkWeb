@@ -11,9 +11,10 @@ using System;
 namespace lkWeb.Data.Migrations
 {
     [DbContext(typeof(lkWebContext))]
-    partial class lkWebContextModelSnapshot : ModelSnapshot
+    [Migration("20180312144029_201803122240")]
+    partial class _201803122240
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

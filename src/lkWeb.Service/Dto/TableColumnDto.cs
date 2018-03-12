@@ -1,11 +1,11 @@
-﻿using lkWeb.Entity.Base;
+﻿using lkWeb.Service.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace lkWeb.Entity
+namespace lkWeb.Service.Dto
 {
-    public class TableColumnEntity : BaseEntity
+    public class TableColumnDto : BaseDto
     {
         #region 基本信息
         /// <summary>
@@ -23,7 +23,8 @@ namespace lkWeb.Entity
         /// <summary>
         /// 数据类型   注意还有out takein enum类型
         /// </summary>
-        public byte DataType { get; set; }
+        public ColumnDataType DataType { get; set; }
+        public string DataTypeName { get { return DataType.ToString(); } }
         /// <summary>
         /// 是否必填
         /// </summary>
@@ -53,7 +54,7 @@ namespace lkWeb.Entity
         public int SearchOrder { get; set; }
         #endregion
 
-            #region 是否可见
+        #region 是否可见
         /// <summary>
         /// 导入是否可见
         /// </summary>
@@ -90,7 +91,7 @@ namespace lkWeb.Entity
         /// </summary>
         public string OutSql { get; set; }
         /// <summary>
-        /// 枚举值范围 1,2,3|模块,菜单,按钮
+        /// 枚举值范围
         /// </summary>
         public string EnumRange { get; set; }
         /// <summary>
@@ -98,6 +99,5 @@ namespace lkWeb.Entity
         /// </summary>
         public byte PrimarKey { get; set; }
 
-        public virtual TableListEntity Table { get; set; }
     }
 }

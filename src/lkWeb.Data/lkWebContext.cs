@@ -47,6 +47,7 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new ModuleConfig());
             modelBuilder.ApplyConfiguration(new TableListConfig());
             modelBuilder.ApplyConfiguration(new TableColumnConfig());
+            modelBuilder.ApplyConfiguration(new SystemOptionConfig());
 
         }
         public override int SaveChanges()
