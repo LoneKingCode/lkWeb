@@ -10,6 +10,10 @@
     <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="wwwroot\lib\datatables\media\src\**" />
     <Compile Remove="wwwroot\lib\datatables\media\unit_testing\**" />

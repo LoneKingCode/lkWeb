@@ -12,7 +12,7 @@
             });
 
           $("#btnSearch").click(function () {
-                lkWeb.Search($("#txtSearchKey").val(), table_menu);
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
             })
 
@@ -28,7 +28,7 @@
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "menu", table_menu);
+            lkWeb.DeleteMulti(ids, "menu", lkTable);
         }
         function AddModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
@@ -39,7 +39,7 @@
                 lkWeb.GoAction("menu", "add", 0);
         }
 
-        var table_menu;
+        var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';   //后台获取json数据的地址
             var columns = [
@@ -68,7 +68,7 @@
                 { "mData": "order", "sClass": "text-center" },
                 { "mData": "createDateTime", "sClass": "text-center" }
             ];
-            table_menu = lkWeb.LoadTable("table_menu", columns, dataUrl);
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl);
     }
 
 
@@ -76,7 +76,7 @@
 }
 <div class="form-group">
     <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
-    <button type="button" class="btn btn-primar" onclick="EditModel()">编辑</button>
+    <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
     <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
 </div>
 <div class="form-group">
@@ -88,7 +88,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="table_menu">
+<table class="table table-striped table-hover" id="lkTable">
     <thead>
         <tr>
             <th>

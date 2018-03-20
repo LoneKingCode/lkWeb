@@ -67,7 +67,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var result = await _roleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = result.recordsTotal,
@@ -163,19 +163,19 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(strData);
         }
         [HttpPost]
-        public async Task<IActionResult> AuthMenus(UrlParameter param, AuthMenuDto dto)
+        public async Task<IActionResult> AuthMenus(UrlParameter param, AuthMenuModel model)
         {
             var result = new Result<RoleMenuDto>();
-            foreach (var roleId in dto.RoleIds)
+            foreach (var roleId in model.RoleIds)
             {
                 var delResult = await _roleMenuService.Delete(item => item.RoleId == roleId);
                 if (!delResult.flag)
                     result.msg += delResult.msg + "\n";
-                if (dto.MenuIds != null)
+                if (model.MenuIds != null)
                 {
-                    if (dto.MenuIds.Any())
+                    if (model.MenuIds.Any())
                     {
-                        var newRoleMenus = dto.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
+                        var newRoleMenus = model.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
                         var addResult = await _roleMenuService.Add(newRoleMenus);
                         if (!addResult.flag)
                             result.msg += addResult.msg + "\n";

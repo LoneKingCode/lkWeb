@@ -85,7 +85,7 @@ namespace lkWeb.Areas.Admin.Controllers
                             .data.ToDictionary(item => item.Id, item => item.Name);
             var allModule = (await _moduleService.GetList(item => item.Id > 0))
                             .data.ToDictionary(item => item.Id, item => item.Name);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = result.recordsTotal,

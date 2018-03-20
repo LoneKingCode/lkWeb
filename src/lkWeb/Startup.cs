@@ -75,6 +75,7 @@ namespace lkWeb
             services.AddScoped<IModuleService, ModuleService>();
             services.AddScoped<ITableListService, TableListService>();
             services.AddScoped<ITableColumnService, TableColumnService>();
+            services.AddScoped<ISystemOptionService, SystemOptionService>();
 
 
             services.AddIdentity<UserEntity, RoleEntity>()

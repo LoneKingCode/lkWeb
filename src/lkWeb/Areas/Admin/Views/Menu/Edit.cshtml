@@ -9,7 +9,7 @@
 
     <script type="text/javascript">
     $(function () {
-        lkWeb.FormValidation($("#form-editMenu"), function () {
+        lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.GoAction("menu", "index")
             }, "操作成功")
 
@@ -46,7 +46,7 @@
         }
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="form-editMenu">
+<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
     @Html.AntiForgeryToken()
     @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
     <div class="form-group">

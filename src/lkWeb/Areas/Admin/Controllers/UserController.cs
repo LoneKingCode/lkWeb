@@ -26,9 +26,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         public UserController(IUserService userService,
             IDepartmentService departmentService,
-            IUserDepartmentService userDepartmentService,
-           UserManager<UserEntity> userManager,
-           SignInManager<UserEntity> signInManager)
+            IUserDepartmentService userDepartmentService)
         {
             _userService = userService;
             _departmentService = departmentService;
@@ -117,7 +115,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey));
             var result = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = result.recordsTotal,
@@ -144,7 +142,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 id = d.Id,
                 rolename = d.Name
             });
-            var result = new DataTableDto
+            var result = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = roles.recordsTotal,
@@ -162,7 +160,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 id = d.Id,
                 rolename = d.Name
             });
-            var result = new DataTableDto
+            var result = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = roles.recordsTotal,
@@ -204,21 +202,21 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
 
-        public async Task<IActionResult> DeleteRole(AuthRoleDto dto)
+        public async Task<IActionResult> DeleteRole(AuthRoleModel model)
         {
-            var result = await _userService.RemoveRoles(dto.UserId, dto.RoleIds);
+            var result = await _userService.RemoveRoles(model.UserId, model.RoleIds);
             return Json(result);
         }
-        public async Task<IActionResult> AuthRole(UrlParameter param, AuthRoleDto dto)
+        public async Task<IActionResult> AuthRole(UrlParameter param, AuthRoleModel model)
         {
-            var result = await _userService.AddRoles(dto.UserId, dto.RoleIds);
+            var result = await _userService.AddRoles(model.UserId, model.RoleIds);
             return Json(result);
         }
-        public async Task<IActionResult> DelUserDepartment(SetDepartmentDto dto)
+        public async Task<IActionResult> DelUserDepartment(SetDepartmentModel model)
         {
             var result = await _userDepartmentService.Delete(
-                item => dto.UserIDs.Contains(item.UserID)
-                && item.DepartmentID == dto.DepartmentID);
+                item => model.UserIDs.Contains(item.UserID)
+                && item.DepartmentID == model.DepartmentID);
             return Json(result);
         }
         [HttpGet]
@@ -231,7 +229,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 .data.Select(item => item.UserID).ToList();
             Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0 && users.Contains(item.Id);
             var dto = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var result = new DataTableDto
+            var result = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,
@@ -257,7 +255,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 .data.Select(item => item.UserID).ToList();
             Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0 && !users.Contains(item.Id);
             var dto = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var result = new DataTableDto
+            var result = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,
@@ -275,7 +273,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
-        public async Task<IActionResult> SetDepartment(SetDepartmentDto dto)
+        public async Task<IActionResult> SetDepartment(SetDepartmentModel dto)
         {
             if (dto.UserIDs.Count() < 1 || dto.DepartmentID < 1)
             {

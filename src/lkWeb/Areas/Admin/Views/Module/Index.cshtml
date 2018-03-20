@@ -13,7 +13,7 @@
             });
 
             $("#btnSearch").click(function () {
-                lkWeb.Search($("#txtSearchKey").val(), table_module);
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
             })
         });
@@ -31,10 +31,10 @@
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "module", table_module);
+            lkWeb.DeleteMulti(ids, "module", lkTable);
         }
 
-        var table_module;
+        var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
             var columns = [
@@ -50,7 +50,7 @@
                 { "mData": "name", "sClass": "text-center" },
                 { "mData": "description", "sClass": "text-center" }
             ];
-            table_module = lkWeb.LoadTable("table_module", columns, dataUrl)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
     }
     </script>
 }
@@ -69,7 +69,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="table_module">
+<table class="table table-striped table-hover" id="lkTable">
     <thead>
         <tr>
             <th>

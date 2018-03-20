@@ -204,20 +204,19 @@ namespace lkWeb.Data.Migrations
 
             modelBuilder.Entity("lkWeb.Entity.SystemOptionEntity", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
                     b.Property<string>("Code")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("CreateDateTime");
-
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("varchar(1000)");
 
-                    b.HasKey("Code");
+                    b.HasKey("Id");
 
                     b.ToTable("Sys_SystemOption");
                 });
@@ -231,7 +230,7 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<DateTime>("CreateDateTime");
 
-                    b.Property<string>("DataType");
+                    b.Property<byte>("DataType");
 
                     b.Property<string>("Description");
 

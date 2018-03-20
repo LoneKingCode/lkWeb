@@ -14,7 +14,7 @@
             });
 
             $("#btnSearch").click(function () {
-                lkWeb.Search($("#txtSearchKey").val(), table_user);
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
             })
 
@@ -35,7 +35,7 @@
         function DelModel()
         {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "user", table_user);
+            lkWeb.DeleteMulti(ids, "user", lkTable);
         }
 
         function EditModel() {
@@ -46,7 +46,7 @@
                 lkWeb.GoAction("user", "edit", id);
 
         }
-        var table_user;
+        var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
             var columns = [
@@ -64,7 +64,7 @@
                 { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
                 { "mData": "statusName", "name": "StatusName", "sClass": "text-center" }
             ];
-            table_user = lkWeb.LoadTable("table_user", columns, dataUrl)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
         }
 </script>
 }
@@ -85,7 +85,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="table_user">
+<table class="table table-striped table-hover" id="lkTable">
     <thead>
         <tr>
             <th>

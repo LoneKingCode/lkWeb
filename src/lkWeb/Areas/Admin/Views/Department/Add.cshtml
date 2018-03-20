@@ -5,13 +5,13 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#form-department"), function () {
+            lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.GoAction("department", "index")
             }, "操作成功")
         })
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="form-department">
+<form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="lkForm">
     @Html.AntiForgeryToken()
     <div class="form-group">
         <input type="hidden" value="@ViewBag.ParentID" name="ParentID" />

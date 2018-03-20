@@ -131,7 +131,7 @@
                           url: "@Url.Action("AuthMenus", "Role")",
                           type: "post",
                           dataType: "json",
-                          data: { dto:data},
+                          data: { model:data},
                           async: false,
                           success: function (data) {
                               if (data.flag == true)

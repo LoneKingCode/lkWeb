@@ -9,13 +9,13 @@
     {
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#form-editUser"), function () {
+            lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.GoAction("user", "index")
             }, "操作成功")
         })
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="form-editUser">
+<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
     @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
     @Html.HiddenFor(item => item.ConcurrencyStamp, new { @class = "form-control" })
     @Html.HiddenFor(item => item.SecurityStamp, new { @class = "form-control" })

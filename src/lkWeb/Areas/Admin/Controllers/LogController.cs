@@ -48,7 +48,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey));
             var dto = await _loginLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,
@@ -74,7 +74,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
                 || x.OperationUrl.Contains(queryBase.SearchKey));
             var dto = await _operationLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,

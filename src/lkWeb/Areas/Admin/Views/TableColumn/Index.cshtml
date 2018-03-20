@@ -13,7 +13,7 @@
             });
 
             $("#btnSearch").click(function () {
-                lkWeb.Search($("#txtSearchKey").val(), table_tablecolumn);
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
             })
         });
@@ -31,10 +31,13 @@
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "tablecolumn", table_tablecolumn);
+            lkWeb.DeleteMulti(ids, "tablecolumn", lkTable);
+        }
+        function CopyModel() {
+            alert("复制");
         }
 
-        var table_tablecolumn;
+        var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
             var columns = [
@@ -56,7 +59,7 @@
                 { "mData": "listVisible", "sClass": "text-center" },
                 { "mData": "searchVisible", "sClass": "text-center" },
              ];
-            table_tablecolumn = lkWeb.LoadTable("table_tablecolumn", columns, dataUrl)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
     }
     </script>
 }
@@ -65,7 +68,8 @@
     <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
     <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
     <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
-</div>
+    <button type="button" class="btn btn-warning" onclick="CopyModel()">复制</button>
+ </div>
 <div class="form-group">
     <div class="input-group">
         <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
@@ -75,7 +79,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="table_tablecolumn">
+<table class="table table-striped table-hover" id="lkTable">
     <thead>
         <tr>
             <th>

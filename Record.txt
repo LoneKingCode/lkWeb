@@ -1,12 +1,16 @@
 输入框 加入输入提示
-add edit表单名称都替换为form-edit  form-add之类
-tablelist  - tablecolumn 外键
-
 
 字段保存类型 默认的string是nvarchar(max) 用哪个？varchar or nvarchar
-数据库 初始化代码 初始 数据
+数据库 初始化代码 初始 数据 并且测试
+
+调整startup.cs 里面太乱
+
+菜单 自适应缩放
+
 登陆时根据模块。。。
+
 图表统计
+
 hangfire 定时任务
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name.
   试试直接用SQL 语句?

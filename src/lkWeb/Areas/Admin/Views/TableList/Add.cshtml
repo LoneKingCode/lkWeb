@@ -5,14 +5,14 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#form-addtablelist"), function () {
+            lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.GoAction("tablelist", "index")
             }, "操作成功")
         })
 
     </script>
 }
-    <form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="form-addtablelist">
+    <form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="lkForm">
         @Html.AntiForgeryToken()
         <div class="form-group">
             <label class="col-md-2 control-label">表名</label>

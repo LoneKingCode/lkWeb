@@ -47,7 +47,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var dto = await _TableListService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,

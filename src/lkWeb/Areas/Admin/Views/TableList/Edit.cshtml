@@ -7,14 +7,14 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#form-editTablelist"), function () {
+            lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.GoAction("tablelist", "index")
             }, "操作成功")
         })
 
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="form-editTablelist">
+<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
     @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
     @Html.AntiForgeryToken()
     <div class="form-group">

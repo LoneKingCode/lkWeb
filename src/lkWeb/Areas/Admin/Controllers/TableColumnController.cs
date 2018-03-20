@@ -57,7 +57,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var allTable = (await _tableListService.GetList(item => item.Id > 0))
                    .data.ToDictionary(item => item.Id, item => item.Name);
             var dto = await _tableColumnService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,

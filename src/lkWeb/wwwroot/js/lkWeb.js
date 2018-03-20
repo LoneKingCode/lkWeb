@@ -1,4 +1,7 @@
-﻿
+﻿$(function () {
+
+})
+
 var lkWeb = {};
 
 lkWeb.LayerIndex = 0;
@@ -29,7 +32,7 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
         window.location.href = url;
 }
 
-lkWeb.OpenLayer = function (url,title,width,height) {
+lkWeb.OpenLayer = function (url, title, width, height) {
     lkWeb.LayerIndex = layer.open({
         type: 2,
         title: title,
@@ -177,7 +180,6 @@ lkWeb.CloseLoad = function () {
 
 //Datatable
 lkWeb.Search = function (searchKey, table) {
-    console.log("searchKey:" + searchKey);
     _searchKey = searchKey;
     table.search(_searchKey).draw(); //！！！！！！！！！！！搜索暂时无效 很无奈！！！ 只能先这样代替了
 }
