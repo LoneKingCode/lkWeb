@@ -18,6 +18,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public IActionResult Index(UrlParameter param)
         {
             var model = new ViewListModel();
+          //  model.TableColumn =
             return View(model);
         }
         public IActionResult Add(UrlParameter param)

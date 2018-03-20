@@ -51,12 +51,12 @@
                 },
                 { "mData": "rowNum", "sClass": "text-center" },
                 @{
-                    StringBuilder column = new StringBuilder();
-                    foreach (var columnName in Model.TableColumn)
+                    StringBuilder columnStr = new StringBuilder();
+                    foreach (var column in Model.TableColumn)
                     {
-                        column.Append(string.Format("{\"mData\": \"name\", \"sClass\": \"text-center\" },", columnName));
+                        columnStr.Append(string.Format("{\"mData\": \"name\", \"sClass\": \"text-center\" },", column.Name));
                     }
-                @Html.Raw(column.ToString());
+                @Html.Raw(columnStr.ToString());
                      }
             ];
             lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
@@ -85,12 +85,12 @@
                 <input type="checkbox" class="checkAll" />
             </th>
             @{
-                StringBuilder header = new StringBuilder();
-                foreach (var headerName in Model.TableHeader)
+                StringBuilder headerStr = new StringBuilder();
+                foreach (var column in Model.TableColumn)
                 {
-                    header.Append("<th>" + headerName + "</th>");
+                    headerStr.Append("<th>" + column.Name + "</th>");
                 }
-                @Html.Raw(header.ToString());
+                @Html.Raw(headerStr.ToString());
             }
         </tr>
     </thead>
