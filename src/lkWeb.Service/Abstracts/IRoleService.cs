@@ -8,6 +8,7 @@ namespace lkWeb.Service.Abstracts
 {
     public partial interface IRoleService
     {
+        //以下都为.net core identity中usermanage中的操作
         Task<Result<RoleDto>> _GetById(int id);
         Task<Result<RoleDto>> _Add(RoleDto dto);
         Task<Result<List<RoleDto>>> _Add(List<RoleDto> dtos);

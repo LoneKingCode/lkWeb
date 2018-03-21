@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
+using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +15,17 @@ namespace lkWeb.Areas.Admin.Controllers
     /// </summary>
     public class ViewListController : AdminBaseController
     {
+        public readonly ITableColumnService _tableColumnService;
+        public ViewListController(ITableColumnService tableColumnService)
+        {
+            _tableColumnService = tableColumnService;
+        }
         #region Page
-        public IActionResult Index(UrlParameter param)
+        public async Task<IActionResult> Index(UrlParameter param)
         {
             var model = new ViewListModel();
-          //  model.TableColumn =
+            var result = await _tableColumnService.GetList(item => item.TableID == param.id);
+            model.TableColumn = result.data;
             return View(model);
         }
         public IActionResult Add(UrlParameter param)

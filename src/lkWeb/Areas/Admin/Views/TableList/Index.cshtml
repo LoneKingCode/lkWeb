@@ -34,7 +34,17 @@
             lkWeb.DeleteMulti(ids, "tablelist", lkTable);
         }
         function CopyModel() {
-            alert("复制");
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "") {
+                parent.layer.alert("请选择");
+                return;
+            }
+            lkWeb.Confirm("确认复制", function () {
+                lkWeb.AjaxPost("@Url.Action("Copy")", { id: id }, function () {
+                    parent.layer.alert("复制成功");
+                lkTable.draw(false);
+            })
+            })
         }
         function BuildColumn() {
             alert("生成列");

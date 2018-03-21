@@ -1,3 +1,5 @@
+执行SQL语句&&获取SQL查询结果。
+
 输入框 加入输入提示
 
 字段保存类型 默认的string是nvarchar(max) 用哪个？varchar or nvarchar

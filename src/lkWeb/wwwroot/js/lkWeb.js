@@ -107,7 +107,6 @@ lkWeb.Delete = function (id, model, table) {
                         __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
                     },
                     success: function (result) {
-                        console.log("ajax success")
                         if (result.flag == true) {
                             parent.layer.alert("删除成功")
                             if (table != null && table != undefined)
@@ -131,6 +130,39 @@ lkWeb.Delete = function (id, model, table) {
 
         }
     )
+}
+
+lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
+    data.__RequestVerificationToken = $("input[name='__RequestVerificationToken']").val();
+    $.ajax(
+        {
+            type: 'post',
+            url: url,
+            data: data,
+            success: function (result) {
+                if (result.flag == true) {
+                    if (IsFunction(successCallBack))
+                        successCallBack();
+                    else
+                        parent.layer.alert("操作成功");
+                }
+                else {
+                    if (NotIsEmpty(result.msg))
+                        parent.layer.alert(result.msg);
+                    else
+                        parent.layer.alert("操作失败");
+                }
+            },
+            error: function (err) {
+                parent.layer.alert("操作失败");
+                if (IsFunction(errorCallBack))
+                    errorCallBack();
+                console.log(err);
+            }
+        })
+}
+lkWeb.AjaxGet = function () {
+
 }
 
 //form validation
@@ -176,6 +208,20 @@ lkWeb.ShowLoad = function () {
 }
 lkWeb.CloseLoad = function () {
     layer.close(layerIndex);
+}
+
+lkWeb.Confirm = function (msg, successCallBack, cancelCallBack) {
+    parent.layer.confirm(msg, {
+        btn: ["确认", "取消"]
+    },
+        function () {
+            if (IsFunction(successCallBack))
+                successCallBack();
+        }, function () {
+            if (IsFunction(cancelCallBack))
+                cancelCallBack();
+        }
+    )
 }
 
 //Datatable

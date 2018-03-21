@@ -10,6 +10,7 @@ namespace lkWeb.Service.Abstracts
 {
     public partial interface IUserService
     {
+        //以下都为.net core identity中usermanage中的操作
         Task<Result<string>> Logout();
         Task<Result<UserDto>> _GetById(int id);
         Task<Result<UserDto>> _Add(UserDto dto);

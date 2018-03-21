@@ -15,10 +15,12 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class TableListController : AdminBaseController
     {
-        public readonly ITableListService _TableListService;
-        public TableListController(ITableListService TableListService)
+        public readonly ITableListService _tableListService;
+        public readonly ITableColumnService _tableColumnService;
+        public TableListController(ITableListService tableListService, ITableColumnService tableColumnService)
         {
-            _TableListService = TableListService;
+            _tableListService = tableListService;
+            _tableColumnService = tableColumnService;
         }
 
         #region Page
@@ -34,7 +36,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             ViewBag.ImportTypeList = new SelectList(Enum.GetValues(typeof(TableImportType)).Cast<TableImportType>());
-            var module = (await _TableListService.GetById(param.id)).data;
+            var module = (await _tableListService.GetById(param.id)).data;
             return View(module);
         }
         #endregion
@@ -46,7 +48,7 @@ namespace lkWeb.Areas.Admin.Controllers
             Expression<Func<TableListDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
-            var dto = await _TableListService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var dto = await _tableListService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -68,7 +70,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UrlParameter param, TableListDto dto)
         {
-            var result = await _TableListService.Update(dto);
+            var result = await _tableListService.Update(dto);
             return Json(result);
         }
 
@@ -76,7 +78,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, TableListDto dto)
         {
-            var result = await _TableListService.Add(dto);
+            var result = await _tableListService.Add(dto);
             return Json(result);
         }
         [HttpPost]
@@ -84,9 +86,29 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(UrlParameter param)
         {
             if (param.ids != null && param.ids.Any())
-                return Json(await _TableListService.Delete(param.ids));
+                return Json(await _tableListService.Delete(param.ids));
             else
-                return Json(await _TableListService.Delete(param.id));
+                return Json(await _tableListService.Delete(param.id));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Copy(UrlParameter param)
+        {
+            var resourceDto = (await _tableListService.GetById(param.id)).data;
+            var newDto = resourceDto;
+            newDto.Id = default(int);
+            var result = await _tableListService.Add(newDto);
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BuildColumn(UrlParameter param)
+        {
+            var tableDto = (await _tableListService.GetById(param.id)).data;
+            var tableName = tableDto.Name;
+          //  var tableData = (await _tableListService.SqlQuery("select * from Sys_TableList where Id=" + param.id)).data;
+            
+            return null;
         }
         #endregion
     }

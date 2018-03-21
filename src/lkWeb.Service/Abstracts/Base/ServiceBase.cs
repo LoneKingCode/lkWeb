@@ -9,13 +9,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using lkWeb.Core.Extensions;
+using System.Data.Common;
 
 namespace lkWeb.Service.Abstracts
 {
     public abstract class ServiceBase<T> where T : class
     {
         public readonly IMapper _mapper;
-         static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
+        static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
         static DbContextOptionsBuilder<lkWebContext> dbContextOptionBuilder = new DbContextOptionsBuilder<lkWebContext>(dbContextOption);
         public ServiceBase(IMapper mapper)
         {
@@ -51,7 +52,7 @@ namespace lkWeb.Service.Abstracts
             if (source == null) throw new ArgumentNullException();
             return _mapper.Map<TSource, TDestination>(source);
         }
-        public object Map(object source, object destination,Type sourceType,Type destinationType)
+        public object Map(object source, object destination, Type sourceType, Type destinationType)
         {
             return _mapper.Map(source, destination, sourceType, destinationType);
         }

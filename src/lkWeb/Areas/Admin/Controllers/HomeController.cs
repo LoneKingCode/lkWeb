@@ -12,16 +12,19 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class HomeController : AdminBaseController
     {
-        public readonly IUserService _userService;
-        public HomeController(IUserService userService)
+        public readonly IRoleService _roleService;
+        public readonly ISqlService _sqlService;
+        public HomeController(IRoleService roleService,ISqlService sqlService)
         {
-            _userService = userService;
+            _roleService = roleService;
+            _sqlService = sqlService;
         }
 
         #region Page
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+          //  var reader = await _sqlService.Query("select * from Sys_User");
+             return View();
         }
 
         public IActionResult About()

@@ -76,6 +76,7 @@ namespace lkWeb
             services.AddScoped<ITableListService, TableListService>();
             services.AddScoped<ITableColumnService, TableColumnService>();
             services.AddScoped<ISystemOptionService, SystemOptionService>();
+            services.AddScoped<ISqlService, SqlService>();
 
 
             services.AddIdentity<UserEntity, RoleEntity>()
