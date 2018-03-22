@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +24,7 @@ namespace lkWeb.Service.Abstracts
             return await GetDb().Database.ExecuteSqlCommandAsync(sql) > 0;
         }
 
-        public async Task<DbDataReader> Query(string sql)
+        public async Task<List<Dictionary<string, object>>> Query(string sql)
         {
             var conn = GetDb().Database.GetDbConnection();
             try
@@ -33,9 +35,14 @@ namespace lkWeb.Service.Abstracts
                     string query = sql;
                     command.CommandText = query;
                     DbDataReader reader = await command.ExecuteReaderAsync();
-                    var a = reader["Id"];
-                    return reader;
-                    //   reader.Dispose();
+                    var results = new List<Dictionary<string, object>>();
+                    while (reader.Read())
+                    {
+                        results.Add(Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue));
+                    }
+                    reader.Dispose();
+                    return results;
+
                 }
             }
             finally

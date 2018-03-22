@@ -17,10 +17,18 @@ namespace lkWeb.Areas.Admin.Controllers
     {
         public readonly ITableListService _tableListService;
         public readonly ITableColumnService _tableColumnService;
-        public TableListController(ITableListService tableListService, ITableColumnService tableColumnService)
+        public readonly ISqlService _sqlService;
+        public readonly ISysService _sysService;
+
+        public TableListController(ITableListService tableListService,
+            ITableColumnService tableColumnService,
+            ISqlService sqlService,
+            ISysService sysService)
         {
             _tableListService = tableListService;
             _tableColumnService = tableColumnService;
+            _sqlService = sqlService;
+            _sysService = sysService;
         }
 
         #region Page
@@ -104,11 +112,8 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BuildColumn(UrlParameter param)
         {
-            var tableDto = (await _tableListService.GetById(param.id)).data;
-            var tableName = tableDto.Name;
-          //  var tableData = (await _tableListService.SqlQuery("select * from Sys_TableList where Id=" + param.id)).data;
-            
-            return null;
+            var result = _sysService.GenerateColumn(param.id);
+            return Json(result);
         }
         #endregion
     }

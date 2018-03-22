@@ -151,9 +151,11 @@ namespace lkWeb.Service.Abstracts
                 var result = new Result<DepartmentDto>();
                 var ds = GetDbSet(db);
                 var entity = await ds.FindAsync(id);
-				   if (entity != null)
-                result.data = MapTo<DepartmentEntity, DepartmentDto>(entity);
-                result.flag = true;
+			    if (entity != null)
+                {
+					 result.data = MapTo<DepartmentEntity, DepartmentDto>(entity);
+					 result.flag = true;
+		    	}
                 return result;
             }
         }
@@ -221,7 +223,10 @@ namespace lkWeb.Service.Abstracts
                 var _exp = exp.Cast<DepartmentDto, DepartmentEntity, bool>();
                 var entity = await ds.Where(_exp).FirstOrDefaultAsync();
 				   if (entity != null)
-                 result.data = MapTo<DepartmentEntity,DepartmentDto>(entity);
+                 {
+				    result.data = MapTo<DepartmentEntity,DepartmentDto>(entity);
+					result.flag=true;
+				 }
                 return result;
             }
         }

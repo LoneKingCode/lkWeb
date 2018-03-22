@@ -9,8 +9,22 @@ namespace lkWeb.Service.Abstracts
 {
     public interface ISqlService
     {
+        /// <summary>
+        /// 获取DbContex对象
+        /// </summary>
+        /// <returns></returns>
         lkWebContext GetDb();
+        /// <summary>
+        /// 执行数据库语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
         Task<bool> Execute(string sql);
-        Task<DbDataReader> Query(string sql);
+        /// <summary>
+        /// 查询数据库语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
+        Task<List<Dictionary<string, object>>> Query(string sql);
     }
 }

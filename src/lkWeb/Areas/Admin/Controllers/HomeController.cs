@@ -14,7 +14,7 @@ namespace lkWeb.Areas.Admin.Controllers
     {
         public readonly IRoleService _roleService;
         public readonly ISqlService _sqlService;
-        public HomeController(IRoleService roleService,ISqlService sqlService)
+        public HomeController(IRoleService roleService, ISqlService sqlService)
         {
             _roleService = roleService;
             _sqlService = sqlService;
@@ -23,8 +23,8 @@ namespace lkWeb.Areas.Admin.Controllers
         #region Page
         public async Task<IActionResult> Index()
         {
-          //  var reader = await _sqlService.Query("select * from Sys_User");
-             return View();
+            var reader = await _sqlService.Query("select * from Sys_User");
+            return View();
         }
 
         public IActionResult About()

@@ -151,9 +151,11 @@ namespace lkWeb.Service.Abstracts
                 var result = new Result<LoginLogDto>();
                 var ds = GetDbSet(db);
                 var entity = await ds.FindAsync(id);
-				   if (entity != null)
-                result.data = MapTo<LoginLogEntity, LoginLogDto>(entity);
-                result.flag = true;
+			    if (entity != null)
+                {
+					 result.data = MapTo<LoginLogEntity, LoginLogDto>(entity);
+					 result.flag = true;
+		    	}
                 return result;
             }
         }
@@ -221,7 +223,10 @@ namespace lkWeb.Service.Abstracts
                 var _exp = exp.Cast<LoginLogDto, LoginLogEntity, bool>();
                 var entity = await ds.Where(_exp).FirstOrDefaultAsync();
 				   if (entity != null)
-                 result.data = MapTo<LoginLogEntity,LoginLogDto>(entity);
+                 {
+				    result.data = MapTo<LoginLogEntity,LoginLogDto>(entity);
+					result.flag=true;
+				 }
                 return result;
             }
         }

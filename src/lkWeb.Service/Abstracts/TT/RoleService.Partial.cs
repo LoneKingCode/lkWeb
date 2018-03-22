@@ -151,9 +151,11 @@ namespace lkWeb.Service.Abstracts
                 var result = new Result<RoleDto>();
                 var ds = GetDbSet(db);
                 var entity = await ds.FindAsync(id);
-				   if (entity != null)
-                result.data = MapTo<RoleEntity, RoleDto>(entity);
-                result.flag = true;
+			    if (entity != null)
+                {
+					 result.data = MapTo<RoleEntity, RoleDto>(entity);
+					 result.flag = true;
+		    	}
                 return result;
             }
         }
@@ -221,7 +223,10 @@ namespace lkWeb.Service.Abstracts
                 var _exp = exp.Cast<RoleDto, RoleEntity, bool>();
                 var entity = await ds.Where(_exp).FirstOrDefaultAsync();
 				   if (entity != null)
-                 result.data = MapTo<RoleEntity,RoleDto>(entity);
+                 {
+				    result.data = MapTo<RoleEntity,RoleDto>(entity);
+					result.flag=true;
+				 }
                 return result;
             }
         }
