@@ -7,7 +7,7 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-   public class TableColumnConfig : IEntityTypeConfiguration<TableColumnEntity>
+    public class TableColumnConfig : IEntityTypeConfiguration<TableColumnEntity>
     {
         public void Configure(EntityTypeBuilder<TableColumnEntity> builder)
         {

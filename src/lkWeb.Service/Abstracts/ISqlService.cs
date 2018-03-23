@@ -17,13 +17,19 @@ namespace lkWeb.Service.Abstracts
         /// <summary>
         /// 执行数据库语句
         /// </summary>
-        /// <param name="sql"></param>
+        /// <param name="sql">SQL语句</param>
         /// <returns></returns>
         Task<bool> Execute(string sql);
         /// <summary>
+        /// 批量执行数据库语句
+        /// </summary>
+        /// <param name="listSql">SQL语句集合</param>
+        /// <returns></returns>
+         Task<bool> ExecuteBatch(List<string> listSql);
+        /// <summary>
         /// 查询数据库语句
         /// </summary>
-        /// <param name="sql"></param>
+        /// <param name="sql">SQL语句</param>
         /// <returns></returns>
         Task<List<Dictionary<string, object>>> Query(string sql);
     }

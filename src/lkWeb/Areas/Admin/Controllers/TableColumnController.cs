@@ -17,11 +17,14 @@ namespace lkWeb.Areas.Admin.Controllers
     {
         public readonly ITableColumnService _tableColumnService;
         public readonly ITableListService _tableListService;
+        public readonly ISysService _sysService;
         public TableColumnController(ITableColumnService tableColumnService,
-            ITableListService tableListService)
+            ITableListService tableListService,
+            ISysService sysService)
         {
             _tableColumnService = tableColumnService;
             _tableListService = tableListService;
+            _sysService = sysService;
         }
 
         #region Page
@@ -103,6 +106,23 @@ namespace lkWeb.Areas.Admin.Controllers
                 return Json(await _tableColumnService.Delete(param.ids));
             else
                 return Json(await _tableColumnService.Delete(param.id));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Copy(UrlParameter param)
+        {
+            var resourceDto = (await _tableColumnService.GetById(param.id)).data;
+            var newDto = resourceDto;
+            newDto.Id = default(int);
+            var result = await _tableColumnService.Add(newDto);
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetValue(UrlParameter param, SetColumnAttrModel model)
+        {
+            var result =await _sysService.SetColumnValue(param.ids, model.FiledName, model.Value);
+            return Json(result);
         }
         #endregion
     }

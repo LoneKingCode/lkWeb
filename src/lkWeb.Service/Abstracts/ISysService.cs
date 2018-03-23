@@ -1,4 +1,5 @@
-﻿using System;
+﻿using lkWeb.Service.Dto;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <returns></returns>
-        Task<bool> GenerateColumn(int tableId);
+        Task<Result<List<TableColumnDto>>> GenerateColumn(int tableId);
+        Task<Result<List<TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value);
     }
 }

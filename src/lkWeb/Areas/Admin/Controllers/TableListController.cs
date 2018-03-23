@@ -112,7 +112,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> BuildColumn(UrlParameter param)
         {
-            var result = _sysService.GenerateColumn(param.id);
+            var result = await _sysService.GenerateColumn(param.id);
             return Json(result);
         }
         #endregion

@@ -1,6 +1,7 @@
 ﻿using lkWeb.Entity.Base;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace lkWeb.Entity
@@ -53,7 +54,7 @@ namespace lkWeb.Entity
         public int SearchOrder { get; set; }
         #endregion
 
-            #region 是否可见
+        #region 是否可见
         /// <summary>
         /// 导入是否可见
         /// </summary>

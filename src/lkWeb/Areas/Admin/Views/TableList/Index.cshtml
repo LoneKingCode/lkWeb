@@ -47,7 +47,16 @@
             })
         }
         function BuildColumn() {
-            alert("生成列");
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "") {
+                parent.layer.alert("请选择");
+                return;
+            }
+             lkWeb.Confirm("确认生成", function () {
+                lkWeb.AjaxPost("@Url.Action("BuildColumn")", { id: id }, function () {
+                    parent.layer.alert("生成成功");
+             })
+            })
         }
 
         var lkTable;
@@ -63,6 +72,7 @@
                     "bSortable": false
                 },
                 { "mData": "rowNum", "sClass": "text-center" },
+                { "mData": "id", "sClass": "text-center" },
                 { "mData": "name", "sClass": "text-center" },
                 { "mData": "description", "sClass": "text-center" },
                 { "mData": "isView", "sClass": "text-center" }
@@ -95,6 +105,7 @@
                 <input type="checkbox" class="checkAll" />
             </th>
             <th>序号</th>
+            <th>Id</th>
             <th>表名</th>
             <th>表说明</th>
             <th>是否视图</th>

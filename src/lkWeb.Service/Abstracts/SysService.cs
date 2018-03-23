@@ -22,16 +22,18 @@ namespace lkWeb.Service.Abstracts
             _tableListService = tableListService;
             _tableColumnService = tableColumnService;
         }
-        public async Task<bool> GenerateColumn(int tableId)
+        public async Task<Result<List<TableColumnDto>>> GenerateColumn(int tableId)
         {
+            var result = new Result<List<TableColumnDto>>();
             var tableResult = await _tableListService.GetById(tableId);
             if (!tableResult.flag)
-                return false;
+                return result;
             var tableDto = tableResult.data;
             //此SQL语句可以查询制定表的所有列
             var tableData = await _sqlService.Query(string.Format("select * from v_TableInfo where tablename = '{0}'",
                 tableDto.Name));
             var tableColumns = new List<TableColumnDto>();
+            var delResult = await _tableColumnService.Delete(item => item.TableID == tableId);
             foreach (var row in tableData)
             {
                 tableColumns.Add(new TableColumnDto
@@ -43,8 +45,19 @@ namespace lkWeb.Service.Abstracts
                 });
             }
             var addResult = await _tableColumnService.Add(tableColumns);
-            return addResult.flag;
+            return addResult;
 
+        }
+        public async Task<Result<List<TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value)
+        {
+            var result = new Result<List<TableColumnDto>>();
+            List<string> listSql = new List<string>();
+            foreach (var id in ids)
+            {
+                listSql.Add(string.Format("update Sys_TableColumn set {0}='{1}' where Id={2}", filedName, value, id));
+            }
+            result.flag = await _sqlService.ExecuteBatch(listSql);
+            return result;
         }
     }
 }

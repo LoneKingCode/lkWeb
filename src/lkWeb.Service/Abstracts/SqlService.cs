@@ -23,7 +23,18 @@ namespace lkWeb.Service.Abstracts
         {
             return await GetDb().Database.ExecuteSqlCommandAsync(sql) > 0;
         }
-
+        public async Task<bool> ExecuteBatch(List<string> listSql)
+        {
+            int count = 0;
+            using (var db = GetDb())
+            {
+                foreach (var sql in listSql)
+                {
+                    count += await db.Database.ExecuteSqlCommandAsync(sql);
+                }
+            }
+            return count == listSql.Count;
+        }
         public async Task<List<Dictionary<string, object>>> Query(string sql)
         {
             var conn = GetDb().Database.GetDbConnection();

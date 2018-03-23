@@ -34,9 +34,18 @@
             lkWeb.DeleteMulti(ids, "tablecolumn", lkTable);
         }
         function CopyModel() {
-            alert("复制");
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "") {
+                parent.layer.alert("请选择");
+                return;
+            }
+            lkWeb.Confirm("确认复制", function () {
+                lkWeb.AjaxPost("@Url.Action("Copy")", { id: id }, function () {
+                    parent.layer.alert("复制成功");
+                lkTable.draw(false);
+            })
+            })
         }
-
         var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
@@ -60,16 +69,72 @@
                 { "mData": "searchVisible", "sClass": "text-center" },
              ];
             lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
-    }
+        }
+        function ShowSetValue(filedName) {
+            layer.open({
+                type: 1,
+                title: "批量设置属性",
+                closeBtn: 1,
+                scrollbar :false,
+                 area: '30%',
+                 content: $('#setValue'),
+                 btn: ['确定', '取消'],
+                 yes: function (index, layero) {
+                     SetValue(filedName);
+                     layer.close(index);
+                                     }
+                , cancel: function (index, layero) {
+                    layer.close(index)
+                },
+            });
+        }
+        function SetValue(filedName) {
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
+            var value = $("#txtValue").val();
+            lkWeb.Confirm("确认修改", function () {
+                lkWeb.AjaxPost("@Url.Action("SetValue")", { ids: ids, Value: value, FiledName: filedName }, function () {
+                    parent.layer.alert("修改成功");
+                    lkTable.draw(false);
+                })
+            })
+        }
     </script>
 }
+<div id="setValue" class="form-horizontal" style="display:none;margin-top:5px;">
+    <div class="form-group">
+        <label class="col-md-3 control-label">设置值</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="Value" id="txtValue"
+                   data-val="true" data-val-required="值不能为空" />
+            <span class="field-validation-valid" data-valmsg-for="Value" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            批量设置属性
+        </div>
+        <div class="panel-body shadow-btn">
+            <button type="button" class="btn" onclick="ShowSetValue('Required')">是否必填</button>
+            <button type="button" class="btn" onclick="ShowSetValue('ImportVisible')">导入是否可见</button>
+            <button type="button" class="btn" onclick="ShowSetValue('ExportVisible')">导出是否可见</button>
+            <button type="button" class="btn" onclick="ShowSetValue('ViewVisible')">详情是否可见</button>
+            <button type="button" class="btn" onclick="ShowSetValue('AddVisible')">添加是否可见</button>
+            <button type="button" class="btn" onclick="ShowSetValue('SearchVisible')">查询是否可见</button>
+            <button type="button" class="btn" onclick="ShowSetValue('EditVisible')">编辑是否可见</button>
+            <button type="button" class="btn" onclick="ShowSetValue('ListVisible')">列表是否可见</button>
+        </div>
+    </div>
+</div>
 
 <div class="form-group">
     <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
     <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
     <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
     <button type="button" class="btn btn-warning" onclick="CopyModel()">复制</button>
- </div>
+</div>
 <div class="form-group">
     <div class="input-group">
         <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
