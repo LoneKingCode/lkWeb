@@ -58,7 +58,7 @@ namespace lkWeb.Areas.Admin.Controllers
             //还没做搜索
             var tableId = queryBase.Value; //表ID 保存在value中
             var tableData = await _sysService.GetPageData(tableId.ToInt32(), "*", "1=1", queryBase);
-            List<dynamic> listData = new List<dynamic>();
+            List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
             foreach (var dicList in tableData.data)
             {
                 Dictionary<string, object> temp = new Dictionary<string, object>();
@@ -67,13 +67,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 {
                     temp[item.Key] = item.Value;
                 }
-                dynamic obj = new System.Dynamic.ExpandoObject();
-
-                foreach (KeyValuePair<string, object> item in temp)
-                {
-                    ((IDictionary<string, object>)obj).Add(item.Key, item.Value);
-                }
-                listData.Add(obj);
+                listData.Add(temp);
             }
             var data = new DataTableModel
             {
