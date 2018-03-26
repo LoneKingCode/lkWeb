@@ -162,6 +162,7 @@
     </table>
 </div>
 <hr />
+@Html.AntiForgeryToken()
 <div>
     <h3>@ViewBag.RealName 未拥有的角色</h3>
     <button type="button" class="btn btn-success" onclick="AuthRole()">批量授权</button>
