@@ -51,7 +51,8 @@ namespace lkWeb.Areas.Admin.Controllers
         #endregion
 
         #region Ajax
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
             Expression<Func<TableColumnDto, bool>> queryExp = item => item.Id > 0;

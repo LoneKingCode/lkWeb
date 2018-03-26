@@ -55,7 +55,8 @@
             $.ajax({
                 type: "post",
                 url:"@Url.Action("GetList", "Department")",
-                dataType:"json",
+                dataType: "json",
+                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
                 async: false,
                 success: function (data) {
                     zNodes_department = data;
@@ -96,7 +97,7 @@
             parent.layer.confirm("确认删除" + ids.length + "条数据？", {
                 btn: ["确认", "取消"]
             }, function () {
-                var data =  { UserIDs: [], DepartmentID: departmentID };
+                var data = { UserIDs: [], DepartmentID: departmentID, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() };
                 data.UserIDs = ids;
                 $.ajax(
                     {
@@ -145,6 +146,7 @@
             </div>
         </div>
     </div>
+    @Html.AntiForgeryToken()
     <div class="col-sm-8">
         <div class="panel panel-info">
 

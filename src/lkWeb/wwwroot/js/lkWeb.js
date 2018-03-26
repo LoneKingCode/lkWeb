@@ -239,7 +239,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
         "bInfo": true, //是否显示是否启用底边信息栏
         "ajax": {
             url: dataUrl,
-            type: "get",
+            type: "post",
             data: function (d) {
                 var param = {}; //d是原始的数据 不过太长了，只取需要的数据出来
                 param.start = d.start;//开始的数据位置
@@ -253,6 +253,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
                 }
                 param.searchKey = _searchKey;
                 param.value = _value;
+                param.__RequestVerificationToken = $("input[name='__RequestVerificationToken']").val();
                 return param;
             }
 

@@ -108,7 +108,8 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0;
@@ -133,7 +134,8 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(data);
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetMyRoles(QueryBase queryBase, RoleDto dto)
         {
             var roles = await _userService.GetUserRoles(dto.Id);
@@ -151,7 +153,8 @@ namespace lkWeb.Areas.Admin.Controllers
             };
             return Json(result);
         }
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetNotMyRoles(QueryBase queryBase, RoleDto dto)
         {
             var roles = await _userService.GetNotUserRoles(dto.Id);
@@ -201,17 +204,22 @@ namespace lkWeb.Areas.Admin.Controllers
                 result = await _userService._Delete(param.id);
             return Json(result);
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteRole(AuthRoleModel model)
         {
             var result = await _userService.RemoveRoles(model.UserId, model.RoleIds);
             return Json(result);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AuthRole(UrlParameter param, AuthRoleModel model)
         {
             var result = await _userService.AddRoles(model.UserId, model.RoleIds);
             return Json(result);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DelUserDepartment(SetDepartmentModel model)
         {
             var result = await _userDepartmentService.Delete(
@@ -219,7 +227,8 @@ namespace lkWeb.Areas.Admin.Controllers
                 && item.DepartmentID == model.DepartmentID);
             return Json(result);
         }
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetListByDepartment(QueryBase queryBase)
         {
             if (queryBase.Value.IsEmpty())
@@ -246,6 +255,8 @@ namespace lkWeb.Areas.Admin.Controllers
             };
             return Json(result);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetListByNotDepartment(QueryBase queryBase)
         {
             if (queryBase.Value.IsEmpty())
@@ -273,6 +284,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetDepartment(SetDepartmentModel dto)
         {
             if (dto.UserIDs.Count() < 1 || dto.DepartmentID < 1)

@@ -23,7 +23,7 @@
                     },
                     effectiveFields: ["id", "name", "typeName", "url"],
                     getDataMethod: "url",
-                    url: "@Url.Action("GetList", "Menu")?searchKey=",
+                    url: "@Url.Action("GetList", "Menu")?searchKey=", //最后一个参数为关键字请求参数
                     idField: "id",
                     keyField: "name"
                 }).on('onDataRequestSuccess', function (e, result) {

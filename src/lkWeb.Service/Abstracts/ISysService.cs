@@ -14,6 +14,30 @@ namespace lkWeb.Service.Abstracts
         /// <param name="tableId">表Id</param>
         /// <returns></returns>
         Task<Result<List<TableColumnDto>>> GenerateColumn(int tableId);
+        /// <summary>
+        /// 设置列属性值
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="filedName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         Task<Result<List<TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value);
+        /// <summary>
+        /// 获取表数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="condition">查询条件</param>
+        /// <param name="orderBy">排序条件</param>
+        /// <returns></returns>
+        Task<Result<List<Dictionary<string, object>>>> GetData(int tableId, string columns, string condition, string orderBy);
+        /// <summary>
+        /// 获取分页数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="columns">列</param>
+        /// <param name="condition">查询条件</param>
+        /// <param name="queryBase">基础查询对象</param>
+        /// <returns></returns>
+        Task<Result<List<Dictionary<string, object>>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase);
     }
 }

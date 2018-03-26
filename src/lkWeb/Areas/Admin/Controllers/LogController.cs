@@ -41,7 +41,8 @@ namespace lkWeb.Areas.Admin.Controllers
         #endregion
 
         #region Ajax
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageDataWithLogin(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<LoginLogDto, bool>> queryExp = item => item.Id > 0;
@@ -66,7 +67,8 @@ namespace lkWeb.Areas.Admin.Controllers
             };
             return Json(data);
         }
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageDataWithOperation(UrlParameter param,QueryBase queryBase)
         {
             Expression<Func<OperationLogDto, bool>> queryExp = item => item.Id > 0;

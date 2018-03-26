@@ -16,7 +16,10 @@
         function LoadData() {
             $.ajax({
                 type: "post",
-                url:"@Url.Action("GetRoleList", "Role")",
+                url: "@Url.Action("GetRoleList", "Role")",
+                data: {
+                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
+                },
                 dataType:"json",
                 async: false,
                 success: function (data) {
@@ -29,7 +32,10 @@
             })
             $.ajax({
                 type: "post",
-                url:"@Url.Action("GetMenuList", "Role")",
+                url: "@Url.Action("GetMenuList", "Role")",
+                data: {
+                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
+                },
                 dataType:"json",
                 async: false,
                 success: function (data) {
@@ -75,12 +81,11 @@
         var roleId="";
         function onRoleCheck(e, treeId, treeNode) {
             roleId = treeNode.id;
-            console.log(roleId)
             $.ajax({
                 url: "@Url.Action("GetRoleMenus", "Role")",
                 type: "post",
                 dataType: "json",
-                data: { roleId: roleId },
+                data: { roleId: roleId, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
                 async: false,
                 success: function (data) {
                     var treeObj = $.fn.zTree.getZTreeObj("menuTree");
@@ -131,7 +136,7 @@
                           url: "@Url.Action("AuthMenus", "Role")",
                           type: "post",
                           dataType: "json",
-                          data: { model:data},
+                          data: { model: data, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
                           async: false,
                           success: function (data) {
                               if (data.flag == true)
@@ -165,6 +170,7 @@
     </div>
 </div>
 <hr />
+@Html.AntiForgeryToken()
 <div class="row">
     <div class="col-sm-4">
         <div class="panel panel-info">

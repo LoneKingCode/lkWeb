@@ -74,7 +74,8 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(strData);
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<MenuDto, bool>> queryExp = item => item.Id > 0;

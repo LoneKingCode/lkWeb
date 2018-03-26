@@ -59,7 +59,8 @@ namespace lkWeb.Areas.Admin.Controllers
 
         #region Ajax
 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
 
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
@@ -110,6 +111,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetRoleList(UrlParameter param)
         {
             var result = await _roleService.GetList(item => item.Id > 0);
@@ -122,7 +124,8 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(strData);
 
         }
-        [HttpPost, HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetMenuList(UrlParameter param)
         {
             var result = new List<object>();
@@ -151,6 +154,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetRoleMenus(int roleId)
         {
             var result = await _roleMenuService.GetList(item => item.RoleId == roleId);
@@ -163,6 +167,7 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(strData);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AuthMenus(UrlParameter param, AuthMenuModel model)
         {
             var result = new Result<RoleMenuDto>();

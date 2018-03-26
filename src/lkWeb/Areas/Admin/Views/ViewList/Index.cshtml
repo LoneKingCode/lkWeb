@@ -9,7 +9,7 @@
 @section Scripts{
     <script>
         $(function () {
-            InitDataTable();
+        //    InitDataTable();
 
             $(".checkAll").click(function () {
                 var check = $(this).prop("checked");
@@ -23,19 +23,19 @@
         });
 
         function AddModel() {
-            lkWeb.GoAction("view", "add", 0);
+            lkWeb.GoAction("viewlist", "add", 0);
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("view", "edit", id);
+                lkWeb.GoAction("viewlist", "edit", id);
         }
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "view", lkTable);
+            lkWeb.DeleteMulti(ids, "viewlist", lkTable);
         }
         var lkTable;
         function InitDataTable() {
@@ -52,14 +52,15 @@
                 { "mData": "rowNum", "sClass": "text-center" },
                 @{
                     StringBuilder columnStr = new StringBuilder();
+                    string str = "{{\"mData\": \"{0}\", \"sClass\": \"text-center\"}},";
                     foreach (var column in Model.TableColumn)
                     {
-                        columnStr.Append(string.Format("{\"mData\": \"name\", \"sClass\": \"text-center\" },", column.Name));
+                        columnStr.Append(string.Format(str, column.Name));
                     }
-                @Html.Raw(columnStr.ToString());
+                     @Html.Raw(columnStr.ToString());
                      }
             ];
-            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl,'@Model.TableId')
     }
     </script>
 }
@@ -84,11 +85,12 @@
             <th>
                 <input type="checkbox" class="checkAll" />
             </th>
+            <th>序号</th>
             @{
                 StringBuilder headerStr = new StringBuilder();
                 foreach (var column in Model.TableColumn)
                 {
-                    headerStr.Append("<th>" + column.Name + "</th>");
+                    headerStr.Append("<th>" + column.Description + "</th>");
                 }
                 @Html.Raw(headerStr.ToString());
             }
@@ -96,4 +98,11 @@
     </thead>
     <tbody></tbody>
 </table>
+<script>
+    $(function () {
+        InitDataTable();
+
+
+    });
+</script>
 
