@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using lkWeb.Core.Extensions;
 using lkWeb.Service.Enum;
+using System.Linq;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -32,13 +33,16 @@ namespace lkWeb.Service.Abstracts
             var result = new Result<List<TableColumnDto>>();
             var tableResult = await _tableListService.GetById(tableId);
             if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
                 return result;
+            }
             var tableDto = tableResult.data;
             //此SQL语句可以查询制定表的所有列
             var tableData = await _sqlService.Query(string.Format("select * from v_TableInfo where tablename = '{0}'",
                 tableDto.Name));
             var tableColumns = new List<TableColumnDto>();
-            var delResult = await _tableColumnService.Delete(item => item.TableID == tableId);
+            var delResult = await _tableColumnService.Delete(item => item.TableId == tableId);
             foreach (var row in tableData)
             {
                 tableColumns.Add(new TableColumnDto
@@ -46,7 +50,7 @@ namespace lkWeb.Service.Abstracts
                     Name = row["colName"].ToString(),
                     DataType = (ColumnDataType)System.Enum.Parse(typeof(ColumnDataType), row["colType"].ToString().InitialUpper()),
                     MaxLength = row["colLength"].ObjToInt(),
-                    TableID = tableDto.Id,
+                    TableId = tableDto.Id,
                 });
             }
             var addResult = await _tableColumnService.Add(tableColumns);
@@ -84,7 +88,10 @@ namespace lkWeb.Service.Abstracts
             var result = new Result<List<Dictionary<string, object>>>();
             var tableResult = await _tableListService.GetById(tableId);
             if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
                 return result;
+            }
             var tableDto = tableResult.data;
             string sql = "select {0} from {1} where {2} orderby {3}";
             var queryResult = await _sqlService.Query(string.Format(sql, columns, tableDto.Name, condition, orderBy));
@@ -115,5 +122,62 @@ namespace lkWeb.Service.Abstracts
             result.data = queryResult;
             return result;
         }
+        /// <summary>
+        /// 获取指定表下列名
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="condition">条件</param>
+        /// <returns>多个列名逗号隔开</returns>
+        public async Task<Result<string>> GetColumnNames(int tableId, string condition)
+        {
+            var result = new Result<String>();
+            var tableResult = await _tableListService.GetById(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableDto = tableResult.data;
+            var columnData = await _sqlService.Query(string.Format("select * from Sys_TableColumn where TableId={0} and {1}", tableId, condition));
+            var columnNameStr = string.Empty;
+            foreach (var dicList in columnData)
+            {
+                columnNameStr += dicList["Name"] + ",";
+            }
+            columnNameStr = columnNameStr.Trim(',');
+            result.flag = columnData.Any();
+            result.data = columnNameStr;
+            return result;
+        }
+        /// <summary>
+        /// 添加数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="addData">数据键值对</param>
+        /// <returns></returns>
+        public async Task<Result<bool>> Add(int tableId, Dictionary<string, string> addModel)
+        {
+            var result = new Result<bool>();
+            var tableResult = await _tableListService.GetById(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableName = tableResult.data.Name;
+            string sqlTpl = "insert into {0}({1}) values({2})";
+            StringBuilder sbColumn = new StringBuilder();
+            StringBuilder sbValue = new StringBuilder();
+            foreach (var item in addModel)
+            {
+                sbColumn.Append(item.Key + ",");
+                sbValue.AppendFormat("'{0}',", item.Value);
+            }
+            var executeResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
+            result.flag = executeResult;
+            result.data = executeResult;
+            return result;
+        }
+
     }
 }

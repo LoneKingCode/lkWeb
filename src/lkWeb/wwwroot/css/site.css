@@ -136,4 +136,5 @@ nav.page-tabs { margin-left: 40px; width: 100000px; height: 40px; overflow: hidd
     .shadow-btn button:nth-child(10) { }
     .shadow-btn button:nth-child(11) { }
     .shadow-btn button:nth-child(12) { }
+.form-item { padding: 3px; }
 /*#endregion*/

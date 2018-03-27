@@ -39,5 +39,21 @@ namespace lkWeb.Service.Abstracts
         /// <param name="queryBase">基础查询对象</param>
         /// <returns></returns>
         Task<Result<List<Dictionary<string, object>>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase);
+        /// <summary>
+        /// 获取指定表下列名
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="condition">条件</param>
+        /// <returns>多个列名逗号隔开</returns>
+        Task<Result<string>> GetColumnNames(int tableId, string condition);
+        /// <summary>
+        /// 添加数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="addData">数据键值对</param>
+        /// <returns></returns>
+        Task<Result<bool>> Add(int tableId, Dictionary<string, string> addModel);
+
+
     }
 }

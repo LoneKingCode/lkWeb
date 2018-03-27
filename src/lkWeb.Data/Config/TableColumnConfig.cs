@@ -14,7 +14,7 @@ namespace lkWeb.Data.Config
             builder.ToTable("Sys_TableColumn");
             builder.HasKey(item => item.Id);
             builder.Property(item => item.Id).ValueGeneratedOnAdd();
-            builder.HasOne(item => item.Table).WithMany(item => item.TableColumns).HasForeignKey(item => item.TableID);
+            builder.HasOne(item => item.Table).WithMany(item => item.TableColumns).HasForeignKey(item => item.TableId);
         }
     }
 }

@@ -6,6 +6,7 @@ using lkWeb.Areas.Admin.Models;
 using lkWeb.Core.Extensions;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lkWeb.Areas.Admin.Controllers
@@ -32,20 +33,25 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var model = new ViewListModel();
             model.TableId = param.id;
-            var result = await _tableColumnService.GetList(item => item.TableID == param.id);
+            var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.ListVisible == 1);
             model.TableColumn = result.data;
             return View(model);
         }
-        public IActionResult Add(UrlParameter param)
+        public async Task<IActionResult> Add(UrlParameter param)
         {
             var model = new ViewListModel();
-
+            model.TableId = param.id;
+            var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
+            model.TableColumn = result.data;
             return View(model);
         }
 
-        public IActionResult Edit(UrlParameter param)
+        public async Task<IActionResult> Edit(UrlParameter param)
         {
             var model = new ViewListModel();
+            model.TableId = param.id;
+            var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.EditVisible == 1);
+            model.TableColumn = result.data;
             return View(model);
         }
         #endregion
@@ -56,8 +62,9 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
             //还没做搜索
-            var tableId = queryBase.Value; //表ID 保存在value中
-            var tableData = await _sysService.GetPageData(tableId.ToInt32(), "*", "1=1", queryBase);
+            var tableId = queryBase.Value.ToInt32(); //表ID 保存在value中
+            var columnNames = (await _sysService.GetColumnNames(tableId, "ListVisible=1")).data;
+            var tableData = await _sysService.GetPageData(tableId, columnNames, "1=1", queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
             foreach (var dicList in tableData.data)
             {
@@ -81,14 +88,25 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Add(UrlParameter param, ViewListModel model)
+        public async Task<IActionResult> Add(UrlParameter param, IFormCollection formData)
         {
-            return View();
+            var model = new ViewListModel();
+            var columnResult = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
+            var tableColumns = columnResult.data;
+            var addModel = new Dictionary<string, string>();
+            foreach (var column in tableColumns)
+            {
+                if (formData.ContainsKey(column.Name))
+                    addModel[column.Name] = formData[column.Name];
+            }
+            addModel["CreateDateTime"] = DateTime.Now.ToString();
+            var result = await _sysService.Add(param.id, addModel);
+            return Json(result);
         }
 
-        public IActionResult Edit(UrlParameter param, ViewListModel model)
+        public async Task<IActionResult> Edit(UrlParameter param, IFormCollection formData)
         {
-            return View();
+            return null;
         }
         #endregion
     }

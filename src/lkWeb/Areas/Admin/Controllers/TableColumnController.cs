@@ -72,7 +72,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     name = d.Name,
                     description = d.Description,
                     id = d.Id.ToString(),
-                    tableName = allTable.ContainsKey(d.TableID) ? allTable[d.TableID] : "无",
+                    tableName = allTable.ContainsKey(d.TableId) ? allTable[d.TableId] : "无",
                     dataType = d.DataTypeName,
                     addVisible = d.AddVisible == 1 ? "是" : "否",
                     editVisible = d.EditVisible == 1 ? "是" : "否",

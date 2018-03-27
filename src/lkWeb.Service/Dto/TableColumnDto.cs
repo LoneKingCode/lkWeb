@@ -11,7 +11,7 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 所属表
         /// </summary>
-        public int TableID { get; set; }
+        public int TableId { get; set; }
         /// <summary>
         /// 列名称
         /// </summary>
