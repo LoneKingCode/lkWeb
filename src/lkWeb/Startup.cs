@@ -155,7 +155,7 @@ namespace lkWeb
             {
                 routes.MapRoute(
                   name: "Admin",
-                  template: "{area:exists}/{controller=Control}/{action=Index}/{id?}");
+                  template: "{area:exists}/{controller=Control}/{action=Index}/{id?}/{value?}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

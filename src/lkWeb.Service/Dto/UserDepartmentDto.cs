@@ -9,11 +9,11 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 部门ID
         /// </summary>
-        public int DepartmentID { get; set; }
+        public int DepartmentId { get; set; }
 
         /// <summary>
         /// 用户ID
         /// </summary>
-        public int UserID { get; set; }
+        public int UserId { get; set; }
     }
 }

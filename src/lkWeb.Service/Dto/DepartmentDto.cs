@@ -30,7 +30,6 @@ namespace lkWeb.Service.Dto
         /// 上级部门
         /// </summary>
         [DisplayName("上级部门")]
-        public int ParentID { get; set; }
-
+        public int ParentId { get; set; }
     }
 }

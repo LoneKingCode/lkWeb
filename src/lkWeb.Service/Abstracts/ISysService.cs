@@ -50,9 +50,16 @@ namespace lkWeb.Service.Abstracts
         /// 添加数据
         /// </summary>
         /// <param name="tableId">表Id</param>
-        /// <param name="addData">数据键值对</param>
+        /// <param name="addModel">数据键值对</param>
         /// <returns></returns>
         Task<Result<bool>> Add(int tableId, Dictionary<string, string> addModel);
+        /// <summary>
+        /// 更新数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="updateModel">数据键值对</param>
+        /// <returns></returns>
+        Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel);
 
 
     }

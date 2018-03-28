@@ -1,15 +1,16 @@
 ﻿@using lkWeb.Areas.Admin.Models
 @using System.Text;
+@using System.Text.Encodings.Web;
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title = "添加表";
+    ViewBag.Title = "添加数据";
 }
 @model ViewListModel
 @section Scripts{
     <script type="text/javascript">
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
-                lkWeb.GoAction("View", "index")
+                lkWeb.GoAction("viewlist", "index","@Model.TableId")
             }, "操作成功")
         })
 
@@ -18,16 +19,30 @@
 <form class="form-horizontal" action="@Url.Action("Add",new { id = @Model.TableId })" method="post" id="lkForm">
     @Html.AntiForgeryToken()
     @{
-        string template = "<div class=\"form-group\"><div class=\"\">" +
-            "<label class=\"col-md-2 control-label\">{0}</label>" +
-            "<div class=\"col-md-9\">" +
-        "<input type=\"text\" class=\"form-control\" name=\"{1}\" />" +
-        "</div></div></div>";
-        int count = 0;
+        string selectTpl = "<div class=\"form-group\"><div class=\"\">" +
+    "<label class=\"col-md-2 control-label\">{0}</label>" +
+    "<div class=\"col-md-9\"> {1} </div></div></div>";
+        string inputTemplate = "<div class=\"form-group\"><div class=\"\">" +
+"<label class=\"col-md-2 control-label\">{0}</label>" +
+"<div class=\"col-md-9\">" +
+"<input type=\"text\" class=\"form-control\" name=\"{1}\" data-val-required=\"{0}不能为空\" data-val=\"true\"/>" +
+"<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span></div> " +
+"</div></div>";
         StringBuilder sb = new StringBuilder();
         foreach (var column in Model.TableColumn)
         {
-            sb.Append(string.Format(template, column.Description, column.Name));
+            if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Out)
+            {
+                var content = Html.DropDownList(column.Name, (SelectList)ViewBag.OutColumn[column.Name], new { @class = "form-control" });
+                var writer = new System.IO.StringWriter();
+                content.WriteTo(writer, HtmlEncoder.Default);
+                var sltHtml = writer.ToString();
+                sb.Append(string.Format(selectTpl, column.Description, sltHtml));
+            }
+            else
+            {
+                sb.Append(string.Format(inputTemplate, column.Description, column.Name));
+            }
         }
         @Html.Raw(sb.ToString());
     }

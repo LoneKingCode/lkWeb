@@ -25,7 +25,13 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="listSql">SQL语句集合</param>
         /// <returns></returns>
-         Task<bool> ExecuteBatch(List<string> listSql);
+        Task<bool> ExecuteBatch(List<string> listSql);
+        /// <summary>
+        /// 获取第一行第一列值
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <returns></returns>
+        Task<string> GetSingle(string sql);
         /// <summary>
         /// 查询数据库语句
         /// </summary>

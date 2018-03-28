@@ -8,5 +8,9 @@ namespace lkWeb.Service.Dto
     {
         public int id { get; set; }
         public List<int> ids { get; set; }
+        /// <summary>
+        /// 作为额外补充的值
+        /// </summary>
+        public string value { get; set; }
     }
 }

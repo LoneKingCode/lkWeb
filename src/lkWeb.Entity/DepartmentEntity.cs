@@ -23,7 +23,7 @@ namespace lkWeb.Entity
         /// <summary>
         /// 上级部门
         /// </summary>
-        public int ParentID { get; set; }
+        public int ParentId { get; set; }
 
         /// <summary>
         /// 部门用户

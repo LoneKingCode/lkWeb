@@ -22,7 +22,7 @@ namespace lkWeb.Service.Dto
         /// 所属模块ID
         /// </summary>
         [DisplayName("所属模块")]
-        public int ModuleID { get; set; }
+        public int ModuleId { get; set; }
         /// <summary>
         /// 类型
         /// </summary>

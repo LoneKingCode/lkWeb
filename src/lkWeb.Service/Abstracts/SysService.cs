@@ -57,6 +57,7 @@ namespace lkWeb.Service.Abstracts
             return addResult;
 
         }
+
         /// <summary>
         /// 设置列属性值
         /// </summary>
@@ -75,6 +76,7 @@ namespace lkWeb.Service.Abstracts
             result.flag = await _sqlService.ExecuteBatch(listSql);
             return result;
         }
+
         /// <summary>
         /// 获取数据
         /// </summary>
@@ -99,6 +101,7 @@ namespace lkWeb.Service.Abstracts
             result.data = queryResult;
             return result;
         }
+
         /// <summary>
         /// 获取分页数据
         /// </summary>
@@ -122,6 +125,7 @@ namespace lkWeb.Service.Abstracts
             result.data = queryResult;
             return result;
         }
+
         /// <summary>
         /// 获取指定表下列名
         /// </summary>
@@ -149,11 +153,12 @@ namespace lkWeb.Service.Abstracts
             result.data = columnNameStr;
             return result;
         }
+
         /// <summary>
         /// 添加数据
         /// </summary>
         /// <param name="tableId">表Id</param>
-        /// <param name="addData">数据键值对</param>
+        /// <param name="addModel">数据键值对</param>
         /// <returns></returns>
         public async Task<Result<bool>> Add(int tableId, Dictionary<string, string> addModel)
         {
@@ -177,6 +182,18 @@ namespace lkWeb.Service.Abstracts
             result.flag = executeResult;
             result.data = executeResult;
             return result;
+        }
+
+        /// <summary>
+        /// 更新数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="updateModel">数据键值对</param>
+        /// <returns></returns>
+        public async Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel)
+        {
+
+            return null;
         }
 
     }

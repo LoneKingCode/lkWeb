@@ -28,15 +28,15 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Add(UrlParameter param)
         {
-            var parentID = param.id;
-            if (parentID > 0)
+            var parentId = param.id;
+            if (parentId > 0)
             {
-                ViewBag.ParentID = parentID;
-                ViewBag.ParentName = (await _departmentService.GetById(parentID)).data.Name;
+                ViewBag.ParentId = parentId;
+                ViewBag.ParentName = (await _departmentService.GetById(parentId)).data.Name;
             }
             else
             {
-                ViewBag.ParentID = 0;
+                ViewBag.ParentId = 0;
                 ViewBag.ParentName = "无";
             }
             return View();
@@ -44,10 +44,10 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             var department = (await _departmentService.GetById(param.id)).data;
-            var parentID = department.ParentID;
-            if (parentID > 0)
+            var parentId = department.ParentId;
+            if (parentId > 0)
             {
-                var dto = (await _departmentService.GetById(parentID)).data;
+                var dto = (await _departmentService.GetById(parentId)).data;
                 if (dto == null)
                     ViewBag.ParentName = "无";
                 else
@@ -81,9 +81,9 @@ namespace lkWeb.Areas.Admin.Controllers
                 data = dto.data.Select(d => new
                 {
                     rowNum = ++queryBase.Start,
-                    parentID = d.ParentID,
+                    parentId = d.ParentId,
                     leader = d.Leader,
-                    parentName = allDepartment.ContainsKey(d.ParentID) ? allDepartment[d.ParentID] : "无",
+                    parentName = allDepartment.ContainsKey(d.ParentId) ? allDepartment[d.ParentId] : "无",
                     name = d.Name,
                     description = d.Description,
                     id = d.Id.ToString()
@@ -117,7 +117,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 bool flag = false;
                 foreach (var id in param.ids)
                 {
-                    var dtos = (await _departmentService.GetList(item => item.ParentID == id)).data;
+                    var dtos = (await _departmentService.GetList(item => item.ParentId == id)).data;
                     if (dtos.Count > 0)
                     {
                         var department = (await _departmentService.GetById(id)).data;
@@ -134,7 +134,7 @@ namespace lkWeb.Areas.Admin.Controllers
             else
             {
                 var result = new Result<DepartmentDto>();
-                var dtos = (await _departmentService.GetList(item => item.ParentID == param.id)).data;
+                var dtos = (await _departmentService.GetList(item => item.ParentId == param.id)).data;
                 if (dtos.Count > 0)
                 {
                     result.flag = false;
@@ -158,7 +158,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var strData = result.data.Select(d => new
             {
                 id = d.Id,
-                pId = d.ParentID,
+                pId = d.ParentId,
                 name = d.Name
             });
             return Json(strData);

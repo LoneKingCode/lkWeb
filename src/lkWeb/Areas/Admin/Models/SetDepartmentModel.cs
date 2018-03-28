@@ -7,8 +7,8 @@ namespace lkWeb.Areas.Admin.Models
 {
     public class SetDepartmentModel
     {
-        public List<int> UserIDs{ get; set; }
+        public List<int> UserIds{ get; set; }
 
-        public int DepartmentID { get; set; }
+        public int DepartmentId { get; set; }
     }
 }

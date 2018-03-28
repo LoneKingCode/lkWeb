@@ -4,7 +4,7 @@
 }
 @section Scripts{
     <script>
-        var departmentID = "";
+        var departmentId = "";
         $(function () {
             InitDataTable();
 
@@ -20,8 +20,8 @@
         });
 
         function AddModel() {
-            departmentID = lkWeb.GetCheckValue($(".checkChild"));
-            lkWeb.GoAction("department", "add", departmentID);;
+            departmentId = lkWeb.GetCheckValue($(".checkChild"));
+            lkWeb.GoAction("department", "add", departmentId);;
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));

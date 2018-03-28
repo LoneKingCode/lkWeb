@@ -23,6 +23,7 @@ namespace lkWeb.Service.Abstracts
             return new lkWebContext(dbContextOptionBuilder.UseSqlServer(lkWebContext.connectionString).Options);
 
         }
+
         /// <summary>
         /// 执行数据库语句
         /// </summary>
@@ -32,6 +33,7 @@ namespace lkWeb.Service.Abstracts
         {
             return await GetDb().Database.ExecuteSqlCommandAsync(sql) > 0;
         }
+
         /// <summary>
         /// 批量执行数据库语句
         /// </summary>
@@ -49,6 +51,7 @@ namespace lkWeb.Service.Abstracts
             }
             return count == listSql.Count;
         }
+
         /// <summary>
         /// 查询数据库语句
         /// </summary>
@@ -79,6 +82,17 @@ namespace lkWeb.Service.Abstracts
             {
                 conn.Close();
             }
+        }
+
+        /// <summary>
+        /// 获取第一行第一列值
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <returns></returns>
+        public async Task<string> GetSingle(string sql)
+        {
+            var queryResult = await Query(sql);
+            return queryResult.First().First().Value.ToString();
         }
 
     }

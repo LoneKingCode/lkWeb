@@ -134,7 +134,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var menus = menuList.Select(d => new
             {
                 id = d.Id.ToString(),
-                pId = d.Type == Service.Enum.MenuType.模块 ? d.ModuleID.ToString() + "_m" : d.ParentId.ToString(),
+                pId = d.Type == Service.Enum.MenuType.模块 ? d.ModuleId.ToString() + "_m" : d.ParentId.ToString(),
                 name = d.Name,
                 open = d.Type == Service.Enum.MenuType.模块
             });

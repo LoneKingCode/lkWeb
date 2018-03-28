@@ -223,8 +223,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> DelUserDepartment(SetDepartmentModel model)
         {
             var result = await _userDepartmentService.Delete(
-                item => model.UserIDs.Contains(item.UserID)
-                && item.DepartmentID == model.DepartmentID);
+                item => model.UserIds.Contains(item.UserId)
+                && item.DepartmentId == model.DepartmentId);
             return Json(result);
         }
         [HttpPost]
@@ -234,8 +234,8 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.Value.IsEmpty())
                 return Json(new { });
             var departmentID = queryBase.Value.ToInt32();
-            var users = (await _userDepartmentService.GetList(item => item.Id > 0 && item.DepartmentID == departmentID))
-                .data.Select(item => item.UserID).ToList();
+            var users = (await _userDepartmentService.GetList(item => item.Id > 0 && item.DepartmentId == departmentID))
+                .data.Select(item => item.UserId).ToList();
             Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0 && users.Contains(item.Id);
             var dto = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var result = new DataTableModel
@@ -262,8 +262,8 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.Value.IsEmpty())
                 return Json(new { });
             var departmentID = Convert.ToInt32(queryBase.Value);
-            var users = (await _userDepartmentService.GetList(item => item.Id > 0 && item.DepartmentID == departmentID))
-                .data.Select(item => item.UserID).ToList();
+            var users = (await _userDepartmentService.GetList(item => item.Id > 0 && item.DepartmentId == departmentID))
+                .data.Select(item => item.UserId).ToList();
             Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0 && !users.Contains(item.Id);
             var dto = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var result = new DataTableModel
@@ -287,17 +287,17 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetDepartment(SetDepartmentModel dto)
         {
-            if (dto.UserIDs.Count() < 1 || dto.DepartmentID < 1)
+            if (dto.UserIds.Count() < 1 || dto.DepartmentId < 1)
             {
                 return Json(new { });
             }
             var dtos = new List<UserDepartmentDto>();
-            foreach (int userID in dto.UserIDs)
+            foreach (int userId in dto.UserIds)
             {
                 dtos.Add(new UserDepartmentDto
                 {
-                    UserID = userID,
-                    DepartmentID = dto.DepartmentID
+                    UserId = userId,
+                    DepartmentId = dto.DepartmentId
                 });
             }
 

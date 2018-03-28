@@ -13,10 +13,10 @@ namespace lkWeb.Data.Config
             builder.ToTable("Sys_UserDepartment");
             builder.HasKey(item => item.Id);
             builder.Property(item => item.Id).ValueGeneratedOnAdd();
-            builder.HasOne(item => item.User).WithMany(item => item.UserDepartments).HasForeignKey(item => item.UserID);
-            builder.HasOne(item => item.Department).WithMany(item => item.UserDepartments).HasForeignKey(item => item.DepartmentID);
-            builder.Property(item => item.DepartmentID).IsRequired();
-            builder.Property(item => item.UserID).IsRequired();
+            builder.HasOne(item => item.User).WithMany(item => item.UserDepartments).HasForeignKey(item => item.UserId);
+            builder.HasOne(item => item.Department).WithMany(item => item.UserDepartments).HasForeignKey(item => item.DepartmentId);
+            builder.Property(item => item.DepartmentId).IsRequired();
+            builder.Property(item => item.UserId).IsRequired();
         }
     }
 }

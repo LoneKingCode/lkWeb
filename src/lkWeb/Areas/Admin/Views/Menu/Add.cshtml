@@ -29,13 +29,13 @@
                 }).on('onDataRequestSuccess', function (e, result) {
 
                 }).on('onSetSelectValue', function (e, keyword, data) {
-                     $("#txtParentID").val(keyword.id);
+                     $("#txtParentId").val(keyword.id);
                 }).on('onUnsetSelectValue', function () {
                  });
             })
         })
         function SelectModule(value) {
-            $("#txtModuleID").val(value);
+            $("#txtModuleId").val(value);
         }
         function ViewIcon() {
             var url = " http://www.fontawesome.com.cn/faicons/";
@@ -48,15 +48,15 @@
     <div class="form-group">
         <label class="col-md-3 control-label">所属模块</label>
         <div class="col-md-7">
-            <input name="ModuleID" type="hidden" id="txtModuleID" value="@ViewBag.ModuleID" />
-            @Html.DropDownList("ModuleID", (SelectList)ViewBag.Modules, new { @class = "form-control", @onchange = "SelectModule(this.value)" })
+            <input name="ModuleId" type="hidden" id="txtModuleId" value="@ViewBag.ModuleId" />
+            @Html.DropDownList("ModuleId", (SelectList)ViewBag.Modules, new { @class = "form-control", @onchange = "SelectModule(this.value)" })
         </div>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">上级菜单</label>
         <div class="col-md-7">
             <div class="input-group">
-                <input name="ParentID" type="hidden" id="txtParentID" value="@ViewBag.ParentID" />
+                <input name="ParentId" type="hidden" id="txtParentId" value="@ViewBag.ParentId" />
                 <input class="form-control" type="text" autocomplete="off" id="menuList" value="@ViewBag.ParentName" />
                 <div class="input-group-btn">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle>

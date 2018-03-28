@@ -52,8 +52,8 @@ namespace lkWeb.Areas.Admin.Controllers
             else
                 ViewBag.ParentName = "无";
             var result = await _moduleService.GetList(item => item.Id > 0);
-            ViewBag.Modules = new SelectList(result.data, "Id", "Name", menu.ModuleID);
-            ViewBag.ModuleID = menu.ModuleID;
+            ViewBag.Modules = new SelectList(result.data, "Id", "Name", menu.ModuleId);
+            ViewBag.ModuleID = menu.ModuleId;
             return View(menu);
         }
         #endregion
@@ -95,9 +95,9 @@ namespace lkWeb.Areas.Admin.Controllers
                 {
                     rowNum = ++queryBase.Start,
                     name = d.Name,
-                    moduleID = d.ModuleID,
-                    moduleName = allModule.ContainsKey(d.ModuleID) ? allModule[d.ModuleID] : "无",
-                    parentID = d.ParentId,
+                    moduleId = d.ModuleId,
+                    moduleName = allModule.ContainsKey(d.ModuleId) ? allModule[d.ModuleId] : "无",
+                    parentId= d.ParentId,
                     parentName = allMenu.ContainsKey(d.ParentId) ? allMenu[d.ParentId] : "无",
                     id = d.Id.ToString(),
                     createDateTime = d.CreateDateTime.ToString(),
