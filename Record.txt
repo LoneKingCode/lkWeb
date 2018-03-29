@@ -1,15 +1,15 @@
-表管理 表结构管理 查看表数据  *对于 外键的字段 Out  下拉
+查看表数据 对于列的 各个属性扩展功能 实现
+
+对于 外键的字段 take in
 
 数据库 sqlService  EF  事务性
 
-输入框 加入输入提示
+输入框 加入输入提示 对于表结构管理的详细设置说明
 
 字段保存类型 默认的string是nvarchar(max) 用哪个？varchar or nvarchar
 数据库 初始化代码 初始 数据 并且测试
 
 调整startup.cs 里面太乱
-
-
 
 菜单 自适应缩放
 
@@ -19,4 +19,3 @@
 
 hangfire 定时任务
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name.
-  试试直接用SQL 语句?

@@ -53,15 +53,23 @@
                 @{
                     StringBuilder columnStr = new StringBuilder();
                     string str = "{{\"mData\": \"{0}\", \"sClass\": \"text-center\"}},";
+                    string hiddenStr= "{{\"mData\": \"{0}\",\"visible\": false, \"sClass\": \"text-center\"}},";
                     foreach (var column in Model.TableColumn)
                     {
-                        columnStr.Append(string.Format(str, column.Name));
+                        if(column.Name=="Id")  //隐藏Id列
+                        {
+                            columnStr.Append(string.Format(hiddenStr, column.Name));
+                        }
+                        else
+                        {
+                            columnStr.Append(string.Format(str, column.Name));
+                        }
                     }
                      @Html.Raw(columnStr.ToString());
                      }
             ];
             lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl,'@Model.TableId')
-    }
+        }
     </script>
 }
 

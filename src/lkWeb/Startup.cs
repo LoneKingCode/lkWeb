@@ -57,7 +57,9 @@ namespace lkWeb
             services.AddHangfire(x => x.UseSqlServerStorage(lkWebContext.connectionString));
 
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(
+                opt => opt.SerializerSettings.DateFormatString = "yyyy/M/d hh:mm:ss"
+                );
 
             services.AddAuthentication();
 

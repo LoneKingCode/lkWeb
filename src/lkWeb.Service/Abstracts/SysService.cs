@@ -189,11 +189,48 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="updateModel">数据键值对</param>
+        /// <param name="id">数据主键Id</param>
         /// <returns></returns>
-        public async Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel)
+        public async Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel, int id)
         {
+            var result = new Result<bool>();
+            var tableResult = await _tableListService.GetById(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableName = tableResult.data.Name;
+            string sqlTpl = "update {0} set {1} where {2}";
+            StringBuilder sbValue = new StringBuilder();
+            foreach (var item in updateModel)
+            {
+                sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value));
+            }
+            var executeResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id));
+            result.flag = executeResult;
+            result.data = executeResult;
+            return result;
+        }
+        /// <summary>
+        /// 获取Out类型列
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="colName">列名</param>
+        /// <param name="outValue">值</param>
+        /// <returns></returns>
+        public async Task<Result<string>> GetOutValue(int tableId, string columnName, string outValue)
+        {
+            var result = new Result<String>();
+            string outSql = await _sqlService.GetSingle(
+                string.Format("select OutSql from Sys_TableColumn where TableId={0} and Name='{1}'", tableId, columnName));
+            var outSqlData = outSql.Split(','); //Example: Name,Sys_Department,ParentId=0
+            var outColName = outSqlData[0];
+            var outTableName = outSqlData[1];
+            result.data = await _sqlService.GetSingle(string.Format("select {0} from {1} where Id={2}", outColName, outTableName, outValue));
+            result.flag = true;
+            return result;
 
-            return null;
         }
 
     }

@@ -92,7 +92,14 @@ namespace lkWeb.Service.Abstracts
         public async Task<string> GetSingle(string sql)
         {
             var queryResult = await Query(sql);
-            return queryResult.First().First().Value.ToString();
+            if (queryResult.Any()) //如果有查询数据 返回第一行第一列数据
+            {
+                return queryResult.First().First().Value.ToString();
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
     }

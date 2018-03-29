@@ -42,11 +42,24 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
+            var colDto = (await _tableColumnService.GetById(param.id)).data;
+
+            //获取所有表 放到下拉中 且选中当前列所属表
             var result = await _tableListService.GetList(item => item.Id > 0);
-            ViewBag.TableList = new SelectList(result.data, "Id", "Name");
+            var items = new List<SelectListItem>();
+            foreach (var item in result.data)
+            {
+                items.Add(new SelectListItem
+                {
+                    Value = item.Id.ToString(),
+                    Text = item.Name.ToString(),
+                    Selected = colDto.TableId == item.Id
+                });
+
+            }
+            ViewBag.TableList = new SelectList(items, "Value", "Text");
             ViewBag.DataTypeList = new SelectList(Enum.GetValues(typeof(ColumnDataType)).Cast<ColumnDataType>());
-            var module = (await _tableColumnService.GetById(param.id)).data;
-            return View(module);
+            return View(colDto);
         }
         #endregion
 
@@ -122,7 +135,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetValue(UrlParameter param, SetColumnAttrModel model)
         {
-            var result =await _sysService.SetColumnValue(param.ids, model.FiledName, model.Value);
+            var result = await _sysService.SetColumnValue(param.ids, model.FiledName, model.Value);
             return Json(result);
         }
         #endregion

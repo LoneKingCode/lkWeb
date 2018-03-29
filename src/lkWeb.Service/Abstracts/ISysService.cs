@@ -1,4 +1,5 @@
 ﻿using lkWeb.Service.Dto;
+using lkWeb.Service.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -58,9 +59,17 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="updateModel">数据键值对</param>
+        /// <param name="id">数据主键Id</param>
         /// <returns></returns>
-        Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel);
-
+        Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel, int id);
+        /// <summary>
+        /// 获取Out类型列
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="colName">列名</param>
+        /// <param name="outValue">值</param>
+        /// <returns></returns>
+        Task<Result<string>> GetOutValue(int tableId, string columnName, string outValue);
 
     }
 }

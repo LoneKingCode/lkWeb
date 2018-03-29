@@ -6,6 +6,7 @@ using lkWeb.Areas.Admin.Models;
 using lkWeb.Core.Extensions;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
+using lkWeb.Service.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -76,7 +77,6 @@ namespace lkWeb.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(UrlParameter param)
         {
-            //*** TableId 不对， param是这一条记录的 主键Id，TableId得再多余的传过来
             var model = new ViewListModel();
             model.TableId = param.value.ToInt32();
             var result = await _tableColumnService.GetList(item => item.TableId == model.TableId && item.EditVisible == 1);
@@ -139,13 +139,27 @@ namespace lkWeb.Areas.Admin.Controllers
             var columnNames = (await _sysService.GetColumnNames(tableId, "ListVisible=1")).data;
             var tableData = await _sysService.GetPageData(tableId, columnNames, condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
+            var outTypeColumnNames = (await _sysService.GetColumnNames(
+                tableId, "ListVisible=1 and DataType=" + (int)ColumnDataType.Out)).data.Split(',');
+
+
             foreach (var dicList in tableData.data)
             {
                 Dictionary<string, object> temp = new Dictionary<string, object>();
                 temp["rowNum"] = ++queryBase.Start;
                 foreach (var item in dicList)
                 {
-                    temp[item.Key] = item.Value;
+                    if (outTypeColumnNames.Contains(item.Key))
+                    {
+                        temp[item.Key] = (await _sysService.GetOutValue(tableId, item.Key, item.Value.ToString())).data;
+                    }
+                    else
+                    {
+                        if (item.Key == "CreateDateTime") //如果是创建时间 转换下格式显示
+                            temp[item.Key] = Convert.ToDateTime(item.Value).ToString("yyyy/M/d hh:mm:ss");
+                        else
+                            temp[item.Key] = item.Value;
+                    }
                 }
                 listData.Add(temp);
             }
@@ -182,7 +196,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param, IFormCollection formData)
         {
             var model = new ViewListModel();
-            var columnResult = await _tableColumnService.GetList(item => item.TableId == param.id && item.EditVisible == 1);
+            var tableId = param.value.ToInt32();
+            var columnResult = await _tableColumnService.GetList(item => item.TableId == tableId && item.EditVisible == 1);
             var tableColumns = columnResult.data;
             var updateModel = new Dictionary<string, string>();
             foreach (var column in tableColumns)
@@ -190,7 +205,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 if (formData.ContainsKey(column.Name))
                     updateModel[column.Name] = formData[column.Name];
             }
-            var result = await _sysService.Update(param.id, updateModel);
+            var result = await _sysService.Update(tableId, updateModel, param.id);
             return Json(result);
         }
         #endregion

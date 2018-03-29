@@ -2,7 +2,7 @@
 @model TableColumnDto
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title = "编辑角色";
+    ViewBag.Title = "编辑列";
 }
 @section Scripts{
     <script type="text/javascript">
@@ -20,7 +20,7 @@
     <div class="form-group">
         <label class="col-md-2 control-label">所属表</label>
         <div class="col-md-4">
-            @Html.DropDownList("TableID", (SelectList)ViewBag.TableList, new { @class = "form-control" })
+            @Html.DropDownList("TableId", (SelectList)ViewBag.TableList, new { @class = "form-control" })
         </div>
         <label class="col-md-2 control-label">列名称</label>
         <div class="col-md-4">
