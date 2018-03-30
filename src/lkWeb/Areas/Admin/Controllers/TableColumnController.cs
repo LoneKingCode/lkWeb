@@ -28,8 +28,19 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         #region Page
-        public IActionResult Index(UrlParameter param)
+        public async Task<IActionResult> Index(UrlParameter param)
         {
+            var tableDtos = await _tableListService.GetList(item => item.Id > 0);
+            List<SelectListItem> tableList = new List<SelectListItem>();
+            foreach (var dto in tableDtos.data)
+            {
+                tableList.Add(new SelectListItem
+                {
+                    Value = dto.Id.ToString(),
+                    Text = dto.Name.ToString(),
+                });
+            }
+            ViewBag.TableList = new SelectList(tableList, "Value", "Text");
             return View();
         }
         public async Task<IActionResult> Add(UrlParameter param)
@@ -69,8 +80,17 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
             Expression<Func<TableColumnDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
+            var searchKey = queryBase.SearchKey;
+            if (searchKey.IsNotEmpty())
+            {
+                if (searchKey.Contains("TableId")) //如果是查找指定表下的列 前台格式为 TableId|Id值
+                {
+                    var tableId = searchKey.Split('|')[1].ToInt32();
+                    queryExp = x => x.TableId == tableId;
+                }
+                else
+                    queryExp = x => (x.Description.Contains(searchKey) || x.Name.Contains(searchKey));
+            }
             var allTable = (await _tableListService.GetList(item => item.Id > 0))
                    .data.ToDictionary(item => item.Id, item => item.Name);
             var dto = await _tableColumnService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);

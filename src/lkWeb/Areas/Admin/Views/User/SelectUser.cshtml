@@ -55,7 +55,7 @@
                           parent.SelectUser();
                       }
                       else {
-                          if (result.msg.notIsEmpty())
+                          if (result.msg.IsNotEmpty())
                               parent.layer.alert(result.msg);
                           else
                               parent.layer.alert("删除失败");

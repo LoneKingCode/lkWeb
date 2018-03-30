@@ -40,6 +40,7 @@ namespace lkWeb.Areas.Admin.Controllers
             model.TableId = param.id;
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.ListVisible == 1);
             model.TableColumn = result.data;
+            ViewBag.TableName = (await _tableListService.GetById(model.TableId)).data.Description;
             return View(model);
         }
         public async Task<IActionResult> Add(UrlParameter param)
@@ -208,6 +209,16 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _sysService.Update(tableId, updateModel, param.id);
             return Json(result);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(UrlParameter param)
+        {
+            var tableId = param.value.ToInt32();
+            var result = _sysService.Delete(tableId, param.ids);
+            return Json(result);
+        }
+
         #endregion
     }
 }

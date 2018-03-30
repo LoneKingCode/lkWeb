@@ -3,7 +3,7 @@
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title = "表管理";
+    ViewBag.Title = ViewBag.TableName;
 }
 @model ViewListModel
 @section Scripts{
@@ -35,7 +35,7 @@
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "viewlist", lkTable);
+            lkWeb.DeleteMulti(ids, "viewlist", lkTable,"@Model.TableId");
         }
         var lkTable;
         function InitDataTable() {

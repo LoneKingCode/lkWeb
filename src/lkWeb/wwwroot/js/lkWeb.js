@@ -14,7 +14,7 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
     //获取主机地址，如： http://localhost:8083
     var localhostPath = curWwwPath.substring(0, pos);
     var url = "";
-    if (NotIsEmpty(values))
+    if (IsNotEmpty(values))
         url = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
     else
         url = localhostPath + "/admin/" + ctrl + "/" + action;
@@ -48,7 +48,7 @@ lkWeb.CloseLayert = function () {
     //    var index = parent.layer.getFrameIndex(window.name);
 }
 //删除多个
-lkWeb.DeleteMulti = function (ids, model, table) {
+lkWeb.DeleteMulti = function (ids, model, table, value) {
     if (ids.length < 1) {
         parent.layer.alert("请选择要删除的数据");
         return;
@@ -56,12 +56,17 @@ lkWeb.DeleteMulti = function (ids, model, table) {
     parent.layer.confirm("确认删除" + ids.length + "条数据？", {
         btn: ["确认", "取消"]
     }, function () {
+        var postUrl = '/Admin/' + model + '/Delete';
+        var _value = "";
+        if (IsNotEmpty(value))
+            _value = value;
         $.ajax(
             {
                 type: 'post',
-                url: '/Admin/' + model + '/Delete',
+                url: postUrl,
                 data: {
                     ids: ids,
+                    value: _value,
                     __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
                 },
                 success: function (result) {
@@ -73,7 +78,7 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                             window.location.reload();
                     }
                     else {
-                        if (NotIsEmpty(result.msg))
+                        if (IsNotEmpty(result.msg))
                             parent.layer.alert(result.msg);
                         else
                             parent.layer.alert("删除失败");
@@ -93,17 +98,22 @@ lkWeb.DeleteMulti = function (ids, model, table) {
 }
 
 //删除单个
-lkWeb.Delete = function (id, model, table) {
+lkWeb.Delete = function (id, model, table, value) {
     parent.layer.confirm("确认删除？", {
         btn: ["确认", "取消"]
     },
         function () {
+            var postUrl = '/Admin/' + model + '/Delete';
+            var _value = "";
+            if (IsNotEmpty(value))
+                _value = value;
             $.ajax(
                 {
                     type: 'post',
-                    url: '/Admin/' + model + '/Delete',
+                    url: postUrl,
                     data: {
-                        Id: id,
+                        id: id,
+                        value: _value,
                         __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
                     },
                     success: function (result) {
@@ -115,7 +125,7 @@ lkWeb.Delete = function (id, model, table) {
                                 window.location.reload();
                         }
                         else {
-                            if (NotIsEmpty(result.msg))
+                            if (IsNotEmpty(result.msg))
                                 parent.layer.alert(result.msg);
                             else
                                 parent.layer.alert("删除失败");
@@ -147,7 +157,7 @@ lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
                         parent.layer.alert("操作成功");
                 }
                 else {
-                    if (NotIsEmpty(result.msg))
+                    if (IsNotEmpty(result.msg))
                         parent.layer.alert(result.msg);
                     else
                         parent.layer.alert("操作失败");
@@ -171,7 +181,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
         datatype: "json",
         success: function (data) {
             if (data.flag == true) {
-                if (NotIsEmpty(successMsg)) {
+                if (IsNotEmpty(successMsg)) {
                     layer.alert(successMsg);
                     setTimeout(function () {
                         if (IsFunction(successCallBack))
@@ -346,10 +356,10 @@ String.prototype.format = function (args) {
 }
 
 function IsEmpty(value) {
-    return !NotIsEmpty(value);
+    return !IsNotEmpty(value);
 }
 
-function NotIsEmpty(value) {
+function IsNotEmpty(value) {
     return value != "" && value != null && value != undefined;
 }
 function IsFunction(func) {

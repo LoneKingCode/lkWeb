@@ -212,8 +212,37 @@ namespace lkWeb.Service.Abstracts
             result.data = executeResult;
             return result;
         }
+
         /// <summary>
-        /// 获取Out类型列
+        /// 删除多条数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="ids">要删除的id集合</param>
+        /// <returns></returns>
+        public async Task<Result<bool>> Delete(int tableId, List<int> ids)
+        {
+            var result = new Result<bool>();
+            var tableResult = await _tableListService.GetById(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableName = tableResult.data.Name;
+            string sqlTpl = "delete from {0} where Id={1}";
+            List<string> sqlList = new List<string>();
+            foreach (var id in ids)
+            {
+                sqlList.Add(string.Format(sqlTpl, tableName, id));
+            }
+            var flag = await _sqlService.ExecuteBatch(sqlList);
+            result.flag = flag;
+            result.data = flag;
+            return result;
+        }
+
+        /// <summary>
+        /// 获取Out类型列对应值
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="colName">列名</param>
