@@ -15,7 +15,6 @@ namespace lkWeb.Service.Enum
         Int,
         TinyInt,
         Out,
-        TakeIn,
         Datetime2,
         Float,
         Bit,

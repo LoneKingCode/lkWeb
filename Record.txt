@@ -1,8 +1,6 @@
 表结构管理 扩展 按钮 查看表数据 对于列的 各个属性扩展功能 实现
 
-对于 外键的字段 take in
-
-数据库 sqlService  EF  事务性
+数据库 sqlService  EF  事务性   + nlog 日志输出
 
 输入框 加入输入提示 对于表结构管理的详细设置说明
 
@@ -16,6 +14,8 @@
 登陆时根据模块。。。
 
 图表统计
+
+注意lkWebDbContextFactory 里写的明文 SQL链接
 
 hangfire 定时任务
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name.

@@ -50,7 +50,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
             model.TableColumn = result.data;
             string sql = "select {0} from {1} where {2}";
-            ViewBag.Data = new Dictionary<string, SelectList>();
+            ViewBag.OutColumn = new Dictionary<string, SelectList>();
             foreach (var column in model.TableColumn)
             {
                 if (column.DataType == Service.Enum.ColumnDataType.Out)
@@ -70,7 +70,7 @@ namespace lkWeb.Areas.Admin.Controllers
                         });
 
                     }
-                    ViewBag.Data[column.Name] = new SelectList(items, "Value", "Text");
+                    ViewBag.OutColumn[column.Name] = new SelectList(items, "Value", "Text");
                 }
             }
             return View(model);

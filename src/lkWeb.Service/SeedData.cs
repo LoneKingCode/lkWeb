@@ -516,7 +516,10 @@ namespace lkWeb.Service
                    Status=  UserStatus.已激活,
               },  //id:3
             };
-            userService.Add(users);
+            foreach (var user in users)
+            {
+                userService.Register(user);
+            }
             #endregion
 
             #region 角色

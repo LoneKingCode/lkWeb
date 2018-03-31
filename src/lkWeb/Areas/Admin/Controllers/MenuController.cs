@@ -97,7 +97,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     name = d.Name,
                     moduleId = d.ModuleId,
                     moduleName = allModule.ContainsKey(d.ModuleId) ? allModule[d.ModuleId] : "无",
-                    parentId= d.ParentId,
+                    parentId = d.ParentId,
                     parentName = allMenu.ContainsKey(d.ParentId) ? allMenu[d.ParentId] : "无",
                     id = d.Id.ToString(),
                     createDateTime = d.CreateDateTime.ToString(),
@@ -114,13 +114,33 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UrlParameter param, MenuDto menu)
         {
+            await SetMenu(menu);
             var result = await _menuService.Update(menu);
+            return Json(result);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(UrlParameter param, MenuDto menu)
+        {
+            SetMenu(menu);
+
+            var result = await _menuService.Add(menu);
 
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UrlParameter param, MenuDto menu)
+        public async Task<IActionResult> Delete(UrlParameter param)
+        {
+            if (param.ids != null && param.ids.Any())
+                return Json(await _menuService.Delete(param.ids));
+            else
+                return Json(await _menuService.Delete(param.id));
+        }
+
+        private async Task SetMenu(MenuDto menu)
         {
             if (menu.ParentId > 0)
             {
@@ -140,19 +160,6 @@ namespace lkWeb.Areas.Admin.Controllers
                         break;
                 }
             }
-
-            var result = await _menuService.Add(menu);
-
-            return Json(result);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(UrlParameter param)
-        {
-            if (param.ids != null && param.ids.Any())
-                return Json(await _menuService.Delete(param.ids));
-            else
-                return Json(await _menuService.Delete(param.id));
         }
 
         #endregion
