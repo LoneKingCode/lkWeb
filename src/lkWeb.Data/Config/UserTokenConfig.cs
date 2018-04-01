@@ -13,6 +13,8 @@ namespace lkWeb.Data.Config
         public void Configure(EntityTypeBuilder<IdentityUserToken<int>> builder)
         {
             builder.ToTable("Sys_UserToken");
+            builder.Property(item => item.LoginProvider).HasMaxLength(100);
+            builder.Property(item => item.Name).HasMaxLength(100);
         }
     }
 }

@@ -32,7 +32,6 @@ namespace lkWeb.Service.Abstracts
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManage = roleManage;
-            _userManager.GetUserAsync(WebHelper._httpContext.User);
         }
 
         public async Task<Result<UserDto>> GetCurrentUser()

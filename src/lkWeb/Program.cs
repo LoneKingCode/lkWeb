@@ -19,7 +19,7 @@ namespace lkWeb
                 .Build();
 
             host.Run();
-        
+
         }
     }
 }

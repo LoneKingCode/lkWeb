@@ -13,6 +13,7 @@ namespace lkWeb.Data.Config
         {
             builder.ToTable("Sys_Role");
             builder.Property(item => item.Description).HasColumnType("varchar(30)").IsRequired();
+            builder.Property(item => item.NormalizedName).HasMaxLength(100);
         }
     }
 }
