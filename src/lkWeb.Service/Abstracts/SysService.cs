@@ -110,19 +110,24 @@ namespace lkWeb.Service.Abstracts
         /// <param name="condition">查询条件</param>
         /// <param name="queryBase">基础查询对象</param>
         /// <returns></returns>
-        public async Task<Result<List<Dictionary<string, object>>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase)
+        public async Task<ResultDto<Dictionary<string, object>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase)
         {
-            var result = new Result<List<Dictionary<string, object>>>();
+            var result = new ResultDto<Dictionary<string, object>>();
             var tableResult = await _tableListService.GetById(tableId);
             if (!tableResult.flag)
                 return result;
             var tableDto = tableResult.data;
-            var oderBy = queryBase.OrderBy ?? "Id";
+            var orderBy = string.Empty;
+            //默认排序条件
+            if (tableDto.DefaultSort.IsNotEmpty())
+                orderBy = tableDto.DefaultSort;
+            if (queryBase.OrderBy.IsNotEmpty())
+                orderBy = queryBase.OrderBy + " " + queryBase.OrderDir;
             string sql = "select {0} from {1} where {2} order by {3} offset {4} rows fetch next {5} rows only";
             var queryResult = await _sqlService.Query(string.Format(sql, columns, tableDto.Name, condition,
-                oderBy + " " + queryBase.OrderDir, queryBase.Start, queryBase.Length));
-            result.flag = true;
+                orderBy, queryBase.Start, queryBase.Length));
             result.data = queryResult;
+            result.recordsTotal = (await _sqlService.GetSingle(String.Format("select count(*) from {0} where {1}", tableDto.Name, condition))).ToInt32();
             return result;
         }
 
@@ -200,12 +205,14 @@ namespace lkWeb.Service.Abstracts
                 result.msg = "未找到指定表";
                 return result;
             }
-            var tableName = tableResult.data.Name;
-            string sqlTpl = "update {0} set {1} where {2}";
+            var tableDto = tableResult.data;
+            var tableName = tableDto.Name;
+            var forbiddenUpdateFilter = tableDto.ForbiddenUpdateFilter ?? "1=1";
+            string sqlTpl = "update {0} set {1} where {2} and {3}";
             StringBuilder sbValue = new StringBuilder();
             foreach (var item in updateModel)
             {
-                sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value));
+                sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value, forbiddenUpdateFilter));
             }
             var executeResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id));
             result.flag = executeResult;
@@ -228,12 +235,15 @@ namespace lkWeb.Service.Abstracts
                 result.msg = "未找到指定表";
                 return result;
             }
-            var tableName = tableResult.data.Name;
-            string sqlTpl = "delete from {0} where Id={1}";
+            var tableDto = tableResult.data;
+            var tableName = tableDto.DeleteTableName;
+            //禁止删除条件
+            var forbiddenDeleteFilter = tableDto.ForbiddenDeleteFilter ?? "1=1";
+            string sqlTpl = "delete from {0} where Id={1} and {2}";
             List<string> sqlList = new List<string>();
             foreach (var id in ids)
             {
-                sqlList.Add(string.Format(sqlTpl, tableName, id));
+                sqlList.Add(string.Format(sqlTpl, tableName, id, forbiddenDeleteFilter));
             }
             var flag = await _sqlService.ExecuteBatch(sqlList);
             result.flag = flag;

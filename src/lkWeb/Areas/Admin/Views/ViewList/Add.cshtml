@@ -10,13 +10,13 @@
     <script type="text/javascript">
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
-                lkWeb.GoAction("viewlist", "index","@Model.TableId")
+                lkWeb.GoAction("admin","viewlist", "index","@Model.Table.Id")
             }, "操作成功")
         })
 
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Add",new { id = @Model.TableId })" method="post" id="lkForm">
+<form class="form-horizontal" action="@Url.Action("Add",new { id = @Model.Table.Id })" method="post" id="lkForm">
     @Html.AntiForgeryToken()
     @{
         string selectTpl = "<div class=\"form-group\"><div class=\"\">" +

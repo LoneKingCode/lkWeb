@@ -21,10 +21,10 @@
     <script type="text/javascript">
         $(function () {
             lkWeb.FormValidation($("#loginForm"), function () {
-                lkWeb.GoAction("control", "index")
+                lkWeb.GoAction("admin","control", "index")
             }, "登陆成功")
             lkWeb.FormValidation($("#registerForm"), function () {
-                lkWeb.GoAction("user", "login")
+                lkWeb.GoAction("admin","user", "login")
             }, "注册成功")
         })
 

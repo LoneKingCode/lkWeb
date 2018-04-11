@@ -10,7 +10,7 @@
     <script type="text/javascript">
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
-                lkWeb.GoAction("viewlist", "index","@Model.TableId")
+                lkWeb.GoAction("admin","viewlist", "index","@Model.Table.Id")
             }, "操作成功")
         })
 

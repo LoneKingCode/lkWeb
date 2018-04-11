@@ -26,16 +26,16 @@
                 parent.layer.alert("请选择用户");
                 return;
             }
-              lkWeb.GoAction("user", "authen", userId, true, "设置权限",'100%','100%');
+              lkWeb.GoAction("admin","user", "authen", userId, true, "设置权限",'100%','100%');
         }
 
         function AddModel() {
-            lkWeb.GoAction("user", "add", 0);
+            lkWeb.GoAction("admin","user", "add", 0);
         }
         function DelModel()
         {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "user", lkTable);
+            lkWeb.DeleteMulti("admin",ids, "user", lkTable);
         }
 
         function EditModel() {
@@ -43,7 +43,7 @@
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("user", "edit", id);
+                lkWeb.GoAction("admin","user", "edit", id);
 
         }
         var lkTable;

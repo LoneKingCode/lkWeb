@@ -42,7 +42,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="condition">查询条件</param>
         /// <param name="queryBase">基础查询对象</param>
         /// <returns></returns>
-        Task<Result<List<Dictionary<string, object>>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase);
+        Task<ResultDto<Dictionary<string, object>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase);
 
         /// <summary>
         /// 获取指定表下列名

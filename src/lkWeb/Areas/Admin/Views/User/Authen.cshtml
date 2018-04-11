@@ -37,7 +37,7 @@
                           url: "@Url.Action("DeleteRole", "User")",
                           type: "post",
                           dataType: "json",
-                          data: { dto: data, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
+                          data: { model: data, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
                           async: false,
                           success: function (data) {
                               if (data.flag == true)

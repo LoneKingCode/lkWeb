@@ -6,7 +6,7 @@
     <script type="text/javascript">
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
-                lkWeb.GoAction("tablelist", "index")
+                lkWeb.GoAction("admin","tablelist", "index")
             }, "操作成功")
         })
 
@@ -69,7 +69,7 @@
             </div>
             <label class="col-md-2 control-label">禁止添加条件</label>
             <div class="col-md-4">
-                <input type="text" class="form-control" name="ForbiddenAddFilter" />
+                <input type="text" class="form-control" name="ForbiddenAddFilter"  placeholder="未实现" />
             </div>
         </div>
         <div class="form-group">

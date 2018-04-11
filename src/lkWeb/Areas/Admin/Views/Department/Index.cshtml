@@ -21,19 +21,19 @@
 
         function AddModel() {
             departmentId = lkWeb.GetCheckValue($(".checkChild"));
-            lkWeb.GoAction("department", "add", departmentId);;
+            lkWeb.GoAction("admin","department", "add", departmentId);;
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("department", "edit", id);
+                lkWeb.GoAction("admin","department", "edit", id);
         }
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "department", lkTable);
+            lkWeb.DeleteMulti("admin",ids, "department", lkTable);
         }
 
         var lkTable;

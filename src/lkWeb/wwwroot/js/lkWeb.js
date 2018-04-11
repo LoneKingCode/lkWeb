@@ -6,7 +6,7 @@ var lkWeb = {};
 
 lkWeb.LayerIndex = 0;
 
-lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
+lkWeb.GoAction = function (area, ctrl, action, values, isOpen, title, width, height) {
     var curWwwPath = window.document.location.href;
     //获取主机地址之后的目录，如： uimcardprj/share/meun.jsp
     var pathName = window.document.location.pathname;
@@ -15,9 +15,9 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
     var localhostPath = curWwwPath.substring(0, pos);
     var url = "";
     if (IsNotEmpty(values))
-        url = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
+        url = localhostPath + "/" + area + "/" + ctrl + "/" + action + "/" + values;
     else
-        url = localhostPath + "/admin/" + ctrl + "/" + action;
+        url = localhostPath + "/" + area + "/" + ctrl + "/" + action;
     if (isOpen == true) {
         lkWeb.LayerIndex = layer.open({
             type: 2,
@@ -48,7 +48,7 @@ lkWeb.CloseLayert = function () {
     //    var index = parent.layer.getFrameIndex(window.name);
 }
 //删除多个
-lkWeb.DeleteMulti = function (ids, model, table, value) {
+lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
     if (ids.length < 1) {
         parent.layer.alert("请选择要删除的数据");
         return;
@@ -56,7 +56,7 @@ lkWeb.DeleteMulti = function (ids, model, table, value) {
     parent.layer.confirm("确认删除" + ids.length + "条数据？", {
         btn: ["确认", "取消"]
     }, function () {
-        var postUrl = '/Admin/' + model + '/Delete';
+        var postUrl = '/' + area + '/' + ctrl + '/Delete';
         var _value = "";
         if (IsNotEmpty(value))
             _value = value;
@@ -93,17 +93,15 @@ lkWeb.DeleteMulti = function (ids, model, table, value) {
 
     }
     )
-
-
 }
 
 //删除单个
-lkWeb.Delete = function (id, model, table, value) {
+lkWeb.Delete = function (area, id, ctrl, table, value) {
     parent.layer.confirm("确认删除？", {
         btn: ["确认", "取消"]
     },
         function () {
-            var postUrl = '/Admin/' + model + '/Delete';
+            var postUrl = '/' + area + '/' + ctrl + '/Delete';
             var _value = "";
             if (IsNotEmpty(value))
                 _value = value;

@@ -37,16 +37,16 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Index(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.TableId = param.id;
+            model.Table = (await _tableListService.GetById(param.id)).data;
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.ListVisible == 1);
             model.TableColumn = result.data;
-            ViewBag.TableName = (await _tableListService.GetById(model.TableId)).data.Description;
+            ViewBag.TableName = model.Table.Description;
             return View(model);
         }
         public async Task<IActionResult> Add(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.TableId = param.id;
+            model.Table = (await _tableListService.GetById(param.id)).data;
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
             model.TableColumn = result.data;
             string sql = "select {0} from {1} where {2}";
@@ -79,12 +79,12 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.TableId = param.value.ToInt32();
-            var result = await _tableColumnService.GetList(item => item.TableId == model.TableId && item.EditVisible == 1);
+            model.Table = (await _tableListService.GetById(param.value.ToInt32())).data;
+            var result = await _tableColumnService.GetList(item => item.TableId == model.Table.Id && item.EditVisible == 1);
             model.TableColumn = result.data;
             string sql = "select {0} from {1} where {2}";
             ViewBag.OutColumn = new Dictionary<string, SelectList>();
-            var tbName = (await _tableListService.GetById(model.TableId)).data.Name;
+            var tbName = model.Table.Name;
             var columnValueResult = await _sqlService.Query(
                 string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id));
             ViewBag.ColumnValue = columnValueResult.First();
@@ -125,6 +125,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
             var tableId = queryBase.Value.ToInt32(); //表ID 保存在value中
+            var tableDto = (await _tableListService.GetById(tableId)).data;
             string condition = "1=1";
             if (queryBase.SearchKey.IsNotEmpty())
             {
@@ -164,11 +165,14 @@ namespace lkWeb.Areas.Admin.Controllers
                 }
                 listData.Add(temp);
             }
+            listData.Add(new Dictionary<string, object> {
+                { "ExtendFunction", tableDto.ExtendFunction}
+            });
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
-                recordsTotal = tableData.data.Count,
-                recordsFiltered = tableData.data.Count,
+                recordsTotal = tableData.recordsTotal,
+                recordsFiltered = tableData.recordsTotal,
                 data = listData
             };
             return Json(data);

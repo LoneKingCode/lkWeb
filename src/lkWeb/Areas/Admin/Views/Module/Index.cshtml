@@ -19,19 +19,19 @@
         });
 
         function AddModel() {
-            lkWeb.GoAction("module", "add", 0);
+            lkWeb.GoAction("admin","module", "add", 0);
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("module", "edit", id);
+                lkWeb.GoAction("admin","module", "edit", id);
         }
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "module", lkTable);
+            lkWeb.DeleteMulti("admin",ids, "module", lkTable);
         }
 
         var lkTable;

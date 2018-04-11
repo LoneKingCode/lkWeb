@@ -19,19 +19,19 @@
         });
 
         function AddModel() {
-            lkWeb.GoAction("role", "add", 0);
+            lkWeb.GoAction("admin","role", "add", 0);
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("role", "edit", id);
+                lkWeb.GoAction("admin","role", "edit", id);
         }
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "role", lkTable);
+            lkWeb.DeleteMulti("admin",ids, "role", lkTable);
         }
 
         var lkTable;

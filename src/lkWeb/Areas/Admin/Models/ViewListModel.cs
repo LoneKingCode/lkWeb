@@ -15,7 +15,7 @@ namespace lkWeb.Areas.Admin.Models
         /// <summary>
         /// 所属表
         /// </summary>
-        public int TableId { get; set; }
+        public TableListDto Table { get; set; }
 
     }
 }

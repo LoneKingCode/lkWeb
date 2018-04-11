@@ -1,5 +1,6 @@
 ﻿@using lkWeb.Areas.Admin.Models
 @using System.Text;
+@using lkWeb.Core.Extensions;
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
@@ -23,19 +24,19 @@
         });
 
         function AddModel() {
-            lkWeb.GoAction("viewlist", "add","@Model.TableId");
+            lkWeb.GoAction("admin","viewlist", "add","@Model.Table.Id");
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("viewlist", "edit", id+"/" + "@Model.TableId");
+                lkWeb.GoAction("admin","viewlist", "edit", id+"/" + "@Model.Table.Id");
         }
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "viewlist", lkTable,"@Model.TableId");
+            lkWeb.DeleteMulti("admin",ids, "viewlist", lkTable,"@Model.Table.Id");
         }
         var lkTable;
         function InitDataTable() {
@@ -67,8 +68,9 @@
                     }
                      @Html.Raw(columnStr.ToString());
                      }
+                { "mData": "extendFunction", "sClass": "text-center" },
             ];
-            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl,'@Model.TableId')
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl,'@Model.Table.Id')
         }
     </script>
 }
@@ -99,6 +101,10 @@
                 foreach (var column in Model.TableColumn)
                 {
                     headerStr.Append("<th>" + column.Description + "</th>");
+                }
+                if (Model.Table.ExtendFunction.IsNotEmpty())
+                {
+                    headerStr.Append("<th>操作</th>");
                 }
                 @Html.Raw(headerStr.ToString());
             }

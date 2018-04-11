@@ -1,4 +1,14 @@
+
 表结构管理 扩展 按钮 查看表数据 对于列的 各个属性扩展功能 实现
+
+
+执行sql delete语句 不会返回影响行数
+
+             var delResult = await _roleMenuService.Delete(item => item.RoleId == roleId);
+                if (!delResult.flag)
+                    result.msg += delResult.msg + "\n";
+				role 第一次设置菜单权限 返回信息不正确。
+
 
 数据库 sqlService  EF  事务性   + nlog 日志输出
 

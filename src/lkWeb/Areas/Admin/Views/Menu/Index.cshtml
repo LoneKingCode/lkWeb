@@ -23,20 +23,20 @@
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("menu", "edit", id);
+                lkWeb.GoAction("admin","menu", "edit", id);
         }
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "menu", lkTable);
+            lkWeb.DeleteMulti("admin",ids, "menu", lkTable);
         }
         function AddModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             //如果选中有菜单 直接默认为 添加为此菜单的子菜单
             if(id != "")
-                lkWeb.GoAction("menu", "add", id);
+                lkWeb.GoAction("admin","menu", "add", id);
             else
-                lkWeb.GoAction("menu", "add", 0);
+                lkWeb.GoAction("admin","menu", "add", 0);
         }
 
         var lkTable;
