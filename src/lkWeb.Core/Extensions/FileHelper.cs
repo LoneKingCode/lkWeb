@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace lkWeb.Core.Extensions
 {
-    public static class FileExtensions
+    public static class FileHelper
     {
         /// <summary>
         /// 下载文件
@@ -21,9 +21,9 @@ namespace lkWeb.Core.Extensions
             var loadPath = Path.Combine(filePath, DateTime.Now.ToFileTime() + Path.GetExtension(url));
             try
             {
-              //  var webClient = new WebClient();
+                //  var webClient = new WebClient();
                 // 进行下载，下载完成，函数返回
-              //  webClient.DownloadFile(url, loadPath);
+                //  webClient.DownloadFile(url, loadPath);
             }
             catch (Exception)
             {

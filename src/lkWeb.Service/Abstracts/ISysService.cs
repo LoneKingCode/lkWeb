@@ -78,6 +78,22 @@ namespace lkWeb.Service.Abstracts
         Task<Result<bool>> Delete(int tableId, List<int> ids);
 
         /// <summary>
+        /// 导入Excel数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="excelFilePath">Excel文件路径</param>
+        /// <returns></returns>
+        Task<Result<bool>> ImportExcel(int tableId, string excelFilePath);
+
+        /// <summary>
+        /// 导出数据为Excel
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <returns></returns>
+
+        Task<Result<string>> ExportExcel(int tableId);
+
+        /// <summary>
         /// 获取Out类型列对应值
         /// </summary>
         /// <param name="tableId">表Id</param>

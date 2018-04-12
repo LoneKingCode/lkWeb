@@ -69,6 +69,10 @@ namespace lkWeb.Areas.Admin.Controllers
                     name = d.Name,
                     description = d.Description,
                     id = d.Id.ToString(),
+                    allowView = d.AllowView == 1 ? "是" : "否",
+                    allowAdd = d.AllowAdd == 1 ? "是" : "否",
+                    allowEdit = d.AllowEdit == 1 ? "是" : "否",
+                    allowDelete = d.AllowDelete == 1 ? "是" : "否",
                     isView = d.IsView == 1 ? "是" : "否"
                 })
             };

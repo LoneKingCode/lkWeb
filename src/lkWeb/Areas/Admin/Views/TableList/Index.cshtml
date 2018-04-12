@@ -75,6 +75,10 @@
                 { "mData": "id", "sClass": "text-center" },
                 { "mData": "name", "sClass": "text-center" },
                 { "mData": "description", "sClass": "text-center" },
+                { "mData": "allowView", "sClass": "text-center" },
+                { "mData": "allowAdd", "sClass": "text-center" },
+                { "mData": "allowEdit", "sClass": "text-center" },
+                { "mData": "allowDelete", "sClass": "text-center" },
                 { "mData": "isView", "sClass": "text-center" }
             ];
             lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
@@ -108,6 +112,10 @@
             <th>Id</th>
             <th>表名</th>
             <th>表说明</th>
+            <th>查看是否允许</th>
+            <th>添加是否允许</th>
+            <th>编辑是否允许</th>
+            <th>删除是否允许</th>
             <th>是否视图</th>
         </tr>
     </thead>

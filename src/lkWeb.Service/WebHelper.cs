@@ -7,6 +7,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using lkWeb.Core.Extensions;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace lkWeb.Service
 {
@@ -20,6 +22,7 @@ namespace lkWeb.Service
         static extern Int32 inet_addr(string ipaddr);
 
         public static IHttpContextAccessor _httpContextAccessor;
+        public static IHostingEnvironment _hostingEnvironment;
         public static ISession _session
         {
             get
@@ -35,6 +38,32 @@ namespace lkWeb.Service
             }
         }
 
+        public static string WebRootPath
+        {
+            get
+            {
+                return _hostingEnvironment.WebRootPath;
+
+            }
+        }
+        public static string UploadPath
+        {
+            get
+            {
+                return Path.Combine(WebRootPath, "Upload");
+            }
+        }
+        public static string DateDirPath
+        {
+            get
+            {
+                var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
+                var dir = Path.Combine(UploadPath, dateDir);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+                return dir;
+            }
+        }
         /// <summary>
         /// 设置Session
         /// </summary>

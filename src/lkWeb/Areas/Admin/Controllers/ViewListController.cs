@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
 using lkWeb.Core.Extensions;
+using lkWeb.Service;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using lkWeb.Service.Enum;
@@ -163,11 +164,10 @@ namespace lkWeb.Areas.Admin.Controllers
                             temp[item.Key] = item.Value;
                     }
                 }
+                //替换扩展方法中的参数
+                temp["ExtendFunction"] = tableDto.ExtendFunction.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
                 listData.Add(temp);
             }
-            listData.Add(new Dictionary<string, object> {
-                { "ExtendFunction", tableDto.ExtendFunction}
-            });
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -223,6 +223,21 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(UrlParameter param)
+        {
+            var tableId = param.id;
+            return null;
+        }
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Export(UrlParameter param)
+        {
+            var tableId = param.id;
+            var result = await _sysService.ExportExcel(tableId);
+            return File(result.data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
         #endregion
     }
 }

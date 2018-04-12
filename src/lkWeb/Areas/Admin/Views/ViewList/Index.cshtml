@@ -38,6 +38,15 @@
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
             lkWeb.DeleteMulti("admin",ids, "viewlist", lkTable,"@Model.Table.Id");
         }
+
+        function Import() {
+
+        }
+
+        function Export() {
+
+        }
+
         var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
@@ -68,7 +77,7 @@
                     }
                      @Html.Raw(columnStr.ToString());
                      }
-                { "mData": "extendFunction", "sClass": "text-center" },
+                { "mData": "ExtendFunction", "sClass": "text-center" },
             ];
             lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl,'@Model.Table.Id')
         }
@@ -79,6 +88,8 @@
     <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
     <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
     <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+    <button type="button" class="btn btn-primary" onclick="Import()">导入</button>
+    <button type="button" class="btn btn-warning" onclick="Export()">导出</button>
 </div>
 <div class="form-group">
     <div class="input-group">

@@ -45,9 +45,29 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public string ExtendFunction { get; set; }
         /// <summary>
-        /// 查看，编辑，删除是否可见  1,1,1
+        /// 查看是否允许
         /// </summary>
-        public string ViewEditDeleteSet { get; set; }
+        public byte AllowView { get; set; }
+        /// <summary>
+        /// 添加是否允许
+        /// </summary>
+        public byte AllowAdd { get; set; }
+        /// <summary>
+        /// 编辑是否允许
+        /// </summary>
+        public byte AllowEdit { get; set; }
+        /// <summary>
+        /// 删除是否允许
+        /// </summary>
+        public byte AllowDelete { get; set; }
+        /// <summary>
+        /// 导入是否允许
+        /// </summary>
+        public byte AllowImport { get; set; }
+        /// <summary>
+        /// 导出是否允许
+        /// </summary>
+        public byte AllowExport { get; set; }
         /// <summary>
         /// 查看，编辑，删除 宽高   width,height|width,height|width,height
         /// </summary>

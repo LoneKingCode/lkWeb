@@ -19,6 +19,7 @@ using NLog.Extensions.Logging;
 using NLog.Web;
 using Hangfire;
 using lkWeb.Filter;
+using lkWeb.Core.Extensions;
 
 namespace lkWeb
 {
@@ -126,6 +127,7 @@ namespace lkWeb
             var accessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
 
             WebHelper._httpContextAccessor = accessor;
+            WebHelper._hostingEnvironment = app.ApplicationServices.GetRequiredService<IHostingEnvironment>();
             ServiceLocator.Instance = app.ApplicationServices;
 
             app.UseStaticFiles();//使用静态文件

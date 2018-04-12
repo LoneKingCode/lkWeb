@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using lkWeb.Core.Extensions;
 using lkWeb.Service.Enum;
 using System.Linq;
+using System.IO;
+using OfficeOpenXml;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -97,7 +99,7 @@ namespace lkWeb.Service.Abstracts
             var tableDto = tableResult.data;
             string sql = "select {0} from {1} where {2} orderby {3}";
             var queryResult = await _sqlService.Query(string.Format(sql, columns, tableDto.Name, condition, orderBy));
-            result.flag = true;
+            result.flag = queryResult.Count > 0;
             result.data = queryResult;
             return result;
         }
@@ -116,6 +118,9 @@ namespace lkWeb.Service.Abstracts
             var tableResult = await _tableListService.GetById(tableId);
             if (!tableResult.flag)
                 return result;
+            if (tableResult.data.AllowView == 0)
+                return result;
+
             var tableDto = tableResult.data;
             var orderBy = string.Empty;
             //默认排序条件
@@ -123,6 +128,8 @@ namespace lkWeb.Service.Abstracts
                 orderBy = tableDto.DefaultSort;
             if (queryBase.OrderBy.IsNotEmpty())
                 orderBy = queryBase.OrderBy + " " + queryBase.OrderDir;
+            if (tableDto.DefaultFilter.IsNotEmpty())
+                condition += " and " + tableDto.DefaultFilter;
             string sql = "select {0} from {1} where {2} order by {3} offset {4} rows fetch next {5} rows only";
             var queryResult = await _sqlService.Query(string.Format(sql, columns, tableDto.Name, condition,
                 orderBy, queryBase.Start, queryBase.Length));
@@ -147,7 +154,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
             var tableDto = tableResult.data;
-            var columnData = await _sqlService.Query(string.Format("select * from Sys_TableColumn where TableId={0} and {1}", tableId, condition));
+            var columnData = await _sqlService.Query($"select * from Sys_TableColumn where TableId={tableId} and {condition}");
             var columnNameStr = string.Empty;
             foreach (var dicList in columnData)
             {
@@ -172,6 +179,11 @@ namespace lkWeb.Service.Abstracts
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
+                return result;
+            }
+            if (tableResult.data.AllowAdd == 0)
+            {
+                result.msg = "不允许添加";
                 return result;
             }
             var tableName = tableResult.data.Name;
@@ -205,6 +217,11 @@ namespace lkWeb.Service.Abstracts
                 result.msg = "未找到指定表";
                 return result;
             }
+            if (tableResult.data.AllowEdit == 0)
+            {
+                result.msg = "不允许编辑";
+                return result;
+            }
             var tableDto = tableResult.data;
             var tableName = tableDto.Name;
             var forbiddenUpdateFilter = tableDto.ForbiddenUpdateFilter ?? "1=1";
@@ -233,6 +250,11 @@ namespace lkWeb.Service.Abstracts
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
+                return result;
+            }
+            if (tableResult.data.AllowDelete == 0)
+            {
+                result.msg = "不允许删除";
                 return result;
             }
             var tableDto = tableResult.data;
@@ -272,5 +294,71 @@ namespace lkWeb.Service.Abstracts
 
         }
 
+        /// <summary>
+        /// 导入Excel数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="excelFilePath">Excel文件路径</param>
+        /// <returns></returns>
+        public async Task<Result<bool>> ImportExcel(int tableId, string excelFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 导出数据为Excel
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <returns></returns>
+        public async Task<Result<string>> ExportExcel(int tableId)
+        {
+            var result = new Result<string>();
+            var tableResult = await _tableListService.GetById(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableDto = tableResult.data;
+            string uploadPath = WebHelper.DateDirPath;
+            string fileName = $"{tableDto.Name + "_" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
+            string filePath = Path.Combine(uploadPath, fileName);
+            FileInfo file = new FileInfo(filePath);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                var colNames = string.Empty;
+                // 添加worksheet
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
+                //添加表头
+                var colDtos = await _tableColumnService.GetList(item => item.ExportVisible == 1);
+                int rowNum = 1;
+                for (int i = 1; i <= colDtos.data.Count; i++)
+                {
+                    worksheet.Cells[rowNum, i].Value = colDtos.data[i - 1].Description;
+                    colNames += colDtos.data[i - 1].Description + ",";
+                }
+                rowNum++;
+                colNames = colNames.Trim(',');
+                var colNameArr = colNames.Split(',');
+                var tableData = await GetData(tableId, colNames, "1=1", "Id");
+
+                //遍历每一行数据
+                for (int i = 1; i <= tableData.data.Count; i++)
+                {
+                    //遍历每一列
+                    for (int j = 1; j <= tableData.data[i - 1].Count; j++)
+                    {
+                        var col = tableData.data[i - 1];
+                        worksheet.Cells[rowNum, j].Value = col[colNameArr[j - 1]];
+                    }
+                    rowNum++;
+                }
+                package.Save();
+            }
+
+            result.data = filePath;
+            result.flag = true;
+            return result;
+        }
     }
 }
