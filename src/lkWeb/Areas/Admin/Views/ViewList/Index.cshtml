@@ -44,7 +44,27 @@
         }
 
         function Export() {
+                lkWeb.GoAction("admin", "viewlist", "export", "@Model.Table.Id", true, "导出", "300px", "200px");
+               @*$.ajax({
+                          url: "@Url.Action("Export", "ViewList")",
+                          type: "post",
+                          dataType: "json",
+                          data: { dto: data, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
+                          async: false,
+                          success: function (data) {
+                              if (data.flag == true)
+                              {
+                                  ReloadDataTable();
+                              }
+                              else {
+                                  parent.layer.alert("操作失败");
+                              }
+                          },
+                           err: function (err) {
+                              console.log(err);
+                          }
 
+                 })*@
         }
 
         var lkTable;

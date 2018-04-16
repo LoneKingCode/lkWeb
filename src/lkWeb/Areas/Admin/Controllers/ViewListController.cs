@@ -118,6 +118,14 @@ namespace lkWeb.Areas.Admin.Controllers
             }
             return View(model);
         }
+
+
+        public async Task<IActionResult> Export(UrlParameter param)
+        {
+            var tableId = param.id;
+            var result = await _sysService.ExportExcel(tableId);
+            return File(result.data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
         #endregion
 
         #region Ajax
@@ -127,6 +135,10 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var tableId = queryBase.Value.ToInt32(); //表ID 保存在value中
             var tableDto = (await _tableListService.GetById(tableId)).data;
+            if (tableDto.AllowView != 1)
+            {
+                return Json(new DataTableModel());
+            }
             string condition = "1=1";
             if (queryBase.SearchKey.IsNotEmpty())
             {
@@ -231,13 +243,6 @@ namespace lkWeb.Areas.Admin.Controllers
             return null;
         }
 
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Export(UrlParameter param)
-        {
-            var tableId = param.id;
-            var result = await _sysService.ExportExcel(tableId);
-            return File(result.data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        }
         #endregion
     }
 }

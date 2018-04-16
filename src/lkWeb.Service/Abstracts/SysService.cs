@@ -321,7 +321,7 @@ namespace lkWeb.Service.Abstracts
             }
             var tableDto = tableResult.data;
             string uploadPath = WebHelper.DateDirPath;
-            string fileName = $"{tableDto.Name + "_" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
+            string fileName = $"{tableDto.Description + "_" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
             string filePath = Path.Combine(uploadPath, fileName);
             FileInfo file = new FileInfo(filePath);
             using (ExcelPackage package = new ExcelPackage(file))
