@@ -323,6 +323,10 @@ lkWeb.GetCheckValueList = function (chkList) {
     return values;
 }
 
+lkWeb.GetCurrentUrl = function () {
+    return window.location.protocol + "://" + window.location.host;
+}
+
 //扩展
 
 //两种调用方式

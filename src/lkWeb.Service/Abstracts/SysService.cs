@@ -8,6 +8,7 @@ using lkWeb.Service.Enum;
 using System.Linq;
 using System.IO;
 using OfficeOpenXml;
+using System.Globalization;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -97,7 +98,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
             var tableDto = tableResult.data;
-            string sql = "select {0} from {1} where {2} orderby {3}";
+            string sql = "select {0} from {1} where {2} order by {3}";
             var queryResult = await _sqlService.Query(string.Format(sql, columns, tableDto.Name, condition, orderBy));
             result.flag = queryResult.Count > 0;
             result.data = queryResult;
@@ -320,10 +321,19 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
             var tableDto = tableResult.data;
-            string uploadPath = WebHelper.DateDirPath;
+            string webRootPath = WebHelper.WebRootPath;
+            var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
+            var uploadDateDir = Path.Combine(WebHelper.UploadDir, dateDir);
+            var uploadPath = Path.Combine(webRootPath, uploadDateDir);
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
             string fileName = $"{tableDto.Description + "_" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
+            var fileUrl = Path.Combine("\\", uploadDateDir, fileName);
+
             string filePath = Path.Combine(uploadPath, fileName);
             FileInfo file = new FileInfo(filePath);
+            var colDataType = new Dictionary<string, ColumnDataType>();
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 var colNames = string.Empty;
@@ -334,8 +344,10 @@ namespace lkWeb.Service.Abstracts
                 int rowNum = 1;
                 for (int i = 1; i <= colDtos.data.Count; i++)
                 {
-                    worksheet.Cells[rowNum, i].Value = colDtos.data[i - 1].Description;
-                    colNames += colDtos.data[i - 1].Description + ",";
+                    var col = colDtos.data[i - 1];
+                    colDataType.Add(col.Name, col.DataType);
+                    worksheet.Cells[rowNum, i].Value = col.Description;
+                    colNames += col.Name + ",";
                 }
                 rowNum++;
                 colNames = colNames.Trim(',');
@@ -349,14 +361,20 @@ namespace lkWeb.Service.Abstracts
                     for (int j = 1; j <= tableData.data[i - 1].Count; j++)
                     {
                         var col = tableData.data[i - 1];
-                        worksheet.Cells[rowNum, j].Value = col[colNameArr[j - 1]];
+                        var colName = colNameArr[j - 1];
+                        if (colDataType[colName] == ColumnDataType.Datetime2)
+                        {
+                            worksheet.Cells[rowNum, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
+                                " " + DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
+                        }
+                        worksheet.Cells[rowNum, j].Value = col[colName];
                     }
                     rowNum++;
                 }
                 package.Save();
             }
 
-            result.data = filePath;
+            result.data = fileUrl;
             result.flag = true;
             return result;
         }

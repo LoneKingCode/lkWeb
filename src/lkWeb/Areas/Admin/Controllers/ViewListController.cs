@@ -120,15 +120,18 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
 
+        #endregion
+
+        #region Ajax
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Export(UrlParameter param)
         {
             var tableId = param.id;
             var result = await _sysService.ExportExcel(tableId);
-            return File(result.data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            return Json(result);
         }
-        #endregion
 
-        #region Ajax
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(QueryBase queryBase)

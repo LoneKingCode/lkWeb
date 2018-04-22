@@ -50,20 +50,17 @@ namespace lkWeb.Service
         {
             get
             {
-                return Path.Combine(WebRootPath, "Upload");
+                return Path.Combine(WebRootPath, UploadDir);
             }
         }
-        public static string DateDirPath
+        public static string UploadDir
         {
             get
             {
-                var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
-                var dir = Path.Combine(UploadPath, dateDir);
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-                return dir;
+                return "Upload";
             }
         }
+
         /// <summary>
         /// 设置Session
         /// </summary>
