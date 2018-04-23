@@ -9,15 +9,16 @@ namespace lkWeb.Service.Enum
     /// </summary>
     public enum ColumnDataType
     {
-        Varchar,
-        Nvarchar,
-        Char,
-        Int,
-        TinyInt,
-        Out,
-        Datetime2,
-        Float,
-        Bit,
-        Decimal
+        Varchar = 0,
+        Nvarchar = 1,
+        Char = 2,
+        Int = 3,
+        TinyInt = 4,
+        Out = 5,
+        Datetime2 = 6,
+        Float = 7,
+        Bit = 8,
+        Decimal = 9,
+        Enum = 10
     }
 }

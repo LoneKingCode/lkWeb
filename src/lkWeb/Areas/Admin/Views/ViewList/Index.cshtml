@@ -21,6 +21,47 @@
                 lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
             })
+
+            $("#excelFile").change(function () {
+                var fileObj = document.getElementById("excelFile").files[0]; // js 获取文件对象
+                if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+                    alert("请选择excel文件");
+                    return;
+                }
+                var formFile = new FormData();
+                formFile.append("excelFile", fileObj); //加入文件对象
+                formFile.append("param", new { id:@Model.Table.Id});
+                formFile.append("__RequestVerificationToken", __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val());
+                var data = formFile;
+                $.ajax({
+                    url: "@Url.Action("Import")",
+                    data: data,
+                    type: "Post",
+                    dataType: "json",
+                    async: false,
+                    cache: false,//上传文件无需缓存
+                    processData: false,//用于对data参数进行序列化处理 这里必须false
+                    contentType: false, //必须
+                    success: function (data) {
+                        console.log(data);
+                        if (data.flag == true) {
+                            parent.layer.alert("操作成功");
+                            table.draw(false);//刷新datatable
+                         }
+                        else {
+                            if (IsNotEmpty(result.msg))
+                                parent.layer.alert(result.msg);
+                            else
+                                parent.layer.alert("操作失败")
+                        }
+                    },
+                    error: function (err) {
+                        parent.layer.alert("请求失败");
+                        console.log(err);
+                     if
+                    }
+                })
+            })
         });
 
         function AddModel() {
@@ -40,12 +81,12 @@
         }
 
         function Import() {
-
+            $("#excelFile").click();
         }
 
         function Export() {
                  $.ajax({
-                          url: "@Url.Action("Export", "ViewList")",
+                          url: "@Url.Action("Export")",
                           type: "post",
                           dataType: "json",
                           data: { param: {id:@Model.Table.Id}, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
@@ -59,7 +100,8 @@
                                   parent.layer.alert("操作失败");
                               }
                           },
-                           err: function (err) {
+                          err: function (err) {
+                              parent.layer.alert("请求失败");
                               console.log(err);
                           }
 
@@ -109,6 +151,9 @@
     <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
     <button type="button" class="btn btn-primary" onclick="Import()">导入</button>
     <button type="button" class="btn btn-warning" onclick="Export()">导出</button>
+</div>
+<div class="hidden">
+    <input type="file" name="excelfile" id="excelFile" />
 </div>
 <div class="form-group">
     <div class="input-group">

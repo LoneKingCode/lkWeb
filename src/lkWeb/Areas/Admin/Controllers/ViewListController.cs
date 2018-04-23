@@ -52,26 +52,47 @@ namespace lkWeb.Areas.Admin.Controllers
             model.TableColumn = result.data;
             string sql = "select {0} from {1} where {2}";
             ViewBag.OutColumn = new Dictionary<string, SelectList>();
+            ViewBag.EnumColumn = new Dictionary<string, SelectList>();
             foreach (var column in model.TableColumn)
             {
                 if (column.DataType == Service.Enum.ColumnDataType.Out)
                 {
-                    string[] outSql = column.OutSql.Split(','); //Example: Name,Sys_Department,ParentId=0
-                    var colNames = outSql[0] + ",Id"; //Id也需要 作为下拉菜单的Value
+                    string[] outSql = column.OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
+                    var colNames = outSql[0].Split(','); //value,text
                     var tableName = outSql[1];
                     var condition = outSql[2];
+                    var primarKey = colNames[0]; //作为下拉菜单value的列
+                    var textKey = colNames[1]; //作为下拉菜单的text的列
                     var queryResult = await _sqlService.Query(string.Format(sql, colNames, tableName, condition));
                     var items = new List<SelectListItem>();
-                    foreach (var dic in queryResult)
+                    foreach (var row in queryResult)
                     {
                         items.Add(new SelectListItem
                         {
-                            Value = dic["Id"].ToString(),
-                            Text = dic[outSql[0]].ToString(),
+
+                            Value = row[primarKey].ToString(),
+                            Text = row[textKey].ToString(),
                         });
 
                     }
                     ViewBag.OutColumn[column.Name] = new SelectList(items, "Value", "Text");
+                }
+                else if (column.DataType == ColumnDataType.Enum)
+                {
+                    var enumStr = column.EnumRange.Split('|'); //value,value|text,text
+                    var values = enumStr[0].Split(',');
+                    var texts = enumStr[1].Split(',');
+                    var items = new List<SelectListItem>();
+                    for (int i = 0; i < texts.Length; i++)
+                    {
+                        items.Add(new SelectListItem
+                        {
+
+                            Value = values[i],
+                            Text = texts[i]
+                        });
+                    }
+                    ViewBag.EnumColumn[column.Name] = new SelectList(items, "Value", "Text");
                 }
             }
             return View(model);
@@ -85,6 +106,7 @@ namespace lkWeb.Areas.Admin.Controllers
             model.TableColumn = result.data;
             string sql = "select {0} from {1} where {2}";
             ViewBag.OutColumn = new Dictionary<string, SelectList>();
+            ViewBag.EnumColumn = new Dictionary<string, SelectList>();
             var tbName = model.Table.Name;
             var columnValueResult = await _sqlService.Query(
                 string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id));
@@ -93,27 +115,48 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 if (column.DataType == Service.Enum.ColumnDataType.Out)
                 {
-                    var outSql = column.OutSql.Split(','); //Example: Name,Sys_Department,ParentId=0
-                    var colName = outSql[0];
-                    var colNames = colName + ",Id"; //Id也需要 查询时使用 作为下拉菜单的Value
+                    string[] outSql = column.OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
+                    var colNames = outSql[0].Split(','); //value,text
                     var tableName = outSql[1];
                     var condition = outSql[2];
+                    var primarKey = colNames[0]; //作为下拉菜单value的列
+                    var textKey = colNames[1]; //作为下拉菜单的text的列
                     var queryResult = await _sqlService.Query(string.Format(sql, colNames, tableName, condition));
                     var items = new List<SelectListItem>();
                     //获取此条数据列类型为Out的字段的值，以便之后SelectList的默认选中Selected使用
-                    var outKeyValue = await _sqlService.GetSingle(
-                        string.Format("select {0} from {1} where {2}", colName, tableName, "Id=" + param.id));
-                    foreach (var dic in queryResult)
+                    var outColValue = await _sqlService.GetSingle(
+                        string.Format("select {0} from {1} where {2}", colNames, tableName, primarKey + "=" + param.id));
+                    foreach (var row in queryResult)
                     {
                         items.Add(new SelectListItem
                         {
-                            Value = dic["Id"].ToString(),
-                            Text = dic[outSql[0]].ToString(),
-                            Selected = dic["Id"].ToString() == outKeyValue
+                            Value = row[primarKey].ToString(),
+                            Text = row[outSql[0]].ToString(),
+                            Selected = row[primarKey].ToString() == outColValue
                         });
 
                     }
                     ViewBag.OutColumn[column.Name] = new SelectList(items, "Value", "Text");
+                }
+                else if (column.DataType == ColumnDataType.Enum)
+                {
+                    //获取此条数据列类型为Enum的字段的值，以便之后SelectList的默认选中Selected使用
+                    var enumColValue = await _sqlService.GetSingle(
+                        string.Format("select {0} from {1} where {2}", column.Name, tbName, "Id=" + param.id));
+                    var enumStr = column.EnumRange.Split('|'); //value,value|text,text
+                    var values = enumStr[0].Split(',');
+                    var texts = enumStr[1].Split(',');
+                    var items = new List<SelectListItem>();
+                    for (int i = 0; i < texts.Length; i++)
+                    {
+                        items.Add(new SelectListItem
+                        {
+                            Value = values[i],
+                            Text = texts[i],
+                            Selected = values[i] == enumColValue
+                        });
+                    }
+                    ViewBag.EnumColumn[column.Name] = new SelectList(items, "Value", "Text");
                 }
             }
             return View(model);
@@ -123,14 +166,7 @@ namespace lkWeb.Areas.Admin.Controllers
         #endregion
 
         #region Ajax
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Export(UrlParameter param)
-        {
-            var tableId = param.id;
-            var result = await _sysService.ExportExcel(tableId);
-            return Json(result);
-        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -240,10 +276,20 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Import(UrlParameter param)
+        public async Task<IActionResult> Export(UrlParameter param)
         {
             var tableId = param.id;
-            return null;
+            var result = await _sysService.ExportExcel(tableId);
+            return Json(result);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(UrlParameter param, IFormFile excelFile)
+        {
+            var tableId = param.id;
+            var result = await _sysService.ImportExcel(tableId, excelFile);
+            return Json(result);
         }
 
         #endregion

@@ -21,7 +21,7 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public string Description { get; set; }
         /// <summary>
-        /// 数据类型   注意还有out takein enum类型
+        /// 数据类型
         /// </summary>
         public ColumnDataType DataType { get; set; }
         public string DataTypeName { get { return DataType.ToString(); } }

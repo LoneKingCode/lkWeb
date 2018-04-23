@@ -22,7 +22,7 @@ namespace lkWeb.Entity
         /// </summary>
         public string Description { get; set; }
         /// <summary>
-        /// 数据类型   注意还有out takein enum类型
+        /// 数据类型
         /// </summary>
         public byte DataType { get; set; }
         /// <summary>
@@ -91,7 +91,7 @@ namespace lkWeb.Entity
         /// </summary>
         public string OutSql { get; set; }
         /// <summary>
-        /// 枚举值范围 1,2,3|模块,菜单,按钮
+        /// 枚举值范围
         /// </summary>
         public string EnumRange { get; set; }
         /// <summary>

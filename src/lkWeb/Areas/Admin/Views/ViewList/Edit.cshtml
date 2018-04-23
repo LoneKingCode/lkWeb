@@ -39,9 +39,17 @@
                 var sltHtml = writer.ToString();
                 sb.Append(string.Format(selectTpl, column.Description, sltHtml));
             }
+            else if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Enum)
+            {
+                var content = Html.DropDownList(column.Name, (SelectList)ViewBag.EnumColumn[column.Name], new { @class = "form-control" });
+                var writer = new System.IO.StringWriter();
+                content.WriteTo(writer, HtmlEncoder.Default);
+                var sltHtml = writer.ToString();
+                sb.Append(string.Format(selectTpl, column.Description, sltHtml));
+            }
             else
             {
-                sb.Append(string.Format(inputTemplate, column.Description, column.Name, ViewBag.ColumnValue[column.Name]));
+                sb.Append(string.Format(inputTemplate, column.Description, column.Name));
             }
         }
         @Html.Raw(sb.ToString());

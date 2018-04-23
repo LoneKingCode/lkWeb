@@ -1,5 +1,6 @@
 ﻿using lkWeb.Service.Dto;
 using lkWeb.Service.Enum;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -83,7 +84,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="tableId">表Id</param>
         /// <param name="excelFilePath">Excel文件路径</param>
         /// <returns></returns>
-        Task<Result<bool>> ImportExcel(int tableId, string excelFilePath);
+        Task<Result<string>> ImportExcel(int tableId, IFormFile excelfile);
 
         /// <summary>
         /// 导出数据为Excel

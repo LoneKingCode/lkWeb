@@ -9,6 +9,7 @@ using System.Linq;
 using System.IO;
 using OfficeOpenXml;
 using System.Globalization;
+using Microsoft.AspNetCore.Http;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -301,9 +302,82 @@ namespace lkWeb.Service.Abstracts
         /// <param name="tableId">表Id</param>
         /// <param name="excelFilePath">Excel文件路径</param>
         /// <returns></returns>
-        public async Task<Result<bool>> ImportExcel(int tableId, string excelFilePath)
+        public async Task<Result<string>> ImportExcel(int tableId, IFormFile excelfile)
         {
-            throw new NotImplementedException();
+            var result = new Result<string>();
+            var tableResult = await _tableListService.GetById(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableDto = tableResult.data;
+            var colDtos = (await _tableColumnService.GetList(item => item.TableId == tableId && item.ImportVisible == 1)).data;
+
+            string webRootPath = WebHelper.WebRootPath;
+            string sFileName = $"{tableDto.Description + "_" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
+            FileInfo file = new FileInfo(Path.Combine(webRootPath, sFileName));
+
+            using (FileStream fs = new FileStream(file.ToString(), FileMode.Create))
+            {
+                excelfile.CopyTo(fs);
+                fs.Flush();
+            }
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+                int rowCount = worksheet.Dimension.Rows;
+                int ColCount = worksheet.Dimension.Columns;
+                var colNames = new List<string>();
+                var colValues = new List<List<string>>();
+                for (int row = 1; row <= rowCount; row++)
+                {
+                    for (int col = 1; col <= ColCount; col++)
+                    {
+                        var value = worksheet.Cells[row, col].Value.ToString();
+                        if (row == 1)  //第一行 为表头
+                        {
+                            if (colDtos.Where(c => c.Description == value).First() != null)
+                                colNames.Add(value);
+                            else
+                            {
+                                result.msg += value + "不存在,";
+                            }
+                        }
+                        else
+                        {
+                            //每一行的列的值
+                            colValues[row - 1].Add(value);
+                        }
+                    }
+                }
+                if (result.msg.IsNotEmpty()) //如果有错误信息 不继续执行 返回错误信息
+                    return result;
+                //将excel中表头的中文列名 转换为对应的 英文列名
+                var colCnAndEndNames = colDtos.ToDictionary(c => c.Description, c => c.Name);
+                var engColNames = colNames.Select(c => colCnAndEndNames[c]).ToList();
+                var insertColNames = string.Empty;
+                foreach (var colName in engColNames)
+                {
+                    insertColNames += colName + ",";
+                }
+                insertColNames = insertColNames.Trim(',');
+                var sqlTpl = "insert into {0}({1}) values({2})";
+                var listSql = new List<string>();
+                //构造插入语句
+                for (int row = 0; row < colValues.Count(); row++)
+                {
+                    var insertValues = string.Empty;
+                    foreach (var colValue in colValues[row])
+                    {
+                        insertValues += $"'{colValue}',";
+                    }
+                    insertValues = insertValues.Trim(',');
+                    listSql.Add(string.Format(sqlTpl, tableDto.Name, insertColNames, insertValues));
+                }
+                result.flag = await _sqlService.ExecuteBatch(listSql);
+            }
+            return result;
         }
 
         /// <summary>
@@ -339,9 +413,9 @@ namespace lkWeb.Service.Abstracts
                 var colNames = string.Empty;
                 // 添加worksheet
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
-                //添加表头
-                var colDtos = await _tableColumnService.GetList(item => item.ExportVisible == 1);
+                var colDtos = await _tableColumnService.GetList(item => item.TableId == tableId && item.ExportVisible == 1);
                 int rowNum = 1;
+                //添加表头
                 for (int i = 1; i <= colDtos.data.Count; i++)
                 {
                     var col = colDtos.data[i - 1];
@@ -362,18 +436,40 @@ namespace lkWeb.Service.Abstracts
                     {
                         var col = tableData.data[i - 1];
                         var colName = colNameArr[j - 1];
+                        //如果为日期 修改excel单元格自定义格式
                         if (colDataType[colName] == ColumnDataType.Datetime2)
                         {
                             worksheet.Cells[rowNum, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
-                                " " + DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
+         " " + DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
+                            worksheet.Cells[rowNum, j].Value = col[colName];
                         }
-                        worksheet.Cells[rowNum, j].Value = col[colName];
+                        //如果为OUT类型
+                        else if (colDataType[colName] == ColumnDataType.Out)
+                        {
+                            var outValueResult = await GetOutValue(tableId, colName, col[colName].ToString());
+                            worksheet.Cells[rowNum, j].Value = outValueResult.data;
+                        }
+                        //如果为Enum 类型
+                        else if (colDataType[colName] == ColumnDataType.Enum)
+                        {
+                            var enumStr = col[colName].ToString().Split('|'); //value,value|text,text
+                            var values = enumStr[0].Split(',').ToList();
+                            var texts = enumStr[1].Split(',');
+                            var colValue = col[colName].ToString();
+                            worksheet.Cells[rowNum, j].Value = texts[values.IndexOf(colValue)];
+                        }
+                        //普通情况
+                        else
+                        {
+                            worksheet.Cells[rowNum, j].Value = col[colName];
+                        }
                     }
                     rowNum++;
                 }
+                //自动调整列宽
+                worksheet.Cells.AutoFitColumns();
                 package.Save();
             }
-
             result.data = fileUrl;
             result.flag = true;
             return result;
