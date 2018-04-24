@@ -313,10 +313,20 @@ namespace lkWeb.Service.Abstracts
             }
             var tableDto = tableResult.data;
             var colDtos = (await _tableColumnService.GetList(item => item.TableId == tableId && item.ImportVisible == 1)).data;
-
+            if (!colDtos.Any())
+            {
+                result.msg = "无可导入的列";
+                return result;
+            }
             string webRootPath = WebHelper.WebRootPath;
-            string sFileName = $"{tableDto.Description + "_" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
-            FileInfo file = new FileInfo(Path.Combine(webRootPath, sFileName));
+            var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
+            var uploadDateDir = Path.Combine(WebHelper.UploadDir, dateDir);
+            var uploadPath = Path.Combine(webRootPath, uploadDateDir);
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            string fileName = $"{tableDto.Description + "_" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
+            FileInfo file = new FileInfo(Path.Combine(uploadPath, fileName));
 
             using (FileStream fs = new FileStream(file.ToString(), FileMode.Create))
             {
@@ -330,11 +340,15 @@ namespace lkWeb.Service.Abstracts
                 int ColCount = worksheet.Dimension.Columns;
                 var colNames = new List<string>();
                 var colValues = new List<List<string>>();
+                var colValueCount = 0;
                 for (int row = 1; row <= rowCount; row++)
                 {
+                    if (row != 1) //表头不添加到这个列值集合
+                        colValues.Add(new List<string>());
                     for (int col = 1; col <= ColCount; col++)
                     {
                         var value = worksheet.Cells[row, col].Value.ToString();
+
                         if (row == 1)  //第一行 为表头
                         {
                             if (colDtos.Where(c => c.Description == value).First() != null)
@@ -347,9 +361,12 @@ namespace lkWeb.Service.Abstracts
                         else
                         {
                             //每一行的列的值
-                            colValues[row - 1].Add(value);
+                            colValues[colValueCount].Add(value);
                         }
                     }
+                    if (row != 1)
+                        colValueCount++;
+
                 }
                 if (result.msg.IsNotEmpty()) //如果有错误信息 不继续执行 返回错误信息
                     return result;

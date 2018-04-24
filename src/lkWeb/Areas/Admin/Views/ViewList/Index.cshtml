@@ -30,8 +30,9 @@
                 }
                 var formFile = new FormData();
                 formFile.append("excelFile", fileObj); //加入文件对象
-                formFile.append("param", new { id:@Model.Table.Id});
-                formFile.append("__RequestVerificationToken", __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val());
+                formFile.append("id", @Model.Table.Id);
+                var token = $("input[name='__RequestVerificationToken']").val();
+                formFile.append("__RequestVerificationToken", token);
                 var data = formFile;
                 $.ajax({
                     url: "@Url.Action("Import")",
@@ -42,11 +43,10 @@
                     cache: false,//上传文件无需缓存
                     processData: false,//用于对data参数进行序列化处理 这里必须false
                     contentType: false, //必须
-                    success: function (data) {
-                        console.log(data);
-                        if (data.flag == true) {
+                    success: function (result) {
+                         if (result.flag == true) {
                             parent.layer.alert("操作成功");
-                            table.draw(false);//刷新datatable
+                            lkTable.draw(false);//刷新datatable
                          }
                         else {
                             if (IsNotEmpty(result.msg))
@@ -58,7 +58,7 @@
                     error: function (err) {
                         parent.layer.alert("请求失败");
                         console.log(err);
-                     if
+
                     }
                 })
             })
