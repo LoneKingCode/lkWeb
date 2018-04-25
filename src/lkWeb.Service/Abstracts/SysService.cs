@@ -233,7 +233,7 @@ namespace lkWeb.Service.Abstracts
             {
                 sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value, forbiddenUpdateFilter));
             }
-            var executeResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id));
+            var executeResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
             result.flag = executeResult;
             result.data = executeResult;
             return result;
@@ -280,17 +280,26 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="colName">列名</param>
-        /// <param name="outValue">值</param>
+        /// <param name="outValue">外键Id值</param>
         /// <returns></returns>
         public async Task<Result<string>> GetOutValue(int tableId, string columnName, string outValue)
         {
             var result = new Result<String>();
+            if (outValue.IsEmpty())
+            {
+                result.data = "无";
+                return result;
+            }
             string outSql = await _sqlService.GetSingle(
                 string.Format("select OutSql from Sys_TableColumn where TableId={0} and Name='{1}'", tableId, columnName));
-            var outSqlData = outSql.Split(','); //Example: Name,Sys_Department,ParentId=0
-            var outColName = outSqlData[0];
-            var outTableName = outSqlData[1];
-            result.data = await _sqlService.GetSingle(string.Format("select {0} from {1} where Id={2}", outColName, outTableName, outValue));
+            string[] outSqlArr = outSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
+            var colNames = outSqlArr[0].Split(','); //value,text
+            var tableName = outSqlArr[1];
+            var condition = outSqlArr[2];
+            var primarKey = colNames[0]; //作为下拉菜单value的列
+            var textKey = colNames[1]; //作为下拉菜单的text的列
+            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}", textKey, tableName, primarKey, outValue));
+            result.data = value.IsEmpty() ? "无" : value;
             result.flag = true;
             return result;
 
@@ -360,8 +369,33 @@ namespace lkWeb.Service.Abstracts
                         }
                         else
                         {
-                            //每一行的列的值
-                            colValues[colValueCount].Add(value);
+                            //如果为out类型 需要转换值为对应表的主键Id值
+                            if (colDtos[col - 1].DataType == ColumnDataType.Out)
+                            {
+                                if (value.IsEmpty()) //out列 允许为空
+                                    colValues[colValueCount].Add(value);
+                                else
+                                {
+                                    var outSql = colDtos[col - 1].OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
+                                    var outColNames = outSql[0].Split(','); //value,text
+
+                                    var outKey = outColNames[0];
+                                    var outColName = outColNames[1];
+                                    var tableName = outSql[1];
+                                    var condition = outSql[2];
+                                    var outValueId = await _sqlService.GetSingle($"select {outKey} from {tableName} where {outColName}='{value}'");
+                                    if (outValueId.IsNotEmpty())
+                                        colValues[colValueCount].Add(outValueId);
+                                    else
+                                    {
+                                        result.msg += "第" + row + "行," + colDtos[col - 1].Description + "错误,未查询到值，";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                colValues[colValueCount].Add(value);
+                            }
                         }
                     }
                     if (row != 1)
@@ -379,7 +413,7 @@ namespace lkWeb.Service.Abstracts
                     insertColNames += colName + ",";
                 }
                 insertColNames = insertColNames.Trim(',');
-                var sqlTpl = "insert into {0}({1}) values({2})";
+                var sqlTpl = "insert into {0}({1},CreateDateTime) values({2},'{3}')";
                 var listSql = new List<string>();
                 //构造插入语句
                 for (int row = 0; row < colValues.Count(); row++)
@@ -390,7 +424,7 @@ namespace lkWeb.Service.Abstracts
                         insertValues += $"'{colValue}',";
                     }
                     insertValues = insertValues.Trim(',');
-                    listSql.Add(string.Format(sqlTpl, tableDto.Name, insertColNames, insertValues));
+                    listSql.Add(string.Format(sqlTpl, tableDto.Name, insertColNames, insertValues, DateTime.Now.ToString()));
                 }
                 result.flag = await _sqlService.ExecuteBatch(listSql);
             }
@@ -466,16 +500,7 @@ namespace lkWeb.Service.Abstracts
                             var outValueResult = await GetOutValue(tableId, colName, col[colName].ToString());
                             worksheet.Cells[rowNum, j].Value = outValueResult.data;
                         }
-                        //如果为Enum 类型
-                        else if (colDataType[colName] == ColumnDataType.Enum)
-                        {
-                            var enumStr = col[colName].ToString().Split('|'); //value,value|text,text
-                            var values = enumStr[0].Split(',').ToList();
-                            var texts = enumStr[1].Split(',');
-                            var colValue = col[colName].ToString();
-                            worksheet.Cells[rowNum, j].Value = texts[values.IndexOf(colValue)];
-                        }
-                        //普通情况
+                        //普通情况 包括Enum类型Enum直接保存的为Text value和text一样
                         else
                         {
                             worksheet.Cells[rowNum, j].Value = col[colName];

@@ -87,7 +87,7 @@ namespace lkWeb.Entity
         #endregion
 
         /// <summary>
-        /// 外部SQL
+        /// 外部SQL Example: Id,Name|Sys_Department|ParentId=0
         /// </summary>
         public string OutSql { get; set; }
         /// <summary>

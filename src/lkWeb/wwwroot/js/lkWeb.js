@@ -242,7 +242,7 @@ var _value = "";
 //tableID:控件ID，columns:列集合，dataUrl:获取数据的URL，value:补充的值给后台(QueryBase)用
 lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
     _value = value;
-    var config = {
+     var config = {
         "processing": true, //载入数据的时候是否显示“载入中”
         "bInfo": true, //是否显示是否启用底边信息栏
         "ajax": {

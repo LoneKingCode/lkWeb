@@ -49,7 +49,7 @@
             }
             else
             {
-                sb.Append(string.Format(inputTemplate, column.Description, column.Name));
+                sb.Append(string.Format(inputTemplate, column.Description, column.Name, ViewBag.ColumnValue[column.Name]));
             }
         }
         @Html.Raw(sb.ToString());

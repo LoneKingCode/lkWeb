@@ -8,7 +8,7 @@
 }
 @model ViewListModel
 @section Scripts{
-    <script>
+<script>
         $(function () {
             InitDataTable();
 
@@ -138,11 +138,17 @@
                     }
                      @Html.Raw(columnStr.ToString());
                      }
-                { "mData": "ExtendFunction", "sClass": "text-center" },
+            @{
+                if (Model.Table.ExtendFunction.IsNotEmpty())
+                {
+                       @Html.Raw("{\"mData\":\"ExtendFunction\", \"sClass\": \"text-center\" },".ToString())
+                }
+            }
             ];
-            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl,'@Model.Table.Id')
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl, '@Model.Table.Id')
+
         }
-    </script>
+</script>
 }
 
 <div class="form-group">
