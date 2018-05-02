@@ -276,16 +276,16 @@ namespace lkWeb.Service.Abstracts
         }
 
         /// <summary>
-        /// 获取Out类型列对应值
+        /// 根据外键Id获取对应值
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="colName">列名</param>
-        /// <param name="outValue">外键Id值</param>
+        /// <param name="outId">外键Id值</param>
         /// <returns></returns>
-        public async Task<Result<string>> GetOutValue(int tableId, string columnName, string outValue)
+        public async Task<Result<string>> GetOutValue(int tableId, string columnName, string outId)
         {
             var result = new Result<String>();
-            if (outValue.IsEmpty())
+            if (outId.IsEmpty())
             {
                 result.data = "无";
                 return result;
@@ -298,11 +298,39 @@ namespace lkWeb.Service.Abstracts
             var condition = outSqlArr[2];
             var primarKey = colNames[0]; //作为下拉菜单value的列
             var textKey = colNames[1]; //作为下拉菜单的text的列
-            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}", textKey, tableName, primarKey, outValue));
+            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}", textKey, tableName, primarKey, outId));
             result.data = value.IsEmpty() ? "无" : value;
             result.flag = true;
             return result;
 
+        }
+
+        /// <summary>
+        /// 根据外键值获取对应外键Id
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="colName">列名</param>
+        /// <param name="outValue">外键值</param>
+        /// <returns></returns>
+        public async Task<Result<string>> GetOutValueId(int tableId, string columnName, string outValue)
+        {
+            var result = new Result<String>();
+            if (outValue.IsEmpty())
+            {
+                return result;
+            }
+            string outSql = await _sqlService.GetSingle(
+                string.Format("select OutSql from Sys_TableColumn where TableId={0} and Name='{1}'", tableId, columnName));
+            string[] outSqlArr = outSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
+            var colNames = outSqlArr[0].Split(','); //value,text
+            var tableName = outSqlArr[1];
+            var condition = outSqlArr[2];
+            var primarKey = colNames[0]; //作为下拉菜单value的列
+            var textKey = colNames[1]; //作为下拉菜单的text的列
+            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'", primarKey, tableName, textKey, outValue));
+            result.data = value;
+            result.flag = true;
+            return result;
         }
 
         /// <summary>
@@ -321,6 +349,11 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
             var tableDto = tableResult.data;
+            if (tableDto.AllowImport != 1)
+            {
+                result.msg = "不允许导入";
+                return result;
+            }
             var colDtos = (await _tableColumnService.GetList(item => item.TableId == tableId && item.ImportVisible == 1)).data;
             if (!colDtos.Any())
             {
@@ -350,14 +383,16 @@ namespace lkWeb.Service.Abstracts
                 var colNames = new List<string>();
                 var colValues = new List<List<string>>();
                 var colValueCount = 0;
+                // 遍历EXCEL文件
                 for (int row = 1; row <= rowCount; row++)
                 {
                     if (row != 1) //表头不添加到这个列值集合
                         colValues.Add(new List<string>());
                     for (int col = 1; col <= ColCount; col++)
                     {
-                        var value = worksheet.Cells[row, col].Value.ToString();
-
+                        //单元格为空时Value属性为Null
+                        var colValue = worksheet.Cells[row, col].Value ?? "";
+                        var value = colValue.ToString();
                         if (row == 1)  //第一行 为表头
                         {
                             if (colDtos.Where(c => c.Description == value).First() != null)
@@ -376,19 +411,12 @@ namespace lkWeb.Service.Abstracts
                                     colValues[colValueCount].Add(value);
                                 else
                                 {
-                                    var outSql = colDtos[col - 1].OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
-                                    var outColNames = outSql[0].Split(','); //value,text
-
-                                    var outKey = outColNames[0];
-                                    var outColName = outColNames[1];
-                                    var tableName = outSql[1];
-                                    var condition = outSql[2];
-                                    var outValueId = await _sqlService.GetSingle($"select {outKey} from {tableName} where {outColName}='{value}'");
+                                    var outValueId = (await GetOutValueId(tableId, colDtos[col - 1].Name, value)).data;
                                     if (outValueId.IsNotEmpty())
                                         colValues[colValueCount].Add(outValueId);
                                     else
                                     {
-                                        result.msg += "第" + row + "行," + colDtos[col - 1].Description + "错误,未查询到值，";
+                                        result.msg += "第" + row + "行," + colDtos[col - 1].Description + ":" + value + " 错误,未查询到值，";
                                     }
                                 }
                             }
@@ -407,24 +435,58 @@ namespace lkWeb.Service.Abstracts
                 //将excel中表头的中文列名 转换为对应的 英文列名
                 var colCnAndEndNames = colDtos.ToDictionary(c => c.Description, c => c.Name);
                 var engColNames = colNames.Select(c => colCnAndEndNames[c]).ToList();
-                var insertColNames = string.Empty;
-                foreach (var colName in engColNames)
-                {
-                    insertColNames += colName + ",";
-                }
-                insertColNames = insertColNames.Trim(',');
-                var sqlTpl = "insert into {0}({1},CreateDateTime) values({2},'{3}')";
                 var listSql = new List<string>();
-                //构造插入语句
-                for (int row = 0; row < colValues.Count(); row++)
+                if (tableDto.ImportType == TableImportType.插入)
                 {
-                    var insertValues = string.Empty;
-                    foreach (var colValue in colValues[row])
+                    var insertColNames = string.Empty;
+                    foreach (var colName in engColNames)
                     {
-                        insertValues += $"'{colValue}',";
+                        insertColNames += colName + ",";
                     }
-                    insertValues = insertValues.Trim(',');
-                    listSql.Add(string.Format(sqlTpl, tableDto.Name, insertColNames, insertValues, DateTime.Now.ToString()));
+                    insertColNames = insertColNames.Trim(',');
+                    var sqlTpl = "insert into {0}({1},CreateDateTime) values({2},'{3}')";
+                    //构造插入语句
+                    for (int row = 0; row < colValues.Count(); row++)
+                    {
+                        var insertValues = string.Empty;
+                        foreach (var colValue in colValues[row])
+                        {
+                            insertValues += $"'{colValue}',";
+                        }
+                        insertValues = insertValues.Trim(',');
+                        listSql.Add(string.Format(sqlTpl, tableDto.Name, insertColNames, insertValues, DateTime.Now.ToString()));
+                    }
+
+                }
+                else if (tableDto.ImportType == TableImportType.更新)
+                {
+                    string sqlTpl = "update {0} set {1} where {2}";
+                    var primarKeyResult = await _tableColumnService.GetByExp(c => c.TableId == tableId && c.PrimarKey == 1);
+                    if (primarKeyResult.data == null)
+                    {
+                        result.msg = "未找到主键";
+                        return result;
+                    }
+                    var primarKey = primarKeyResult.data;
+                    //构造更新语句
+                    for (int row = 0; row < colValues.Count(); row++)
+                    {
+                        var updateValues = string.Empty;
+                        var condition = string.Empty;
+                        for (int i = 0; i < colValues[row].Count(); i++)
+                        {
+                            var colName = engColNames[i];
+                            var colValue = colValues[row];
+                            if (colName == primarKey.Name) //如果这一列为主键 要放到where条件后的
+                            {
+                                condition = $"{colName} = '{colValue[i]}'";
+                                continue;
+                            }
+                            updateValues += $"{colName}='{colValue[i]}',";
+                        }
+                        updateValues = updateValues.Trim(',');
+                        listSql.Add(string.Format(sqlTpl, tableDto.Name, updateValues, condition));
+                    }
                 }
                 result.flag = await _sqlService.ExecuteBatch(listSql);
             }
@@ -446,6 +508,11 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
             var tableDto = tableResult.data;
+            if (tableDto.AllowExport != 1)
+            {
+                result.msg = "不允许导出";
+                return result;
+            }
             string webRootPath = WebHelper.WebRootPath;
             var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
             var uploadDateDir = Path.Combine(WebHelper.UploadDir, dateDir);
@@ -507,6 +574,57 @@ namespace lkWeb.Service.Abstracts
                         }
                     }
                     rowNum++;
+                }
+                //自动调整列宽
+                worksheet.Cells.AutoFitColumns();
+                package.Save();
+            }
+            result.data = fileUrl;
+            result.flag = true;
+            return result;
+        }
+
+        /// <summary>
+        /// 下载导入模板
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <returns></returns>
+        public async Task<Result<string>> DownloadImportTemplate(int tableId)
+        {
+            var result = new Result<string>();
+            var tableResult = await _tableListService.GetById(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableDto = tableResult.data;
+
+            string webRootPath = WebHelper.WebRootPath;
+            var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
+            var uploadDateDir = Path.Combine(WebHelper.UploadDir, dateDir);
+            var uploadPath = Path.Combine(webRootPath, uploadDateDir);
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            string fileName = $"{tableDto.Description + "_导入模板" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
+            var fileUrl = Path.Combine("\\", uploadDateDir, fileName);
+
+            string filePath = Path.Combine(uploadPath, fileName);
+            FileInfo file = new FileInfo(filePath);
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                var colNames = string.Empty;
+                // 添加worksheet
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
+                var colDtos = await _tableColumnService.GetList(item => item.TableId == tableId && item.ImportVisible == 1);
+                int rowNum = 1;
+                //添加表头
+                for (int i = 1; i <= colDtos.data.Count; i++)
+                {
+                    var col = colDtos.data[i - 1];
+                    worksheet.Cells[rowNum, i].Value = col.Description;
+                    colNames += col.Name + ",";
                 }
                 //自动调整列宽
                 worksheet.Cells.AutoFitColumns();

@@ -42,6 +42,15 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.ListVisible == 1);
             model.TableColumn = result.data;
             ViewBag.TableName = model.Table.Description;
+            var showBtnModel = new ShowButtonModel
+            {
+                ShowAddBtn = model.Table.AllowAdd == 1,
+                ShowEditBtn = model.Table.AllowEdit == 1,
+                ShowDelBtn = model.Table.AllowDelete == 1,
+                ShowImportBtn = model.Table.AllowImport == 1,
+                ShowExportBtn = model.Table.AllowExport == 1,
+            };
+            ViewBag.ShowButton = showBtnModel;
             return View(model);
         }
         public async Task<IActionResult> Add(UrlParameter param)
@@ -297,6 +306,15 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var tableId = param.id;
             var result = await _sysService.ImportExcel(tableId, excelFile);
+            return Json(result);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DownloadImportTemplate(UrlParameter param)
+        {
+            var tableId = param.id;
+            var result = await _sysService.DownloadImportTemplate(tableId);
             return Json(result);
         }
 

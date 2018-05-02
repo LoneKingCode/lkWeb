@@ -17,9 +17,5 @@ namespace lkWeb.Service.Enum
         /// 更新
         /// </summary>
         更新 = 1,
-        /// <summary>
-        /// 更新或插入
-        /// </summary>
-        更新或插入 = 2
     }
 }

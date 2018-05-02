@@ -95,13 +95,32 @@ namespace lkWeb.Service.Abstracts
         Task<Result<string>> ExportExcel(int tableId);
 
         /// <summary>
-        /// 获取Out类型列对应值
+        /// 下载导入模板
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <returns></returns>
+        Task<Result<string>> DownloadImportTemplate(int tableId);
+
+
+        /// <summary>
+        /// 根据外键Id获取对应值
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="colName">列名</param>
-        /// <param name="outValue">值</param>
+        /// <param name="outId">外键Id值</param>
         /// <returns></returns>
-        Task<Result<string>> GetOutValue(int tableId, string columnName, string outValue);
+        Task<Result<string>> GetOutValue(int tableId, string columnName, string outId);
+
+        /// <summary>
+        /// 根据外键值获取对应外键Id
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="colName">列名</param>
+        /// <param name="outValue">外键值</param>
+        /// <returns></returns>
+
+        Task<Result<string>> GetOutValueId(int tableId, string columnName, string outValue);
+
 
     }
 }
