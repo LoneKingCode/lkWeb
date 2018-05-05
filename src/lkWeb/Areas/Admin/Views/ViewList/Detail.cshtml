@@ -1,0 +1,49 @@
+﻿@using lkWeb.Areas.Admin.Models
+@using System.Text;
+@using System.Text.Encodings.Web;
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = "查看详情";
+}
+@model ViewListModel
+@section Scripts{
+    <script type="text/javascript">
+        $(function () {
+
+        })
+
+    </script>
+}
+<form class="form-horizontal" method="post" id="lkForm">
+    @Html.AntiForgeryToken()
+    @{
+        string tpl = "<div class=\"form-group\"><div class=\"\">" +
+"<label class=\"col-md-2 control-label\">{0}:</label>" +
+"<div class=\"col-md-9\">" +
+"<label class=\"control-label\">{1}</label>" +
+"</div> " +
+"</div></div>";
+        StringBuilder sb = new StringBuilder();
+        foreach (var column in Model.TableColumn)
+        {
+            if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Out)
+            {
+                sb.Append(string.Format(tpl, column.Description, ViewBag.OutColumn[column.Name]));
+            }
+            else
+            {
+                sb.Append(string.Format(tpl, column.Description, ViewBag.ColumnValue[column.Name]));
+            }
+        }
+        @Html.Raw(sb.ToString());
+    }
+
+
+
+
+    <div class="form-group">
+        <div class="col-md-3 col-md-offset-3">
+            <button type="button" class="btn btn-danger" onclick="parent.lkWeb.CloseLayert()">关闭</button>
+        </div>
+    </div>
+</form>

@@ -27,6 +27,10 @@ namespace lkWeb.Areas.Admin.Models
         /// 是否显示导出按钮
         /// </summary>
         public bool ShowExportBtn { get; set; }
+        /// <summary>
+        /// 是否查看详情
+        /// </summary>
+        public bool ShowViewBtn { get; set; }
 
     }
 }

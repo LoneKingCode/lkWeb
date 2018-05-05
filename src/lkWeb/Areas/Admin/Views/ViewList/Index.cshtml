@@ -74,7 +74,13 @@
             else
                 lkWeb.GoAction("admin","viewlist", "edit", id+"/" + "@Model.Table.Id");
         }
-
+        function Detail() {
+                  var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "")
+                parent.layer.alert("请选择");
+            else
+                lkWeb.GoAction("admin","viewlist", "detail", id+"/" + "@Model.Table.Id",true,"查看详情","80%","80%");
+        }
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
             lkWeb.DeleteMulti("admin",ids, "viewlist", lkTable,"@Model.Table.Id");
@@ -178,6 +184,10 @@
 <div class="form-group">
     @{
         ShowButtonModel btnModel = ViewBag.ShowButton;
+        if (btnModel.ShowAddBtn)
+        {
+            <button type="button" class="btn btn-success" onclick="Detail()">查看详情</button>
+        }
         if (btnModel.ShowAddBtn)
         {
             <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>

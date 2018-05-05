@@ -40,7 +40,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var model = new ViewListModel();
             model.Table = (await _tableListService.GetById(param.id)).data;
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.ListVisible == 1);
-            model.TableColumn = result.data;
+            model.TableColumn = result.data.OrderBy(c => c.ListOrder).ToList();
             ViewBag.TableName = model.Table.Description;
             var showBtnModel = new ShowButtonModel
             {
@@ -49,6 +49,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 ShowDelBtn = model.Table.AllowDelete == 1,
                 ShowImportBtn = model.Table.AllowImport == 1,
                 ShowExportBtn = model.Table.AllowExport == 1,
+                ShowViewBtn = model.Table.AllowView == 1
             };
             ViewBag.ShowButton = showBtnModel;
             return View(model);
@@ -58,7 +59,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var model = new ViewListModel();
             model.Table = (await _tableListService.GetById(param.id)).data;
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
-            model.TableColumn = result.data;
+            model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             string sql = "select {0} from {1} where {2}";
             ViewBag.OutColumn = new Dictionary<string, SelectList>();
             ViewBag.EnumColumn = new Dictionary<string, SelectList>();
@@ -115,7 +116,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var model = new ViewListModel();
             model.Table = (await _tableListService.GetById(param.value.ToInt32())).data;
             var result = await _tableColumnService.GetList(item => item.TableId == model.Table.Id && item.EditVisible == 1);
-            model.TableColumn = result.data;
+            model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             string sql = "select {0} from {1} where {2}";
             ViewBag.OutColumn = new Dictionary<string, SelectList>();
             ViewBag.EnumColumn = new Dictionary<string, SelectList>();
@@ -178,8 +179,32 @@ namespace lkWeb.Areas.Admin.Controllers
             return View(model);
         }
 
-
+        public async Task<IActionResult> Detail(UrlParameter param)
+        {
+            var model = new ViewListModel();
+            model.Table = (await _tableListService.GetById(param.value.ToInt32())).data;
+            var result = await _tableColumnService.GetList(item => item.TableId == model.Table.Id && item.ViewVisible == 1);
+            model.TableColumn = result.data.OrderBy(c => c.ViewOrder).ToList();
+            string sql = "select {0} from {1} where {2}";
+            ViewBag.OutColumn = new Dictionary<string, string>();
+            var tbName = model.Table.Name;
+            var columnValueResult = await _sqlService.Query(
+                string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id));
+            var columnValue = columnValueResult.First();
+            ViewBag.ColumnValue = columnValue;
+            foreach (var column in model.TableColumn)
+            {
+                if (column.DataType == Service.Enum.ColumnDataType.Out)
+                {
+                    var outColValue = await _sysService.GetOutValue(model.Table.Id, column.Name, columnValue[column.Name].ToString());
+                    ViewBag.OutColumn[column.Name] = outColValue.data;
+                }
+            }
+            return View(model);
+        }
         #endregion
+
+
 
         #region Ajax
 
@@ -198,7 +223,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.SearchKey.IsNotEmpty())
             {
                 condition = string.Empty;
-                var searchColumns = (await _sysService.GetColumnNames(tableId, "SearchVisible=1")).data.Split(',');
+                var searchColumns = (await _sysService.GetColumnNames(tableId, "SearchVisible=1", "ListOrder")).data.Split(',');
                 foreach (var column in searchColumns)
                 {
                     condition += string.Format(" {0} like '%{1}%' or", column, queryBase.SearchKey);
@@ -206,11 +231,11 @@ namespace lkWeb.Areas.Admin.Controllers
                 condition = condition.Substring(0, condition.Length - 2); // 为了去掉 like 条件末尾多余的or
             }
 
-            var columnNames = (await _sysService.GetColumnNames(tableId, "ListVisible=1")).data;
+            var columnNames = (await _sysService.GetColumnNames(tableId, "ListVisible=1", "ListOrder")).data;
             var tableData = await _sysService.GetPageData(tableId, columnNames, condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
-            var outTypeColumnNames = (await _sysService.GetColumnNames(
-                tableId, "ListVisible=1 and DataType=" + (int)ColumnDataType.Out)).data.Split(',');
+            var outTypeColumnNames = (await _sysService.GetColumnNames(tableId,
+                "ListVisible=1 and DataType=" + (int)ColumnDataType.Out, "ListOrder")).data.Split(',');
 
 
             foreach (var dicList in tableData.data)

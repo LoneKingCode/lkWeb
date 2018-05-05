@@ -145,8 +145,9 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="condition">条件</param>
+        /// <param name="orderBy">排序条件</param>
         /// <returns>多个列名逗号隔开</returns>
-        public async Task<Result<string>> GetColumnNames(int tableId, string condition)
+        public async Task<Result<string>> GetColumnNames(int tableId, string condition, string orderBy)
         {
             var result = new Result<String>();
             var tableResult = await _tableListService.GetById(tableId);
@@ -156,7 +157,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
             var tableDto = tableResult.data;
-            var columnData = await _sqlService.Query($"select * from Sys_TableColumn where TableId={tableId} and {condition}");
+            var columnData = await _sqlService.Query($"select * from Sys_TableColumn where TableId={tableId} and {condition} order By {orderBy}");
             var columnNameStr = string.Empty;
             foreach (var dicList in columnData)
             {

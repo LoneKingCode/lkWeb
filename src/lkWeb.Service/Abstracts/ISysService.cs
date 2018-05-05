@@ -50,8 +50,9 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="condition">条件</param>
+        /// <param name="orderBy">排序条件</param>
         /// <returns>多个列名逗号隔开</returns>
-        Task<Result<string>> GetColumnNames(int tableId, string condition);
+        Task<Result<string>> GetColumnNames(int tableId, string condition, string orderBy);
 
         /// <summary>
         /// 添加数据

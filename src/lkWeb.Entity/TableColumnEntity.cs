@@ -48,10 +48,7 @@ namespace lkWeb.Entity
         /// 添加编辑显示顺序
         /// </summary>
         public int EditOrder { get; set; }
-        /// <summary>
-        /// 查询显示顺序
-        /// </summary>
-        public int SearchOrder { get; set; }
+
         #endregion
 
         #region 是否可见
