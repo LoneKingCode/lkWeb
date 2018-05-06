@@ -15,7 +15,7 @@ namespace lkWeb.Data
 {
     public class lkWebContext : IdentityDbContext<UserEntity, RoleEntity, int>
     {
-        //数据库连接串
+        //数据库连接串 在StartUp.cs中为其赋值
         public static string connectionString = "";
         public DbSet<LoginLogEntity> LoginLogs { get; set; }
         public DbSet<MenuEntity> Menus { get; set; }

@@ -1,10 +1,7 @@
 输入控制---
 是否必填
 
-  datatable 列 mData那多了name
-
 执行sql delete语句 不会返回影响行数
-
              var delResult = await _roleMenuService.Delete(item => item.RoleId == roleId);
                 if (!delResult.flag)
                     result.msg += delResult.msg + "\n";

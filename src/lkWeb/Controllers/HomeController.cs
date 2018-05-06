@@ -16,12 +16,8 @@ namespace lkWeb.Controllers
 {
     public class HomeController : Controller
     {
-         public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-
-    //        var jobId = BackgroundJob.Enqueue(
-
-    //() => Console.WriteLine("Fire-and-forget!"));
             return View();
         }
 

@@ -84,7 +84,5 @@ namespace lkWeb.Service.Abstracts
                 return Tuple.Create(list, totalRecords);
             }
         }
-
-
     }
 }

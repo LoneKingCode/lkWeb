@@ -14,6 +14,7 @@ namespace lkWeb.Service.Abstracts
     {
         static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
         static DbContextOptionsBuilder<lkWebContext> dbContextOptionBuilder = new DbContextOptionsBuilder<lkWebContext>(dbContextOption);
+
         /// <summary>
         /// 获取DbContex对象
         /// </summary>
@@ -21,7 +22,6 @@ namespace lkWeb.Service.Abstracts
         public lkWebContext GetDb()
         {
             return new lkWebContext(dbContextOptionBuilder.UseSqlServer(lkWebContext.connectionString).Options);
-
         }
 
         /// <summary>
@@ -31,7 +31,24 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         public async Task<bool> Execute(string sql)
         {
-            return await GetDb().Database.ExecuteSqlCommandAsync(sql) > 0;
+            int result = 0;
+            using (var db = GetDb())
+            {
+                using (var tran = await db.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        result = await db.Database.ExecuteSqlCommandAsync(sql);
+                        tran.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        tran.Rollback();
+                        result = -1;
+                    }
+                }
+                return result > 0;
+            }
         }
 
         /// <summary>
@@ -41,15 +58,27 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         public async Task<bool> ExecuteBatch(List<string> listSql)
         {
-            int count = 0;
+            int result = 0;
             using (var db = GetDb())
             {
-                foreach (var sql in listSql)
+                using (var tran = await db.Database.BeginTransactionAsync())
                 {
-                    count += await db.Database.ExecuteSqlCommandAsync(sql);
+                    try
+                    {
+                        foreach (var sql in listSql)
+                        {
+                            result += await db.Database.ExecuteSqlCommandAsync(sql);
+                        }
+                        tran.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        tran.Rollback();
+                        result = -1;
+                    }
                 }
+                return result == listSql.Count;
             }
-            return count == listSql.Count;
         }
 
         /// <summary>
