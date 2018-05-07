@@ -62,14 +62,14 @@ namespace lkWeb.Areas.Admin.Controllers
                     clientMac = d.ClientMac,
                     id = d.Id.ToString(),
                     createDateTime = d.CreateDateTime.ToString(),
-                    description= d.Description
+                    description = d.Description
                 })
             };
             return Json(data);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetPageDataWithOperation(UrlParameter param,QueryBase queryBase)
+        public async Task<IActionResult> GetPageDataWithOperation(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<OperationLogDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
@@ -95,6 +95,118 @@ namespace lkWeb.Areas.Admin.Controllers
                 })
             };
             return Json(data);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetChartDataByDay()
+        {
+            var result = await _operationLogService.GetList(
+                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
+            var xAxis = new List<string>();
+            var visitors = new List<int>();
+            var visitPage = new List<int>();
+            for (int hour = 0; hour < 24; hour++)
+            {
+                xAxis.Add(hour + "时");
+                visitors.Add(result.data.Where(
+                    item => item.CreateDateTime.ToString("yyyy-MM-dd h") == DateTime.Now.ToString("yyyy-MM-dd") + " " + hour)
+                    .GroupBy(item => item.ClientMac).Count());
+                visitPage.Add(result.data.Where(
+                    item => item.CreateDateTime.ToString("yyyy-MM-dd h") == DateTime.Now.ToString("yyyy-MM-dd") + " " + hour).Count());
+            }
+            return Json(new
+            {
+                xAxis,
+                visitors,
+                visitPage
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetChartDataByWeek()
+        {
+            var result = await _operationLogService.GetList(
+                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
+            var xAxis = new List<string>();
+            var visitors = new List<int>();
+            var visitPage = new List<int>();
+
+            return Json(new
+            {
+                xAxis,
+                visitors,
+                visitPage
+            });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetChartDataByMonth()
+        {
+            var result = await _operationLogService.GetList(
+                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
+            var xAxis = new List<string>();
+            var visitors = new List<int>();
+            var visitPage = new List<int>();
+
+            return Json(new
+            {
+                xAxis,
+                visitors,
+                visitPage
+            });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetChartDataByTrimester()
+        {
+            var result = await _operationLogService.GetList(
+                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
+            var xAxis = new List<string>();
+            var visitors = new List<int>();
+            var visitPage = new List<int>();
+
+            return Json(new
+            {
+                xAxis,
+                visitors,
+                visitPage
+            });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetChartDataBySemester()
+        {
+            var result = await _operationLogService.GetList(
+                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
+            var xAxis = new List<string>();
+            var visitors = new List<int>();
+            var visitPage = new List<int>();
+
+            return Json(new
+            {
+                xAxis,
+                visitors,
+                visitPage
+            });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetChartDataByYear()
+        {
+            var result = await _operationLogService.GetList(
+                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
+            var xAxis = new List<string>();
+            var visitors = new List<int>();
+            var visitPage = new List<int>();
+
+            return Json(new
+            {
+                xAxis,
+                visitors,
+                visitPage
+            });
         }
         #endregion
     }

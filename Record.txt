@@ -1,17 +1,6 @@
 输入控制---
 是否必填
 
-执行sql delete语句 不会返回影响行数
-             var delResult = await _roleMenuService.Delete(item => item.RoleId == roleId);
-                if (!delResult.flag)
-                    result.msg += delResult.msg + "\n";
-				role 第一次设置菜单权限 返回信息不正确。
-
-
-数据库 sqlService  EF  事务性   + nlog 日志输出
-
-输入框 加入输入提示 对于表结构管理的详细设置说明
-
 字段保存类型 默认的string是nvarchar(max) 用哪个？varchar or nvarchar
 数据库 初始化代码 初始 数据 并且测试
 

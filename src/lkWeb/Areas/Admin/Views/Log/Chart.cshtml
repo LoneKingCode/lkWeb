@@ -7,20 +7,24 @@
     <script src="~/lib/echart/echarts-all.js"></script>
     <script>
         $(function () {
-            LoadChart();
+            LoadChartByDay();
+            LoadChartByWeek();
+            LoadChartByMonth();
+            LoadChartByTrimester();
+            LoadChartBySemester();
+            LoadChartByYear();
         })
-        function LoadChart() {
-            var myChart = echarts.init(document.getElementById('chart'));
+        function ShowChart(myChart,title,result) {
             option = {
                 title: {
-                    text: '最近一周站点数据统计',
+                    text: title,
                     subtext: ''
                 },
                 tooltip: {
                     trigger: 'axis'
                 },
                 legend: {
-                    data: ['注册人数', '参与课程人数']
+                    data: ['用户数', '页面访问数']
                 },
                 toolbox: {
                     show: true,
@@ -36,7 +40,7 @@
                 xAxis: [
                     {
                         type: 'category',
-                        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                        data: result.xAxis,
                     }
                 ],
                 yAxis: [
@@ -46,9 +50,9 @@
                 ],
                 series: [
                     {
-                        name: '注册人数',
+                        name: '访客数',
                         type: 'bar',
-                        data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
+                        data: result.visitors,
                         markPoint: {
                             data: [
                                 { type: 'max', name: '最大值' },
@@ -62,15 +66,10 @@
                         }
                     },
                     {
-                        name: '参与课程人数',
+                        name: '页面访问数',
                         type: 'bar',
-                        data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
-                        markPoint: {
-                            data: [
-                                { name: '年最高', value: 182.2, xAxis: 7, yAxis: 183, symbolSize: 18 },
-                                { name: '年最低', value: 2.3, xAxis: 11, yAxis: 3 }
-                            ]
-                        },
+                        data: result.visitPage,
+
                         markLine: {
                             data: [
                                 { type: 'average', name: '平均值' }
@@ -79,13 +78,121 @@
                     }
                 ]
             };
-
+            myChart.hideLoading();
             myChart.setOption(option);
+        }
+
+        function LoadChartByDay() {
+            var myChart = echarts.init(document.getElementById('chartByDay'));
+            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
+            $.ajax({
+                type: "post",
+                datatype: "json",
+                url:'@Url.Action("GetChartDataByDay")',
+                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    ShowChart(myChart, "当日站点访问统计", result);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+
+            })
+        }
+                function LoadChartByWeek() {
+            var myChart = echarts.init(document.getElementById('chartByWeek'));
+            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
+            $.ajax({
+                type: "post",
+                datatype: "json",
+                url:'@Url.Action("GetChartDataByWeek")',
+                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    ShowChart(myChart, "一周站点访问统计", result);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+
+            })
+        }
+                function LoadChartByMonth() {
+            var myChart = echarts.init(document.getElementById('chartByMonth'));
+            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
+            $.ajax({
+                type: "post",
+                datatype: "json",
+                url:'@Url.Action("GetChartDataByMonth")',
+                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    ShowChart(myChart, "一个月内站点访问统计", result);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+
+            })
+                }
+                function LoadChartByTrimester() {
+            var myChart = echarts.init(document.getElementById('chartByTrimester'));
+            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
+            $.ajax({
+                type: "post",
+                datatype: "json",
+                url:'@Url.Action("GetChartDataByTrimester")',
+                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    ShowChart(myChart, "三个月内站点访问统计", result);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+
+            })
+                }
+                function LoadChartBySemester() {
+            var myChart = echarts.init(document.getElementById('chartBySemester'));
+            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
+            $.ajax({
+                type: "post",
+                datatype: "json",
+                url:'@Url.Action("GetChartDataBySemester")',
+                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    ShowChart(myChart, "半年内站点访问统计", result);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+
+            })
+                }
+                function LoadChartByYear() {
+            var myChart = echarts.init(document.getElementById('chartByYear'));
+            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
+            $.ajax({
+                type: "post",
+                datatype: "json",
+                url:'@Url.Action("GetChartDataByYear")',
+                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+                success: function (result) {
+                    ShowChart(myChart, "一年内站点访问统计", result);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+
+            })
         }
     </script>
 }
 
 @Html.AntiForgeryToken()
 
-<div id="chart" style="width: 90%; height: 400px;"></div>
+<div id="chartByDay" style="width: 90%; height: 400px;"></div>
+<div id="chartByWeek" style="width: 90%; height: 400px;"></div>
+<div id="chartByMonth" style="width: 90%; height: 400px;"></div>
+<div id="chartByTrimester" style="width: 90%; height: 400px;"></div>
+<div id="chartBySemester" style="width: 90%; height: 400px;"></div>
+<div id="chartByYear" style="width: 90%; height: 400px;"></div>
 
