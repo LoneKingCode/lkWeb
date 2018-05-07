@@ -173,8 +173,10 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = new Result<RoleMenuDto>();
             foreach (var roleId in model.RoleIds)
             {
+                var exist = (await _roleMenuService.GetList(item => item.RoleId == roleId)).data.Count > 0;
+
                 var delResult = await _roleMenuService.Delete(item => item.RoleId == roleId);
-                if (!delResult.flag)
+                if (!delResult.flag && exist)
                     result.msg += delResult.msg + "\n";
                 if (model.MenuIds != null)
                 {
