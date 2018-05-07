@@ -312,7 +312,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(UrlParameter param)
         {
             var tableId = param.value.ToInt32();
-            var result = _sysService.Delete(tableId, param.ids);
+            var result = await _sysService.Delete(tableId, param.ids);
             return Json(result);
         }
 
