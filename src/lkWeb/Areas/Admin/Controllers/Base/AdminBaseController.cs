@@ -47,33 +47,38 @@ namespace lkWeb.Areas.Admin.Controllers
                     Id = User.Claims.ElementAt(0).Value.ToInt32(),
                     UserName = User.Claims.ElementAt(1).Value
                 };
-
-                var operationLogService = ServiceLocator.Get<IOperationLogService>();
-                operationLogService.Add(new OperationLogDto
+                if (!WebHelper.IsAjax(context.HttpContext))
                 {
-                    ClientIP = WebHelper.GetClientIP(),
-                    ClientMac = WebHelper.GetClientMac(),
-                    Description = "访问",
-                    OperationDescription = "访问",
-                    OperationUrl = context.HttpContext.Request.Path,
-                    UserId = CurrentUser.Id,
-                    UserName = CurrentUser.UserName
-                });
+                    var operationLogService = ServiceLocator.Get<IOperationLogService>();
+                    operationLogService.Add(new OperationLogDto
+                    {
+                        ClientIP = WebHelper.GetClientIP(),
+                        ClientMac = WebHelper.GetClientMac(),
+                        Description = "访问",
+                        OperationDescription = "访问",
+                        OperationUrl = context.HttpContext.Request.Path,
+                        UserId = CurrentUser.Id,
+                        UserName = CurrentUser.UserName
+                    });
+                }
             }
             else
             {
-                var operationLogService = ServiceLocator.Get<IOperationLogService>();
-                operationLogService.Add(new OperationLogDto
+                if (!WebHelper.IsAjax(context.HttpContext))
                 {
-                    ClientIP = WebHelper.GetClientIP(),
-                    ClientMac = WebHelper.GetClientMac(),
-                    Description = "访问",
-                    OperationDescription = "访问",
-                    OperationUrl = context.HttpContext.Request.Path,
-                    UserId = 0,
-                    UserName = "无"
-                });
-                CurrentUser = null;
+                    var operationLogService = ServiceLocator.Get<IOperationLogService>();
+                    operationLogService.Add(new OperationLogDto
+                    {
+                        ClientIP = WebHelper.GetClientIP(),
+                        ClientMac = WebHelper.GetClientMac(),
+                        Description = "访问",
+                        OperationDescription = "访问",
+                        OperationUrl = context.HttpContext.Request.Path,
+                        UserId = 0,
+                        UserName = "无"
+                    });
+                    CurrentUser = null;
+                }
             }
             base.OnActionExecuting(context);
         }

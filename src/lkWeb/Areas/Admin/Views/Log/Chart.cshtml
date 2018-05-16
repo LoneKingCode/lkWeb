@@ -10,8 +10,6 @@
             LoadChartByDay();
             LoadChartByWeek();
             LoadChartByMonth();
-            LoadChartByTrimester();
-            LoadChartBySemester();
             LoadChartByYear();
         })
         function ShowChart(myChart,title,result) {
@@ -117,55 +115,21 @@
             })
         }
                 function LoadChartByMonth() {
-            var myChart = echarts.init(document.getElementById('chartByMonth'));
-            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
-            $.ajax({
-                type: "post",
-                datatype: "json",
-                url:'@Url.Action("GetChartDataByMonth")',
-                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-                    ShowChart(myChart, "一个月内站点访问统计", result);
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+                    var myChart = echarts.init(document.getElementById('chartByMonth'));
+                    myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
+                    $.ajax({
+                        type: "post",
+                        datatype: "json",
+                        url: '@Url.Action("GetChartDataByMonth")',
+                        data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
+                        success: function (result) {
+                            ShowChart(myChart, "一个月内站点访问统计", result);
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
 
-            })
-                }
-                function LoadChartByTrimester() {
-            var myChart = echarts.init(document.getElementById('chartByTrimester'));
-            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
-            $.ajax({
-                type: "post",
-                datatype: "json",
-                url:'@Url.Action("GetChartDataByTrimester")',
-                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-                    ShowChart(myChart, "三个月内站点访问统计", result);
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-
-            })
-                }
-                function LoadChartBySemester() {
-            var myChart = echarts.init(document.getElementById('chartBySemester'));
-            myChart.showLoading({ text: '数据获取中', effect: 'whirling' });
-            $.ajax({
-                type: "post",
-                datatype: "json",
-                url:'@Url.Action("GetChartDataBySemester")',
-                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
-                success: function (result) {
-                    ShowChart(myChart, "半年内站点访问统计", result);
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-
-            })
+                    })
                 }
                 function LoadChartByYear() {
             var myChart = echarts.init(document.getElementById('chartByYear'));
@@ -192,7 +156,6 @@
 <div id="chartByDay" style="width: 90%; height: 400px;"></div>
 <div id="chartByWeek" style="width: 90%; height: 400px;"></div>
 <div id="chartByMonth" style="width: 90%; height: 400px;"></div>
-<div id="chartByTrimester" style="width: 90%; height: 400px;"></div>
-<div id="chartBySemester" style="width: 90%; height: 400px;"></div>
+
 <div id="chartByYear" style="width: 90%; height: 400px;"></div>
 

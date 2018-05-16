@@ -150,5 +150,16 @@ namespace lkWeb.Service
             }
             return default(T);
         }
+
+        public static bool IsAjax(HttpContext context)
+        {
+            bool result = false;
+            var xreq= context.Request.Headers.ContainsKey("X-Requested-With");
+            if(xreq)
+            {
+                result = context.Request.Headers["x-requested-with"] == "XMLHttpRequest";
+            }
+            return result;
+        }
     }
 }

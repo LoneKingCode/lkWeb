@@ -25,7 +25,7 @@
         string inputTemplate = "<div class=\"form-group\"><div class=\"\">" +
 "<label class=\"col-md-2 control-label\">{0}</label>" +
 "<div class=\"col-md-9\">" +
-"<input type=\"text\" class=\"form-control\" name=\"{1}\" value=\"{2}\" data-val-required=\"{0}不能为空\" data-val=\"true\"/>" +
+"<input type=\"text\" class=\"form-control\" name=\"{1}\" value=\"{2}\" data-val-required=\"{0}不能为空\" {4} data-val-maxlength=\"{0}长度不能超过{3}个字符\" data-val-maxlength-max=\"{3}\" data-val=\"true\"/>" +
 "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span></div> " +
 "</div></div>";
         StringBuilder sb = new StringBuilder();
@@ -49,7 +49,8 @@
             }
             else
             {
-                sb.Append(string.Format(inputTemplate, column.Description, column.Name, ViewBag.ColumnValue[column.Name]));
+                sb.Append(string.Format(inputTemplate, column.Description, column.Name, ViewBag.ColumnValue[column.Name], column.MaxLength,
+                    column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : ""));
             }
         }
         @Html.Raw(sb.ToString());

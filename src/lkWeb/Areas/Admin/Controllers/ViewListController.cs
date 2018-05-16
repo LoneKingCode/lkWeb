@@ -189,7 +189,7 @@ namespace lkWeb.Areas.Admin.Controllers
             ViewBag.OutColumn = new Dictionary<string, string>();
             var tbName = model.Table.Name;
             var columnValueResult = await _sqlService.Query(
-                string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id));
+                string.Format(sql, "*", tbName, "Id=" + param.id));
             var columnValue = columnValueResult.First();
             ViewBag.ColumnValue = columnValue;
             foreach (var column in model.TableColumn)

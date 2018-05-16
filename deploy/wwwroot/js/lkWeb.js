@@ -1,9 +1,12 @@
-﻿
+﻿$(function () {
+
+})
+
 var lkWeb = {};
 
 lkWeb.LayerIndex = 0;
 
-lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
+lkWeb.GoAction = function (area, ctrl, action, values, isOpen, title, width, height) {
     var curWwwPath = window.document.location.href;
     //获取主机地址之后的目录，如： uimcardprj/share/meun.jsp
     var pathName = window.document.location.pathname;
@@ -11,10 +14,10 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
     //获取主机地址，如： http://localhost:8083
     var localhostPath = curWwwPath.substring(0, pos);
     var url = "";
-    if (NotIsEmpty(values))
-        url = localhostPath + "/admin/" + ctrl + "/" + action + "/" + values;
+    if (IsNotEmpty(values))
+        url = localhostPath + "/" + area + "/" + ctrl + "/" + action + "/" + values;
     else
-        url = localhostPath + "/admin/" + ctrl + "/" + action;
+        url = localhostPath + "/" + area + "/" + ctrl + "/" + action;
     if (isOpen == true) {
         lkWeb.LayerIndex = layer.open({
             type: 2,
@@ -29,7 +32,7 @@ lkWeb.GoAction = function (ctrl, action, values, isOpen, title, width, height) {
         window.location.href = url;
 }
 
-lkWeb.OpenLayer = function (url,title,width,height) {
+lkWeb.OpenLayer = function (url, title, width, height) {
     lkWeb.LayerIndex = layer.open({
         type: 2,
         title: title,
@@ -45,7 +48,7 @@ lkWeb.CloseLayert = function () {
     //    var index = parent.layer.getFrameIndex(window.name);
 }
 //删除多个
-lkWeb.DeleteMulti = function (ids, model, table) {
+lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
     if (ids.length < 1) {
         parent.layer.alert("请选择要删除的数据");
         return;
@@ -53,12 +56,17 @@ lkWeb.DeleteMulti = function (ids, model, table) {
     parent.layer.confirm("确认删除" + ids.length + "条数据？", {
         btn: ["确认", "取消"]
     }, function () {
+        var postUrl = '/' + area + '/' + ctrl + '/Delete';
+        var _value = "";
+        if (IsNotEmpty(value))
+            _value = value;
         $.ajax(
             {
                 type: 'post',
-                url: '/Admin/' + model + '/DeleteMulti',
+                url: postUrl,
                 data: {
                     ids: ids,
+                    value: _value,
                     __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
                 },
                 success: function (result) {
@@ -70,7 +78,7 @@ lkWeb.DeleteMulti = function (ids, model, table) {
                             window.location.reload();
                     }
                     else {
-                        if (NotIsEmpty(result.msg))
+                        if (IsNotEmpty(result.msg))
                             parent.layer.alert(result.msg);
                         else
                             parent.layer.alert("删除失败");
@@ -85,26 +93,28 @@ lkWeb.DeleteMulti = function (ids, model, table) {
 
     }
     )
-
-
 }
 
 //删除单个
-lkWeb.Delete = function (id, model, table) {
+lkWeb.Delete = function (area, id, ctrl, table, value) {
     parent.layer.confirm("确认删除？", {
         btn: ["确认", "取消"]
     },
         function () {
+            var postUrl = '/' + area + '/' + ctrl + '/Delete';
+            var _value = "";
+            if (IsNotEmpty(value))
+                _value = value;
             $.ajax(
                 {
                     type: 'post',
-                    url: '/Admin/' + model + '/Delete',
+                    url: postUrl,
                     data: {
-                        Id: id,
+                        id: id,
+                        value: _value,
                         __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
                     },
                     success: function (result) {
-                        console.log("ajax success")
                         if (result.flag == true) {
                             parent.layer.alert("删除成功")
                             if (table != null && table != undefined)
@@ -113,7 +123,7 @@ lkWeb.Delete = function (id, model, table) {
                                 window.location.reload();
                         }
                         else {
-                            if (NotIsEmpty(result.msg))
+                            if (IsNotEmpty(result.msg))
                                 parent.layer.alert(result.msg);
                             else
                                 parent.layer.alert("删除失败");
@@ -130,13 +140,46 @@ lkWeb.Delete = function (id, model, table) {
     )
 }
 
+lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
+    data.__RequestVerificationToken = $("input[name='__RequestVerificationToken']").val();
+    $.ajax(
+        {
+            type: 'post',
+            url: url,
+            data: data,
+            success: function (result) {
+                if (result.flag == true) {
+                    if (IsFunction(successCallBack))
+                        successCallBack();
+                    else
+                        parent.layer.alert("操作成功");
+                }
+                else {
+                    if (IsNotEmpty(result.msg))
+                        parent.layer.alert(result.msg);
+                    else
+                        parent.layer.alert("操作失败");
+                }
+            },
+            error: function (err) {
+                parent.layer.alert("操作失败");
+                if (IsFunction(errorCallBack))
+                    errorCallBack();
+                console.log(err);
+            }
+        })
+}
+lkWeb.AjaxGet = function () {
+
+}
+
 //form validation
 lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
     var option = {
         datatype: "json",
         success: function (data) {
             if (data.flag == true) {
-                if (NotIsEmpty(successMsg)) {
+                if (IsNotEmpty(successMsg)) {
                     layer.alert(successMsg);
                     setTimeout(function () {
                         if (IsFunction(successCallBack))
@@ -175,9 +218,22 @@ lkWeb.CloseLoad = function () {
     layer.close(layerIndex);
 }
 
+lkWeb.Confirm = function (msg, successCallBack, cancelCallBack) {
+    parent.layer.confirm(msg, {
+        btn: ["确认", "取消"]
+    },
+        function () {
+            if (IsFunction(successCallBack))
+                successCallBack();
+        }, function () {
+            if (IsFunction(cancelCallBack))
+                cancelCallBack();
+        }
+    )
+}
+
 //Datatable
 lkWeb.Search = function (searchKey, table) {
-    console.log("searchKey:" + searchKey);
     _searchKey = searchKey;
     table.search(_searchKey).draw(); //！！！！！！！！！！！搜索暂时无效 很无奈！！！ 只能先这样代替了
 }
@@ -186,12 +242,12 @@ var _value = "";
 //tableID:控件ID，columns:列集合，dataUrl:获取数据的URL，value:补充的值给后台(QueryBase)用
 lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
     _value = value;
-    var config = {
+     var config = {
         "processing": true, //载入数据的时候是否显示“载入中”
         "bInfo": true, //是否显示是否启用底边信息栏
         "ajax": {
             url: dataUrl,
-            type: "get",
+            type: "post",
             data: function (d) {
                 var param = {}; //d是原始的数据 不过太长了，只取需要的数据出来
                 param.start = d.start;//开始的数据位置
@@ -205,6 +261,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
                 }
                 param.searchKey = _searchKey;
                 param.value = _value;
+                param.__RequestVerificationToken = $("input[name='__RequestVerificationToken']").val();
                 return param;
             }
 
@@ -266,6 +323,10 @@ lkWeb.GetCheckValueList = function (chkList) {
     return values;
 }
 
+lkWeb.GetCurrentUrl = function () {
+    return window.location.protocol + "://" + window.location.host;
+}
+
 //扩展
 
 //两种调用方式
@@ -297,10 +358,10 @@ String.prototype.format = function (args) {
 }
 
 function IsEmpty(value) {
-    return !NotIsEmpty(value);
+    return !IsNotEmpty(value);
 }
 
-function NotIsEmpty(value) {
+function IsNotEmpty(value) {
     return value != "" && value != null && value != undefined;
 }
 function IsFunction(func) {

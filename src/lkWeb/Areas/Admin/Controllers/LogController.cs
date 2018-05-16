@@ -110,10 +110,10 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 xAxis.Add(hour + "时");
                 visitors.Add(result.data.Where(
-                    item => item.CreateDateTime.ToString("yyyy-MM-dd h") == DateTime.Now.ToString("yyyy-MM-dd") + " " + hour)
+                    item => item.CreateDateTime.ToString("yyyy-MM-dd H") == DateTime.Now.ToString("yyyy-MM-dd") + " " + hour)
                     .GroupBy(item => item.ClientMac).Count());
                 visitPage.Add(result.data.Where(
-                    item => item.CreateDateTime.ToString("yyyy-MM-dd h") == DateTime.Now.ToString("yyyy-MM-dd") + " " + hour).Count());
+                    item => item.CreateDateTime.ToString("yyyy-MM-dd H") == DateTime.Now.ToString("yyyy-MM-dd") + " " + hour).Count());
             }
             return Json(new
             {
@@ -127,11 +127,21 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetChartDataByWeek()
         {
+            var weekAgo = DateTime.Now.AddDays(-7);
             var result = await _operationLogService.GetList(
-                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
+                item => DateTime.Compare(item.CreateDateTime, weekAgo) >= 0);
             var xAxis = new List<string>();
             var visitors = new List<int>();
             var visitPage = new List<int>();
+            for (int i = 0; i < 7; i++)
+            {
+                xAxis.Add(weekAgo.AddDays(i).ToString("MM-dd"));
+                visitors.Add(result.data.Where(
+                    item => item.CreateDateTime.ToString("yyyy-MM-dd") == weekAgo.AddDays(i).ToString("yyyy-MM-dd"))
+                    .GroupBy(item => item.ClientMac).Count());
+                visitPage.Add(result.data.Where(
+                    item => item.CreateDateTime.ToString("yyyy-MM-dd") == weekAgo.AddDays(i).ToString("yyyy-MM-dd")).Count());
+            }
 
             return Json(new
             {
@@ -144,11 +154,22 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetChartDataByMonth()
         {
+            var lastMonth = DateTime.Now.AddMonths(-1);
             var result = await _operationLogService.GetList(
-                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
+                item => DateTime.Compare(item.CreateDateTime, lastMonth) > 0);
             var xAxis = new List<string>();
             var visitors = new List<int>();
             var visitPage = new List<int>();
+
+            for (int i = 0; i < 30; i++)
+            {
+                xAxis.Add(lastMonth.AddDays(i).ToString("MM-dd"));
+                visitors.Add(result.data.Where(
+                    item => item.CreateDateTime.ToString("yyyy-MM-dd") == lastMonth.AddDays(i).ToString("yyyy-MM-dd"))
+                    .GroupBy(item => item.ClientMac).Count());
+                visitPage.Add(result.data.Where(
+                    item => item.CreateDateTime.ToString("yyyy-MM-dd") == lastMonth.AddDays(i).ToString("yyyy-MM-dd")).Count());
+            }
 
             return Json(new
             {
@@ -157,50 +178,26 @@ namespace lkWeb.Areas.Admin.Controllers
                 visitPage
             });
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetChartDataByTrimester()
-        {
-            var result = await _operationLogService.GetList(
-                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
-            var xAxis = new List<string>();
-            var visitors = new List<int>();
-            var visitPage = new List<int>();
 
-            return Json(new
-            {
-                xAxis,
-                visitors,
-                visitPage
-            });
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetChartDataBySemester()
-        {
-            var result = await _operationLogService.GetList(
-                item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
-            var xAxis = new List<string>();
-            var visitors = new List<int>();
-            var visitPage = new List<int>();
-
-            return Json(new
-            {
-                xAxis,
-                visitors,
-                visitPage
-            });
-        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetChartDataByYear()
         {
+            var yearAgo = DateTime.Now.AddYears(-1);
             var result = await _operationLogService.GetList(
                 item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
             var xAxis = new List<string>();
             var visitors = new List<int>();
             var visitPage = new List<int>();
-
+            for (int i = 0; i < 12; i++)
+            {
+                xAxis.Add(yearAgo.AddMonths(i).ToString("MM"));
+                visitors.Add(result.data.Where(
+                    item => item.CreateDateTime.ToString("yyyy-MM") == yearAgo.AddMonths(i).ToString("yyyy-MM"))
+                    .GroupBy(item => item.ClientMac).Count());
+                visitPage.Add(result.data.Where(
+                    item => item.CreateDateTime.ToString("yyyy-MM") == yearAgo.AddMonths(i).ToString("yyyy-MM")).Count());
+            }
             return Json(new
             {
                 xAxis,

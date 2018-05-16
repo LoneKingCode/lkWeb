@@ -1,5 +1,4 @@
-输入控制---
-是否必填
+
 
 字段保存类型 默认的string是nvarchar(max) 用哪个？varchar or nvarchar
 数据库 初始化代码 初始 数据 并且测试
@@ -10,7 +9,6 @@
 
 登陆时根据模块。。。
 
-图表统计
 
 注意lkWebDbContextFactory 里写的明文 SQL链接
 
