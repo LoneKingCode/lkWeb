@@ -1,0 +1,252 @@
+﻿@using lkWeb.Areas.Admin.Models
+@using System.Text;
+@using lkWeb.Core.Extensions;
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = ViewBag.TableName;
+}
+@model ViewListModel
+@section Scripts{
+    <script>
+        $(function () {
+            InitDataTable();
+
+            $(".checkAll").click(function () {
+                var check = $(this).prop("checked");
+                $(".checkChild").prop("checked", check);
+            });
+
+            $("#btnSearch").click(function () {
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
+
+            })
+
+            $("#excelFile").change(function () {
+                var fileObj = document.getElementById("excelFile").files[0]; // js 获取文件对象
+                if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+                    alert("请选择excel文件");
+                    return;
+                }
+                var formFile = new FormData();
+                formFile.append("excelFile", fileObj); //加入文件对象
+                formFile.append("id", @Model.Table.Id);
+                var token = $("input[name='__RequestVerificationToken']").val();
+                formFile.append("__RequestVerificationToken", token);
+                var data = formFile;
+                $.ajax({
+                    url: "@Url.Action("Import")",
+                    data: data,
+                    type: "Post",
+                    dataType: "json",
+                    async: false,
+                    cache: false,//上传文件无需缓存
+                    processData: false,//用于对data参数进行序列化处理 这里必须false
+                    contentType: false, //必须
+                    success: function (result) {
+                         if (result.flag == true) {
+                            parent.layer.alert("操作成功");
+                            lkTable.draw(false);//刷新datatable
+                         }
+                        else {
+                            if (IsNotEmpty(result.msg))
+                                parent.layer.alert(result.msg);
+                            else
+                                parent.layer.alert("操作失败")
+                        }
+                    },
+                    error: function (err) {
+                        parent.layer.alert("请求失败");
+                        console.log(err);
+
+                    }
+                })
+            })
+        });
+
+        function AddModel() {
+            lkWeb.GoAction("admin","viewlist", "add","@Model.Table.Id");
+        }
+        function EditModel() {
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "")
+                parent.layer.alert("请选择");
+            else
+                lkWeb.GoAction("admin","viewlist", "edit", id+"/" + "@Model.Table.Id");
+        }
+        function Detail() {
+                  var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "")
+                parent.layer.alert("请选择");
+            else
+                lkWeb.GoAction("admin","viewlist", "detail", id+"/" + "@Model.Table.Id",true,"查看详情","80%","80%");
+        }
+        function DelModel() {
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
+            lkWeb.DeleteMulti("admin",ids, "viewlist", lkTable,"@Model.Table.Id");
+        }
+
+        function Import() {
+            $("#excelFile").click();
+        }
+
+        function DownloadTemplate() {
+             $.ajax({
+                          url: "@Url.Action("DownloadImportTemplate")",
+                          type: "post",
+                          dataType: "json",
+                          data: { param: {id:@Model.Table.Id}, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
+                          async: false,
+                          success: function (data) {
+                              if (data.flag == true)
+                              {
+                                  window.open(data.data)
+                              }
+                              else {
+                                  parent.layer.alert("操作失败");
+                              }
+                          },
+                          err: function (err) {
+                              parent.layer.alert("请求失败");
+                              console.log(err);
+                          }
+
+                 })
+        }
+
+        function Export() {
+                 $.ajax({
+                          url: "@Url.Action("Export")",
+                          type: "post",
+                          dataType: "json",
+                          data: { param: {id:@Model.Table.Id}, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
+                          async: false,
+                          success: function (data) {
+                              if (data.flag == true)
+                              {
+                                  window.open(data.data)
+                              }
+                              else {
+                                  parent.layer.alert("操作失败");
+                              }
+                          },
+                          err: function (err) {
+                              parent.layer.alert("请求失败");
+                              console.log(err);
+                          }
+
+                 })
+        }
+
+        var lkTable;
+        function InitDataTable() {
+            var dataUrl = '@Url.Action("GetPageData")';
+            var columns = [
+                {
+                    "sClass": "text-center",
+                    "mData": "Id",
+                    "mRender": function (data, type, row) {
+                        return '<input type="checkbox" class="checkChild"  value="' + data + '" />';
+                    },
+                    "bSortable": false
+                },
+                { "mData": "rowNum", "sClass": "text-center" },
+                @{
+                    StringBuilder columnStr = new StringBuilder();
+                    string str = "{{\"mData\": \"{0}\", \"sClass\": \"text-center\"}},";
+                    string hiddenStr = "{{\"mData\": \"{0}\",\"visible\": false, \"sClass\": \"text-center\"}},";
+                    foreach (var column in Model.TableColumn)
+                    {
+                        if (column.Name == "Id")  //隐藏Id列
+                        {
+                            columnStr.Append(string.Format(hiddenStr, column.Name));
+                        }
+                        else
+                        {
+                            columnStr.Append(string.Format(str, column.Name));
+                        }
+                    }
+                     @Html.Raw(columnStr.ToString());
+                     }
+            @{
+                if (Model.Table.ExtendFunction.IsNotEmpty())
+                {
+                       @Html.Raw("{\"mData\":\"ExtendFunction\", \"sClass\": \"text-center\" },".ToString())
+                }
+            }
+            ];
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl, '@Model.Table.Id')
+
+        }
+    </script>
+}
+
+<div class="form-group">
+    @{
+        ShowButtonModel btnModel = ViewBag.ShowButton;
+        if (btnModel.ShowAddBtn)
+        {
+            <button type="button" class="btn btn-success" onclick="Detail()">查看详情</button>
+        }
+        if (btnModel.ShowAddBtn)
+        {
+            <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
+        }
+        if (btnModel.ShowEditBtn)
+        {
+            <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
+        }
+        if (btnModel.ShowDelBtn)
+        {
+            <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+        }
+        if (btnModel.ShowImportBtn)
+        {
+            <button type="button" class="btn btn-primary" onclick="Import()">导入</button>
+        }
+        if (btnModel.ShowExportBtn)
+        {
+            <button type="button" class="btn btn-warning" onclick="Export()">导出</button>
+        }
+        if (btnModel.ShowImportBtn)
+        {
+            <button type="button" class="btn btn-primary" onclick="DownloadTemplate()">下载导入模板</button>
+        }
+
+    }
+</div>
+<div class="hidden">
+    <input type="file" name="excelfile" id="excelFile" />
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
+        <span class="input-group-btn">
+            <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
+        </span>
+    </div>
+</div>
+@Html.AntiForgeryToken()
+<table class="table table-striped table-hover" id="lkTable">
+    <thead>
+        <tr>
+            <th>
+                <input type="checkbox" class="checkAll" />
+            </th>
+            <th>序号</th>
+            @{
+                StringBuilder headerStr = new StringBuilder();
+                foreach (var column in Model.TableColumn)
+                {
+                    headerStr.Append("<th>" + column.Description + "</th>");
+                }
+                if (Model.Table.ExtendFunction.IsNotEmpty())
+                {
+                    headerStr.Append("<th>操作</th>");
+                }
+                @Html.Raw(headerStr.ToString());
+            }
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>

@@ -5,16 +5,16 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#form-department"), function () {
-                lkWeb.GoAction("department", "index")
+            lkWeb.FormValidation($("#lkForm"), function () {
+                lkWeb.GoAction("admin","department", "index")
             }, "操作成功")
         })
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="form-department">
+<form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="lkForm">
     @Html.AntiForgeryToken()
     <div class="form-group">
-        <input type="hidden" value="@ViewBag.ParentID" name="ParentID" />
+        <input type="hidden" value="@ViewBag.ParentId" name="ParentId" />
         <label class="col-md-3 control-label">上级部门</label>
         <div class="col-md-7">
             <input type="text" class="form-control" name="ParentName" value="@ViewBag.ParentName" readonly="readonly" />

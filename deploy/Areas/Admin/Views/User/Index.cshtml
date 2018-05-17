@@ -3,7 +3,7 @@
     ViewBag.Title = "用户管理";
 }
 @section Scripts{
-<script>
+    <script>
         $(function () {
 
             InitDataTable();
@@ -14,7 +14,7 @@
             });
 
             $("#btnSearch").click(function () {
-                lkWeb.Search($("#txtSearchKey").val(), table_user);
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
             })
 
@@ -26,16 +26,16 @@
                 parent.layer.alert("请选择用户");
                 return;
             }
-              lkWeb.GoAction("user", "authen", userId, true, "设置权限",'100%','100%');
+              lkWeb.GoAction("admin","user", "authen", userId, true, "设置权限",'100%','100%');
         }
 
         function AddModel() {
-            lkWeb.GoAction("user", "add", 0);
+            lkWeb.GoAction("admin","user", "add", 0);
         }
         function DelModel()
         {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "user", table_user);
+            lkWeb.DeleteMulti("admin",ids, "user", lkTable);
         }
 
         function EditModel() {
@@ -43,10 +43,10 @@
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("user", "edit", id);
+                lkWeb.GoAction("admin","user", "edit", id);
 
         }
-        var table_user;
+        var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
             var columns = [
@@ -58,15 +58,15 @@
                     },
                     "bSortable": false
                 },
-                { "mData": "rowNum", "name":"Id", "sClass": "text-center" },
-                { "mData": "userName", "name": "LoginName", "sClass": "text-center" },
-                { "mData": "realName", "name": "RealName", "sClass": "text-center" },
-                { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
-                { "mData": "statusName", "name": "StatusName", "sClass": "text-center" }
+                { "mData": "rowNum",  "sClass": "text-center" },
+                { "mData": "userName",  "sClass": "text-center" },
+                { "mData": "realName",   "sClass": "text-center" },
+                { "mData": "email" ,"sClass": "text-center", "bSortable": false },
+                { "mData": "statusName",   "sClass": "text-center" }
             ];
-            table_user = lkWeb.LoadTable("table_user", columns, dataUrl)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
         }
-</script>
+    </script>
 }
 
 <div class="form-group">
@@ -85,7 +85,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="table_user">
+<table class="table table-striped table-hover" id="lkTable">
     <thead>
         <tr>
             <th>

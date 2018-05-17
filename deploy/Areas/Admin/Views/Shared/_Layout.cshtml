@@ -54,8 +54,8 @@
 
                             foreach (var menu in menus)
                             {
-                                sb.Append(string.Format("<li><a data-index=\"{0}\" data-url=\"{1}\" class=\"J_menuItem\"><i class=\"fa fa-chevron-right\"></i>{3}</a></li>",
-                                    menu.ListOrder, menu.Url, menu.Icon, menu.Name));
+                                sb.Append(string.Format("<li><a data-index=\"{0}\" data-url=\"{1}\" class=\"J_menuItem\"><i class=\"fa fa-chevron-right\"></i>{2}</a></li>",
+                                    menu.ListOrder, menu.Url, menu.Name));
                             }
 
                             sb.Append("</ul>");
@@ -63,6 +63,7 @@
                     }
                     @Html.Raw(sb.ToString());
                 }
+
             </div>
 
             <div class="sidebar-footer">
@@ -79,10 +80,8 @@
             <div class="row border-bottom">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                     <ul class="nav navbar-top-links navbar-right">
-                        <li class="hidden-xs">
-                            admin
-                        </li>
-                        <li class="hidden-xs">
+
+                        <li class="hidden-xs" style="padding:3px;">
                             <a href="@Url.Action("Logout","User")"><i class="fa fa fa-sign-out"></i> 退出</a>
                         </li>
                     </ul>

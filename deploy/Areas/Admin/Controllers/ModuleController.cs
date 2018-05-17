@@ -20,30 +20,31 @@ namespace lkWeb.Areas.Admin.Controllers
         }
 
         #region Page
-        public IActionResult Index()
+        public IActionResult Index(UrlParameter param)
         {
             return View();
         }
-        public IActionResult Add()
+        public IActionResult Add(UrlParameter param)
         {
             return View();
         }
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var module = (await _moduleService.GetById(id)).data;
+            var module = (await _moduleService.GetById(param.id)).data;
             return View(module);
         }
         #endregion
 
         #region Ajax
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
-            Expression<Func<ModuleDto, bool>> queryExp = item => item.Id >= 0;
+            Expression<Func<ModuleDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var dto = await _moduleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,
@@ -61,7 +62,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ModuleDto dto)
+        public async Task<IActionResult> Edit(UrlParameter param, ModuleDto dto)
         {
             var result = await _moduleService.Update(dto);
             return Json(result);
@@ -69,26 +70,21 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(ModuleDto dto)
+        public async Task<IActionResult> Add(UrlParameter param, ModuleDto dto)
         {
             var result = await _moduleService.Add(dto);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(UrlParameter param)
         {
+            if (param.ids != null && param.ids.Any())
+                return Json(await _moduleService.Delete(param.ids));
+            else
+                return Json(await _moduleService.Delete(param.id));
+        }
 
-            var result = await _moduleService.Delete(id);
-            return Json(result);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteMulti(List<int> ids)
-        {
-            var result = await _moduleService.Delete(ids);
-            return Json(result);
-        }
         #endregion
     }
 }

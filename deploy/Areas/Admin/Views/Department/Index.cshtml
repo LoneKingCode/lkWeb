@@ -4,7 +4,7 @@
 }
 @section Scripts{
     <script>
-        var departmentID = "";
+        var departmentId = "";
         $(function () {
             InitDataTable();
 
@@ -14,29 +14,29 @@
             });
 
             $("#btnSearch").click(function () {
-                lkWeb.Search($("#txtSearchKey").val(), table_department);
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
             })
         });
 
         function AddModel() {
-            departmentID = lkWeb.GetCheckValue($(".checkChild"));
-            lkWeb.GoAction("department", "add", departmentID);;
+            departmentId = lkWeb.GetCheckValue($(".checkChild"));
+            lkWeb.GoAction("admin","department", "add", departmentId);;
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("department", "edit", id);
+                lkWeb.GoAction("admin","department", "edit", id);
         }
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "department", table_department);
+            lkWeb.DeleteMulti("admin",ids, "department", lkTable);
         }
 
-        var table_department;
+        var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
             var columns = [
@@ -54,7 +54,7 @@
                 { "mData": "leader", "sClass": "text-center" },
                 { "mData": "description", "sClass": "text-center" }
             ];
-            table_department = lkWeb.LoadTable("table_department", columns, dataUrl)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
     }
 
 
@@ -74,7 +74,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="table_department">
+<table class="table table-striped table-hover" id="lkTable">
     <thead>
         <tr>
             <th>

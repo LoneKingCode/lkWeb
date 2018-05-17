@@ -1,0 +1,124 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = "表管理";
+}
+@section Scripts{
+    <script>
+        $(function () {
+            InitDataTable();
+
+            $(".checkAll").click(function () {
+                var check = $(this).prop("checked");
+                $(".checkChild").prop("checked", check);
+            });
+
+            $("#btnSearch").click(function () {
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
+
+            })
+        });
+
+        function AddModel() {
+            lkWeb.GoAction("admin","tablelist", "add", 0);
+        }
+        function EditModel() {
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "")
+                parent.layer.alert("请选择");
+            else
+                lkWeb.GoAction("admin","tablelist", "edit", id);
+        }
+
+        function DelModel() {
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
+            lkWeb.DeleteMulti("admin",ids, "tablelist", lkTable);
+        }
+        function CopyModel() {
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "") {
+                parent.layer.alert("请选择");
+                return;
+            }
+            lkWeb.Confirm("确认复制", function () {
+                lkWeb.AjaxPost("@Url.Action("Copy")", { id: id }, function () {
+                    parent.layer.alert("复制成功");
+                lkTable.draw(false);
+            })
+            })
+        }
+        function BuildColumn() {
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "") {
+                parent.layer.alert("请选择");
+                return;
+            }
+             lkWeb.Confirm("确认生成", function () {
+                lkWeb.AjaxPost("@Url.Action("BuildColumn")", { id: id }, function () {
+                    parent.layer.alert("生成成功");
+             })
+            })
+        }
+
+        var lkTable;
+        function InitDataTable() {
+            var dataUrl = '@Url.Action("GetPageData")';
+            var columns = [
+                {
+                    "sClass": "text-center",
+                    "mData": "id",
+                    "mRender": function (data, type, row) {
+                        return '<input type="checkbox" class="checkChild"  value="' + data + '" />';
+                    },
+                    "bSortable": false
+                },
+                { "mData": "rowNum", "sClass": "text-center" },
+                { "mData": "id", "sClass": "text-center" },
+                { "mData": "name", "sClass": "text-center" },
+                { "mData": "description", "sClass": "text-center" },
+                { "mData": "allowView", "sClass": "text-center" },
+                { "mData": "allowAdd", "sClass": "text-center" },
+                { "mData": "allowEdit", "sClass": "text-center" },
+                { "mData": "allowDelete", "sClass": "text-center" },
+                { "mData": "isView", "sClass": "text-center" }
+            ];
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
+        }
+    </script>
+}
+
+<div class="form-group">
+    <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
+    <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
+    <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+    <button type="button" class="btn btn-warning" onclick="CopyModel()">复制</button>
+    <button type="button" class="btn" onclick="BuildColumn()">生成列</button>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
+        <span class="input-group-btn">
+            <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
+        </span>
+    </div>
+</div>
+@Html.AntiForgeryToken()
+<table class="table table-striped table-hover" id="lkTable">
+    <thead>
+        <tr>
+            <th>
+                <input type="checkbox" class="checkAll" />
+            </th>
+            <th>序号</th>
+            <th>Id</th>
+            <th>表名</th>
+            <th>表说明</th>
+            <th>查看是否允许</th>
+            <th>添加是否允许</th>
+            <th>编辑是否允许</th>
+            <th>删除是否允许</th>
+            <th>是否视图</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+

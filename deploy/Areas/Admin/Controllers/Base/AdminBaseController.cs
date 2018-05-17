@@ -7,45 +7,88 @@ using lkWeb.Service.Dto;
 using lkWeb.Service.Abstracts;
 using Microsoft.AspNetCore.Mvc.Filters;
 using lkWeb.Service;
+using lkWeb.Filter;
+using lkWeb.Core.Extensions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace lkWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [PermissionFilter]
     public class AdminBaseController : Controller
     {
-        ///// <summary>
-        ///// 当前登录用户
-        ///// </summary>
-        //protected UserDto CurrentUser
-        //{
-        //    get
-        //    {
-        //        return WebHelper.GetSession<UserDto>("CurrentUser");
-        //    }
-        //}
+        /// <summary>
+        /// 当前登录用户
+        /// </summary>
+        protected UserDto CurrentUser
+        {
+            get; set;
+        }
 
-        ///// <summary>
-        ///// 是否登录
-        ///// </summary>
-        //protected bool IsLogined
-        //{
-        //    get
-        //    {
-        //        return CurrentUser != null;
-        //    }
-        //}
+        /// <summary>
+        /// 是否登录
+        /// </summary>
+        protected bool IsLogined
+        {
+            get
+            {
+                return CurrentUser != null && CurrentUser.Id > 0;
+            }
+        }
+
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            //再加上判断菜单权限
-            //context.HttpContext.Session.TryGetValue("CurrentUser", out byte[] result);
-            //if (result == null)
-            //{
-            //    context.Result = new RedirectToActionResult("Login", "User", "0");
-            //}
+            if (User.Identity.IsAuthenticated)
+            {
+                CurrentUser = new UserDto
+                {
+                    Id = User.Claims.ElementAt(0).Value.ToInt32(),
+                    UserName = User.Claims.ElementAt(1).Value
+                };
+                if (!WebHelper.IsAjax(context.HttpContext))
+                {
+                    var operationLogService = ServiceLocator.Get<IOperationLogService>();
+                    operationLogService.Add(new OperationLogDto
+                    {
+                        ClientIP = WebHelper.GetClientIP(),
+                        ClientMac = WebHelper.GetClientMac(),
+                        Description = "访问",
+                        OperationDescription = "访问",
+                        OperationUrl = context.HttpContext.Request.Path,
+                        UserId = CurrentUser.Id,
+                        UserName = CurrentUser.UserName
+                    });
+                }
+            }
+            else
+            {
+                if (!WebHelper.IsAjax(context.HttpContext))
+                {
+                    var operationLogService = ServiceLocator.Get<IOperationLogService>();
+                    operationLogService.Add(new OperationLogDto
+                    {
+                        ClientIP = WebHelper.GetClientIP(),
+                        ClientMac = WebHelper.GetClientMac(),
+                        Description = "访问",
+                        OperationDescription = "访问",
+                        OperationUrl = context.HttpContext.Request.Path,
+                        UserId = 0,
+                        UserName = "无"
+                    });
+                    CurrentUser = null;
+                }
+            }
             base.OnActionExecuting(context);
+        }
+
+        public async Task GetButtons(int menuId)
+        {
+            var userService = ServiceLocator.Get<IUserService>();
+            var Menus = (await userService.GetUserMenu(CurrentUser.Id)).data;
+            ViewBag.Buttons = Menus.Where(item => item.ParentId == menuId
+            && item.Type == Service.Enum.MenuType.按钮).ToList();
         }
     }
 }

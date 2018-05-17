@@ -94,7 +94,16 @@ namespace lkWeb.Service
             {
                 return "0.0.0.0";
             }
-            var ip = GetHeaderValueAs<string>("X-Original-For").Split(':')[0];
+            var ip = string.Empty;
+            try
+            {
+                ip = GetHeaderValueAs<string>("X-Original-For").Split(':')[0];
+            }
+            catch (Exception)
+            {
+
+
+            }
             return ip;
         }
 
@@ -154,8 +163,8 @@ namespace lkWeb.Service
         public static bool IsAjax(HttpContext context)
         {
             bool result = false;
-            var xreq= context.Request.Headers.ContainsKey("X-Requested-With");
-            if(xreq)
+            var xreq = context.Request.Headers.ContainsKey("X-Requested-With");
+            if (xreq)
             {
                 result = context.Request.Headers["x-requested-with"] == "XMLHttpRequest";
             }

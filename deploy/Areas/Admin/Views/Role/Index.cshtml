@@ -13,28 +13,28 @@
             });
 
             $("#btnSearch").click(function () {
-                lkWeb.Search($("#txtSearchKey").val(), table_role);
+                lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
             })
         });
 
         function AddModel() {
-            lkWeb.GoAction("role", "add", 0);
+            lkWeb.GoAction("admin","role", "add", 0);
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("role", "edit", id);
+                lkWeb.GoAction("admin","role", "edit", id);
         }
 
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            lkWeb.DeleteMulti(ids, "role", table_role);
+            lkWeb.DeleteMulti("admin",ids, "role", lkTable);
         }
 
-        var table_role;
+        var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
             var columns = [
@@ -50,7 +50,7 @@
                 { "mData": "name", "sClass": "text-center" },
                 { "mData": "description", "sClass": "text-center" }
             ];
-            table_role = lkWeb.LoadTable("table_role", columns, dataUrl)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl)
     }
     </script>
 }
@@ -69,7 +69,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="table_role">
+<table class="table table-striped table-hover" id="lkTable">
     <thead>
         <tr>
             <th>

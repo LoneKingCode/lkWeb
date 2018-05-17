@@ -6,8 +6,8 @@
     <script src="~/lib/bootstrap-suggest-plugin/dist/bootstrap-suggest.min.js"></script>
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#form-addMenu"), function () {
-                lkWeb.GoAction("menu", "index")
+            lkWeb.FormValidation($("#lkForm"), function () {
+                lkWeb.GoAction("admin","menu", "index")
             }, "操作成功")
 
             $("#menuList").focusin(function () {
@@ -23,19 +23,19 @@
                     },
                     effectiveFields: ["id", "name", "typeName", "url"],
                     getDataMethod: "url",
-                    url: "@Url.Action("GetList", "Menu")?searchKey=",
+                    url: "@Url.Action("GetList", "Menu")?searchKey=", //最后一个参数为关键字请求参数
                     idField: "id",
                     keyField: "name"
                 }).on('onDataRequestSuccess', function (e, result) {
 
                 }).on('onSetSelectValue', function (e, keyword, data) {
-                     $("#txtParentID").val(keyword.id);
+                     $("#txtParentId").val(keyword.id);
                 }).on('onUnsetSelectValue', function () {
                  });
             })
         })
         function SelectModule(value) {
-            $("#txtModuleID").val(value);
+            $("#txtModuleId").val(value);
         }
         function ViewIcon() {
             var url = " http://www.fontawesome.com.cn/faicons/";
@@ -43,20 +43,20 @@
         }
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="form-addMenu">
+<form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="lkForm">
     @Html.AntiForgeryToken()
     <div class="form-group">
         <label class="col-md-3 control-label">所属模块</label>
         <div class="col-md-7">
-            <input name="ModuleID" type="hidden" id="txtModuleID" value="@ViewBag.ModuleID" />
-            @Html.DropDownList("ModuleID", (SelectList)ViewBag.Modules, new { @class = "form-control", @onchange = "SelectModule(this.value)" })
+            <input name="ModuleId" type="hidden" id="txtModuleId" value="@ViewBag.ModuleId" />
+            @Html.DropDownList("ModuleId", (SelectList)ViewBag.Modules, new { @class = "form-control", @onchange = "SelectModule(this.value)" })
         </div>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">上级菜单</label>
         <div class="col-md-7">
             <div class="input-group">
-                <input name="ParentID" type="hidden" id="txtParentID" value="@ViewBag.ParentID" />
+                <input name="ParentId" type="hidden" id="txtParentId" value="@ViewBag.ParentId" />
                 <input class="form-control" type="text" autocomplete="off" id="menuList" value="@ViewBag.ParentName" />
                 <div class="input-group-btn">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle>

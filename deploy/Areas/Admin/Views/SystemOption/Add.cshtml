@@ -1,0 +1,40 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = "添加系统设置";
+}
+@section Scripts{
+    <script type="text/javascript">
+        $(function () {
+            lkWeb.FormValidation($("#lkForm"), function () {
+                lkWeb.GoAction("admin","systemoption", "index")
+            }, "操作成功")
+        })
+
+    </script>
+}
+<form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="lkForm">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label class="col-md-3 control-label">代码</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="Code"
+                   data-val="true" data-val-maxlength="代码长度不能超过20个字符" data-val-maxlength-max="20"
+                   data-val-minlength="代码长度不能少于1个字符" data-val-minlength-min="1" data-val-required="代码不能为空" />
+            <span class="field-validation-valid" data-valmsg-for="Code" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-3 control-label">值</label>
+        <div class="col-md-7">
+            <textarea type="text" class="form-control" name="Value"
+                      data-val="true"  data-val-required="值不能为空" rows="3"></textarea>
+            <span class="field-validation-valid" data-valmsg-for="Value" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3 col-md-offset-3">
+            <button type="submit" class="btn btn-success">确定</button>
+            <button type="button" class="btn btn-default" onclick="history.go(-1)">返回</button>
+        </div>
+    </div>
+</form>

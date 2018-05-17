@@ -26,9 +26,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         public UserController(IUserService userService,
             IDepartmentService departmentService,
-            IUserDepartmentService userDepartmentService,
-           UserManager<UserEntity> userManager,
-           SignInManager<UserEntity> signInManager)
+            IUserDepartmentService userDepartmentService)
         {
             _userService = userService;
             _departmentService = departmentService;
@@ -37,7 +35,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         #region Page
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index(UrlParameter param)
         {
             return View();
         }
@@ -46,34 +44,34 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> Authen(int id)
+        public async Task<IActionResult> Authen(UrlParameter param)
         {
-            var user = (await _userService.GetById(id)).data;
+            var user = (await _userService.GetById(param.id)).data;
             return View(user);
         }
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(UrlParameter param)
         {
-            UserDto user = new UserDto();
-            if (id != 0)
-                user = (await _userService._GetById(id)).data;
+            var user = new UserDto();
+            if (param.id != 0)
+                user = (await _userService._GetById(param.id)).data;
             else
                 user = (await _userService.GetCurrentUser()).data;
             ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View(user);
         }
 
-        public IActionResult Add()
+        public IActionResult Add(UrlParameter param)
         {
             ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View();
         }
-        public IActionResult Department()
+        public IActionResult Department(UrlParameter param)
         {
             return View();
         }
-        public IActionResult SelectUser(int id)
+        public IActionResult SelectUser(UrlParameter param)
         {
-            ViewBag.DepartmentID = id;
+            ViewBag.DepartmentID = param.id;
             return View();
         }
         public IActionResult ForgetPwd()
@@ -90,7 +88,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Logout()
         {
             var result = await _userService.Logout();
-            return Content("<script>window.lcation.href='" + Url.Action("Login") + "'</script>");
+            return new RedirectToActionResult("Login", "User", "");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -110,14 +108,15 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPageData(QueryBase queryBase)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<UserDto, bool>> queryExp = item => item.Id >= 0;
+            Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey));
             var result = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableDto
+            var data = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = result.recordsTotal,
@@ -135,7 +134,8 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(data);
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetMyRoles(QueryBase queryBase, RoleDto dto)
         {
             var roles = await _userService.GetUserRoles(dto.Id);
@@ -144,7 +144,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 id = d.Id,
                 rolename = d.Name
             });
-            var result = new DataTableDto
+            var result = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = roles.recordsTotal,
@@ -153,7 +153,8 @@ namespace lkWeb.Areas.Admin.Controllers
             };
             return Json(result);
         }
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetNotMyRoles(QueryBase queryBase, RoleDto dto)
         {
             var roles = await _userService.GetNotUserRoles(dto.Id);
@@ -162,7 +163,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 id = d.Id,
                 rolename = d.Name
             });
-            var result = new DataTableDto
+            var result = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = roles.recordsTotal,
@@ -173,14 +174,14 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UserDto user)
+        public async Task<IActionResult> Edit(UrlParameter param, UserDto user)
         {
             var result = await _userService._Update(user);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UserDto user)
+        public async Task<IActionResult> Add(UrlParameter param, UserDto user)
         {
             var result = await _userService._Add(user);
             return Json(result);
@@ -193,72 +194,51 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int Id)
+        public async Task<IActionResult> Delete(UrlParameter param)
         {
-            var result = await _userService._Delete(Id);
+            Result<UserDto> result = new Result<UserDto>();
+
+            if (param.ids != null && param.ids.Any())
+                result = await _userService._Delete(param.ids);
+            else if (param.id > 0)
+                result = await _userService._Delete(param.id);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteMulti(List<int> ids)
+        public async Task<IActionResult> DeleteRole(AuthRoleModel model)
         {
-            var result = await _userService._Delete(ids);
+            var result = await _userService.RemoveRoles(model.UserId, model.RoleIds);
             return Json(result);
         }
-        public async Task<IActionResult> DeleteRole(AuthRoleDto dto)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AuthRole(UrlParameter param, AuthRoleModel model)
         {
-            var result = await _userService.RemoveRoles(dto.UserId, dto.RoleIds);
+            var result = await _userService.AddRoles(model.UserId, model.RoleIds);
             return Json(result);
         }
-        public async Task<IActionResult> AuthRole(AuthRoleDto dto)
-        {
-            var result = await _userService.AddRoles(dto.UserId, dto.RoleIds);
-            return Json(result);
-        }
-        public async Task<IActionResult> DelUserDepartment(SetDepartmentDto dto)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DelUserDepartment(SetDepartmentModel model)
         {
             var result = await _userDepartmentService.Delete(
-                item => dto.UserIDs.Contains(item.UserID)
-                && item.DepartmentID == dto.DepartmentID);
+                item => model.UserIds.Contains(item.UserId)
+                && item.DepartmentId == model.DepartmentId);
             return Json(result);
         }
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetListByDepartment(QueryBase queryBase)
         {
             if (queryBase.Value.IsEmpty())
                 return Json(new { });
             var departmentID = queryBase.Value.ToInt32();
-            var users = (await _userDepartmentService.GetList(item => item.Id >= 0 && item.DepartmentID == departmentID))
-                .data.Select(item => item.UserID).ToList();
-            Expression<Func<UserDto, bool>> queryExp = item => item.Id >= 0 && users.Contains(item.Id);
+            var users = (await _userDepartmentService.GetList(item => item.Id > 0 && item.DepartmentId == departmentID))
+                .data.Select(item => item.UserId).ToList();
+            Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0 && users.Contains(item.Id);
             var dto = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var result = new DataTableDto
-            {
-                draw = queryBase.Draw,
-                recordsTotal = dto.recordsTotal,
-                recordsFiltered = dto.recordsTotal,
-                data = dto.data.Select(d => new
-                {
-                    rowNum = ++queryBase.Start,
-                    userName = d.UserName,
-                    realName = d.RealName,
-                    email = d.Email,
-                    statusName = d.StatusName,
-                    id = d.Id.ToString(),
-                })
-            };
-            return Json(result);
-        }
-        public async Task<IActionResult> GetListByNotDepartment(QueryBase queryBase)
-        {
-            if (queryBase.Value.IsEmpty())
-                return Json(new { });
-            var departmentID = Convert.ToInt32(queryBase.Value);
-            var users = (await _userDepartmentService.GetList(item => item.Id >= 0 && item.DepartmentID == departmentID))
-                .data.Select(item => item.UserID).ToList();
-            Expression<Func<UserDto, bool>> queryExp = item => item.Id >= 0 && !users.Contains(item.Id);
-            var dto = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var result = new DataTableDto
+            var result = new DataTableModel
             {
                 draw = queryBase.Draw,
                 recordsTotal = dto.recordsTotal,
@@ -276,19 +256,48 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
         [HttpPost]
-        public async Task<IActionResult> SetDepartment(SetDepartmentDto dto)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetListByNotDepartment(QueryBase queryBase)
         {
-            if (dto.UserIDs.Count() < 1 || dto.DepartmentID < 1)
+            if (queryBase.Value.IsEmpty())
+                return Json(new { });
+            var departmentID = Convert.ToInt32(queryBase.Value);
+            var users = (await _userDepartmentService.GetList(item => item.Id > 0 && item.DepartmentId == departmentID))
+                .data.Select(item => item.UserId).ToList();
+            Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0 && !users.Contains(item.Id);
+            var dto = await _userService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var result = new DataTableModel
+            {
+                draw = queryBase.Draw,
+                recordsTotal = dto.recordsTotal,
+                recordsFiltered = dto.recordsTotal,
+                data = dto.data.Select(d => new
+                {
+                    rowNum = ++queryBase.Start,
+                    userName = d.UserName,
+                    realName = d.RealName,
+                    email = d.Email,
+                    statusName = d.StatusName,
+                    id = d.Id.ToString(),
+                })
+            };
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetDepartment(SetDepartmentModel dto)
+        {
+            if (dto.UserIds.Count() < 1 || dto.DepartmentId < 1)
             {
                 return Json(new { });
             }
             var dtos = new List<UserDepartmentDto>();
-            foreach (int userID in dto.UserIDs)
+            foreach (int userId in dto.UserIds)
             {
                 dtos.Add(new UserDepartmentDto
                 {
-                    UserID = userID,
-                    DepartmentID = dto.DepartmentID
+                    UserId = userId,
+                    DepartmentId = dto.DepartmentId
                 });
             }
 

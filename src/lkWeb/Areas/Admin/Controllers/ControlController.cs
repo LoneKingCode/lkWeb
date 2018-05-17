@@ -49,8 +49,15 @@ namespace lkWeb.Areas.Admin.Controllers
         public IActionResult Error()
         {
             var feature = HttpContext.Features.Get<IExceptionHandlerFeature>();
-            var error = feature?.Error;
-            return View("~/Areas/Views/Shared/Error.cshtml", error);
+
+            if (feature != null)
+            {
+                return View("~/Areas/Views/Shared/Error.cshtml", feature.Error);
+            }
+            else
+            {
+                return View("~/Areas/Views/Shared/Error.cshtml", "");
+            }
         }
         #endregion
     }

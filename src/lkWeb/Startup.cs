@@ -140,8 +140,8 @@ namespace lkWeb
 
             loggerFactory.AddDebug();
 
-            //异常处理中间件
-            // app.UseMiddleware(typeof(ExceptionHandlerMiddleWare));
+            // 异常处理中间件
+           // app.UseMiddleware(typeof(ExceptionHandlerMiddleWare));
 
             if (env.IsDevelopment())
             {

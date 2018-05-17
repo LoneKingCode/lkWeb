@@ -1,0 +1,68 @@
+﻿@using lkWeb.Areas.Admin.Models
+@using System.Text;
+@using System.Text.Encodings.Web;
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
+    ViewBag.Title = "编辑数据";
+}
+@model ViewListModel
+@section Scripts{
+    <script type="text/javascript">
+        $(function () {
+            lkWeb.FormValidation($("#lkForm"), function () {
+                lkWeb.GoAction("admin","viewlist", "index","@Model.Table.Id")
+            }, "操作成功")
+        })
+
+    </script>
+}
+<form class="form-horizontal" action="@Url.Action("Edit")" method="post" id="lkForm">
+    @Html.AntiForgeryToken()
+    @{
+        string selectTpl = "<div class=\"form-group\"><div class=\"\">" +
+    "<label class=\"col-md-2 control-label\">{0}</label>" +
+    "<div class=\"col-md-9\"> {1} </div></div></div>";
+        string inputTemplate = "<div class=\"form-group\"><div class=\"\">" +
+"<label class=\"col-md-2 control-label\">{0}</label>" +
+"<div class=\"col-md-9\">" +
+"<input type=\"text\" class=\"form-control\" name=\"{1}\" value=\"{2}\" data-val-required=\"{0}不能为空\" {4} data-val-maxlength=\"{0}长度不能超过{3}个字符\" data-val-maxlength-max=\"{3}\" data-val=\"true\"/>" +
+"<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span></div> " +
+"</div></div>";
+        StringBuilder sb = new StringBuilder();
+        foreach (var column in Model.TableColumn)
+        {
+            if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Out)
+            {
+                var content = Html.DropDownList(column.Name, (SelectList)ViewBag.OutColumn[column.Name], new { @class = "form-control" });
+                var writer = new System.IO.StringWriter();
+                content.WriteTo(writer, HtmlEncoder.Default);
+                var sltHtml = writer.ToString();
+                sb.Append(string.Format(selectTpl, column.Description, sltHtml));
+            }
+            else if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Enum)
+            {
+                var content = Html.DropDownList(column.Name, (SelectList)ViewBag.EnumColumn[column.Name], new { @class = "form-control" });
+                var writer = new System.IO.StringWriter();
+                content.WriteTo(writer, HtmlEncoder.Default);
+                var sltHtml = writer.ToString();
+                sb.Append(string.Format(selectTpl, column.Description, sltHtml));
+            }
+            else
+            {
+                sb.Append(string.Format(inputTemplate, column.Description, column.Name, ViewBag.ColumnValue[column.Name], column.MaxLength,
+                    column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : ""));
+            }
+        }
+        @Html.Raw(sb.ToString());
+    }
+
+
+
+
+    <div class="form-group">
+        <div class="col-md-3 col-md-offset-3">
+            <button type="submit" class="btn btn-success">确定</button>
+            <button type="button" class="btn btn-default" onclick="history.go(-1)">返回</button>
+        </div>
+    </div>
+</form>

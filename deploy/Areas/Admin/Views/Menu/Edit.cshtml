@@ -9,8 +9,8 @@
 
     <script type="text/javascript">
     $(function () {
-        lkWeb.FormValidation($("#form-editMenu"), function () {
-                lkWeb.GoAction("menu", "index")
+        lkWeb.FormValidation($("#lkForm"), function () {
+                lkWeb.GoAction("admin","menu", "index")
             }, "操作成功")
 
         $("#menuList").focusin(function () {
@@ -26,19 +26,19 @@
                     },
                     effectiveFields: ["id", "name", "typeName", "url"],
                     getDataMethod: "url",
-                    url: "@Url.Action("GetList", "Menu")?searchKey=",
+                    url: "@Url.Action("GetList", "Menu")?searchKey=", //最后一个参数为关键字请求参数
                     idField: "id",
                     keyField: "name"
                 }).on('onDataRequestSuccess', function (e, result) {
 
                 }).on('onSetSelectValue', function (e, keyword, data) {
-                     $("#txtParentID").val(keyword.id);
+                     $("#txtParentId").val(keyword.id);
                 }).on('onUnsetSelectValue', function () {
                  });
             })
         })
         function SelectModule(value) {
-            $("#txtModuleID").val(value);
+            $("#txtModuleId").val(value);
         }
                 function ViewIcon() {
             var url = " http://www.fontawesome.com.cn/faicons/";
@@ -46,21 +46,22 @@
         }
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="form-editMenu">
+<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
     @Html.AntiForgeryToken()
     @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
+    @Html.HiddenFor(item => item.Type, new { @class = "form-control" })
     <div class="form-group">
         <label class="col-md-3 control-label">所属模块</label>
         <div class="col-md-7">
-            <input name="ModuleID" type="hidden" id="txtModuleID" value="@ViewBag.ModuleID" />
-            @Html.DropDownList("ModuleID", (SelectList)ViewBag.Modules, new { @class = "form-control", @onchange = "SelectModule(this.value)" })
+            <input name="ModuleId" type="hidden" id="txtModuleId" value="@ViewBag.ModuleId" />
+            @Html.DropDownList("ModuleId", (SelectList)ViewBag.Modules, new { @class = "form-control", @onchange = "SelectModule(this.value)" })
         </div>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">上级菜单</label>
         <div class="col-md-7">
             <div class="input-group">
-                <input name="ParentID" type="hidden" id="txtParentID" asp-for="ParentId" />
+                <input name="ParentID" type="hidden" id="txtParentId" asp-for="ParentId" />
                 <input class="form-control" type="text" autocomplete="off" id="menuList" value="@ViewBag.ParentName" />
                 <div class="input-group-btn">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle>
@@ -92,7 +93,7 @@
     <div class="form-group">
         <label class="col-md-3 control-label">菜单图标</label>
         <div class="col-md-7">
-            <input type="text" class="form-control" name="Icon"
+            <input type="text" class="form-control" asp-for="Icon"
                    data-val="true" data-val-maxlength="菜单图标不能超过50个字符" data-val-maxlength-max="50" />
             <span class="field-validation-valid" data-valmsg-for="Icon" data-valmsg-replace="true"></span>
             <button class="btn btn-sm btn-info" style="margin:3px;" type="button" onclick="ViewIcon()">查看图标库</button>
