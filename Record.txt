@@ -1,7 +1,4 @@
-
-
-字段保存类型 默认的string是nvarchar(max) 用哪个？varchar or nvarchar
-数据库 初始化代码 初始 数据 并且测试
+ 
 
 调整startup.cs 里面太乱
 

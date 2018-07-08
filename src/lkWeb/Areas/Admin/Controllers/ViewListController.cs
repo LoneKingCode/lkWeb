@@ -229,6 +229,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     condition += string.Format(" {0} like '%{1}%' or", column, queryBase.SearchKey);
                 }
                 condition = condition.Substring(0, condition.Length - 2); // 为了去掉 like 条件末尾多余的or
+                condition = '(' + condition + ')';
             }
 
             var columnNames = (await _sysService.GetColumnNames(tableId, "ListVisible=1", "ListOrder")).data;
