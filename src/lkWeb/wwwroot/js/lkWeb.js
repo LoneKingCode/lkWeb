@@ -292,7 +292,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
         "info": true,
         "aoColumns": colums,
         "destroy": true,
-        "order": [[1, "asc"]],
+        "order": [],
     };
     var table = $("#" + tableID).DataTable(config);
 
