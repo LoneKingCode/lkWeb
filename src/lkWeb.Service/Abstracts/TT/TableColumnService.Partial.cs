@@ -174,7 +174,7 @@ namespace lkWeb.Service.Abstracts
                 var ds = db.Set<TableColumnEntity>();
                 var result = new ResultDto<TableColumnDto>();
                 var where = queryExp.Cast<TableColumnDto, TableColumnEntity, bool>();
-                var isAsc = orderDir.ToLower() != "desc";
+                var isAsc = !string.IsNullOrEmpty(orderDir) && orderDir.ToLower() != "desc";
                 //暂时没用到这个
                 Expression<Func<TableColumnDto, int>> orderExp = item => item.Id;
                 var _orderExp = orderExp.Cast<TableColumnDto, TableColumnEntity, int>();

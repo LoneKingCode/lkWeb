@@ -7,14 +7,14 @@
 }
 @model ViewListModel
 @section Scripts{
-    <script type="text/javascript">
+<script type="text/javascript">
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
-                lkWeb.GoAction("admin","viewlist", "index","@Model.Table.Id")
+                 lkWeb.RefreshAndClose()
             }, "操作成功")
         })
 
-    </script>
+</script>
 }
 <form class="form-horizontal" action="@Url.Action("Add",new { id = @Model.Table.Id })" method="post" id="lkForm">
     @Html.AntiForgeryToken()

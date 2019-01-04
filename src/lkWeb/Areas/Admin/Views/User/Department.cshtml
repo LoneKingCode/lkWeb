@@ -19,7 +19,7 @@
         })
 
         var departmentID = "";
-        var table_user;
+        var lkTable;
 
         var zNodes_department = [];
         var setting_department= {
@@ -40,7 +40,7 @@
         function onNodeClick( treeId, treeNode, clickFlag) {
             departmentID = treeNode.id;
             LoadDataTable();
-            table_user.draw();
+            lkTable.draw();
         }
 
         function InitDepartmentTree() {
@@ -85,7 +85,7 @@
                 { "mData": "email", "sClass": "text-center", "bSortable": false },
                 { "mData": "statusName",  "sClass": "text-center" }
             ];
-            table_user = lkWeb.LoadTable("table_user", columns, dataUrl, departmentID)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl, departmentID)
          }
 
         function DelUser() {
@@ -107,7 +107,7 @@
                         success: function (result) {
                             if (result.flag == true) {
                                 parent.layer.alert("删除成功")
-                                table_user.draw(false);
+                                lkTable.draw(false);
                             }
                             else {
                                 parent.layer.alert("删除失败");
@@ -129,8 +129,8 @@
         }
         //这个函数给 SelectUser子页面回调用
         function SelectUser() {
-            lkWeb.CloseLayert();
-            table_user.draw();
+            lkWeb.Close();
+            lkTable.draw();
         }
 
     </script>
@@ -158,7 +158,7 @@
                     <button type="button" class="btn btn-success" onclick="AddUser()">添加</button>
                     <button type="button" class="btn btn-danger" onclick="DelUser()">删除</button>
                 </div>
-                <table class="table table-striped table-hover" id="table_user">
+                <table class="table table-striped table-hover" id="lkTable">
                     <thead>
                         <tr>
                             <th>

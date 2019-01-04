@@ -42,11 +42,20 @@ lkWeb.OpenLayer = function (url, title, width, height) {
         content: url
     });
 }
-
-lkWeb.CloseLayert = function () {
+lkWeb.CloseLayer = function () {
     layer.close(lkWeb.LayerIndex);
     //    var index = parent.layer.getFrameIndex(window.name);
 }
+//主要用在 添加/编辑页面
+lkWeb.RefreshAndClose = function () {
+    parent.lkTable.draw(false)
+    parent.lkWeb.CloseLayer()
+}
+lkWeb.Close = function () {
+    parent.lkWeb.CloseLayer()
+}
+
+
 //删除多个
 lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
     if (ids.length < 1) {
@@ -219,7 +228,8 @@ lkWeb.CloseLoad = function () {
 }
 
 lkWeb.Confirm = function (msg, successCallBack, cancelCallBack) {
-    parent.layer.confirm(msg, {
+    var _layer = IsNotEmpty(parent.layer) ? parent.layer : layer
+    _layer.confirm(msg, {
         btn: ["确认", "取消"]
     },
         function () {
@@ -242,7 +252,7 @@ var _value = "";
 //tableID:控件ID，columns:列集合，dataUrl:获取数据的URL，value:补充的值给后台(QueryBase)用
 lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
     _value = value;
-     var config = {
+    var config = {
         "processing": true, //载入数据的时候是否显示“载入中”
         "bInfo": true, //是否显示是否启用底边信息栏
         "ajax": {

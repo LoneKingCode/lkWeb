@@ -15,27 +15,26 @@ namespace lkWeb.Service.Abstracts
 {
     public partial class ModuleService : ServiceBase<ModuleEntity>, IModuleService
     {
-        public ModuleService(IMapper mapper) : base(mapper)
-        {
+		public ModuleService(IMapper mapper):base(mapper)
+		{
 
-        }
-        /// <summary>
+		}
+		    /// <summary>
         ///添加单个module
         /// </summary>
         /// <param name="dto">module实体</param>
         /// <returns></returns>
         public async Task<Result<ModuleDto>> Add(ModuleDto dto)
         {
-            var result = new Result<ModuleDto>();
-
             using (var db = GetDb())
             {
+                var result = new Result<ModuleDto>();
                 var ds = GetDbSet(db);
                 var entity = MapTo<ModuleDto, ModuleEntity>(dto);
                 await ds.AddAsync(entity);
                 result.flag = (await db.SaveChangesAsync()) > 0;
+                return result;
             }
-            return result;
         }
         /// <summary>
         /// 批量添加module
@@ -152,11 +151,11 @@ namespace lkWeb.Service.Abstracts
                 var result = new Result<ModuleDto>();
                 var ds = GetDbSet(db);
                 var entity = await ds.FindAsync(id);
-                if (entity != null)
+			    if (entity != null)
                 {
-                    result.data = MapTo<ModuleEntity, ModuleDto>(entity);
-                    result.flag = true;
-                }
+					 result.data = MapTo<ModuleEntity, ModuleDto>(entity);
+					 result.flag = true;
+		    	}
                 return result;
             }
         }
@@ -175,7 +174,7 @@ namespace lkWeb.Service.Abstracts
                 var ds = db.Set<ModuleEntity>();
                 var result = new ResultDto<ModuleDto>();
                 var where = queryExp.Cast<ModuleDto, ModuleEntity, bool>();
-                var isAsc = orderDir.ToLower() != "desc";
+                var isAsc = !string.IsNullOrEmpty(orderDir) && orderDir.ToLower() != "desc";
                 //暂时没用到这个
                 Expression<Func<ModuleDto, int>> orderExp = item => item.Id;
                 var _orderExp = orderExp.Cast<ModuleDto, ModuleEntity, int>();
@@ -210,7 +209,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
-        /// <summary>
+		 /// <summary>
         /// 根据条件获取单个module数据
         /// </summary>
         /// <param name="exp"></param>
@@ -223,11 +222,11 @@ namespace lkWeb.Service.Abstracts
                 var ds = GetDbSet(db);
                 var _exp = exp.Cast<ModuleDto, ModuleEntity, bool>();
                 var entity = await ds.Where(_exp).FirstOrDefaultAsync();
-                if (entity != null)
-                {
-                    result.data = MapTo<ModuleEntity, ModuleDto>(entity);
-                    result.flag = true;
-                }
+				   if (entity != null)
+                 {
+				    result.data = MapTo<ModuleEntity,ModuleDto>(entity);
+					result.flag=true;
+				 }
                 return result;
             }
         }
@@ -249,7 +248,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
-    }
+	}
 
 }
 

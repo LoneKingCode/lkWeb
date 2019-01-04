@@ -42,6 +42,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
+            ViewBag.next = Request.Query["ReturnUrl"];
             return View();
         }
         public async Task<IActionResult> Authen(UrlParameter param)

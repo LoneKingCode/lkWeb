@@ -174,7 +174,7 @@ namespace lkWeb.Service.Abstracts
                 var ds = db.Set<MenuEntity>();
                 var result = new ResultDto<MenuDto>();
                 var where = queryExp.Cast<MenuDto, MenuEntity, bool>();
-                var isAsc = orderDir.ToLower() != "desc";
+                var isAsc = !string.IsNullOrEmpty(orderDir) && orderDir.ToLower() != "desc";
                 //暂时没用到这个
                 Expression<Func<MenuDto, int>> orderExp = item => item.Id;
                 var _orderExp = orderExp.Cast<MenuDto, MenuEntity, int>();

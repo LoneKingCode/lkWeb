@@ -21,14 +21,14 @@
 
         function AddModel() {
             departmentId = lkWeb.GetCheckValue($(".checkChild"));
-            lkWeb.GoAction("admin","department", "add", departmentId);;
+            lkWeb.GoAction("admin", "department", "add", departmentId,  true, '添加', '90%', '90%');
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("admin","department", "edit", id);
+                lkWeb.GoAction("admin", "department", "edit", id,  true, '编辑', '90%', '90%');
         }
 
         function DelModel() {

@@ -205,6 +205,21 @@ namespace lkWeb.Areas.Admin.Controllers
                 visitPage
             });
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearLoginLog()
+        {
+            var result = await _loginLogService.Delete(x => x.Id > 0);
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearOperationLog()
+        {
+            var result = await _operationLogService.Delete(x => x.Id > 0);
+            return Json(result);
+        }
         #endregion
     }
 }

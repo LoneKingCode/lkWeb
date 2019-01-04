@@ -41,6 +41,9 @@ public partial class AutoMapperConfiguration : Profile
 				/*	CreateMap<TableListEntity, TableListDto>();
 					CreateMap<TableListDto, TableListEntity>();
 					*/
+				/*	CreateMap<TestLeaderEntity, TestLeaderDto>();
+					CreateMap<TestLeaderDto, TestLeaderEntity>();
+					*/
 				/*	CreateMap<UserDepartmentEntity, UserDepartmentDto>();
 					CreateMap<UserDepartmentDto, UserDepartmentEntity>();
 					*/

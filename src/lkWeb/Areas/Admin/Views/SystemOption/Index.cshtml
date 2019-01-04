@@ -19,14 +19,14 @@
         });
 
         function AddModel() {
-            lkWeb.GoAction("admin","systemoption", "add", 0);
+            lkWeb.GoAction("admin", "systemoption", "add", 0, true, '添加', '90%', '90%');
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("admin","systemoption", "edit", id);
+                lkWeb.GoAction("admin", "systemoption", "edit", id, true, '编辑', '90%', '90%');
         }
 
         function DelModel() {

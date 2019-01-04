@@ -8,7 +8,7 @@
     <script type="text/javascript">
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
-                lkWeb.GoAction("admin","department", "index")
+                lkWeb.RefreshAndClose()
             }, "操作成功")
         })
     </script>
@@ -45,14 +45,14 @@
         <label class="col-md-3 control-label">部门说明</label>
         <div class="col-md-7">
             <textarea class="form-control" asp-for="Description"
-                      data-val="true" data-val-maxlength="部门说明长度不能超过100个字符" data-val-maxlength-max="100" rows="3"></textarea>
+                      data-val="true" data-val-maxlength="部门说明长度不能超过100个字符" data-val-maxlength-max="100" rows="3">@Model.Description</textarea>
             <span class="field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
         </div>
     </div>
     <div class="form-group">
         <div class="col-md-3 col-md-offset-3">
             <button type="submit" class="btn btn-success">保存</button>
-            <button type="button" class="btn btn-default" onclick="history.go(-1)">
+            <button type="button" class="btn btn-default" onclick="lkWeb.Close()">
                 返回
             </button>
         </div>

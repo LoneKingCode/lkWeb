@@ -18,7 +18,7 @@
 
         });
 
-        var table_operation;
+        var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageDataWithOperation")';   //后天获取json数据的地址
             var columns = [
@@ -38,13 +38,23 @@
                 { "mData": "clientMac", "sClass": "text-center", "bSortable": false },
                 { "mData": "createDateTime", "sClass": "text-center" }
             ];
-            table_operation = lkWeb.LoadTable("table_operation", columns, dataUrl);
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl);
     }
 
-
+        function Clear() {
+            lkWeb.Confirm('确认清除？', function () {
+                lkWeb.AjaxPost("/Admin/Log/ClearOperationLog/", {}, function () {
+                    parent.layer.alert("清除成功");
+                    lkTable.draw(false);
+                })
+            })
+        }
     </script>
 }
 
+<div class="form-group">
+    <button type="button" class="btn btn-warning" onclick="Clear()">清空</button>
+</div>
 
 <div class="form-group">
     <div class="input-group">
@@ -55,7 +65,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="table_operation">
+<table class="table table-striped table-hover" id="lkTable">
     <thead>
         <tr>
             <th>

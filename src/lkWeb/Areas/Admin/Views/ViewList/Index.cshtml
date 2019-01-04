@@ -65,14 +65,14 @@
         });
 
         function AddModel() {
-            lkWeb.GoAction("admin","viewlist", "add","@Model.Table.Id");
+            lkWeb.GoAction("admin", "viewlist", "add", "@Model.Table.Id", true, '添加', '90%', '90%');
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("admin","viewlist", "edit", id+"/" + "@Model.Table.Id");
+                lkWeb.GoAction("admin", "viewlist", "edit", id + "/" + "@Model.Table.Id", true, '编辑', '90%', '90%');
         }
         function Detail() {
                   var id = lkWeb.GetCheckValue($(".checkChild"));

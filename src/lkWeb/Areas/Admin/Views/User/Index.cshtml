@@ -30,7 +30,7 @@
         }
 
         function AddModel() {
-            lkWeb.GoAction("admin","user", "add", 0);
+            lkWeb.GoAction("admin", "user", "add", 0, true, '添加', '90%', '90%');
         }
         function DelModel()
         {
@@ -43,7 +43,7 @@
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("admin","user", "edit", id);
+                lkWeb.GoAction("admin", "user", "edit", id, true, '编辑', '90%', '90%');
 
         }
         var lkTable;

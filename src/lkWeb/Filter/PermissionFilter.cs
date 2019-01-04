@@ -63,7 +63,7 @@ namespace lkWeb.Filter
                 }
                 else
                 {
-                    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "User", Action = "Login" }));
+                    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { Controller = "User", Action = "Login" ,ReturnUrl=request.Path }));
                 }
             }
             else //已登陆

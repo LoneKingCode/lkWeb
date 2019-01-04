@@ -21,7 +21,102 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
+    <style>
 
+        .miniMenu .title {
+            display: none
+        }
+
+        .miniMenu .sidebar-menu a {
+            padding: 9px;
+        }
+
+        .miniMenu .profile-img {
+            top: 6px;
+            left: -10px;
+            margin-top: 7px;
+            width: 41px;
+            height: 41px;
+            position: relative;
+        }
+
+        .miniMenu .profile-user {
+            margin-top: 20px;
+            padding: 2px;
+        }
+
+        .miniMenu .parent-menu-name {
+            display: none;
+        }
+
+        .miniMenu .menuitem {
+            display: none;
+        }
+
+        .miniMenu .sidebar-footer > a:nth-child(n+2) {
+            display: none;
+        }
+
+        .miniMenu .sidebar-footer > a:nth-child(1) {
+            position: relative;
+            left: 16px;
+            top: 2px;
+        }
+
+        .miniMenu .profile-user > span {
+            margin-left: 13px;
+            position: relative;
+            right: 26px;
+            font-size: .8em;
+            display: block;
+            width: 44px;
+            overflow-x: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+    <script>
+        var collapse = false
+        $(function () {
+            $(".sidebar-menu").click(function () {
+                if (collapse) {
+                    collapseMenu()
+                }
+            })
+        })
+        function collapseMenu() {
+
+            collapse = !collapse
+            if (collapse) {
+                $("#sidebar-wrapper").removeClass('miniMenu').addClass('miniMenu')
+
+                $("#sidebar-wrapper").animate({ width: "50px" }, 300, 'swing', function () {
+                    $("#sidebar-wrapper").css('width', '50px')
+                });
+                $("#page-wrapper").animate({ marginLeft: "50px" }, 300, 'swing', function () {
+                    $("#page-wrapper").css('margin-left', '50px')
+                });
+                $(".miniMenu .sidebar-footer").animate({ width: "50px" }, 300, 'swing', function () {
+                    console.log('50')
+                    $(".miniMenu .sidebar-footer").css('width', '50px')
+                });
+                //$("#sidebar-wrapper").css('width', '50px')
+                //$("#page-wrapper").css('margin-left', '50px')
+
+            }
+            else {
+                $("#sidebar-wrapper").animate({ width: "200px" }, 300, 'swing', function () {
+                    $("#sidebar-wrapper").css('width', '200px')
+                });
+                $("#page-wrapper").animate({ marginLeft: "200px" }, 300, 'swing', function () {
+                    $("#page-wrapper").css('margin-left', '200px')
+                });
+                $(".miniMenu .sidebar-footer").animate({ width: "200px" }, 300, 'swing', function () {
+                    $(".miniMenu .sidebar-footer").css('width', '200px')
+                });
+                $("#sidebar-wrapper").removeClass('miniMenu')
+            }
+        }
+    </script>
 </head>
 <body>
     <div id="wrapper">
@@ -29,9 +124,9 @@
         <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
             <div class="navbar-header profile">
                 <h2 class="title"><a href="#">lkWeb </a></h2>
-                <img src="~/images/head.jpg" alt="..." class="img-circle profile_img">
+                <img src="~/images/head.jpg" alt="..." class="img-circle profile-img">
 
-                <div style="padding:3px;">
+                <div style="padding:3px;" class="profile-user">
                     <i class="fa fa-user"></i>
                     @ViewBag.UserName
                 </div>
@@ -45,12 +140,12 @@
                     foreach (var module in modules)
                     {
                         var id = "a" + module.Id.ToString(); // CnToPinyin.convertCh(module.Name);
-                        sb.Append(string.Format("<a href=\"#{0}\" class=\"nav-header menu-first collapsed\" data-toggle=\"collapse\">" + "<i class=\"{1}\"></i>{2}</a>",
+                        sb.Append(string.Format("<a href=\"#{0}\" class=\"nav-header menu-first collapsed\" data-toggle=\"collapse\">" + "<i class=\"{1}\"></i><span class=\"parent-menu-name\">{2}</span></a>",
                            id, module.Icon, module.Name));
                         var menus = myMenus.Where(item => item.ParentId == module.Id && item.Type == MenuType.菜单);
                         if (menus.Any())
                         {
-                            sb.Append(string.Format("<ul id=\"{0}\" class=\"nav nav-list collapse menu-second\">", id));
+                            sb.Append(string.Format("<ul id=\"{0}\" class=\"nav nav-list collapse menu-second menuitem\">", id));
 
                             foreach (var menu in menus)
                             {
@@ -61,13 +156,13 @@
                             sb.Append("</ul>");
                         }
                     }
-                    @Html.Raw(sb.ToString());
-                }
+            @Html.Raw(sb.ToString());
+}
 
             </div>
 
             <div class="sidebar-footer">
-                <a><span class="fa fa-telegram"></span></a>
+                <a><span class="fa fa-reorder" onclick="collapseMenu()"></span></a>
                 <a><span class="fa fa-lock"></span></a>
                 <a><span class="fa fa-desktop"></span></a>
                 <a href="/Home/Logout"><span class="fa fa-power-off"></span></a>

@@ -4,9 +4,6 @@
 
 菜单 自适应缩放
 
-登陆时根据模块。。。
-
-
 注意lkWebDbContextFactory 里写的明文 SQL链接
 
 hangfire 定时任务

@@ -174,7 +174,7 @@ namespace lkWeb.Service.Abstracts
                 var ds = db.Set<OperationLogEntity>();
                 var result = new ResultDto<OperationLogDto>();
                 var where = queryExp.Cast<OperationLogDto, OperationLogEntity, bool>();
-                var isAsc = orderDir.ToLower() != "desc";
+                var isAsc = !string.IsNullOrEmpty(orderDir) && orderDir.ToLower() != "desc";
                 //暂时没用到这个
                 Expression<Func<OperationLogDto, int>> orderExp = item => item.Id;
                 var _orderExp = orderExp.Cast<OperationLogDto, OperationLogEntity, int>();
