@@ -54,7 +54,9 @@ lkWeb.RefreshAndClose = function () {
 lkWeb.Close = function () {
     parent.lkWeb.CloseLayer()
 }
-
+lkWeb.GetCsrfToken = function () {
+    return $("input[name='__RequestVerificationToken']").val();
+}
 
 //删除多个
 lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
@@ -76,7 +78,7 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
                 data: {
                     ids: ids,
                     value: _value,
-                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
+                    __RequestVerificationToken: lkWeb.GetCsrfToken()
                 },
                 success: function (result) {
                     if (result.flag == true) {
@@ -121,7 +123,7 @@ lkWeb.Delete = function (area, id, ctrl, table, value) {
                     data: {
                         id: id,
                         value: _value,
-                        __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
+                        __RequestVerificationToken: lkWeb.GetCsrfToken()
                     },
                     success: function (result) {
                         if (result.flag == true) {
@@ -150,7 +152,7 @@ lkWeb.Delete = function (area, id, ctrl, table, value) {
 }
 
 lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
-    data.__RequestVerificationToken = $("input[name='__RequestVerificationToken']").val();
+    data.__RequestVerificationToken = lkWeb.GetCsrfToken()
     $.ajax(
         {
             type: 'post',
@@ -271,7 +273,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
                 }
                 param.searchKey = _searchKey;
                 param.value = _value;
-                param.__RequestVerificationToken = $("input[name='__RequestVerificationToken']").val();
+                param.__RequestVerificationToken = lkWeb.GetCsrfToken()
                 return param;
             }
 

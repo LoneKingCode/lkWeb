@@ -116,6 +116,12 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="col-md-2 control-label">顶部扩展方法</label>
+        <div class="col-md-7">
+            <textarea class="form-control" asp-for="TopExtendFunction" rows="3" data-toggle="tooltip" title="{Id}为Id,{UserId}为UserId">@Model.TopExtendFunction</textarea>
+        </div>
+    </div>
+    <div class="form-group">
         <div class="col-md-3 col-md-offset-3">
             <button type="submit" class="btn btn-success">确定</button>
             <button type="button" class="btn btn-default" onclick="lkWeb.Close()">返回</button>

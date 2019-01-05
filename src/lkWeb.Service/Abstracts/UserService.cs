@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using lkWeb.Data;
+using lkWeb.Service.Util;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -67,7 +68,7 @@ namespace lkWeb.Service.Abstracts
                     else if (signedUserDto.Status == UserStatus.已激活)
                     {
                         result.flag = true;
-                        // WebHelper.SetSession("CurrentUser", signedUserDto);
+                        result.msg = "登陆成功";
                     }
                     else
                         result.msg = "登陆失败，账户状态未知";

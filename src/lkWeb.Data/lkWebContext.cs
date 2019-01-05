@@ -16,7 +16,7 @@ namespace lkWeb.Data
     public class lkWebContext : IdentityDbContext<UserEntity, RoleEntity, int>
     {
         //数据库连接串 在StartUp.cs中为其赋值
-        public static string connectionString = "";
+        public static string connectionString = ConfigurationHelper.getConnStr();
         public DbSet<LoginLogEntity> LoginLogs { get; set; }
         public DbSet<MenuEntity> Menus { get; set; }
         public DbSet<RoleMenuEntity> RoleMenus { get; set; }
@@ -48,8 +48,6 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new TableListConfig());
             modelBuilder.ApplyConfiguration(new TableColumnConfig());
             modelBuilder.ApplyConfiguration(new SystemOptionConfig());
-            modelBuilder.ApplyConfiguration(new TestLeaderConfig());
-
         }
         public override int SaveChanges()
         {

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using lkWeb.Service;
 using lkWeb.Filter;
 using lkWeb.Core.Extensions;
+using lkWeb.Service.Util;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -83,12 +84,6 @@ namespace lkWeb.Areas.Admin.Controllers
             base.OnActionExecuting(context);
         }
 
-        public async Task GetButtons(int menuId)
-        {
-            var userService = ServiceLocator.Get<IUserService>();
-            var Menus = (await userService.GetUserMenu(CurrentUser.Id)).data;
-            ViewBag.Buttons = Menus.Where(item => item.ParentId == menuId
-            && item.Type == Service.Enum.MenuType.按钮).ToList();
-        }
+
     }
 }

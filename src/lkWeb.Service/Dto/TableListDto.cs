@@ -41,9 +41,13 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public string ForbiddenAddFilter { get; set; }
         /// <summary>
-        /// 扩展方法 {0} {1}分别代表主键或者什么的
+        /// 扩展方法
         /// </summary>
         public string ExtendFunction { get; set; }
+        /// <summary>
+        /// 顶部扩展方法
+        /// </summary>
+        public string TopExtendFunction { get; set; }
         /// <summary>
         /// 查看是否允许
         /// </summary>

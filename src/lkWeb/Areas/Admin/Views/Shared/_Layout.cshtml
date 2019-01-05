@@ -149,8 +149,11 @@
 
                             foreach (var menu in menus)
                             {
+                                if (menu.Name == "基础数据菜单权限") {
+                                    continue;
+                                }
                                 sb.Append(string.Format("<li><a data-index=\"{0}\" data-url=\"{1}\" class=\"J_menuItem\"><i class=\"fa fa-chevron-right\"></i>{2}</a></li>",
-                                    menu.ListOrder, menu.Url, menu.Name));
+                                        menu.ListOrder, menu.Url, menu.Name));
                             }
 
                             sb.Append("</ul>");

@@ -133,7 +133,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var xAxis = new List<string>();
             var visitors = new List<int>();
             var visitPage = new List<int>();
-            for (int i = 0; i < 7; i++)
+            for (int i = 1; i <= 7; i++)
             {
                 xAxis.Add(weekAgo.AddDays(i).ToString("MM-dd"));
                 visitors.Add(result.data.Where(
@@ -161,7 +161,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var visitors = new List<int>();
             var visitPage = new List<int>();
 
-            for (int i = 0; i < 30; i++)
+            for (int i = 1; i <= 30; i++)
             {
                 xAxis.Add(lastMonth.AddDays(i).ToString("MM-dd"));
                 visitors.Add(result.data.Where(
@@ -189,7 +189,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var xAxis = new List<string>();
             var visitors = new List<int>();
             var visitPage = new List<int>();
-            for (int i = 0; i < 12; i++)
+            for (int i = 1; i <= 12; i++)
             {
                 xAxis.Add(yearAgo.AddMonths(i).ToString("MM"));
                 visitors.Add(result.data.Where(

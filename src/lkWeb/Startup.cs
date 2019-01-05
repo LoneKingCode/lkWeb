@@ -20,6 +20,7 @@ using NLog.Web;
 using Hangfire;
 using lkWeb.Filter;
 using lkWeb.Core.Extensions;
+using lkWeb.Service.Util;
 
 namespace lkWeb
 {
@@ -46,7 +47,8 @@ namespace lkWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            lkWebContext.connectionString = Configuration.GetConnectionString("lkWebConn");
+            //lkWebContext.connectionString = Configuration.GetConnectionString("lkWebConn");
+            //lkWebContext.connectionString = ConfigurationHelper.getConnStr();
             services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString));
             services.AddSession(config =>
             {

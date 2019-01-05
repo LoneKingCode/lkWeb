@@ -31,8 +31,7 @@
                 var formFile = new FormData();
                 formFile.append("excelFile", fileObj); //加入文件对象
                 formFile.append("id", @Model.Table.Id);
-                var token = $("input[name='__RequestVerificationToken']").val();
-                formFile.append("__RequestVerificationToken", token);
+                formFile.append("__RequestVerificationToken", lkWeb.GetCsrfToken());
                 var data = formFile;
                 $.ajax({
                     url: "@Url.Action("Import")",
@@ -212,7 +211,10 @@
         {
             <button type="button" class="btn btn-primary" onclick="DownloadTemplate()">下载导入模板</button>
         }
-
+        if(!string.IsNullOrEmpty(btnModel.TopExtendFunction))
+        {
+            @Html.Raw(btnModel.TopExtendFunction)
+        }
     }
 </div>
 <div class="hidden">

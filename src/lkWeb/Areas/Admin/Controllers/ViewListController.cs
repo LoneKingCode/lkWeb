@@ -49,7 +49,8 @@ namespace lkWeb.Areas.Admin.Controllers
                 ShowDelBtn = model.Table.AllowDelete == 1,
                 ShowImportBtn = model.Table.AllowImport == 1,
                 ShowExportBtn = model.Table.AllowExport == 1,
-                ShowViewBtn = model.Table.AllowView == 1
+                ShowViewBtn = model.Table.AllowView == 1,
+                TopExtendFunction = model.Table.TopExtendFunction,
             };
             ViewBag.ShowButton = showBtnModel;
             return View(model);
@@ -136,25 +137,24 @@ namespace lkWeb.Areas.Admin.Controllers
                     var textKey = colNames[1]; //作为下拉菜单的text的列
                     var queryResult = await _sqlService.Query(string.Format(sql, outSql[0], tableName, condition));
                     var items = new List<SelectListItem>();
-                    //获取此条数据列类型为Out的字段的值，以便之后SelectList的默认选中Selected使用
-                    var outColValue = await _sqlService.GetSingle(
-                        string.Format("select {0} from {1} where {2}", textKey, tableName, primarKey + "=" + param.id));
+                    //获取此条out列的主键值
+                    var outColId = columnValueResult.First()[column.Name].ToString();
                     items.Add(new SelectListItem
                     {
                         Value = "0",
-                        Text = "无"
+                        Text = "无",
                     });
+                    //遍历outsql查询的数据中全部项
                     foreach (var row in queryResult)
                     {
                         items.Add(new SelectListItem
                         {
                             Value = row[primarKey].ToString(),
                             Text = row[textKey].ToString(),
-                            Selected = row[primarKey].ToString() == outColValue
                         });
 
                     }
-                    ViewBag.OutColumn[column.Name] = new SelectList(items, "Value", "Text");
+                    ViewBag.OutColumn[column.Name] = new SelectList(items, "Value", "Text", outColId);
                 }
                 else if (column.DataType == ColumnDataType.Enum)
                 {
@@ -170,10 +170,9 @@ namespace lkWeb.Areas.Admin.Controllers
                         {
                             Value = enumStr[i],
                             Text = enumStr[i],
-                            Selected = enumStr[i] == enumColValue
                         });
                     }
-                    ViewBag.EnumColumn[column.Name] = new SelectList(items, "Value", "Text");
+                    ViewBag.EnumColumn[column.Name] = new SelectList(items, "Value", "Text", enumColValue);
                 }
             }
             return View(model);
@@ -231,7 +230,13 @@ namespace lkWeb.Areas.Admin.Controllers
                 condition = condition.Substring(0, condition.Length - 2); // 为了去掉 like 条件末尾多余的or
                 condition = '(' + condition + ')';
             }
-
+            if (queryBase.OrderBy.IsEmpty())
+            {
+                if (tableDto.DefaultSort.IsEmpty())
+                    queryBase.OrderBy = "Id";
+                else
+                    queryBase.OrderBy = tableDto.DefaultSort;
+            }
             var columnNames = (await _sysService.GetColumnNames(tableId, "ListVisible=1", "ListOrder")).data;
             var tableData = await _sysService.GetPageData(tableId, columnNames, condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();

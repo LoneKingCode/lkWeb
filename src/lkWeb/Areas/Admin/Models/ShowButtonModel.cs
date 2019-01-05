@@ -31,6 +31,10 @@ namespace lkWeb.Areas.Admin.Models
         /// 是否查看详情
         /// </summary>
         public bool ShowViewBtn { get; set; }
+        /// <summary>
+        /// 顶部扩展方法
+        /// </summary>
+        public string TopExtendFunction { get; set; }
 
     }
 }
