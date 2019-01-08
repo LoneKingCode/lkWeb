@@ -260,6 +260,8 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<byte>("SearchVisible");
 
+                    b.Property<string>("SelectRange");
+
                     b.Property<int>("TableId");
 
                     b.Property<int>("ViewOrder");
@@ -290,6 +292,8 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<byte>("AllowView");
 
+                    b.Property<int>("ColumnPerRow");
+
                     b.Property<DateTime>("CreateDateTime");
 
                     b.Property<string>("DefaultFilter");
@@ -316,9 +320,33 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<string>("TopExtendFunction");
 
+                    b.Property<string>("ViewEditWidthHeight");
+
                     b.HasKey("Id");
 
                     b.ToTable("Sys_TableList");
+                });
+
+            modelBuilder.Entity("lkWeb.Entity.TestLeaderEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreateDateTime");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("ParentId");
+
+                    b.Property<string>("Test");
+
+                    b.Property<string>("Test1");
+
+                    b.Property<string>("Test2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Test_Leader");
                 });
 
             modelBuilder.Entity("lkWeb.Entity.UserDepartmentEntity", b =>

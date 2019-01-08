@@ -92,6 +92,10 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public string EnumRange { get; set; }
         /// <summary>
+        /// 单选/多选值范围
+        /// </summary>
+        public string SelectRange { get; set; }
+        /// <summary>
         /// 是否主键
         /// </summary>
         public byte PrimarKey { get; set; }

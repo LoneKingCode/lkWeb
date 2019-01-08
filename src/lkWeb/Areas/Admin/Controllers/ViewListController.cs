@@ -42,6 +42,21 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.ListVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.ListOrder).ToList();
             ViewBag.TableName = model.Table.Description;
+
+            var viewEditWidthHeight =
+                string.IsNullOrEmpty(model.Table.ViewEditWidthHeight) ||
+                model.Table.ViewEditWidthHeight.Split("|").Length != 2
+                ? "90%,90%|90%,90%".Split("|") : model.Table.ViewEditWidthHeight.Split("|");
+            //example: width,height|width,height
+            var viewWidth = viewEditWidthHeight[0].Split(',')[0];
+            var viewHeight = viewEditWidthHeight[0].Split(',')[1];
+            var addEditWidth = viewEditWidthHeight[1].Split(',')[0];
+            var addEditHeight = viewEditWidthHeight[1].Split(',')[1];
+            ViewBag.viewWidth = viewWidth.Contains("px") || viewWidth.Contains("%") ? viewWidth : "90%";
+            ViewBag.viewHeight = viewHeight.Contains("px") || viewHeight.Contains("%") ? viewHeight : "90%";
+            ViewBag.addEditWidth = addEditWidth.Contains("px") || addEditWidth.Contains("%") ? addEditWidth : "90%";
+            ViewBag.addEditHeight = addEditHeight.Contains("px") || addEditHeight.Contains("%") ? addEditHeight : "90%";
+
             var showBtnModel = new ShowButtonModel
             {
                 ShowAddBtn = model.Table.AllowAdd == 1,
@@ -62,8 +77,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             string sql = "select {0} from {1} where {2}";
-            ViewBag.OutColumn = new Dictionary<string, SelectList>();
-            ViewBag.EnumColumn = new Dictionary<string, SelectList>();
+
             foreach (var column in model.TableColumn)
             {
                 if (column.DataType == Service.Enum.ColumnDataType.Out)
@@ -91,7 +105,7 @@ namespace lkWeb.Areas.Admin.Controllers
                         });
 
                     }
-                    ViewBag.OutColumn[column.Name] = new SelectList(items, "Value", "Text");
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text");
                 }
                 else if (column.DataType == ColumnDataType.Enum)
                 {
@@ -106,7 +120,23 @@ namespace lkWeb.Areas.Admin.Controllers
                             Text = enumStr[i]
                         });
                     }
-                    ViewBag.EnumColumn[column.Name] = new SelectList(items, "Value", "Text");
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text");
+                }
+                else if (column.DataType == ColumnDataType.CheckBox || column.DataType == ColumnDataType.Radio)
+                {
+                    var checkStr = column.SelectRange.Split('|'); //1,啊|2,吧
+                    var items = new List<SelectListItem>();
+                    for (int i = 0; i < checkStr.Length; i++)
+                    {
+                        var item = checkStr[i].Split(',');
+                        items.Add(new SelectListItem
+                        {
+
+                            Value = item[0],
+                            Text = item[1],
+                        });
+                    }
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text");
                 }
             }
             return View(model);
@@ -119,8 +149,6 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _tableColumnService.GetList(item => item.TableId == model.Table.Id && item.EditVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             string sql = "select {0} from {1} where {2}";
-            ViewBag.OutColumn = new Dictionary<string, SelectList>();
-            ViewBag.EnumColumn = new Dictionary<string, SelectList>();
             var tbName = model.Table.Name;
             var columnValueResult = await _sqlService.Query(
                 string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id));
@@ -154,13 +182,14 @@ namespace lkWeb.Areas.Admin.Controllers
                         });
 
                     }
-                    ViewBag.OutColumn[column.Name] = new SelectList(items, "Value", "Text", outColId);
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text", outColId);
                 }
                 else if (column.DataType == ColumnDataType.Enum)
                 {
                     //获取此条数据列类型为Enum的字段的值，以便之后SelectList的默认选中Selected使用
-                    var enumColValue = await _sqlService.GetSingle(
-                        string.Format("select {0} from {1} where {2}", column.Name, tbName, "Id=" + param.id));
+                    //var enumColValue = await _sqlService.GetSingle(
+                    //    string.Format("select {0} from {1} where {2}", column.Name, tbName, "Id=" + param.id));
+                    var enumColValue = columnValueResult.First()[column.Name].ToString();
                     var enumStr = column.EnumRange.Split(','); //value,value
                     var items = new List<SelectListItem>();
 
@@ -172,7 +201,24 @@ namespace lkWeb.Areas.Admin.Controllers
                             Text = enumStr[i],
                         });
                     }
-                    ViewBag.EnumColumn[column.Name] = new SelectList(items, "Value", "Text", enumColValue);
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text", enumColValue);
+                }
+                else if (column.DataType == ColumnDataType.CheckBox || column.DataType == ColumnDataType.Radio)
+                {
+                    var checkColValues = columnValueResult.First()[column.Name].ToString().Split(',');
+                    var checkStr = column.SelectRange.Split('|'); //1,啊|2,吧
+                    var items = new List<SelectListItem>();
+                    for (int i = 0; i < checkStr.Length; i++)
+                    {
+                        var item = checkStr[i].Split(',');
+                        items.Add(new SelectListItem
+                        {
+                            Selected = checkColValues.Contains(item[0]),
+                            Value = item[0],
+                            Text = item[1],
+                        });
+                    }
+                    ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", checkColValues);
                 }
             }
             return View(model);

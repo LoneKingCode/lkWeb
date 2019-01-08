@@ -64,21 +64,21 @@
         });
 
         function AddModel() {
-            lkWeb.GoAction("admin", "viewlist", "add", "@Model.Table.Id", true, '添加', '90%', '90%');
+            lkWeb.GoAction("admin", "viewlist", "add", "@Model.Table.Id", true, '添加', '@ViewBag.addEditWidth', '@ViewBag.addEditHeight');
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("admin", "viewlist", "edit", id + "/" + "@Model.Table.Id", true, '编辑', '90%', '90%');
+                lkWeb.GoAction("admin", "viewlist", "edit", id + "/" + "@Model.Table.Id", true, '编辑', '@ViewBag.addEditWidth', '@ViewBag.addEditHeight');
         }
         function Detail() {
                   var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "")
                 parent.layer.alert("请选择");
             else
-                lkWeb.GoAction("admin","viewlist", "detail", id+"/" + "@Model.Table.Id",true,"查看详情","80%","80%");
+                lkWeb.GoAction("admin","viewlist", "detail", id+"/" + "@Model.Table.Id",true,"查看详情","@ViewBag.viewWidth","@ViewBag.viewHeight");
         }
         function DelModel() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));

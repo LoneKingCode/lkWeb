@@ -72,6 +72,14 @@ namespace lkWeb.Entity
         /// </summary>
         public byte AllowExport { get; set; }
         /// <summary>
+        /// 查看，添加编辑  宽高   width,height|width,height
+        /// </summary>
+        public string ViewEditWidthHeight { get; set; }
+        /// <summary>
+        /// 添加编辑查看每行列数
+        /// </summary>
+        public int ColumnPerRow { get; set; }
+        /// <summary>
         /// 导入类型  更新，插入，更新或插入
         /// </summary>
         public byte ImportType { get; set; }

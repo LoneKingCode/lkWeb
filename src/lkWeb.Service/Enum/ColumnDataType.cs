@@ -19,6 +19,9 @@ namespace lkWeb.Service.Enum
         Float = 7,
         Bit = 8,
         Decimal = 9,
-        Enum = 10
+        Enum = 10,
+        Date = 11,
+        CheckBox = 12,
+        Radio = 13,
     }
 }
