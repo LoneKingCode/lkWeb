@@ -90,7 +90,7 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
                     }
                     else {
                         if (IsNotEmpty(result.msg))
-                            parent.layer.alert(result.msg);
+                            parent.layer.alert("操作失败," + result.msg);
                         else
                             parent.layer.alert("删除失败");
                     }
@@ -135,7 +135,7 @@ lkWeb.Delete = function (area, id, ctrl, table, value) {
                         }
                         else {
                             if (IsNotEmpty(result.msg))
-                                parent.layer.alert(result.msg);
+                                parent.layer.alert("操作失败," + result.msg);
                             else
                                 parent.layer.alert("删除失败");
                         }
@@ -167,7 +167,7 @@ lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
                 }
                 else {
                     if (IsNotEmpty(result.msg))
-                        parent.layer.alert(result.msg);
+                        parent.layer.alert("操作失败," + result.msg);
                     else
                         parent.layer.alert("操作失败");
                 }
@@ -191,7 +191,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
         success: function (data) {
             if (data.flag == true) {
                 if (IsNotEmpty(successMsg)) {
-                    layer.alert(successMsg);
+                    layer.alert(successMsg + ',' + data.msg);
                     setTimeout(function () {
                         if (IsFunction(successCallBack))
                             successCallBack();
@@ -203,7 +203,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
                 }
             }
             else {
-                layer.alert(data.msg);
+                layer.alert('操作失败,' + data.msg);
             }
         },
         error: function (error) {

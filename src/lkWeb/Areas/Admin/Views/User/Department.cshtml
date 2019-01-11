@@ -48,8 +48,6 @@
 
             $.fn.zTree.init($("#departmentTree"), setting_department, zNodes_department);
 
-            $("#level").bind("change", setCheck_department);
-            $("#all").bind("change", setCheck_department);
         }
       function LoadData() {
             $.ajax({
@@ -106,16 +104,16 @@
                         data: data,
                         success: function (result) {
                             if (result.flag == true) {
-                                parent.layer.alert("删除成功")
+                                layer.alert("删除成功")
                                 lkTable.draw(false);
                             }
                             else {
-                                parent.layer.alert("删除失败");
+                                layer.alert("删除失败");
                             }
                         },
                         error: function (err) {
                             console.log(err);
-                            parent.layer.alert("删除失败");
+                            layer.alert("删除失败");
                         }
                     })
             }, function () {
@@ -125,13 +123,13 @@
         }
 
         function AddUser() {
+            if (IsEmpty(departmentID)) {
+                layer.alert('请选择部门')
+                return;
+            }
             lkWeb.GoAction("admin","user", "selectUser", departmentID, true, "选择用户", "80%", "80%");
         }
-        //这个函数给 SelectUser子页面回调用
-        function SelectUser() {
-            lkWeb.Close();
-            lkTable.draw();
-        }
+
 
     </script>
 }

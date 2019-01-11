@@ -48,6 +48,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     Id = User.Claims.ElementAt(0).Value.ToInt32(),
                     UserName = User.Claims.ElementAt(1).Value
                 };
+                SysService.currentUserId = CurrentUser.Id.ToString();
                 if (!WebHelper.IsAjax(context.HttpContext))
                 {
                     var operationLogService = ServiceLocator.Get<IOperationLogService>();

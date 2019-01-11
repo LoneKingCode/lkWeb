@@ -327,17 +327,32 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, IFormCollection formData)
         {
-            var model = new ViewListModel();
+            var table = (await _tableListService.GetById(param.id)).data;
             var columnResult = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
             var tableColumns = columnResult.data;
             var addModel = new Dictionary<string, string>();
+            var result = new Result<bool>();
+            var pk_cols = (await _tableColumnService.GetList(item => item.PrimarKey == 1)).data.Select(x => x.Name);
             foreach (var column in tableColumns)
             {
+                var exist = "0";
+
                 if (formData.ContainsKey(column.Name))
-                    addModel[column.Name] = formData[column.Name];
+                {
+                    if (pk_cols.Contains(column.Name))
+                        exist = await _sqlService.GetSingle($"select count(*) from {table.Name} where {column.Name} = '{formData[column.Name]}'");
+                    if (exist != "0")
+                    {
+                        result.msg += column.Description + "字段为主键，值\"" + formData[column.Name] + "\"已存在,";
+                    }
+                    else
+                        addModel[column.Name] = formData[column.Name];
+                }
             }
+            if (!string.IsNullOrEmpty(result.msg))
+                return Json(result);
             addModel["CreateDateTime"] = DateTime.Now.ToString(); //补充上创建时间
-            var result = await _sysService.Add(param.id, addModel);
+            result = await _sysService.Add(param.id, addModel);
             return Json(result);
         }
 
@@ -349,13 +364,31 @@ namespace lkWeb.Areas.Admin.Controllers
             var tableId = param.value.ToInt32();
             var columnResult = await _tableColumnService.GetList(item => item.TableId == tableId && item.EditVisible == 1);
             var tableColumns = columnResult.data;
+            var table = (await _tableListService.GetById(tableId)).data;
+
             var updateModel = new Dictionary<string, string>();
+            var pk_cols = (await _tableColumnService.GetList(item => item.PrimarKey == 1)).data.Select(x => x.Name);
+            var result = new Result<bool>();
+
             foreach (var column in tableColumns)
             {
+                var exist = "0";
                 if (formData.ContainsKey(column.Name))
-                    updateModel[column.Name] = formData[column.Name];
+                {
+                    if (pk_cols.Contains(column.Name))
+                        exist = await _sqlService.GetSingle(
+                            $"select count(*) from {table.Name} where {column.Name} = '{formData[column.Name]}' and Id!={param.id}");
+                    if (exist != "0")
+                    {
+                        result.msg += column.Description + "字段为主键，值\"" + formData[column.Name] + "\"已存在,";
+                    }
+                    else
+                        updateModel[column.Name] = formData[column.Name];
+                }
             }
-            var result = await _sysService.Update(tableId, updateModel, param.id);
+            if (!string.IsNullOrEmpty(result.msg))
+                return Json(result);
+            result = await _sysService.Update(tableId, updateModel, param.id);
             return Json(result);
         }
 

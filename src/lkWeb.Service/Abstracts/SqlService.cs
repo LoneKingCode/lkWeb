@@ -29,7 +29,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="sql">SQL语句</param>
         /// <returns></returns>
-        public async Task<bool> Execute(string sql)
+        public async Task<int> Execute(string sql)
         {
             int result = 0;
             using (var db = GetDb())
@@ -47,7 +47,7 @@ namespace lkWeb.Service.Abstracts
                         result = -1;
                     }
                 }
-                return result > 0;
+                return result;
             }
         }
 
@@ -56,7 +56,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="listSql">SQL语句集合</param>
         /// <returns></returns>
-        public async Task<bool> ExecuteBatch(List<string> listSql)
+        public async Task<int> ExecuteBatch(List<string> listSql)
         {
             int result = 0;
             using (var db = GetDb())
@@ -77,7 +77,7 @@ namespace lkWeb.Service.Abstracts
                         result = -1;
                     }
                 }
-                return result == listSql.Count;
+                return result;
             }
         }
 

@@ -19,6 +19,10 @@ namespace lkWeb.Service.Abstracts
         public readonly ISqlService _sqlService;
         public readonly ITableListService _tableListService;
         public readonly ITableColumnService _tableColumnService;
+        /// <summary>
+        /// 当前用户Id
+        /// </summary>
+        public static string currentUserId;
 
         public SysService(ISqlService sqlService,
             ITableListService tableListService,
@@ -78,7 +82,9 @@ namespace lkWeb.Service.Abstracts
             {
                 listSql.Add(string.Format("update Sys_TableColumn set {0}='{1}' where Id={2}", filedName, value, id));
             }
-            result.flag = await _sqlService.ExecuteBatch(listSql);
+            var execResult = await _sqlService.ExecuteBatch(listSql);
+            result.flag = execResult == listSql.Count();
+            result.msg = "影响数据条数" + execResult;
             return result;
         }
 
@@ -199,9 +205,9 @@ namespace lkWeb.Service.Abstracts
                 sbColumn.Append(item.Key + ",");
                 sbValue.AppendFormat("'{0}',", item.Value);
             }
-            var executeResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
-            result.flag = executeResult;
-            result.data = executeResult;
+            var execResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
+            result.flag = execResult == 1;
+            result.msg = "影响数据条数" + execResult;
             return result;
         }
 
@@ -228,16 +234,18 @@ namespace lkWeb.Service.Abstracts
             }
             var tableDto = tableResult.data;
             var tableName = tableDto.Name;
-            var forbiddenUpdateFilter = tableDto.ForbiddenUpdateFilter ?? "1=1";
+            var forbiddenUpdateFilter = "1=1";
+            if (!string.IsNullOrEmpty(tableDto.ForbiddenUpdateFilter))
+                forbiddenUpdateFilter = tableDto.ForbiddenUpdateFilter.Replace("{UserId}", currentUserId);
             string sqlTpl = "update {0} set {1} where {2} and {3}";
             StringBuilder sbValue = new StringBuilder();
             foreach (var item in updateModel)
             {
                 sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value, forbiddenUpdateFilter));
             }
-            var executeResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
-            result.flag = executeResult;
-            result.data = executeResult;
+            var execResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
+            result.flag = execResult == 1;
+            result.msg = "影响数据条数" + execResult;
             return result;
         }
 
@@ -264,16 +272,18 @@ namespace lkWeb.Service.Abstracts
             var tableDto = tableResult.data;
             var tableName = tableDto.DeleteTableName;
             //禁止删除条件
-            var forbiddenDeleteFilter = tableDto.ForbiddenDeleteFilter ?? "1=1";
+            var forbiddenDeleteFilter = "1=1";
+            if (!string.IsNullOrEmpty(tableDto.ForbiddenDeleteFilter))
+                forbiddenDeleteFilter = tableDto.ForbiddenDeleteFilter.Replace("{UserId}", currentUserId);
             string sqlTpl = "delete from {0} where Id={1} and {2}";
             List<string> sqlList = new List<string>();
             foreach (var id in ids)
             {
                 sqlList.Add(string.Format(sqlTpl, tableName, id, forbiddenDeleteFilter));
             }
-            var flag = await _sqlService.ExecuteBatch(sqlList);
-            result.flag = flag;
-            result.data = flag;
+            var execResult = await _sqlService.ExecuteBatch(sqlList);
+            result.flag = execResult == sqlList.Count();
+            result.msg = "影响数据条数" + execResult;
             return result;
         }
 
@@ -490,7 +500,9 @@ namespace lkWeb.Service.Abstracts
                         listSql.Add(string.Format(sqlTpl, tableDto.Name, updateValues, condition));
                     }
                 }
-                result.flag = await _sqlService.ExecuteBatch(listSql);
+                var execResult = await _sqlService.ExecuteBatch(listSql);
+                result.flag = execResult == listSql.Count();
+                result.msg = "影响数据条数" + execResult;
             }
             return result;
         }
