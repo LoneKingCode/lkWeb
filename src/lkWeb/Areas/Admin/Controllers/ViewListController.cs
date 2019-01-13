@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
@@ -8,6 +9,7 @@ using lkWeb.Service;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using lkWeb.Service.Enum;
+using lkWeb.Service.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -80,7 +82,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
             foreach (var column in model.TableColumn)
             {
-                if (column.DataType == Service.Enum.ColumnDataType.Out)
+                if (column.DataType == "out")
                 {
                     string[] outSql = column.OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
                     var colNames = outSql[0].Split(','); //value,text
@@ -107,7 +109,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
                 }
-                else if (column.DataType == ColumnDataType.Enum)
+                else if (column.DataType =="Enum")
                 {
                     var enumStr = column.EnumRange.Split(','); //value,value
                     var items = new List<SelectListItem>();
@@ -122,18 +124,16 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
                 }
-                else if (column.DataType == ColumnDataType.CheckBox || column.DataType == ColumnDataType.Radio)
+                else if (column.DataType == "Checkbox")
                 {
-                    var checkStr = column.SelectRange.Split('|'); //1,啊|2,吧
+                    var checkStr = column.SelectRange.Split(','); //选项1,选项2
                     var items = new List<SelectListItem>();
                     for (int i = 0; i < checkStr.Length; i++)
                     {
-                        var item = checkStr[i].Split(',');
                         items.Add(new SelectListItem
                         {
-
-                            Value = item[0],
-                            Text = item[1],
+                            Value = checkStr[i],
+                            Text = checkStr[i],
                         });
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
@@ -155,7 +155,7 @@ namespace lkWeb.Areas.Admin.Controllers
             ViewBag.ColumnValue = columnValueResult.First();
             foreach (var column in model.TableColumn)
             {
-                if (column.DataType == Service.Enum.ColumnDataType.Out)
+                if (column.DataType == "Out")
                 {
                     string[] outSql = column.OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
                     var colNames = outSql[0].Split(','); //value,text
@@ -184,7 +184,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text", outColId);
                 }
-                else if (column.DataType == ColumnDataType.Enum)
+                else if (column.DataType == "Enum")
                 {
                     //获取此条数据列类型为Enum的字段的值，以便之后SelectList的默认选中Selected使用
                     //var enumColValue = await _sqlService.GetSingle(
@@ -203,19 +203,18 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text", enumColValue);
                 }
-                else if (column.DataType == ColumnDataType.CheckBox || column.DataType == ColumnDataType.Radio)
+                else if (column.DataType == "CheckBox")
                 {
                     var checkColValues = columnValueResult.First()[column.Name].ToString().Split(',');
-                    var checkStr = column.SelectRange.Split('|'); //1,啊|2,吧
+                    var checkStr = column.SelectRange.Split(','); //选项1,选项2
                     var items = new List<SelectListItem>();
                     for (int i = 0; i < checkStr.Length; i++)
                     {
-                        var item = checkStr[i].Split(',');
                         items.Add(new SelectListItem
                         {
-                            Selected = checkColValues.Contains(item[0]),
-                            Value = item[0],
-                            Text = item[1],
+                            Selected = checkColValues.Contains(checkStr[i]),
+                            Value = checkStr[i],
+                            Text = checkStr[i],
                         });
                     }
                     ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", checkColValues);
@@ -239,7 +238,7 @@ namespace lkWeb.Areas.Admin.Controllers
             ViewBag.ColumnValue = columnValue;
             foreach (var column in model.TableColumn)
             {
-                if (column.DataType == Service.Enum.ColumnDataType.Out)
+                if (column.DataType == "Out")
                 {
                     var outColValue = await _sysService.GetOutValue(model.Table.Id, column.Name, columnValue[column.Name].ToString());
                     ViewBag.OutColumn[column.Name] = outColValue.data;
@@ -287,8 +286,9 @@ namespace lkWeb.Areas.Admin.Controllers
             var tableData = await _sysService.GetPageData(tableId, columnNames, condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
             var outTypeColumnNames = (await _sysService.GetColumnNames(tableId,
-                "ListVisible=1 and DataType=" + (int)ColumnDataType.Out, "ListOrder")).data.Split(',');
-
+                "ListVisible=1 and DataType=Out", "ListOrder")).data.Split(',');
+            var fileTypeColNames = (await _sysService.GetColumnNames(tableId,
+                "ListVisible=1 and DataType=File", "ListOrder")).data.Split(',');
 
             foreach (var dicList in tableData.data)
             {
@@ -299,6 +299,26 @@ namespace lkWeb.Areas.Admin.Controllers
                     if (outTypeColumnNames.Contains(item.Key))
                     {
                         temp[item.Key] = (await _sysService.GetOutValue(tableId, item.Key, item.Value.ToString())).data;
+                    }
+                    else if (fileTypeColNames.Contains(item.Key))
+                    {
+                        string url = string.Empty;
+                        string text = string.Empty;
+                        string style = string.Empty;
+                        string filePath = Path.Combine(WebHelper.WebRootPath, item.Value.ToString().Replace('/', '\\').TrimStart('\\'));
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            url = item.Value.ToString();
+                            text = "下载";
+                            style = "btn btn-info";
+                        }
+                        else
+                        {
+                            url = "javascript:alert('无效文件')";
+                            text = "无效";
+                            style = "btn btn-danger";
+                        }
+                        temp[item.Key] = $"<a href='{url}' target='_blank' class='{style}' download>{text}</a>";
                     }
                     else
                     {
@@ -412,10 +432,40 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Import(UrlParameter param, IFormFile excelFile)
+        public async Task<IActionResult> Import(UrlParameter param, IFormFile file)
         {
             var tableId = param.id;
-            var result = await _sysService.ImportExcel(tableId, excelFile);
+            var result = await _sysService.ImportExcel(tableId, file);
+            return Json(result);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload(UrlParameter param, IFormFile file)
+        {
+            var result = new Result<string>();
+            var columnId = param.id;
+            var forbiddenFileExt = (await _tableColumnService.GetById(columnId)).data.ForbiddenFileExtension;
+            var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
+            var uploadPath = Path.Combine(WebHelper.UploadPath, dateDir);
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+            string fileExt = Path.GetExtension(file.FileName);
+            if (forbiddenFileExt.IsNotEmpty() && forbiddenFileExt.Split('|').Contains(fileExt.TrimStart('.')))
+            {
+                result.msg = "不允许的文件类型";
+                return Json(result);
+            }
+            string fileName = Path.GetFileNameWithoutExtension(file.FileName) + "_" + DateTime.Now.ToString("yyyyMMddhhmmss") + fileExt;
+            FileInfo _file = new FileInfo(Path.Combine(uploadPath, fileName));
+
+            using (FileStream fs = new FileStream(_file.ToString(), FileMode.Create))
+            {
+                file.CopyTo(fs);
+                fs.Flush();
+            }
+            result.flag = true;
+            result.data = "/" + Path.Combine(WebHelper.UploadDir, dateDir).Replace("\\", "/") + "/" + fileName;
             return Json(result);
         }
 

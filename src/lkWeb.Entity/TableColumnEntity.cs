@@ -24,7 +24,7 @@ namespace lkWeb.Entity
         /// <summary>
         /// 数据类型
         /// </summary>
-        public byte DataType { get; set; }
+        public string DataType { get; set; }
         /// <summary>
         /// 是否必填
         /// </summary>
@@ -96,9 +96,14 @@ namespace lkWeb.Entity
         /// </summary>
         public string SelectRange { get; set; }
         /// <summary>
+        /// 禁止上传的文件类型
+        /// </summary>
+        public string ForbiddenFileExtension { get; set; }
+        /// <summary>
         /// 是否主键
         /// </summary>
         public byte PrimarKey { get; set; }
+
 
         public virtual TableListEntity Table { get; set; }
     }

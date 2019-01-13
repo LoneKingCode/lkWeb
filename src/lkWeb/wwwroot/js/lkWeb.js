@@ -184,6 +184,57 @@ lkWeb.AjaxGet = function () {
 
 }
 
+lkWeb.Upload = function (controlId, url, formParams, successCallback, errorCallback) {
+    var fileObj = document.getElementById(controlId).files[0]; // js 获取文件对象
+    if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+        alert("请选择文件");
+        return;
+    }
+    var formFile = new FormData();
+    formFile.append("file", fileObj); //加入文件对象
+    formFile.append("__RequestVerificationToken", lkWeb.GetCsrfToken());
+    for (var key in formParams) {
+        formFile.append(key, formParams[key])
+    }
+    lkWeb.ShowLoad()
+    var data = formFile;
+    $.ajax({
+        url: url,
+        data: data,
+        type: "Post",
+        dataType: "json",
+        async: true,
+        cache: false,//上传文件无需缓存
+        processData: false,//用于对data参数进行序列化处理 这里必须false
+        contentType: false, //必须
+        success: function (result) {
+            if (result.flag == true) {
+                if (IsFunction(successCallback))
+                    successCallback(result)
+                else
+                    parent.layer('操作成功')
+            }
+            else {
+                if (IsFunction(errorCallback))
+                    errorCallback(result)
+                else {
+                    if (IsNotEmpty(result.msg))
+                        parent.layer.alert(result.msg);
+                    else
+                        parent.layer.alert("操作失败")
+                }
+            }
+            lkWeb.CloseLoad()
+        },
+        error: function (err) {
+            if (IsFunction(errorCallback))
+                errorCallback(result)
+            else
+                parent.layer.alert("请求失败");
+            lkWeb.CloseLoad()
+        }
+    })
+}
 //form validation
 lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
     var option = {
@@ -369,13 +420,3 @@ String.prototype.format = function (args) {
     return result;
 }
 
-function IsEmpty(value) {
-    return !IsNotEmpty(value);
-}
-
-function IsNotEmpty(value) {
-    return value != "" && value != null && value != undefined;
-}
-function IsFunction(func) {
-    return typeof func == "function";
-}

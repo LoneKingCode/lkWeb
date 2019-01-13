@@ -5,15 +5,15 @@
     ViewBag.Title = "编辑列";
 }
 @section Scripts{
-<script type="text/javascript">
+    <script type="text/javascript">
         $(function () {
             $("[data-toggle='tooltip']").tooltip();
             lkWeb.FormValidation($("#lkForm"), function () {
-               lkWeb.RefreshAndClose()
+                lkWeb.RefreshAndClose()
             }, "操作成功")
         })
 
-</script>
+    </script>
 }
 <form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
     @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
@@ -118,13 +118,16 @@
         <div class="col-md-4">
             <input type="text" class="form-control" asp-for="EnumRange" data-toggle="tooltip" title="例如 模块,菜单,按钮" />
         </div>
-        <label class="col-md-2 control-label">单选/多选值范围</label>
+        <label class="col-md-2 control-label">多选值范围</label>
         <div class="col-md-4">
-            <input type="text" class="form-control" asp-for="SelectRange" data-toggle="tooltip" title="例如 1,选项1|2,选项2|3,选项3" />
+            <input type="text" class="form-control" asp-for="SelectRange" data-toggle="tooltip" title="例如 选项1,选项2,选项3" />
         </div>
     </div>
     <div class="form-group">
-
+        <label class="col-md-2 control-label">禁止上传文件类型</label>
+        <div class="col-md-4">
+            <input type="text" class="form-control" asp-for="ForbiddenFileExtension" data-toggle="tooltip" title="例如 aspx|rar|jpg" />
+        </div>
         <label class="col-md-2 control-label">是否主键</label>
         <div class="col-md-4">
             <input type="text" class="form-control" asp-for="PrimarKey" />

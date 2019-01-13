@@ -30,10 +30,8 @@ namespace lkWeb.Service
 
             CreateMap<TableListDto, TableListEntity>().ForMember(u => u.ImportType, e => e.MapFrom(s => (byte)s.ImportType));
             CreateMap<TableListEntity, TableListDto>().ForMember(u => u.ImportType, e => e.MapFrom(s => (TableImportType)s.ImportType));
-
-            CreateMap<TableColumnDto, TableColumnEntity>().ForMember(u => u.DataType, e => e.MapFrom(s => (byte)s.DataType));
-            CreateMap<TableColumnEntity, TableColumnDto>().ForMember(u => u.DataType, e => e.MapFrom(s => (ColumnDataType)s.DataType));
-
+            CreateMap<TableColumnDto, TableColumnEntity>();
+            CreateMap<TableColumnEntity, TableColumnDto>();
             CreateMap<DepartmentEntity, DepartmentDto>();
             CreateMap<DepartmentDto, DepartmentEntity>();
             CreateMap<LoginLogEntity, LoginLogDto>();

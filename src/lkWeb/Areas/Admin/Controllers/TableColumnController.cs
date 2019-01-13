@@ -47,7 +47,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var result = await _tableListService.GetList(item => item.Id > 0);
             ViewBag.TableList = new SelectList(result.data, "Id", "Name");
-            ViewBag.DataTypeList = new SelectList(Enum.GetValues(typeof(ColumnDataType)).Cast<ColumnDataType>());
+            ViewBag.DataTypeList = new SelectList(ColumnType.list);
 
             return View();
         }
@@ -69,7 +69,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
             }
             ViewBag.TableList = new SelectList(items, "Value", "Text");
-            ViewBag.DataTypeList = new SelectList(Enum.GetValues(typeof(ColumnDataType)).Cast<ColumnDataType>());
+            ViewBag.DataTypeList = new SelectList(ColumnType.list);
             return View(colDto);
         }
         #endregion
@@ -106,7 +106,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     description = d.Description,
                     id = d.Id.ToString(),
                     tableName = allTable.ContainsKey(d.TableId) ? allTable[d.TableId] : "无",
-                    dataType = d.DataTypeName,
+                    dataType = d.DataType,
                     addVisible = d.AddVisible == 1 ? "是" : "否",
                     editVisible = d.EditVisible == 1 ? "是" : "否",
                     listVisible = d.ListVisible == 1 ? "是" : "否",

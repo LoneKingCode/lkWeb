@@ -43,7 +43,7 @@
                 {
                     count++;
                     sb.Append($"<td style='width: {Math.Round(100.0 / numPerRow, 2)}%;'>");
-                    if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Out)
+                    if (column.DataType == "Out")
                     {
                         sb.Append(string.Format(tpl, column.Description, ViewBag.OutColumn[column.Name]));
                     }

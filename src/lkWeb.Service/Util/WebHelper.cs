@@ -60,7 +60,13 @@ namespace lkWeb.Service.Util
                 return "Upload";
             }
         }
-
+        public static string TempDir
+        {
+            get
+            {
+                return "Temp";
+            }
+        }
         /// <summary>
         /// 设置Session
         /// </summary>

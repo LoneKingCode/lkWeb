@@ -55,7 +55,11 @@
                 format: 'YYYY-MM-DD HH:mm'
             });
         })
-
+        function uploadFile(fileInputId, inputId, columnId) {
+            lkWeb.Upload(fileInputId, '@Url.Action("Upload")', { 'id': columnId }, function (result) {
+                $("#" + inputId).val(result.data)
+                })
+        }
     </script>
 }
 <form class="form-horizontal" action="@Url.Action("Add",new { id = @Model.Table.Id })" method="post" id="lkForm">
@@ -88,7 +92,7 @@
                 {
                     count++;
                     sb.Append($"<td style='width: {Math.Round(100.0 / numPerRow, 2)}%;'>");
-                    if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Out || column.DataType == lkWeb.Service.Enum.ColumnDataType.Enum)
+                    if (column.DataType == "Out" || column.DataType =="Enum")
                     {
                         var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], new { @class = "form-control  chosen-radio" });
                         var writer = new System.IO.StringWriter();
@@ -97,36 +101,35 @@
                         sb.Append(string.Format(selectTpl, column.Description, sltHtml));
                     }
 
-                    else if (column.DataType == lkWeb.Service.Enum.ColumnDataType.CheckBox || column.DataType == lkWeb.Service.Enum.ColumnDataType.Radio)
+                    else if (column.DataType == "CheckBox")
                     {
-                        var type = column.DataType == lkWeb.Service.Enum.ColumnDataType.CheckBox ? "checkbox" : "radio";
-                        var htmlAttr = new Object();
-                        if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Radio)
-                        {
-                            htmlAttr = new { @class = "chosen-" + type, id = "chosen-" + column.Name };
-                        }
-                        else
-                        {
-                            htmlAttr = new { @class = "chosen-" + type, multiple = "multiple", id = "chosen-" + column.Name };
-                        }
+                        var htmlAttr = new { @class = "chosen-checkbox", multiple = "multiple", id = "chosen-" + column.Name };
                         var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], htmlAttr);
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
                         var sltHtml = writer.ToString();
                         sb.Append(string.Format(selectTpl, column.Description, sltHtml));
                     }
-                    else if (column.DataType == lkWeb.Service.Enum.ColumnDataType.Date || column.DataType == lkWeb.Service.Enum.ColumnDataType.Datetime2)
+                    else if (column.DataType =="Date" || column.DataType == "Datetime")
                     {
-                        string _class = column.DataType == lkWeb.Service.Enum.ColumnDataType.Date ? "datepicker-date" : "datepicker-datetime";
-                        string type = column.DataType == lkWeb.Service.Enum.ColumnDataType.Date ? "日期" : "时间";
+                        string _class = column.DataType == "Date" ? "datepicker-date" : "datepicker-datetime";
+                        string type = column.DataType == "Date" ? "日期" : "时间";
                         sb.Append(string.Format(dateTpl, column.Description, _class, column.Name, type,
                             column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : ""));
 
                     }
+                    else if (column.DataType =="File")
+                    {
+                        sb.Append(string.Format(inputTemplate, column.Description, column.Name,
+                        column.MaxLength, $" readonly placeholder='请选择文件' id='{column.Name}'" +
+                        (column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "")
+                        + $" onclick=\"$('#file{column.Name}').click()\" "));
+                        sb.Append($"<input type='file' id='file{column.Name}' onchange='uploadFile(\"file{column.Name}\",\"{column.Name}\",\"{column.Id}\")' style='display:none;'/>");
+                    }
                     else
                     {
                         sb.Append(string.Format(inputTemplate, column.Description, column.Name,
-                        column.MaxLength, column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : ""));
+                        column.MaxLength, $" placeholder='请输入{column.Description}' " + (column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "")));
                     }
                     sb.Append("</td>");
                     if (count % numPerRow == 0)
@@ -148,6 +151,7 @@
                         <div class="col-md-3 col-md-offset-5">
                             <button type="submit" class="btn btn-success">确定</button>
                             <button type="button" class="btn btn-default" onclick="lkWeb.Close()">返回</button>
+
                         </div>
                     </div>
                 </td>

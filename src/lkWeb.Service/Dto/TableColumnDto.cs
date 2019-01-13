@@ -23,9 +23,8 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 数据类型
         /// </summary>
-        public ColumnDataType DataType { get; set; }
-        public string DataTypeName { get { return DataType.ToString(); } }
-        /// <summary>
+        public string DataType { get; set; }
+         /// <summary>
         /// 是否必填
         /// </summary>
         public byte Required { get; set; }
@@ -95,6 +94,10 @@ namespace lkWeb.Service.Dto
         /// 单选/多选值范围
         /// </summary>
         public string SelectRange { get; set; }
+        /// <summary>
+        /// 禁止上传的文件类型
+        /// </summary>
+        public string ForbiddenFileExtension { get; set; }
         /// <summary>
         /// 是否主键
         /// </summary>
