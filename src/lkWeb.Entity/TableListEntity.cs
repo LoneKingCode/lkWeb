@@ -87,6 +87,10 @@ namespace lkWeb.Entity
         /// 删除表名
         /// </summary>
         public string DeleteTableName { get; set; }
+        /// <summary>
+        /// JavaScript脚本 onload时执行
+        /// </summary>
+        public string JavaScript { get; set; }
 
         public virtual ICollection<TableColumnEntity> TableColumns { get; set; }
 

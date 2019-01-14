@@ -28,7 +28,14 @@
                     lkTable.draw(false);//刷新datatable
                 })
             })
+
+          customScript()
+
         });
+
+        function customScript() {
+            @Html.Raw(Model.Table.JavaScript)
+        }
 
         function AddModel() {
             lkWeb.GoAction("admin", "viewlist", "add", "@Model.Table.Id", true, '添加', '@ViewBag.addEditWidth', '@ViewBag.addEditHeight');
@@ -178,7 +185,7 @@
         {
             <button type="button" class="btn btn-primary" onclick="DownloadTemplate()">下载导入模板</button>
         }
-        if(!string.IsNullOrEmpty(btnModel.TopExtendFunction))
+        if (!string.IsNullOrEmpty(btnModel.TopExtendFunction))
         {
             @Html.Raw(btnModel.TopExtendFunction)
         }

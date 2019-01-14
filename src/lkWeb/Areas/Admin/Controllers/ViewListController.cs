@@ -286,9 +286,9 @@ namespace lkWeb.Areas.Admin.Controllers
             var tableData = await _sysService.GetPageData(tableId, columnNames, condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
             var outTypeColumnNames = (await _sysService.GetColumnNames(tableId,
-                "ListVisible=1 and DataType=Out", "ListOrder")).data.Split(',');
+                "ListVisible=1 and DataType='Out'", "ListOrder")).data.Split(',');
             var fileTypeColNames = (await _sysService.GetColumnNames(tableId,
-                "ListVisible=1 and DataType=File", "ListOrder")).data.Split(',');
+                "ListVisible=1 and DataType='File'", "ListOrder")).data.Split(',');
 
             foreach (var dicList in tableData.data)
             {
