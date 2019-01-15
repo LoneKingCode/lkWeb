@@ -102,6 +102,10 @@ namespace lkWeb.Service.Dto
         /// 是否主键
         /// </summary>
         public byte PrimarKey { get; set; }
+        /// <summary>
+        /// 验证规则
+        /// </summary>
+        public string ValidationRule { get; set; }
 
     }
 }

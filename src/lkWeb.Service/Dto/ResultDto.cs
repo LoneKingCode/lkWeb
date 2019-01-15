@@ -52,10 +52,14 @@ namespace lkWeb.Service.Dto
         /// 返回的对象
         /// </summary>
         public T data { get; set; }
-
+        private string _msg { get; set; }
         /// <summary>
         /// 返回的提示消息
         /// </summary>
-        public string msg { get; set; }
+        public string msg
+        {
+            get { return _msg.TrimEnd(',','，'); }
+            set { _msg = value; }
+        }
     }
 }

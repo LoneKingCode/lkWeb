@@ -241,17 +241,14 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
         datatype: "json",
         success: function (data) {
             if (data.flag == true) {
-                if (IsNotEmpty(successMsg)) {
-                    layer.alert(successMsg + ',' + data.msg);
-                    setTimeout(function () {
-                        if (IsFunction(successCallBack))
-                            successCallBack();
-                    }, 1200)
-                }
-                else {
+                if (IsNotEmpty(successMsg))
+                    layer.alert(successMsg);
+                else if (IsNotEmpty(data.msg))
+                    layer.alert(data.msg);
+                setTimeout(function () {
                     if (IsFunction(successCallBack))
                         successCallBack();
-                }
+                }, 1200)
             }
             else {
                 layer.alert('操作失败,' + data.msg);

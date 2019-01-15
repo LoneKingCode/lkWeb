@@ -578,15 +578,14 @@ namespace lkWeb.Service.Abstracts
                 result.msg = "不允许导出";
                 return result;
             }
-            string webRootPath = WebHelper.WebRootPath;
             var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
-            var uploadDateDir = Path.Combine(WebHelper.UploadDir, dateDir);
-            var uploadPath = Path.Combine(webRootPath, uploadDateDir);
+            var tempPath = Path.Combine(WebHelper.UploadPath, WebHelper.TempDir);
+            var uploadPath = Path.Combine(tempPath, dateDir);
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
 
             string fileName = $"{tableDto.Description + "_" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
-            var fileUrl = Path.Combine("\\", uploadDateDir, fileName);
+            var fileUrl = Path.Combine("\\", Path.Combine(WebHelper.UploadDir, WebHelper.TempDir, dateDir), fileName);
 
             string filePath = Path.Combine(uploadPath, fileName);
             FileInfo file = new FileInfo(filePath);
@@ -597,6 +596,11 @@ namespace lkWeb.Service.Abstracts
                 // 添加worksheet
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
                 var colDtos = await _tableColumnService.GetList(item => item.TableId == tableId && item.ExportVisible == 1);
+                if (colDtos.data.Count() < 1)
+                {
+                    result.msg += "导出可见的列数量为" + colDtos.data.Count();
+                    return result;
+                }
                 int rowNum = 1;
                 //添加表头
                 for (int i = 1; i <= colDtos.data.Count; i++)
@@ -667,13 +671,13 @@ namespace lkWeb.Service.Abstracts
 
             string webRootPath = WebHelper.WebRootPath;
             var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
-            var uploadDateDir = Path.Combine(WebHelper.UploadDir, dateDir);
-            var uploadPath = Path.Combine(webRootPath, uploadDateDir);
+            var tempPath = Path.Combine(WebHelper.UploadPath, WebHelper.TempDir);
+            var uploadPath = Path.Combine(tempPath, dateDir);
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
 
             string fileName = $"{tableDto.Description + "_导入模板" + DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
-            var fileUrl = Path.Combine("\\", uploadDateDir, fileName);
+            var fileUrl = Path.Combine("\\", Path.Combine(WebHelper.UploadDir, WebHelper.TempDir, dateDir), fileName);
 
             string filePath = Path.Combine(uploadPath, fileName);
             FileInfo file = new FileInfo(filePath);
@@ -683,6 +687,11 @@ namespace lkWeb.Service.Abstracts
                 // 添加worksheet
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
                 var colDtos = await _tableColumnService.GetList(item => item.TableId == tableId && item.ImportVisible == 1);
+                if (colDtos.data.Count() < 1)
+                {
+                    result.msg += "导入可见的列数量为" + colDtos.data.Count();
+                    return result;
+                }
                 int rowNum = 1;
                 //添加表头
                 for (int i = 1; i <= colDtos.data.Count; i++)

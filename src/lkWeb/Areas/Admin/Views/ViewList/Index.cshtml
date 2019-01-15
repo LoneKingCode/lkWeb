@@ -76,7 +76,10 @@
                                   window.open(data.data)
                               }
                               else {
-                                  parent.layer.alert("操作失败");
+                                  if (IsNotEmpty(data.msg))
+                                      parent.layer.alert(data.msg)
+                                  else
+                                    parent.layer.alert("操作失败");
                               }
                           },
                           err: function (err) {
@@ -100,7 +103,10 @@
                                   window.open(data.data)
                               }
                               else {
-                                  parent.layer.alert("操作失败");
+                                  if (IsNotEmpty(data.msg))
+                                      parent.layer.alert(data.msg)
+                                  else
+                                      parent.layer.alert("操作失败");
                               }
                           },
                           err: function (err) {

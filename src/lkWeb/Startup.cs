@@ -185,7 +185,7 @@ namespace lkWeb
             };
             app.UseHangfireDashboard("/jobs", options);
             //初始数据库数据
-            SeedData.Initialize(app.ApplicationServices);
+            //SeedData.Initialize(app.ApplicationServices);
         }
     }
 }
