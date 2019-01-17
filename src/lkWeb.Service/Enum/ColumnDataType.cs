@@ -17,6 +17,7 @@ namespace lkWeb.Service.Enum
             "Enum",
             "CheckBox",
             "File",
+            "Custom",
         };
     }
 

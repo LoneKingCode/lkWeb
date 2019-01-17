@@ -99,9 +99,13 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public string ForbiddenFileExtension { get; set; }
         /// <summary>
+        /// 自定义内容
+        /// </summary>
+        public string CustomContent { get; set; }
+        /// <summary>
         /// 是否主键
         /// </summary>
-        public byte PrimarKey { get; set; }
+        public byte PrimaryKey { get; set; }
         /// <summary>
         /// 验证规则
         /// </summary>

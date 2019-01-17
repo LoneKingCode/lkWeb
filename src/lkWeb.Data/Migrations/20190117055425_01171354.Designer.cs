@@ -11,9 +11,10 @@ using System;
 namespace lkWeb.Data.Migrations
 {
     [DbContext(typeof(lkWebContext))]
-    partial class lkWebContextModelSnapshot : ModelSnapshot
+    [Migration("20190117055425_01171354")]
+    partial class _01171354
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,7 +259,7 @@ namespace lkWeb.Data.Migrations
 
                     b.Property<string>("OutSql");
 
-                    b.Property<byte>("PrimaryKey");
+                    b.Property<byte>("PrimarKey");
 
                     b.Property<byte>("Required");
 

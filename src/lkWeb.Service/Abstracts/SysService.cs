@@ -320,9 +320,9 @@ namespace lkWeb.Service.Abstracts
             var colNames = outSqlArr[0].Split(','); //value,text
             var tableName = outSqlArr[1];
             var condition = outSqlArr[2];
-            var primarKey = colNames[0]; //作为下拉菜单value的列
+            var primaryKey = colNames[0]; //作为下拉菜单value的列
             var textKey = colNames[1]; //作为下拉菜单的text的列
-            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}", textKey, tableName, primarKey, outId));
+            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}", textKey, tableName, primaryKey, outId));
             result.data = value.IsEmpty() ? "无" : value;
             result.flag = true;
             return result;
@@ -349,9 +349,9 @@ namespace lkWeb.Service.Abstracts
             var colNames = outSqlArr[0].Split(','); //value,text
             var tableName = outSqlArr[1];
             var condition = outSqlArr[2];
-            var primarKey = colNames[0]; //作为下拉菜单value的列
+            var primaryKey = colNames[0]; //作为下拉菜单value的列
             var textKey = colNames[1]; //作为下拉菜单的text的列
-            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'", primarKey, tableName, textKey, outValue));
+            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'", primaryKey, tableName, textKey, outValue));
             result.data = value;
             result.flag = true;
             return result;
@@ -461,7 +461,7 @@ namespace lkWeb.Service.Abstracts
                                     }
                                 }
                             }
-                            else if (currentColDto.PrimarKey == 1)
+                            else if (currentColDto.PrimaryKey == 1)
                             {
                                 var exist = (await _sqlService.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
                                 if (tableDto.ImportType == TableImportType.插入)
@@ -517,13 +517,13 @@ namespace lkWeb.Service.Abstracts
                 else if (tableDto.ImportType == TableImportType.更新)
                 {
                     string sqlTpl = "update {0} set {1} where {2}";
-                    var primarKeyResult = await _tableColumnService.GetList(c => c.TableId == tableId && c.PrimarKey == 1);
-                    if (primarKeyResult.data == null)
+                    var primaryKeyResult = await _tableColumnService.GetList(c => c.TableId == tableId && c.PrimaryKey == 1);
+                    if (primaryKeyResult.data == null)
                     {
                         result.msg = "请设置主键，因为导入类型为更新";
                         return result;
                     }
-                    var primarKey = primarKeyResult.data.Select(c => c.Name).ToList();
+                    var primaryKey = primaryKeyResult.data.Select(c => c.Name).ToList();
                     //构造更新语句
                     for (int row = 0; row < colValues.Count(); row++)
                     {
@@ -533,7 +533,7 @@ namespace lkWeb.Service.Abstracts
                         {
                             var colName = engColNames[i];
                             var colValue = colValues[row];
-                            if (primarKey.Contains(colName)) //如果这一列为主键 要放到where条件后的
+                            if (primaryKey.Contains(colName)) //如果这一列为主键 要放到where条件后的
                             {
                                 condition += $"{colName} = '{colValue[i]}' and ";
                                 continue;

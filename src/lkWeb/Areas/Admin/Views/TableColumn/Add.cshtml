@@ -70,15 +70,16 @@
         <div class="col-md-4">
             <select class="form-control" name="ValidationRule">
                 <option value="" selected="selected">无</option>
-                <option value="letterNumber">字母数字</option>
-                <option value="cnLetterNumber">中文字母数字</option>
-                <option value="chinese">中文</option>
-                <option value="isEmail">邮箱</option>
-                <option value="isIdCard">身份证号</option>
-                <option value="isMobile">手机号</option>
-                <option value="isTel">电话号码</option>
-                <option value="isContactPhone">联系电话(手机/电话)</option>
-                <option value="isZipCode">邮政编码</option>
+                <option value="letterNumber='true'">字母数字</option>
+                <option value="cnLetterNumber='true'">汉字字母数字</option>
+                <option value="chinese='true'">汉字</option>
+                <option value="chineseAll='true'">汉字和中文符号</option>
+                <option value="isEmail='true'">邮箱</option>
+                <option value="isIdCard='true'">身份证号</option>
+                <option value="isMobile='true'">手机号</option>
+                <option value="isTel='true'">电话号码</option>
+                <option value="isContactPhone='true'">联系电话(手机/电话)</option>
+                <option value="isZipCode='true'">邮政编码</option>
             </select>
         </div>
 
@@ -126,6 +127,12 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="col-md-2 control-label">自定义内容</label>
+        <div class="col-md-7">
+            <textarea class="form-control" name="CustomContent" rows="3" data-toggle="tooltip" title="可选参数{UserId} {Id}"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-md-2 control-label">枚举值范围</label>
         <div class="col-md-4">
             <input type="text" class="form-control" name="EnumRange" data-toggle="tooltip" title="例如 模块,菜单,按钮" />
@@ -142,7 +149,7 @@
         </div>
         <label class="col-md-2 control-label">是否主键</label>
         <div class="col-md-4">
-            <input type="text" class="form-control" name="PrimarKey" />
+            <input type="text" class="form-control" name="PrimaryKey" />
         </div>
     </div>
     <div class="form-group">

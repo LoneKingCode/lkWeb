@@ -3,15 +3,21 @@ jQuery.validator.addMethod("letterNumber", function (value, element) {
     return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
 }, "只能包括英文字母和数字");
 
-// 中文字母数字
+// 汉字字母数字
 jQuery.validator.addMethod("cnLetterNumber", function (value, element) {
-    return this.optional(element) || /^[u0391-uFFE5w]+$/.test(value);
-}, "只能包括中文,字母和数字");
+    log(value)
+    return this.optional(element) || /^[\u4E00-\u9FA5a-zA-Z0-9]+$/.test(value);
+}, "只能包括汉字,字母和数字");
 
-// 中文
+// 汉字
 jQuery.validator.addMethod("chinese", function (value, element) {
-    return this.optional(element) || /[^/u4e00-/u9fa5]/.test(value);
-}, "只能包括中文,字母和数字");
+    return this.optional(element) || /^[\u4E00-\u9FA5]+$/.test(value);
+}, "只能包括汉字");
+
+// 汉字和中文符号
+jQuery.validator.addMethod("chineseAll", function (value, element) {
+    return this.optional(element) || /^[\u3400-\u4DB5\u4E00-\u9FA5\u9FA6-\u9FBB\uF900-\uFA2D\uFA30-\uFA6A\uFA70-\uFAD9\uFF00-\uFFEF\u2E80-\u2EFF\u3000-\u303F\u31C0-\u31EF]+$/.test(value);
+}, "只能包括汉字和中文符号");
 
 // 邮箱
 jQuery.validator.addMethod("isEmail", function (value, element) {

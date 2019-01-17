@@ -132,7 +132,7 @@
                 { "mData": "rowNum", "sClass": "text-center" },
                 @{
                     StringBuilder columnStr = new StringBuilder();
-                    string str = "{{\"mData\": \"{0}\", \"sClass\": \"text-center\"}},";
+                    string str = "{{\"mData\": \"{0}\", \"sClass\": \"text-center\",\"bSortable\":{1}}},";
                     string hiddenStr = "{{\"mData\": \"{0}\",\"visible\": false, \"sClass\": \"text-center\"}},";
                     foreach (var column in Model.TableColumn)
                     {
@@ -140,9 +140,15 @@
                         {
                             columnStr.Append(string.Format(hiddenStr, column.Name));
                         }
+                        else if(column.DataType=="Custom")
+                        {
+
+                            columnStr.Append(string.Format(str, column.Name,"false"));
+
+                        }
                         else
                         {
-                            columnStr.Append(string.Format(str, column.Name));
+                            columnStr.Append(string.Format(str, column.Name, "true"));
                         }
                     }
                      @Html.Raw(columnStr.ToString());

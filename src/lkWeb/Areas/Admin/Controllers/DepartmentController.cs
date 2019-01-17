@@ -29,32 +29,17 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Add(UrlParameter param)
         {
             var parentId = param.id;
-            if (parentId > 0)
-            {
-                ViewBag.ParentId = parentId;
-                ViewBag.ParentName = (await _departmentService.GetById(parentId)).data.Name;
-            }
-            else
-            {
-                ViewBag.ParentId = 0;
-                ViewBag.ParentName = "无";
-            }
+            var result = await _departmentService.GetList(item => item.Id > 0);
+            ViewBag.Departments = new SelectList(result.data, "Id", "Name", parentId);
             return View();
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             var department = (await _departmentService.GetById(param.id)).data;
             var parentId = department.ParentId;
-            if (parentId > 0)
-            {
-                var dto = (await _departmentService.GetById(parentId)).data;
-                if (dto == null)
-                    ViewBag.ParentName = "无";
-                else
-                    ViewBag.ParentName = dto.Name;
-            }
-            else
-                ViewBag.ParentName = "无";
+            var result = await _departmentService.GetList(item => item.Id != param.id);
+
+            ViewBag.Departments = new SelectList(result.data, "Id", "Name", parentId);
             return View(department);
         }
         #endregion

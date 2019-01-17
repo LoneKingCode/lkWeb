@@ -20,7 +20,7 @@
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.RefreshAndClose()
-            }, "操作成功")
+            })
 
             //下拉单选
             $('.chosen-radio').chosen({
@@ -129,7 +129,8 @@
                     else
                     {
                         sb.Append(string.Format(inputTemplate, column.Description, column.Name,
-                        column.MaxLength, $" placeholder='请输入{column.Description}' " + (column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "")));
+                        column.MaxLength, $" placeholder='请输入{column.Description}' " + column.ValidationRule
+                        + (column.Required == 1 ? " data-val-required=\"" + column.Description + "不能为空\"" : "")));
                     }
                     sb.Append("</td>");
                     if (count % numPerRow == 0)
@@ -142,17 +143,6 @@
                 @Html.Raw(sb.ToString());
             }
 
-            <tr>
-                <td>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">dddd</label><div class="col-md-9">
-                            <input type="text" class="form-control" name="ATest" data-val="true" placeholder="请输入" data-val-maxlength="长度不能超过8000个字符"
-                                   data-val-maxlength-max="11" stringCheck="true" data-val-required="不能为空">
-                            <span class="field-validation-valid" data-valmsg-for="ATest" data-valmsg-replace="true"></span>
-                        </div>
-                    </div>
-                </td>
-            </tr>
         </tbody>
         <tfoot>
             <tr>

@@ -82,15 +82,19 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
                 },
                 success: function (result) {
                     if (result.flag == true) {
-                        parent.layer.alert("删除成功")
-                        if (table != null && table != undefined)
-                            table.draw(false);//刷新datatable
+                        if (IsNotEmpty(result.msg))
+                            parent.layer.alert(result.msg)
                         else
+                            parent.layer.alert("删除成功")
+                        if (IsNotEmpty(table))
+                            table.draw(false);//刷新datatable
+                        else {
                             window.location.reload();
+                        }
                     }
                     else {
                         if (IsNotEmpty(result.msg))
-                            parent.layer.alert("操作失败," + result.msg);
+                            parent.layer.alert(result.msg);
                         else
                             parent.layer.alert("删除失败");
                     }

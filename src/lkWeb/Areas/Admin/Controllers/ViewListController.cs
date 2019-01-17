@@ -88,7 +88,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     var colNames = outSql[0].Split(','); //value,text
                     var tableName = outSql[1];
                     var condition = outSql[2];
-                    var primarKey = colNames[0]; //作为下拉菜单value的列
+                    var primaryKey = colNames[0]; //作为下拉菜单value的列
                     var textKey = colNames[1]; //作为下拉菜单的text的列
                     var queryResult = await _sqlService.Query(string.Format(sql, outSql[0], tableName, condition));
                     var items = new List<SelectListItem>();
@@ -102,14 +102,14 @@ namespace lkWeb.Areas.Admin.Controllers
                         items.Add(new SelectListItem
                         {
 
-                            Value = row[primarKey].ToString(),
+                            Value = row[primaryKey].ToString(),
                             Text = row[textKey].ToString(),
                         });
 
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
                 }
-                else if (column.DataType =="Enum")
+                else if (column.DataType == "Enum")
                 {
                     var enumStr = column.EnumRange.Split(','); //value,value
                     var items = new List<SelectListItem>();
@@ -161,7 +161,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     var colNames = outSql[0].Split(','); //value,text
                     var tableName = outSql[1];
                     var condition = outSql[2];
-                    var primarKey = colNames[0]; //作为下拉菜单value的列
+                    var primaryKey = colNames[0]; //作为下拉菜单value的列
                     var textKey = colNames[1]; //作为下拉菜单的text的列
                     var queryResult = await _sqlService.Query(string.Format(sql, outSql[0], tableName, condition));
                     var items = new List<SelectListItem>();
@@ -177,7 +177,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     {
                         items.Add(new SelectListItem
                         {
-                            Value = row[primarKey].ToString(),
+                            Value = row[primaryKey].ToString(),
                             Text = row[textKey].ToString(),
                         });
 
@@ -289,7 +289,8 @@ namespace lkWeb.Areas.Admin.Controllers
                 "ListVisible=1 and DataType='Out'", "ListOrder")).data.Split(',');
             var fileTypeColNames = (await _sysService.GetColumnNames(tableId,
                 "ListVisible=1 and DataType='File'", "ListOrder")).data.Split(',');
-
+            var customColNames = (await _sysService.GetColumnNames(tableId,
+    "ListVisible=1 and DataType='Custom'", "ListOrder")).data.Split(',');
             foreach (var dicList in tableData.data)
             {
                 Dictionary<string, object> temp = new Dictionary<string, object>();
@@ -299,6 +300,11 @@ namespace lkWeb.Areas.Admin.Controllers
                     if (outTypeColumnNames.Contains(item.Key))
                     {
                         temp[item.Key] = (await _sysService.GetOutValue(tableId, item.Key, item.Value.ToString())).data;
+                    }
+                    if(customColNames.Contains(item.Key))
+                    {
+                        var model = (await _tableColumnService.GetByExp(x => x.Name == item.Key && x.TableId == tableId)).data;
+                        temp[item.Key] = model.CustomContent.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
                     }
                     else if (fileTypeColNames.Contains(item.Key))
                     {
@@ -352,7 +358,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var tableColumns = columnResult.data;
             var addModel = new Dictionary<string, string>();
             var result = new Result<bool>();
-            var pk_cols = (await _tableColumnService.GetList(item => item.PrimarKey == 1)).data.Select(x => x.Name);
+            var pk_cols = (await _tableColumnService.GetList(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
             foreach (var column in tableColumns)
             {
                 var exist = "0";
@@ -387,7 +393,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var table = (await _tableListService.GetById(tableId)).data;
 
             var updateModel = new Dictionary<string, string>();
-            var pk_cols = (await _tableColumnService.GetList(item => item.PrimarKey == 1)).data.Select(x => x.Name);
+            var pk_cols = (await _tableColumnService.GetList(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
             var result = new Result<bool>();
 
             foreach (var column in tableColumns)
