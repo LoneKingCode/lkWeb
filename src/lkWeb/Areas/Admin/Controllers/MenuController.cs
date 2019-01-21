@@ -124,7 +124,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, MenuDto menu)
         {
-            SetMenu(menu);
+            await SetMenu(menu);
 
             var result = await _menuService.Add(menu);
 

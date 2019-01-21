@@ -34,9 +34,7 @@
                  });
             })
         })
-        function SelectModule(value) {
-            $("#txtModuleId").val(value);
-        }
+
         function ViewIcon() {
             var url = " http://www.fontawesome.com.cn/faicons/";
             lkWeb.OpenLayer(url, "图标库", "80%", "500px");
@@ -48,8 +46,7 @@
     <div class="form-group">
         <label class="col-md-3 control-label">所属模块</label>
         <div class="col-md-7">
-            <input name="ModuleId" type="hidden" id="txtModuleId" value="@ViewBag.ModuleId" />
-            @Html.DropDownList("ModuleId", (SelectList)ViewBag.Modules, new { @class = "form-control", @onchange = "SelectModule(this.value)" })
+            @Html.DropDownList("ModuleId", (SelectList)ViewBag.Modules, new { @class = "form-control" })
         </div>
     </div>
     <div class="form-group">
