@@ -9,6 +9,11 @@ using Microsoft.AspNetCore.Authorization;
 using lkWeb.Core.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using lkWeb.Filter;
+using Microsoft.Extensions.PlatformAbstractions;
+using lkWeb.Service.Util;
+using lkWeb.Service.Dto;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -39,6 +44,14 @@ namespace lkWeb.Areas.Admin.Controllers
         public IActionResult Welcome()
         {
             return View();
+        }
+        [HttpPost]
+        public IActionResult GetServerInfo()
+        {
+            var result = new Result<ServerInfo>();
+            result.flag = true;
+            result.data = SysHelper.GetServerInfo();
+            return Json(result);
         }
         [AllowAnonymous]
         public IActionResult AccessDenied(string returnUrl)

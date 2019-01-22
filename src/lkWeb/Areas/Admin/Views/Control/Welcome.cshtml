@@ -1,7 +1,151 @@
 ﻿@{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title = "欢迎欢迎~";
+    ViewBag.Title = "服务器信息";
 }
 
+@section Styles{
+    <style type="text/css">
+        #baseInfo label {
+            display: block;
+        }
+    </style>
+}
 
-欢迎来到德莱文联盟
+@section Scripts{
+    <script>
+
+        function getInfo() {
+            lkWeb.AjaxPost('@Url.Action("GetServerInfo")', '', function (res) {
+                var data = res.data
+                $("#baseInfo").html($("#infoTpl").html().format(
+                    {
+                        MachineName: data.machineName,
+                        OsVersionString: data.osVersionString,
+                        CurrentDirectory: data.currentDirectory,
+                        ServerIp: data.serverIp,
+                        ServerUrl: data.serverUrl,
+                        ServerPort: data.serverPort,
+                        RuntimeFramework: data.runtimeFramework,
+                        LoggedUserName: data.loggedUserName,
+                        CpuUsed: data.cpuUsed,
+                        DiskWrite: data.diskWrite,
+                        DiskRead: data.diskRead,
+                        DiskReadWrite: data.diskReadWrite,
+                        MemoryUsed: data.memoryUsed,
+                        MemoryAvailable: data.memoryAvailable,
+                        Sent: data.sent,
+                        Received:data.received,
+                    }
+                ))
+                $("#networkInfo").empty()
+                for (var i = 0; i < data.networks.length; i++) {
+                    var item = data.networks[i]
+                    $("#networkInfo").append($("#networkTpl").html().format(
+                        {
+                            Name: item.name,
+                            Sent: item.sent,
+                            Received:item.received,
+
+                        }
+                    ))
+                }
+                $("#diskInfo").empty()
+                for (var i = 0; i < data.disks.length; i++) {
+                    var item = data.disks[i]
+                    $("#diskInfo").append($("#diskTpl").html().format(
+                        {
+                            Name:item.name,
+                            DiskWrite: item.diskWrite,
+                            DiskRead: item.diskRead,
+                            DiskReadWrite: item.diskReadWrite,
+                            TotalSpace: item.totalSpace,
+                            TotalSpaceN: item.totalSpaceN,
+                            UsedSpaceN: item.usedSpaceN,
+                            UsedSpace: item.usedSpace,
+                            FreeSpaceN: item.freeSpaceN,
+                            FreeSpace: item.freeSpace,
+                        }
+                    ))
+                }
+            }, function (res) {
+                //error
+            })
+        }
+
+        setInterval(function () {
+            getInfo()
+        }, 3000)
+    </script>
+    <script type="text/template" id="infoTpl">
+        <label>服务器名称:{MachineName}</label>
+        <label>操作系统:{OsVersionString}</label>
+        <label>目录物理路径:{CurrentDirectory}</label>
+        <label>服务器IP:{ServerIp}</label>
+        <label>网站域名:{ServerUrl}</label>
+        <label>网站端口:{ServerPort}</label>
+        <label>.NET框架版本:{RuntimeFramework}</label>
+        <label>服务器当前登陆用户:{LoggedUserName}</label>
+        <label>CPU使用率:{CpuUsed}</label>
+        <label>总硬盘写入:{DiskWrite}</label>
+        <label>总硬盘读取:{DiskRead}</label>
+        <label>总硬盘传输:{DiskReadWrite}</label>
+        <label>已用内存:{MemoryUsed}</label>
+        <label>可用内存:{MemoryAvailable}</label>
+    </script>
+    <script type="text/template" id="networkTpl">
+        <div>
+            <label>网卡名称:{Name}</label>
+            <label>上传速度:{Sent}</label>
+            <label>下载速度:{Received}</label>
+        </div>
+    </script>
+    <script type="text/template" id="diskTpl">
+        <div>
+            <label>磁盘:{Name}</label>
+            <label>总空间:{TotalSpace}</label>
+            <label>剩余空间:{FreeSpaceN}({FreeSpace})</label>
+            <label>已使用空间:{UsedSpaceN}({UsedSpace})</label> <br />
+            <label>读取速度:{DiskRead}</label>
+            <label>写入速度:{DiskWrite}</label>
+            <label>传输速度:{DiskReadWrite}</label>
+        </div>
+    </script>
+}
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    基本信息
+                </h3>
+            </div>
+            <div class="panel-body" id="baseInfo">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    网卡信息
+                </h3>
+            </div>
+            <div class="panel-body" id="networkInfo">
+
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    磁盘信息
+                </h3>
+            </div>
+            <div class="panel-body" id="diskInfo">
+
+            </div>
+        </div>
+    </div>
+
+</div>

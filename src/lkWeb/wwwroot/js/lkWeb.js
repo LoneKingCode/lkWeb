@@ -165,7 +165,7 @@ lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
             success: function (result) {
                 if (result.flag == true) {
                     if (IsFunction(successCallBack))
-                        successCallBack();
+                        successCallBack(result);
                     else
                         parent.layer.alert("操作成功");
                 }
@@ -179,7 +179,7 @@ lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
             error: function (err) {
                 parent.layer.alert("操作失败");
                 if (IsFunction(errorCallBack))
-                    errorCallBack();
+                    errorCallBack(result);
                 console.log(err);
             }
         })

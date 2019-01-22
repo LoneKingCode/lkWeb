@@ -20,9 +20,11 @@
     <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.3" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
     <PackageReference Include="SimpleInjector" Version="4.3.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
