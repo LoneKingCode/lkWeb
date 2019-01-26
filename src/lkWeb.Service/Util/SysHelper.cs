@@ -39,9 +39,14 @@ namespace lkWeb.Service.Util
     {
         public string Name { get; set; }
         public string TotalSpace { get; set; }
+        /// <summary>
+        /// 可用空间(数字)
+        /// </summary>
         public string FreeSpaceN { get; set; }
         public string UsedSpaceN { get; set; }
-
+        /// <summary>
+        /// 可用空间 百分比
+        /// </summary>
         public string FreeSpace { get; set; }
         public string UsedSpace { get; set; }
         public string DiskRead { get; set; }
@@ -73,12 +78,12 @@ namespace lkWeb.Service.Util
             info.RuntimeFramework = PlatformServices.Default.Application.RuntimeFramework.FullName;
             info.LoggedUserName = System.Environment.UserName;
 
-            info.CpuUsed = Math.Round(cpuCounter.NextValue(), 2, MidpointRounding.AwayFromZero) + "%";
-            info.DiskRead = Math.Round(diskReadCounter.NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB/秒";
-            info.DiskWrite = Math.Round(diskWriteCounter.NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB/秒";
-            info.DiskReadWrite = Math.Round(diskReadWriteCounter.NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB/秒";
-            info.MemoryUsed = Math.Round(memoryUsedCounter.NextValue(), 2, MidpointRounding.AwayFromZero) + "%";
-            info.MemoryAvailable = Math.Round(memoryAvaliableCounter.NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB";
+            info.CpuUsed = Math.Round(cpuCounter.NextValue(), 2, MidpointRounding.AwayFromZero).ToString();
+            info.DiskRead = diskReadCounter.NextValue().ToString();
+            info.DiskWrite = diskWriteCounter.NextValue().ToString();
+            info.DiskReadWrite = diskReadWriteCounter.NextValue().ToString();
+            info.MemoryUsed = Math.Round(memoryUsedCounter.NextValue(), 2, MidpointRounding.AwayFromZero).ToString();
+            info.MemoryAvailable = memoryAvaliableCounter.NextValue().ToString();
             info.Disks = GetDiskInfo();
             info.Networks = GetNetworkInfo();
             return info;
@@ -100,8 +105,8 @@ namespace lkWeb.Service.Util
                 result.Add(new NetworkInfo
                 {
                     Name = instance,
-                    Sent = Math.Round(networkCounters[instance + "_sent"].NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB/秒",
-                    Received = Math.Round(networkCounters[instance + "_received"].NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB/秒",
+                    Sent = networkCounters[instance + "_sent"].NextValue().ToString(),
+                    Received = networkCounters[instance + "_received"].NextValue().ToString(),
                 });
             }
             return result;
@@ -129,22 +134,22 @@ namespace lkWeb.Service.Util
                 var usedSpace = totalSpace - freeSpace;
                 result.Add(new DiskInfo
                 {
-                    DiskRead = Math.Round(diskCounters[instance + "_read"].NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB/秒",
-                    DiskWrite = Math.Round(diskCounters[instance + "_write"].NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB/秒",
-                    DiskReadWrite = Math.Round(diskCounters[instance + "_readwrite"].NextValue() / 1024 / 1024, 2, MidpointRounding.AwayFromZero) + "MB/秒",
+                    DiskRead = diskCounters[instance + "_read"].NextValue().ToString(),
+                    DiskWrite = diskCounters[instance + "_write"].NextValue().ToString(),
+                    DiskReadWrite = diskCounters[instance + "_readwrite"].NextValue().ToString(),
                     Name = instance,
-                    TotalSpace = totalSpace.ToString() + "GB",
-                    FreeSpaceN = freeSpace.ToString() + "GB",
-                    UsedSpaceN = usedSpace.ToString() + "GB",
-                    FreeSpace = Math.Round(diskCounters[instance + "_free"].NextValue(), 2, MidpointRounding.AwayFromZero) + "%",
-                    UsedSpace = Math.Round(((double)usedSpace / (double)totalSpace) * 100, 2, MidpointRounding.AwayFromZero) + "%",
+                    TotalSpace = totalSpace.ToString(),
+                    FreeSpaceN = freeSpace.ToString(),
+                    UsedSpaceN = usedSpace.ToString(),
+                    FreeSpace = Math.Round(diskCounters[instance + "_free"].NextValue(), 2, MidpointRounding.AwayFromZero).ToString(),
+                    UsedSpace = Math.Round(((double)usedSpace / (double)totalSpace) * 100, 2, MidpointRounding.AwayFromZero).ToString(),
                 });
 
             }
             return result;
         }
         ///  <summary>
-        /// 获取指定驱动器的空间总大小(单位为GB)
+        /// 获取指定驱动器的空间总大小(单位为Byte)
         ///  </summary>
         ///  <param name="str_HardDiskName">只需输入代表驱动器的字母:即可 （大写）</param>
         ///  <returns> </returns>
@@ -157,14 +162,14 @@ namespace lkWeb.Service.Util
             {
                 if (drive.Name == str_HardDiskName)
                 {
-                    totalSize = drive.TotalSize / (1024 * 1024 * 1024);
+                    totalSize = drive.TotalSize;
                 }
             }
             return totalSize;
         }
 
         ///  <summary>
-        /// 获取指定驱动器的剩余空间总大小(单位为GB)
+        /// 获取指定驱动器的剩余空间总大小(单位为Byte)
         ///  </summary>
         ///  <param name="str_HardDiskName">只需输入代表驱动器的字母:即可 </param>
         ///  <returns> </returns>
@@ -177,7 +182,7 @@ namespace lkWeb.Service.Util
             {
                 if (drive.Name == str_HardDiskName)
                 {
-                    freeSpace = drive.TotalFreeSpace / (1024 * 1024 * 1024);
+                    freeSpace = drive.TotalFreeSpace;
                 }
             }
             return freeSpace;

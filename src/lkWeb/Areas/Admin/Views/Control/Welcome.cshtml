@@ -13,6 +13,36 @@
 
 @section Scripts{
     <script>
+        function getFullNumber(n) {
+            //防止科学记数法 如 9.5367431640625e-7
+            return parseInt(new Number(n).toLocaleString() * 1)
+        }
+        function convertByte(n, saveKB = false, saveB = false) {
+            var a = 1024 * 1024 * 1024
+            var GB = getFullNumber(n / a)
+            var b = 1024 * 1024
+            var MB = getFullNumber((n - GB * a) / b)
+            var c = 1024
+            var KB = getFullNumber((n - GB * a - MB * b) / c)
+            var B = n - GB * a - MB * b - KB * c
+
+            if (saveKB) {
+                if (saveB)
+                    return '{0}GB {1}MB {2}KB {3}B'.format(GB, MB, KB, B)
+                return '{0}GB {1}MB {2}KB'.format(GB, MB, KB)
+            }
+            else {
+                return '{0}GB {1}MB'.format(GB, MB)
+            }
+
+
+        }
+        function convertByteToMB(n) {
+            return (n / (1024 * 1024)).toFixed(2) + 'MB'
+        }
+        function convertByteToGB(n) {
+            return (n / (1024 * 1024 * 1024)).toFixed(2) + 'GB'
+        }
 
         function getInfo() {
             lkWeb.AjaxPost('@Url.Action("GetServerInfo")', '', function (res) {
@@ -27,14 +57,14 @@
                         ServerPort: data.serverPort,
                         RuntimeFramework: data.runtimeFramework,
                         LoggedUserName: data.loggedUserName,
-                        CpuUsed: data.cpuUsed,
-                        DiskWrite: data.diskWrite,
-                        DiskRead: data.diskRead,
-                        DiskReadWrite: data.diskReadWrite,
-                        MemoryUsed: data.memoryUsed,
-                        MemoryAvailable: data.memoryAvailable,
-                        Sent: data.sent,
-                        Received:data.received,
+                        CpuUsed: data.cpuUsed +'%',
+                        DiskWrite: convertByteToMB(data.diskWrite) +'/S',
+                        DiskRead: convertByteToMB(data.diskRead) + '/S',
+                        DiskReadWrite: convertByteToMB(data.diskReadWrite) + '/S',
+                        MemoryUsed: data.memoryUsed + '%',
+                        MemoryAvailable: convertByteToMB(data.memoryAvailable) ,
+                        Sent: convertByteToMB(data.sent) + '/S',
+                        Received: convertByteToMB(data.received) + '/S',
                     }
                 ))
                 $("#networkInfo").empty()
@@ -43,8 +73,8 @@
                     $("#networkInfo").append($("#networkTpl").html().format(
                         {
                             Name: item.name,
-                            Sent: item.sent,
-                            Received:item.received,
+                            Sent: convertByteToMB(item.sent) + '/S',
+                            Received: convertByteToMB(item.received) + '/S',
 
                         }
                     ))
@@ -55,15 +85,14 @@
                     $("#diskInfo").append($("#diskTpl").html().format(
                         {
                             Name:item.name,
-                            DiskWrite: item.diskWrite,
-                            DiskRead: item.diskRead,
-                            DiskReadWrite: item.diskReadWrite,
-                            TotalSpace: item.totalSpace,
-                            TotalSpaceN: item.totalSpaceN,
-                            UsedSpaceN: item.usedSpaceN,
-                            UsedSpace: item.usedSpace,
-                            FreeSpaceN: item.freeSpaceN,
-                            FreeSpace: item.freeSpace,
+                            DiskWrite: convertByteToMB(item.diskWrite) + '/S',
+                            DiskRead: convertByteToMB(item.diskRead) + '/S',
+                            DiskReadWrite: convertByteToMB(item.diskReadWrite) + '/S',
+                            TotalSpace: convertByteToGB(item.totalSpace),
+                            UsedSpaceN: convertByteToGB(item.usedSpaceN) ,
+                            UsedSpace: item.usedSpace + '%',
+                            FreeSpaceN: convertByteToGB(item.freeSpaceN) ,
+                            FreeSpace: item.freeSpace +'%',
                         }
                     ))
                 }
