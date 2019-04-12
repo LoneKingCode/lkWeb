@@ -1,4 +1,4 @@
-﻿using lkWeb.Core.Extensions;
+﻿using lkWeb.Core.Extension;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +47,7 @@ namespace lkWeb.Filter
                 return;
             }
             var _userService = ServiceLocator.Get<IUserService>();
-            var userResult = _userService.GetCurrentUser().Result;
+            var userResult = _userService.GetCurrentUser();
             //如果未登录
             if (!userResult.flag)
             {
@@ -94,7 +94,7 @@ namespace lkWeb.Filter
                 {
                     var menuUrl = "/admin/" + httpContext.GetRouteValue("controller") + "/" + httpContext.GetRouteValue("action");
                     var menuService = ServiceLocator.Get<IMenuService>();
-                    var menu = menuService.GetByExp(item => item.Url == menuUrl).Result;
+                    var menu = menuService.GetByExpAsync(item => item.Url == menuUrl).Result;
                     if (menu.data == null)
                     {
                         return;
@@ -106,7 +106,7 @@ namespace lkWeb.Filter
                         if (userRoles.data != null && userRoles.data.Any())
                         {
                             var userRoleIds = userRoles.data.Select(item => item.Id).ToList();
-                            var roleMenu = _roleMenuService.GetByExp(item => item.MenuId == menu.data.Id && userRoleIds.Contains(item.RoleId)).Result;
+                            var roleMenu = _roleMenuService.GetByExpAsync(item => item.MenuId == menu.data.Id && userRoleIds.Contains(item.RoleId)).Result;
                             if (roleMenu.data != null)
                             {
                                 return;

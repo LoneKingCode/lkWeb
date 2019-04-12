@@ -6,7 +6,7 @@ using System.Text;
 using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -19,12 +19,12 @@ namespace lkWeb.Service.Abstracts
 		{
 
 		}
-		    /// <summary>
+		/// <summary>
         ///添加单个operationlog
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        public async Task<Result<OperationLogDto>> Add(OperationLogDto dto)
+        public async Task<Result<OperationLogDto>> AddAsync(OperationLogDto dto)
         {
             using (var db = GetDb())
             {
@@ -41,14 +41,14 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">operationlog集合</param>
         /// <returns></returns>
-        public async Task<Result<List<OperationLogDto>>> Add(List<OperationLogDto> dtos)
+        public async Task<Result<List<OperationLogDto>>> AddAsync(List<OperationLogDto> dtos)
         {
             using (var db = GetDb())
             {
                 var result = new Result<List<OperationLogDto>>();
                 var ds = GetDbSet(db);
                 var entities = MapTo<List<OperationLogDto>, List<OperationLogEntity>>(dtos);
-                ds.AddRange(entities);
+                await ds.AddRangeAsync(entities);
                 result.flag = (await db.SaveChangesAsync()) > 0;
                 return result;
             }
@@ -58,7 +58,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        public async Task<Result<OperationLogDto>> Update(OperationLogDto dto)
+        public async Task<Result<OperationLogDto>> UpdateAsync(OperationLogDto dto)
         {
             using (var db = GetDb())
             {
@@ -73,7 +73,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">operationlog集合</param>
         /// <returns></returns>
-        public async Task<Result<List<OperationLogDto>>> Update(List<OperationLogDto> dtos)
+        public async Task<Result<List<OperationLogDto>>> UpdateAsync(List<OperationLogDto> dtos)
         {
             using (var db = GetDb())
             {
@@ -90,7 +90,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<Result<OperationLogDto>> Delete(int id)
+        public async Task<Result<OperationLogDto>> DeleteAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -107,7 +107,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public async Task<Result<List<OperationLogDto>>> Delete(List<int> ids)
+        public async Task<Result<List<OperationLogDto>>> DeleteAsync(List<int> ids)
         {
             using (var db = GetDb())
             {
@@ -127,7 +127,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        public async Task<Result<OperationLogDto>> Delete(OperationLogDto dto)
+        public async Task<Result<OperationLogDto>> DeleteAsync(OperationLogDto dto)
         {
             using (var db = GetDb())
             {
@@ -144,7 +144,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Result<OperationLogDto>> GetById(int id)
+        public async Task<Result<OperationLogDto>> GetByIdAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -167,7 +167,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public async Task<ResultDto<OperationLogDto>> GetPageData(QueryBase queryBase, Expression<Func<OperationLogDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<OperationLogDto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<OperationLogDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -191,7 +191,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        public async Task<ResultDto<OperationLogDto>> GetList(Expression<Func<OperationLogDto, bool>> queryExp)
+        public async Task<ResultDto<OperationLogDto>> GetListAsync(Expression<Func<OperationLogDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
@@ -214,7 +214,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<OperationLogDto>> GetByExp(Expression<Func<OperationLogDto, bool>> exp)
+        public async Task<Result<OperationLogDto>> GetByExpAsync(Expression<Func<OperationLogDto, bool>> exp)
         {
             using (var db = GetDb())
             {
@@ -235,7 +235,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<OperationLogDto>> Delete(Expression<Func<OperationLogDto, bool>> exp)
+        public async Task<Result<OperationLogDto>> DeleteAsync(Expression<Func<OperationLogDto, bool>> exp)
         {
             using (var db = GetDb())
             {

@@ -12,8 +12,7 @@ namespace lkWeb.Data.Config
         public void Configure(EntityTypeBuilder<TableListEntity> builder)
         {
             builder.ToTable("Sys_TableList");
-            builder.HasKey(item => item.Id);
-            builder.Property(item => item.Id).ValueGeneratedOnAdd();
+     
         }
     }
 }

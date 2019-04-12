@@ -15,61 +15,61 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">user实体</param>
         /// <returns></returns>
-        Task<Result<UserDto>> Add(UserDto dto);
+        Task<Result<UserDto>> AddAsync(UserDto dto);
         /// <summary>
         /// 批量添加user
         /// </summary>
         /// <param name="dto">user实体集合</param>
         /// <returns></returns>
-        Task<Result<List<UserDto>>> Add(List<UserDto> dtos);
+        Task<Result<List<UserDto>>> AddAsync(List<UserDto> dtos);
         /// <summary>
         /// 根据id获取单个user数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<UserDto>> GetById(int id);
+        Task<Result<UserDto>> GetByIdAsync(int id);
 		 /// <summary>
         /// 根据条件获取单个user数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<UserDto>> GetByExp(Expression<Func<UserDto, bool>> exp);
+        Task<Result<UserDto>> GetByExpAsync(Expression<Func<UserDto, bool>> exp);
         /// <summary>
         /// 根据id删除user数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<UserDto>> Delete(int id);
+        Task<Result<UserDto>> DeleteAsync(int id);
         /// <summary>
         /// 批量删除user数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        Task<Result<List<UserDto>>> Delete(List<int> ids);
+        Task<Result<List<UserDto>>> DeleteAsync(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto">user实体</param>
         /// <returns></returns>
-        Task<Result<UserDto>> Delete(UserDto dto);
+        Task<Result<UserDto>> DeleteAsync(UserDto dto);
         /// <summary>
         /// 根据条件删除user数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<UserDto>> Delete(Expression<Func<UserDto, bool>> exp);
+        Task<Result<UserDto>> DeleteAsync(Expression<Func<UserDto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">user实体</param>
         /// <returns></returns>
-        Task<Result<UserDto>> Update(UserDto dto);
+        Task<Result<UserDto>> UpdateAsync(UserDto dto);
         /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto">user实体集合</param>
         /// <returns></returns>
-        Task<Result<List<UserDto>>> Update(List<UserDto> dtos);
+        Task<Result<List<UserDto>>> UpdateAsync(List<UserDto> dtos);
         /// <summary>
         /// 获取user分页数据
         /// </summary>
@@ -78,14 +78,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<UserDto>> GetPageData(QueryBase queryBase,
+        Task<ResultDto<UserDto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<UserDto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<UserDto>> GetList(Expression<Func<UserDto, bool>> queryExp);
+        Task<ResultDto<UserDto>> GetListAsync(Expression<Func<UserDto, bool>> queryExp);
 	}
 }
 

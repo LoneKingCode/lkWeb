@@ -8,8 +8,8 @@ using lkWeb.Service.Abstracts;
 using Microsoft.AspNetCore.Mvc.Filters;
 using lkWeb.Service;
 using lkWeb.Filter;
-using lkWeb.Core.Extensions;
-using lkWeb.Service.Util;
+using lkWeb.Core.Extension;
+using lkWeb.Core.Helper;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -41,18 +41,20 @@ namespace lkWeb.Areas.Admin.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (User.Identity.IsAuthenticated)
+
+            var currentUserResult = UserService.GetCurrentUserBySession();
+            if (currentUserResult.flag)
             {
                 CurrentUser = new UserDto
                 {
-                    Id = User.Claims.ElementAt(0).Value.ToInt32(),
-                    UserName = User.Claims.ElementAt(1).Value
+                    Id = currentUserResult.data.Id,
+                    UserName = currentUserResult.data.UserName
                 };
                 SysService.currentUserId = CurrentUser.Id.ToString();
                 if (!WebHelper.IsAjax(context.HttpContext))
                 {
                     var operationLogService = ServiceLocator.Get<IOperationLogService>();
-                    operationLogService.Add(new OperationLogDto
+                    operationLogService.AddAsync(new OperationLogDto
                     {
                         ClientIP = WebHelper.GetClientIP(),
                         ClientMac = WebHelper.GetClientMac(),
@@ -69,7 +71,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 if (!WebHelper.IsAjax(context.HttpContext))
                 {
                     var operationLogService = ServiceLocator.Get<IOperationLogService>();
-                    operationLogService.Add(new OperationLogDto
+                    operationLogService.AddAsync(new OperationLogDto
                     {
                         ClientIP = WebHelper.GetClientIP(),
                         ClientMac = WebHelper.GetClientMac(),

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using System.Linq.Expressions;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using lkWeb.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -34,11 +34,11 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             if (param.id > 0)
             {
-                var menu = (await _menuService.GetById(param.id)).data;
+                var menu = (await _menuService.GetByIdAsync(param.id)).data;
                 ViewBag.ParentID = menu.Id;
                 ViewBag.ParentName = menu.Name;
             }
-            var result = await _moduleService.GetList(item => item.Id > 0);
+            var result = await _moduleService.GetListAsync(item => item.Id > 0);
             ViewBag.Modules = new SelectList(result.data, "Id", "Name");
             if (result.data.Count > 0)
                 ViewBag.ModuleID = result.data.First().Id;
@@ -46,12 +46,12 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var menu = (await _menuService.GetById(param.id)).data;
+            var menu = (await _menuService.GetByIdAsync(param.id)).data;
             if (menu.ParentId > 0)
-                ViewBag.ParentName = (await _menuService.GetById(menu.ParentId)).data.Name;
+                ViewBag.ParentName = (await _menuService.GetByIdAsync(menu.ParentId)).data.Name;
             else
                 ViewBag.ParentName = "无";
-            var result = await _moduleService.GetList(item => item.Id > 0);
+            var result = await _moduleService.GetListAsync(item => item.Id > 0);
             ViewBag.Modules = new SelectList(result.data, "Id", "Name", menu.ModuleId);
             ViewBag.ModuleID = menu.ModuleId;
             return View(menu);
@@ -66,7 +66,7 @@ namespace lkWeb.Areas.Admin.Controllers
             Expression<Func<MenuDto, bool>> queryExp = item => item.Id > 0;
             if (searchKey.IsNotEmpty())
                 queryExp = item => item.Id > 0 && (item.Name.Contains(searchKey) || item.Url.Contains(searchKey));
-            var result = await _menuService.GetList(queryExp);
+            var result = await _menuService.GetListAsync(queryExp);
             var strData = new
             {
                 value = result.data
@@ -81,10 +81,10 @@ namespace lkWeb.Areas.Admin.Controllers
             Expression<Func<MenuDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => x.Name.Contains(queryBase.SearchKey);
-            var result = await _menuService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var allMenu = (await _menuService.GetList(item => item.Id > 0))
+            var result = await _menuService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var allMenu = (await _menuService.GetListAsync(item => item.Id > 0))
                             .data.ToDictionary(item => item.Id, item => item.Name);
-            var allModule = (await _moduleService.GetList(item => item.Id > 0))
+            var allModule = (await _moduleService.GetListAsync(item => item.Id > 0))
                             .data.ToDictionary(item => item.Id, item => item.Name);
             var data = new DataTableModel
             {
@@ -115,7 +115,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param, MenuDto menu)
         {
             await SetMenu(menu);
-            var result = await _menuService.Update(menu);
+            var result = await _menuService.UpdateAsync(menu);
             return Json(result);
         }
 
@@ -126,7 +126,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             await SetMenu(menu);
 
-            var result = await _menuService.Add(menu);
+            var result = await _menuService.AddAsync(menu);
 
             return Json(result);
         }
@@ -135,16 +135,16 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(UrlParameter param)
         {
             if (param.ids != null && param.ids.Any())
-                return Json(await _menuService.Delete(param.ids));
+                return Json(await _menuService.DeleteAsync(param.ids));
             else
-                return Json(await _menuService.Delete(param.id));
+                return Json(await _menuService.DeleteAsync(param.id));
         }
 
         private async Task SetMenu(MenuDto menu)
         {
             if (menu.ParentId > 0)
             {
-                var parentMenu = (await _menuService.GetById(menu.ParentId)).data;
+                var parentMenu = (await _menuService.GetByIdAsync(menu.ParentId)).data;
                 switch (parentMenu.Type)
                 {
                     case Service.Enum.MenuType.模块:

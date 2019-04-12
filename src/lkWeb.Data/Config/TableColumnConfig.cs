@@ -12,9 +12,7 @@ namespace lkWeb.Data.Config
         public void Configure(EntityTypeBuilder<TableColumnEntity> builder)
         {
             builder.ToTable("Sys_TableColumn");
-            builder.HasKey(item => item.Id);
-            builder.Property(item => item.Id).ValueGeneratedOnAdd();
-            builder.HasOne(item => item.Table).WithMany(item => item.TableColumns).HasForeignKey(item => item.TableId);
+     
         }
     }
 }

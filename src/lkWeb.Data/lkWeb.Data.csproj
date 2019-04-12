@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Config\UserDepartmentConfig.cs~RF2553ffe0.TMP" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\lkWeb.Core\lkWeb.Core.csproj" />
     <ProjectReference Include="..\lkWeb.Entity\lkWeb.Entity.csproj" />
   </ItemGroup>

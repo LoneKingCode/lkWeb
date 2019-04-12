@@ -31,61 +31,61 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体</param>
         /// <returns></returns>
-        Task<Result<<#=name#>Dto>> Add(<#=name#>Dto dto);
+        Task<Result<<#=name#>Dto>> AddAsync(<#=name#>Dto dto);
         /// <summary>
         /// 批量添加<#=lowerName#>
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体集合</param>
         /// <returns></returns>
-        Task<Result<List<<#=name#>Dto>>> Add(List<<#=name#>Dto> dtos);
+        Task<Result<List<<#=name#>Dto>>> AddAsync(List<<#=name#>Dto> dtos);
         /// <summary>
         /// 根据id获取单个<#=lowerName#>数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<<#=name#>Dto>> GetById(int id);
+        Task<Result<<#=name#>Dto>> GetByIdAsync(int id);
 		 /// <summary>
         /// 根据条件获取单个<#=lowerName#>数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<<#=name#>Dto>> GetByExp(Expression<Func<<#=name#>Dto, bool>> exp);
+        Task<Result<<#=name#>Dto>> GetByExpAsync(Expression<Func<<#=name#>Dto, bool>> exp);
         /// <summary>
         /// 根据id删除<#=lowerName#>数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<<#=name#>Dto>> Delete(int id);
+        Task<Result<<#=name#>Dto>> DeleteAsync(int id);
         /// <summary>
         /// 批量删除<#=lowerName#>数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        Task<Result<List<<#=name#>Dto>>> Delete(List<int> ids);
+        Task<Result<List<<#=name#>Dto>>> DeleteAsync(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体</param>
         /// <returns></returns>
-        Task<Result<<#=name#>Dto>> Delete(<#=name#>Dto dto);
+        Task<Result<<#=name#>Dto>> DeleteAsync(<#=name#>Dto dto);
         /// <summary>
         /// 根据条件删除<#=lowerName#>数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<<#=name#>Dto>> Delete(Expression<Func<<#=name#>Dto, bool>> exp);
+        Task<Result<<#=name#>Dto>> DeleteAsync(Expression<Func<<#=name#>Dto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体</param>
         /// <returns></returns>
-        Task<Result<<#=name#>Dto>> Update(<#=name#>Dto dto);
+        Task<Result<<#=name#>Dto>> UpdateAsync(<#=name#>Dto dto);
         /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体集合</param>
         /// <returns></returns>
-        Task<Result<List<<#=name#>Dto>>> Update(List<<#=name#>Dto> dtos);
+        Task<Result<List<<#=name#>Dto>>> UpdateAsync(List<<#=name#>Dto> dtos);
         /// <summary>
         /// 获取<#=lowerName#>分页数据
         /// </summary>
@@ -94,14 +94,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<<#=name#>Dto>> GetPageData(QueryBase queryBase,
+        Task<ResultDto<<#=name#>Dto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<<#=name#>Dto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<<#=name#>Dto>> GetList(Expression<Func<<#=name#>Dto, bool>> queryExp);
+        Task<ResultDto<<#=name#>Dto>> GetListAsync(Expression<Func<<#=name#>Dto, bool>> queryExp);
 	}
 }
 
@@ -127,7 +127,7 @@ using System.Text;
 using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -140,12 +140,12 @@ namespace lkWeb.Service.Abstracts
 		{
 
 		}
-		    /// <summary>
+		/// <summary>
         ///添加单个<#=lowerName#>
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体</param>
         /// <returns></returns>
-        public async Task<Result<<#=name#>Dto>> Add(<#=name#>Dto dto)
+        public async Task<Result<<#=name#>Dto>> AddAsync(<#=name#>Dto dto)
         {
             using (var db = GetDb())
             {
@@ -162,14 +162,14 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos"><#=lowerName#>集合</param>
         /// <returns></returns>
-        public async Task<Result<List<<#=name#>Dto>>> Add(List<<#=name#>Dto> dtos)
+        public async Task<Result<List<<#=name#>Dto>>> AddAsync(List<<#=name#>Dto> dtos)
         {
             using (var db = GetDb())
             {
                 var result = new Result<List<<#=name#>Dto>>();
                 var ds = GetDbSet(db);
                 var entities = MapTo<List<<#=name#>Dto>, List<<#=name#>Entity>>(dtos);
-                ds.AddRange(entities);
+                await ds.AddRangeAsync(entities);
                 result.flag = (await db.SaveChangesAsync()) > 0;
                 return result;
             }
@@ -179,7 +179,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体</param>
         /// <returns></returns>
-        public async Task<Result<<#=name#>Dto>> Update(<#=name#>Dto dto)
+        public async Task<Result<<#=name#>Dto>> UpdateAsync(<#=name#>Dto dto)
         {
             using (var db = GetDb())
             {
@@ -194,7 +194,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos"><#=lowerName#>集合</param>
         /// <returns></returns>
-        public async Task<Result<List<<#=name#>Dto>>> Update(List<<#=name#>Dto> dtos)
+        public async Task<Result<List<<#=name#>Dto>>> UpdateAsync(List<<#=name#>Dto> dtos)
         {
             using (var db = GetDb())
             {
@@ -211,7 +211,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<Result<<#=name#>Dto>> Delete(int id)
+        public async Task<Result<<#=name#>Dto>> DeleteAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -228,7 +228,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public async Task<Result<List<<#=name#>Dto>>> Delete(List<int> ids)
+        public async Task<Result<List<<#=name#>Dto>>> DeleteAsync(List<int> ids)
         {
             using (var db = GetDb())
             {
@@ -248,7 +248,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto"><#=lowerName#>实体</param>
         /// <returns></returns>
-        public async Task<Result<<#=name#>Dto>> Delete(<#=name#>Dto dto)
+        public async Task<Result<<#=name#>Dto>> DeleteAsync(<#=name#>Dto dto)
         {
             using (var db = GetDb())
             {
@@ -265,7 +265,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Result<<#=name#>Dto>> GetById(int id)
+        public async Task<Result<<#=name#>Dto>> GetByIdAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -288,7 +288,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public async Task<ResultDto<<#=name#>Dto>> GetPageData(QueryBase queryBase, Expression<Func<<#=name#>Dto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<<#=name#>Dto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<<#=name#>Dto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -312,7 +312,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        public async Task<ResultDto<<#=name#>Dto>> GetList(Expression<Func<<#=name#>Dto, bool>> queryExp)
+        public async Task<ResultDto<<#=name#>Dto>> GetListAsync(Expression<Func<<#=name#>Dto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
@@ -335,7 +335,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<<#=name#>Dto>> GetByExp(Expression<Func<<#=name#>Dto, bool>> exp)
+        public async Task<Result<<#=name#>Dto>> GetByExpAsync(Expression<Func<<#=name#>Dto, bool>> exp)
         {
             using (var db = GetDb())
             {
@@ -356,7 +356,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<<#=name#>Dto>> Delete(Expression<Func<<#=name#>Dto, bool>> exp)
+        public async Task<Result<<#=name#>Dto>> DeleteAsync(Expression<Func<<#=name#>Dto, bool>> exp)
         {
             using (var db = GetDb())
             {

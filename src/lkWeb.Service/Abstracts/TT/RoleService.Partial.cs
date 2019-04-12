@@ -6,7 +6,7 @@ using System.Text;
 using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -19,12 +19,12 @@ namespace lkWeb.Service.Abstracts
 		{
 
 		}
-		    /// <summary>
+		/// <summary>
         ///添加单个role
         /// </summary>
         /// <param name="dto">role实体</param>
         /// <returns></returns>
-        public async Task<Result<RoleDto>> Add(RoleDto dto)
+        public async Task<Result<RoleDto>> AddAsync(RoleDto dto)
         {
             using (var db = GetDb())
             {
@@ -41,14 +41,14 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">role集合</param>
         /// <returns></returns>
-        public async Task<Result<List<RoleDto>>> Add(List<RoleDto> dtos)
+        public async Task<Result<List<RoleDto>>> AddAsync(List<RoleDto> dtos)
         {
             using (var db = GetDb())
             {
                 var result = new Result<List<RoleDto>>();
                 var ds = GetDbSet(db);
                 var entities = MapTo<List<RoleDto>, List<RoleEntity>>(dtos);
-                ds.AddRange(entities);
+                await ds.AddRangeAsync(entities);
                 result.flag = (await db.SaveChangesAsync()) > 0;
                 return result;
             }
@@ -58,7 +58,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">role实体</param>
         /// <returns></returns>
-        public async Task<Result<RoleDto>> Update(RoleDto dto)
+        public async Task<Result<RoleDto>> UpdateAsync(RoleDto dto)
         {
             using (var db = GetDb())
             {
@@ -73,7 +73,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">role集合</param>
         /// <returns></returns>
-        public async Task<Result<List<RoleDto>>> Update(List<RoleDto> dtos)
+        public async Task<Result<List<RoleDto>>> UpdateAsync(List<RoleDto> dtos)
         {
             using (var db = GetDb())
             {
@@ -90,7 +90,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<Result<RoleDto>> Delete(int id)
+        public async Task<Result<RoleDto>> DeleteAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -107,7 +107,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public async Task<Result<List<RoleDto>>> Delete(List<int> ids)
+        public async Task<Result<List<RoleDto>>> DeleteAsync(List<int> ids)
         {
             using (var db = GetDb())
             {
@@ -127,7 +127,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">role实体</param>
         /// <returns></returns>
-        public async Task<Result<RoleDto>> Delete(RoleDto dto)
+        public async Task<Result<RoleDto>> DeleteAsync(RoleDto dto)
         {
             using (var db = GetDb())
             {
@@ -144,7 +144,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Result<RoleDto>> GetById(int id)
+        public async Task<Result<RoleDto>> GetByIdAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -167,7 +167,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public async Task<ResultDto<RoleDto>> GetPageData(QueryBase queryBase, Expression<Func<RoleDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<RoleDto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<RoleDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -191,7 +191,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        public async Task<ResultDto<RoleDto>> GetList(Expression<Func<RoleDto, bool>> queryExp)
+        public async Task<ResultDto<RoleDto>> GetListAsync(Expression<Func<RoleDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
@@ -214,7 +214,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<RoleDto>> GetByExp(Expression<Func<RoleDto, bool>> exp)
+        public async Task<Result<RoleDto>> GetByExpAsync(Expression<Func<RoleDto, bool>> exp)
         {
             using (var db = GetDb())
             {
@@ -235,7 +235,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<RoleDto>> Delete(Expression<Func<RoleDto, bool>> exp)
+        public async Task<Result<RoleDto>> DeleteAsync(Expression<Func<RoleDto, bool>> exp)
         {
             using (var db = GetDb())
             {

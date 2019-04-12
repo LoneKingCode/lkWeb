@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var module = (await _moduleService.GetById(param.id)).data;
+            var module = (await _moduleService.GetByIdAsync(param.id)).data;
             return View(module);
         }
         #endregion
@@ -43,7 +43,7 @@ namespace lkWeb.Areas.Admin.Controllers
             Expression<Func<ModuleDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
-            var dto = await _moduleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var dto = await _moduleService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -64,7 +64,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UrlParameter param, ModuleDto dto)
         {
-            var result = await _moduleService.Update(dto);
+            var result = await _moduleService.UpdateAsync(dto);
             return Json(result);
         }
 
@@ -72,7 +72,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, ModuleDto dto)
         {
-            var result = await _moduleService.Add(dto);
+            var result = await _moduleService.AddAsync(dto);
             return Json(result);
         }
         [HttpPost]
@@ -80,9 +80,9 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(UrlParameter param)
         {
             if (param.ids != null && param.ids.Any())
-                return Json(await _moduleService.Delete(param.ids));
+                return Json(await _moduleService.DeleteAsync(param.ids));
             else
-                return Json(await _moduleService.Delete(param.id));
+                return Json(await _moduleService.DeleteAsync(param.id));
         }
 
         #endregion

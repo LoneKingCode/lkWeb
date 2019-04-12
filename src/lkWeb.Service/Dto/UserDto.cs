@@ -50,12 +50,8 @@ namespace lkWeb.Service.Dto
             get { return Status.ToString(); }
         }
 
-        public string SecurityStamp { get; set; }
-
-        /// <summary>
-        /// ASP.NET Identity 所需要。。Guid
-        /// </summary>
-        public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+ 
+     
 
         /// <summary>
         /// 记住我

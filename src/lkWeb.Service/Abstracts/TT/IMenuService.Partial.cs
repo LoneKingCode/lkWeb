@@ -15,61 +15,61 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">menu实体</param>
         /// <returns></returns>
-        Task<Result<MenuDto>> Add(MenuDto dto);
+        Task<Result<MenuDto>> AddAsync(MenuDto dto);
         /// <summary>
         /// 批量添加menu
         /// </summary>
         /// <param name="dto">menu实体集合</param>
         /// <returns></returns>
-        Task<Result<List<MenuDto>>> Add(List<MenuDto> dtos);
+        Task<Result<List<MenuDto>>> AddAsync(List<MenuDto> dtos);
         /// <summary>
         /// 根据id获取单个menu数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<MenuDto>> GetById(int id);
+        Task<Result<MenuDto>> GetByIdAsync(int id);
 		 /// <summary>
         /// 根据条件获取单个menu数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<MenuDto>> GetByExp(Expression<Func<MenuDto, bool>> exp);
+        Task<Result<MenuDto>> GetByExpAsync(Expression<Func<MenuDto, bool>> exp);
         /// <summary>
         /// 根据id删除menu数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<MenuDto>> Delete(int id);
+        Task<Result<MenuDto>> DeleteAsync(int id);
         /// <summary>
         /// 批量删除menu数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        Task<Result<List<MenuDto>>> Delete(List<int> ids);
+        Task<Result<List<MenuDto>>> DeleteAsync(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto">menu实体</param>
         /// <returns></returns>
-        Task<Result<MenuDto>> Delete(MenuDto dto);
+        Task<Result<MenuDto>> DeleteAsync(MenuDto dto);
         /// <summary>
         /// 根据条件删除menu数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<MenuDto>> Delete(Expression<Func<MenuDto, bool>> exp);
+        Task<Result<MenuDto>> DeleteAsync(Expression<Func<MenuDto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">menu实体</param>
         /// <returns></returns>
-        Task<Result<MenuDto>> Update(MenuDto dto);
+        Task<Result<MenuDto>> UpdateAsync(MenuDto dto);
         /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto">menu实体集合</param>
         /// <returns></returns>
-        Task<Result<List<MenuDto>>> Update(List<MenuDto> dtos);
+        Task<Result<List<MenuDto>>> UpdateAsync(List<MenuDto> dtos);
         /// <summary>
         /// 获取menu分页数据
         /// </summary>
@@ -78,14 +78,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<MenuDto>> GetPageData(QueryBase queryBase,
+        Task<ResultDto<MenuDto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<MenuDto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<MenuDto>> GetList(Expression<Func<MenuDto, bool>> queryExp);
+        Task<ResultDto<MenuDto>> GetListAsync(Expression<Func<MenuDto, bool>> queryExp);
 	}
 }
 

@@ -6,7 +6,7 @@ using System.Text;
 using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -19,12 +19,12 @@ namespace lkWeb.Service.Abstracts
 		{
 
 		}
-		    /// <summary>
+		/// <summary>
         ///添加单个loginlog
         /// </summary>
         /// <param name="dto">loginlog实体</param>
         /// <returns></returns>
-        public async Task<Result<LoginLogDto>> Add(LoginLogDto dto)
+        public async Task<Result<LoginLogDto>> AddAsync(LoginLogDto dto)
         {
             using (var db = GetDb())
             {
@@ -41,14 +41,14 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">loginlog集合</param>
         /// <returns></returns>
-        public async Task<Result<List<LoginLogDto>>> Add(List<LoginLogDto> dtos)
+        public async Task<Result<List<LoginLogDto>>> AddAsync(List<LoginLogDto> dtos)
         {
             using (var db = GetDb())
             {
                 var result = new Result<List<LoginLogDto>>();
                 var ds = GetDbSet(db);
                 var entities = MapTo<List<LoginLogDto>, List<LoginLogEntity>>(dtos);
-                ds.AddRange(entities);
+                await ds.AddRangeAsync(entities);
                 result.flag = (await db.SaveChangesAsync()) > 0;
                 return result;
             }
@@ -58,7 +58,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">loginlog实体</param>
         /// <returns></returns>
-        public async Task<Result<LoginLogDto>> Update(LoginLogDto dto)
+        public async Task<Result<LoginLogDto>> UpdateAsync(LoginLogDto dto)
         {
             using (var db = GetDb())
             {
@@ -73,7 +73,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">loginlog集合</param>
         /// <returns></returns>
-        public async Task<Result<List<LoginLogDto>>> Update(List<LoginLogDto> dtos)
+        public async Task<Result<List<LoginLogDto>>> UpdateAsync(List<LoginLogDto> dtos)
         {
             using (var db = GetDb())
             {
@@ -90,7 +90,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<Result<LoginLogDto>> Delete(int id)
+        public async Task<Result<LoginLogDto>> DeleteAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -107,7 +107,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public async Task<Result<List<LoginLogDto>>> Delete(List<int> ids)
+        public async Task<Result<List<LoginLogDto>>> DeleteAsync(List<int> ids)
         {
             using (var db = GetDb())
             {
@@ -127,7 +127,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">loginlog实体</param>
         /// <returns></returns>
-        public async Task<Result<LoginLogDto>> Delete(LoginLogDto dto)
+        public async Task<Result<LoginLogDto>> DeleteAsync(LoginLogDto dto)
         {
             using (var db = GetDb())
             {
@@ -144,7 +144,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Result<LoginLogDto>> GetById(int id)
+        public async Task<Result<LoginLogDto>> GetByIdAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -167,7 +167,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public async Task<ResultDto<LoginLogDto>> GetPageData(QueryBase queryBase, Expression<Func<LoginLogDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<LoginLogDto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<LoginLogDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -191,7 +191,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        public async Task<ResultDto<LoginLogDto>> GetList(Expression<Func<LoginLogDto, bool>> queryExp)
+        public async Task<ResultDto<LoginLogDto>> GetListAsync(Expression<Func<LoginLogDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
@@ -214,7 +214,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<LoginLogDto>> GetByExp(Expression<Func<LoginLogDto, bool>> exp)
+        public async Task<Result<LoginLogDto>> GetByExpAsync(Expression<Func<LoginLogDto, bool>> exp)
         {
             using (var db = GetDb())
             {
@@ -235,7 +235,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<LoginLogDto>> Delete(Expression<Func<LoginLogDto, bool>> exp)
+        public async Task<Result<LoginLogDto>> DeleteAsync(Expression<Func<LoginLogDto, bool>> exp)
         {
             using (var db = GetDb())
             {

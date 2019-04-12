@@ -6,7 +6,7 @@ using System.Text;
 using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -19,12 +19,12 @@ namespace lkWeb.Service.Abstracts
 		{
 
 		}
-		    /// <summary>
+		/// <summary>
         ///添加单个systemoption
         /// </summary>
         /// <param name="dto">systemoption实体</param>
         /// <returns></returns>
-        public async Task<Result<SystemOptionDto>> Add(SystemOptionDto dto)
+        public async Task<Result<SystemOptionDto>> AddAsync(SystemOptionDto dto)
         {
             using (var db = GetDb())
             {
@@ -41,14 +41,14 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">systemoption集合</param>
         /// <returns></returns>
-        public async Task<Result<List<SystemOptionDto>>> Add(List<SystemOptionDto> dtos)
+        public async Task<Result<List<SystemOptionDto>>> AddAsync(List<SystemOptionDto> dtos)
         {
             using (var db = GetDb())
             {
                 var result = new Result<List<SystemOptionDto>>();
                 var ds = GetDbSet(db);
                 var entities = MapTo<List<SystemOptionDto>, List<SystemOptionEntity>>(dtos);
-                ds.AddRange(entities);
+                await ds.AddRangeAsync(entities);
                 result.flag = (await db.SaveChangesAsync()) > 0;
                 return result;
             }
@@ -58,7 +58,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">systemoption实体</param>
         /// <returns></returns>
-        public async Task<Result<SystemOptionDto>> Update(SystemOptionDto dto)
+        public async Task<Result<SystemOptionDto>> UpdateAsync(SystemOptionDto dto)
         {
             using (var db = GetDb())
             {
@@ -73,7 +73,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">systemoption集合</param>
         /// <returns></returns>
-        public async Task<Result<List<SystemOptionDto>>> Update(List<SystemOptionDto> dtos)
+        public async Task<Result<List<SystemOptionDto>>> UpdateAsync(List<SystemOptionDto> dtos)
         {
             using (var db = GetDb())
             {
@@ -90,7 +90,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<Result<SystemOptionDto>> Delete(int id)
+        public async Task<Result<SystemOptionDto>> DeleteAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -107,7 +107,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public async Task<Result<List<SystemOptionDto>>> Delete(List<int> ids)
+        public async Task<Result<List<SystemOptionDto>>> DeleteAsync(List<int> ids)
         {
             using (var db = GetDb())
             {
@@ -127,7 +127,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">systemoption实体</param>
         /// <returns></returns>
-        public async Task<Result<SystemOptionDto>> Delete(SystemOptionDto dto)
+        public async Task<Result<SystemOptionDto>> DeleteAsync(SystemOptionDto dto)
         {
             using (var db = GetDb())
             {
@@ -144,7 +144,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Result<SystemOptionDto>> GetById(int id)
+        public async Task<Result<SystemOptionDto>> GetByIdAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -167,7 +167,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public async Task<ResultDto<SystemOptionDto>> GetPageData(QueryBase queryBase, Expression<Func<SystemOptionDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<SystemOptionDto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<SystemOptionDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -191,7 +191,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        public async Task<ResultDto<SystemOptionDto>> GetList(Expression<Func<SystemOptionDto, bool>> queryExp)
+        public async Task<ResultDto<SystemOptionDto>> GetListAsync(Expression<Func<SystemOptionDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
@@ -214,7 +214,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<SystemOptionDto>> GetByExp(Expression<Func<SystemOptionDto, bool>> exp)
+        public async Task<Result<SystemOptionDto>> GetByExpAsync(Expression<Func<SystemOptionDto, bool>> exp)
         {
             using (var db = GetDb())
             {
@@ -235,7 +235,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<SystemOptionDto>> Delete(Expression<Func<SystemOptionDto, bool>> exp)
+        public async Task<Result<SystemOptionDto>> DeleteAsync(Expression<Func<SystemOptionDto, bool>> exp)
         {
             using (var db = GetDb())
             {

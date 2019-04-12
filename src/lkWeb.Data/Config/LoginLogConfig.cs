@@ -12,13 +12,7 @@ namespace lkWeb.Data.Config
         public void Configure(EntityTypeBuilder<LoginLogEntity> builder)
         {
             builder.ToTable("Sys_LoginLog");
-            builder.HasKey(item => item.Id);
-            builder.Property(item => item.Id).ValueGeneratedOnAdd();
-            builder.Property(item => item.UserId).IsRequired();
-            builder.Property(item => item.UserName).HasColumnType("varchar(20)").IsRequired();
-            builder.Property(item => item.ClientIP).HasColumnType("varchar(15)");
-            builder.Property(item => item.ClientMac).HasColumnType("varchar(40)");
-            builder.Property(item => item.Description).HasColumnType("varchar(40)");
+  
 
         }
     }

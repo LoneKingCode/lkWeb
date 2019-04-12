@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var module = (await _systemOptionService.GetById(param.id)).data;
+            var module = (await _systemOptionService.GetByIdAsync(param.id)).data;
             return View(module);
         }
         #endregion
@@ -43,7 +43,7 @@ namespace lkWeb.Areas.Admin.Controllers
             Expression<Func<SystemOptionDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => x.Code.Contains(queryBase.SearchKey);
-            var dto = await _systemOptionService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var dto = await _systemOptionService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -64,7 +64,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UrlParameter param, SystemOptionDto dto)
         {
-            var result = await _systemOptionService.Update(dto);
+            var result = await _systemOptionService.UpdateAsync(dto);
             return Json(result);
         }
 
@@ -72,7 +72,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, SystemOptionDto dto)
         {
-            var existDto = await _systemOptionService.GetByExp(item => item.Code == dto.Code);
+            var existDto = await _systemOptionService.GetByExpAsync(item => item.Code == dto.Code);
             var result = new Result<SystemOptionDto>();
             if (existDto.data != null)
             {
@@ -80,7 +80,7 @@ namespace lkWeb.Areas.Admin.Controllers
             }
             else
             {
-                result = await _systemOptionService.Add(dto);
+                result = await _systemOptionService.AddAsync(dto);
             }
             return Json(result);
         }
@@ -89,9 +89,9 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(UrlParameter param)
         {
             if (param.ids != null && param.ids.Any())
-                return Json(await _systemOptionService.Delete(param.ids));
+                return Json(await _systemOptionService.DeleteAsync(param.ids));
             else
-                return Json(await _systemOptionService.Delete(param.id));
+                return Json(await _systemOptionService.DeleteAsync(param.id));
         }
 
         #endregion

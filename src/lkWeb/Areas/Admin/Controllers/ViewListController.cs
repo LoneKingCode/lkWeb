@@ -4,12 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using lkWeb.Service;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using lkWeb.Service.Enum;
-using lkWeb.Service.Util;
+using lkWeb.Core.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -40,8 +40,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Index(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.Table = (await _tableListService.GetById(param.id)).data;
-            var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.ListVisible == 1);
+            model.Table = (await _tableListService.GetByIdAsync(param.id)).data;
+            var result = await _tableColumnService.GetListAsync(item => item.TableId == param.id && item.ListVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.ListOrder).ToList();
             ViewBag.TableName = model.Table.Description;
 
@@ -75,8 +75,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Add(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.Table = (await _tableListService.GetById(param.id)).data;
-            var result = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
+            model.Table = (await _tableListService.GetByIdAsync(param.id)).data;
+            var result = await _tableColumnService.GetListAsync(item => item.TableId == param.id && item.AddVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             string sql = "select {0} from {1} where {2}";
 
@@ -145,8 +145,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.Table = (await _tableListService.GetById(param.value.ToInt32())).data;
-            var result = await _tableColumnService.GetList(item => item.TableId == model.Table.Id && item.EditVisible == 1);
+            model.Table = (await _tableListService.GetByIdAsync(param.value.ToInt32())).data;
+            var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.EditVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             string sql = "select {0} from {1} where {2}";
             var tbName = model.Table.Name;
@@ -226,8 +226,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Detail(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.Table = (await _tableListService.GetById(param.value.ToInt32())).data;
-            var result = await _tableColumnService.GetList(item => item.TableId == model.Table.Id && item.ViewVisible == 1);
+            model.Table = (await _tableListService.GetByIdAsync(param.value.ToInt32())).data;
+            var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.ViewVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.ViewOrder).ToList();
             string sql = "select {0} from {1} where {2}";
             ViewBag.OutColumn = new Dictionary<string, string>();
@@ -258,7 +258,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
             var tableId = queryBase.Value.ToInt32(); //表ID 保存在value中
-            var tableDto = (await _tableListService.GetById(tableId)).data;
+            var tableDto = (await _tableListService.GetByIdAsync(tableId)).data;
             if (tableDto.AllowView != 1)
             {
                 return Json(new DataTableModel());
@@ -303,7 +303,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     if(customColNames.Contains(item.Key))
                     {
-                        var model = (await _tableColumnService.GetByExp(x => x.Name == item.Key && x.TableId == tableId)).data;
+                        var model = (await _tableColumnService.GetByExpAsync(x => x.Name == item.Key && x.TableId == tableId)).data;
                         temp[item.Key] = model.CustomContent.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
                     }
                     else if (fileTypeColNames.Contains(item.Key))
@@ -353,12 +353,12 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, IFormCollection formData)
         {
-            var table = (await _tableListService.GetById(param.id)).data;
-            var columnResult = await _tableColumnService.GetList(item => item.TableId == param.id && item.AddVisible == 1);
+            var table = (await _tableListService.GetByIdAsync(param.id)).data;
+            var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == param.id && item.AddVisible == 1);
             var tableColumns = columnResult.data;
             var addModel = new Dictionary<string, string>();
             var result = new Result<bool>();
-            var pk_cols = (await _tableColumnService.GetList(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
+            var pk_cols = (await _tableColumnService.GetListAsync(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
             foreach (var column in tableColumns)
             {
                 var exist = "0";
@@ -388,12 +388,12 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var model = new ViewListModel();
             var tableId = param.value.ToInt32();
-            var columnResult = await _tableColumnService.GetList(item => item.TableId == tableId && item.EditVisible == 1);
+            var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.EditVisible == 1);
             var tableColumns = columnResult.data;
-            var table = (await _tableListService.GetById(tableId)).data;
+            var table = (await _tableListService.GetByIdAsync(tableId)).data;
 
             var updateModel = new Dictionary<string, string>();
-            var pk_cols = (await _tableColumnService.GetList(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
+            var pk_cols = (await _tableColumnService.GetListAsync(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
             var result = new Result<bool>();
 
             foreach (var column in tableColumns)
@@ -451,7 +451,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var result = new Result<string>();
             var columnId = param.id;
-            var forbiddenFileExt = (await _tableColumnService.GetById(columnId)).data.ForbiddenFileExtension;
+            var forbiddenFileExt = (await _tableColumnService.GetByIdAsync(columnId)).data.ForbiddenFileExtension;
             var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
             var uploadPath = Path.Combine(WebHelper.UploadPath, dateDir);
             if (!Directory.Exists(uploadPath))

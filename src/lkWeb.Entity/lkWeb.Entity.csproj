@@ -15,8 +15,4 @@
     <None Remove="UserRoleEntity.cs1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.0.3" />
-  </ItemGroup>
-
 </Project>

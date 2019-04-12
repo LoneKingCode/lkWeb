@@ -113,6 +113,5 @@ namespace lkWeb.Entity
 
         public string ValidationRule { get; set; }
 
-        public virtual TableListEntity Table { get; set; }
     }
 }

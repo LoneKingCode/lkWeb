@@ -15,61 +15,61 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">role实体</param>
         /// <returns></returns>
-        Task<Result<RoleDto>> Add(RoleDto dto);
+        Task<Result<RoleDto>> AddAsync(RoleDto dto);
         /// <summary>
         /// 批量添加role
         /// </summary>
         /// <param name="dto">role实体集合</param>
         /// <returns></returns>
-        Task<Result<List<RoleDto>>> Add(List<RoleDto> dtos);
+        Task<Result<List<RoleDto>>> AddAsync(List<RoleDto> dtos);
         /// <summary>
         /// 根据id获取单个role数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<RoleDto>> GetById(int id);
+        Task<Result<RoleDto>> GetByIdAsync(int id);
 		 /// <summary>
         /// 根据条件获取单个role数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<RoleDto>> GetByExp(Expression<Func<RoleDto, bool>> exp);
+        Task<Result<RoleDto>> GetByExpAsync(Expression<Func<RoleDto, bool>> exp);
         /// <summary>
         /// 根据id删除role数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<RoleDto>> Delete(int id);
+        Task<Result<RoleDto>> DeleteAsync(int id);
         /// <summary>
         /// 批量删除role数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        Task<Result<List<RoleDto>>> Delete(List<int> ids);
+        Task<Result<List<RoleDto>>> DeleteAsync(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto">role实体</param>
         /// <returns></returns>
-        Task<Result<RoleDto>> Delete(RoleDto dto);
+        Task<Result<RoleDto>> DeleteAsync(RoleDto dto);
         /// <summary>
         /// 根据条件删除role数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<RoleDto>> Delete(Expression<Func<RoleDto, bool>> exp);
+        Task<Result<RoleDto>> DeleteAsync(Expression<Func<RoleDto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">role实体</param>
         /// <returns></returns>
-        Task<Result<RoleDto>> Update(RoleDto dto);
+        Task<Result<RoleDto>> UpdateAsync(RoleDto dto);
         /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto">role实体集合</param>
         /// <returns></returns>
-        Task<Result<List<RoleDto>>> Update(List<RoleDto> dtos);
+        Task<Result<List<RoleDto>>> UpdateAsync(List<RoleDto> dtos);
         /// <summary>
         /// 获取role分页数据
         /// </summary>
@@ -78,14 +78,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<RoleDto>> GetPageData(QueryBase queryBase,
+        Task<ResultDto<RoleDto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<RoleDto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<RoleDto>> GetList(Expression<Func<RoleDto, bool>> queryExp);
+        Task<ResultDto<RoleDto>> GetListAsync(Expression<Func<RoleDto, bool>> queryExp);
 	}
 }
 

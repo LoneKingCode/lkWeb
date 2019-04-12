@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service;
 using Microsoft.AspNetCore.Authorization;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using Microsoft.AspNetCore.Diagnostics;
 using lkWeb.Filter;
 using Microsoft.Extensions.PlatformAbstractions;
-using lkWeb.Service.Util;
+using lkWeb.Core.Helper;
 using lkWeb.Service.Dto;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -50,7 +50,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var result = new Result<ServerInfo>();
             result.flag = true;
-            result.data = SysHelper.GetServerInfo();
+            result.data = SysInfoHelper.GetServerInfo();
             return Json(result);
         }
         [AllowAnonymous]

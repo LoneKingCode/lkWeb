@@ -5,32 +5,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
-using lkWeb.Data.Config;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using System.Text;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
+using lkWeb.Data.Config;
+using lkWeb.Core.Helper;
 
 namespace lkWeb.Data
 {
-    public class lkWebContext : IdentityDbContext<UserEntity, RoleEntity, int>
+    public class lkWebContext : DbContext
     {
         //数据库连接串 在StartUp.cs中为其赋值
         public static string connectionString = ConfigurationHelper.getConnStr();
-        public DbSet<LoginLogEntity> LoginLogs { get; set; }
-        public DbSet<MenuEntity> Menus { get; set; }
-        public DbSet<RoleMenuEntity> RoleMenus { get; set; }
-        public DbSet<OperationLogEntity> OperationLogs { get; set; }
-        public DbSet<ModuleEntity> Modules { get; set; }
-        //public DbSet<RoleEntity> Roles { get; set; }  asp.net core identity里已经有
-        //public DbSet<UserEntity> Users { get; set; }
-        //public DbSet<UserRoleEntity> UserRoles { get; set; }
+        public DbSet<LoginLogEntity> LoginLog { get; set; }
+        public DbSet<MenuEntity> Menu { get; set; }
+        public DbSet<RoleMenuEntity> RoleMenu { get; set; }
+        public DbSet<OperationLogEntity> OperationLog { get; set; }
+        public DbSet<ModuleEntity> Module { get; set; }
+        public DbSet<RoleEntity> Role { get; set; }
+        public DbSet<UserEntity> User { get; set; }
+        public DbSet<UserRoleEntity> UserRole { get; set; }
         public lkWebContext(DbContextOptions<lkWebContext> options) : base(options)
         {
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            //设置实体和数据库中表的关系
             modelBuilder.ApplyConfiguration(new LoginLogConfig());
             modelBuilder.ApplyConfiguration(new MenuConfig());
             modelBuilder.ApplyConfiguration(new OperationLog());
@@ -40,17 +41,12 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new UserRoleConfig());
             modelBuilder.ApplyConfiguration(new DepartmentConfig());
             modelBuilder.ApplyConfiguration(new UserDepartmentConfig());
-            modelBuilder.ApplyConfiguration(new UserLoginConfig());
-            modelBuilder.ApplyConfiguration(new UserTokenConfig());
-            modelBuilder.ApplyConfiguration(new RoleClaimConfig());
-            modelBuilder.ApplyConfiguration(new UserClaimConfig());
             modelBuilder.ApplyConfiguration(new ModuleConfig());
             modelBuilder.ApplyConfiguration(new TableListConfig());
             modelBuilder.ApplyConfiguration(new TableColumnConfig());
             modelBuilder.ApplyConfiguration(new SystemOptionConfig());
 
             modelBuilder.ApplyConfiguration(new TestLeaderConfig());
-
         }
         public override int SaveChanges()
         {

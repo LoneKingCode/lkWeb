@@ -104,16 +104,16 @@
                         data: data,
                         success: function (result) {
                             if (result.flag == true) {
-                                layer.alert("删除成功")
+                                parent.layer.alert("删除成功")
                                 lkTable.draw(false);
                             }
                             else {
-                                layer.alert("删除失败");
+                                parent.layer.alert("删除失败");
                             }
                         },
                         error: function (err) {
                             console.log(err);
-                            layer.alert("删除失败");
+                            parent.layer.alert("删除失败");
                         }
                     })
             }, function () {

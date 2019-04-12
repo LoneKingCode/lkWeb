@@ -15,61 +15,61 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        Task<Result<OperationLogDto>> Add(OperationLogDto dto);
+        Task<Result<OperationLogDto>> AddAsync(OperationLogDto dto);
         /// <summary>
         /// 批量添加operationlog
         /// </summary>
         /// <param name="dto">operationlog实体集合</param>
         /// <returns></returns>
-        Task<Result<List<OperationLogDto>>> Add(List<OperationLogDto> dtos);
+        Task<Result<List<OperationLogDto>>> AddAsync(List<OperationLogDto> dtos);
         /// <summary>
         /// 根据id获取单个operationlog数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<OperationLogDto>> GetById(int id);
+        Task<Result<OperationLogDto>> GetByIdAsync(int id);
 		 /// <summary>
         /// 根据条件获取单个operationlog数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<OperationLogDto>> GetByExp(Expression<Func<OperationLogDto, bool>> exp);
+        Task<Result<OperationLogDto>> GetByExpAsync(Expression<Func<OperationLogDto, bool>> exp);
         /// <summary>
         /// 根据id删除operationlog数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<OperationLogDto>> Delete(int id);
+        Task<Result<OperationLogDto>> DeleteAsync(int id);
         /// <summary>
         /// 批量删除operationlog数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        Task<Result<List<OperationLogDto>>> Delete(List<int> ids);
+        Task<Result<List<OperationLogDto>>> DeleteAsync(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        Task<Result<OperationLogDto>> Delete(OperationLogDto dto);
+        Task<Result<OperationLogDto>> DeleteAsync(OperationLogDto dto);
         /// <summary>
         /// 根据条件删除operationlog数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<OperationLogDto>> Delete(Expression<Func<OperationLogDto, bool>> exp);
+        Task<Result<OperationLogDto>> DeleteAsync(Expression<Func<OperationLogDto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">operationlog实体</param>
         /// <returns></returns>
-        Task<Result<OperationLogDto>> Update(OperationLogDto dto);
+        Task<Result<OperationLogDto>> UpdateAsync(OperationLogDto dto);
         /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto">operationlog实体集合</param>
         /// <returns></returns>
-        Task<Result<List<OperationLogDto>>> Update(List<OperationLogDto> dtos);
+        Task<Result<List<OperationLogDto>>> UpdateAsync(List<OperationLogDto> dtos);
         /// <summary>
         /// 获取operationlog分页数据
         /// </summary>
@@ -78,14 +78,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<OperationLogDto>> GetPageData(QueryBase queryBase,
+        Task<ResultDto<OperationLogDto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<OperationLogDto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<OperationLogDto>> GetList(Expression<Func<OperationLogDto, bool>> queryExp);
+        Task<ResultDto<OperationLogDto>> GetListAsync(Expression<Func<OperationLogDto, bool>> queryExp);
 	}
 }
 

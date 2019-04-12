@@ -11,17 +11,13 @@ namespace lkWeb.Service.Abstracts
     public partial interface IUserService
     {
         //以下都为.net core identity中usermanage中的操作
-        Task<Result<string>> Logout();
-        Task<Result<UserDto>> _GetById(int id);
-        Task<Result<UserDto>> _Add(UserDto dto);
-        Task<Result<UserDto>> _Update(UserDto dto);
-        Task<Result<UserDto>> _Delete(UserDto dto);
-        Task<Result<UserDto>> _Delete(int id);
-        Task<Result<UserDto>> _Delete(List<int> ids);
-        Task<Result<UserDto>> AddRoles(int userID, List<int> roleIds);
-        Task<Result<UserDto>> RemoveRoles(int userID, List<int> roleIds);
-        Task<Result<UserDto>> GetCurrentUser();
+        Result<string> Logout();
 
+        Task<Result<List<UserRoleDto>>> AddRoles(int userID, List<int> roleIds);
+        Task<Result<UserRoleDto>> RemoveRoles(int userID, List<int> roleIds);
+        Result<UserDto> GetCurrentUser();
+    
+        //Task<Result<UserDto>> UserLogin(UserDto dto);
         /// <summary>
         /// 登陆
         /// </summary>

@@ -15,61 +15,61 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">tablelist实体</param>
         /// <returns></returns>
-        Task<Result<TableListDto>> Add(TableListDto dto);
+        Task<Result<TableListDto>> AddAsync(TableListDto dto);
         /// <summary>
         /// 批量添加tablelist
         /// </summary>
         /// <param name="dto">tablelist实体集合</param>
         /// <returns></returns>
-        Task<Result<List<TableListDto>>> Add(List<TableListDto> dtos);
+        Task<Result<List<TableListDto>>> AddAsync(List<TableListDto> dtos);
         /// <summary>
         /// 根据id获取单个tablelist数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<TableListDto>> GetById(int id);
+        Task<Result<TableListDto>> GetByIdAsync(int id);
 		 /// <summary>
         /// 根据条件获取单个tablelist数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<TableListDto>> GetByExp(Expression<Func<TableListDto, bool>> exp);
+        Task<Result<TableListDto>> GetByExpAsync(Expression<Func<TableListDto, bool>> exp);
         /// <summary>
         /// 根据id删除tablelist数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<TableListDto>> Delete(int id);
+        Task<Result<TableListDto>> DeleteAsync(int id);
         /// <summary>
         /// 批量删除tablelist数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        Task<Result<List<TableListDto>>> Delete(List<int> ids);
+        Task<Result<List<TableListDto>>> DeleteAsync(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto">tablelist实体</param>
         /// <returns></returns>
-        Task<Result<TableListDto>> Delete(TableListDto dto);
+        Task<Result<TableListDto>> DeleteAsync(TableListDto dto);
         /// <summary>
         /// 根据条件删除tablelist数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<TableListDto>> Delete(Expression<Func<TableListDto, bool>> exp);
+        Task<Result<TableListDto>> DeleteAsync(Expression<Func<TableListDto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">tablelist实体</param>
         /// <returns></returns>
-        Task<Result<TableListDto>> Update(TableListDto dto);
+        Task<Result<TableListDto>> UpdateAsync(TableListDto dto);
         /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto">tablelist实体集合</param>
         /// <returns></returns>
-        Task<Result<List<TableListDto>>> Update(List<TableListDto> dtos);
+        Task<Result<List<TableListDto>>> UpdateAsync(List<TableListDto> dtos);
         /// <summary>
         /// 获取tablelist分页数据
         /// </summary>
@@ -78,14 +78,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<TableListDto>> GetPageData(QueryBase queryBase,
+        Task<ResultDto<TableListDto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<TableListDto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<TableListDto>> GetList(Expression<Func<TableListDto, bool>> queryExp);
+        Task<ResultDto<TableListDto>> GetListAsync(Expression<Func<TableListDto, bool>> queryExp);
 	}
 }
 

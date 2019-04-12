@@ -50,6 +50,9 @@ public partial class AutoMapperConfiguration : Profile
 				/*	CreateMap<UserEntity, UserDto>();
 					CreateMap<UserDto, UserEntity>();
 					*/
+				/*	CreateMap<UserRoleEntity, UserRoleDto>();
+					CreateMap<UserRoleDto, UserRoleEntity>();
+					*/
 
         }
 }

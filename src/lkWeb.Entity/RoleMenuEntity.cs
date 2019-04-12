@@ -22,9 +22,6 @@ namespace lkWeb.Entity
         /// </summary>
         public int MenuId { get; set; }
 
-        /// <summary>
-        ///  角色
-        /// </summary>
-        public virtual RoleEntity Role { get; set; }
+    
     }
 }

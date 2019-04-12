@@ -12,8 +12,7 @@ namespace lkWeb.Data.Config
         public void Configure(EntityTypeBuilder<TestLeaderEntity> builder)
         {
             builder.ToTable("Test_Leader");
-            builder.HasKey(item => item.Id);
-            builder.Property(item => item.Id).ValueGeneratedOnAdd();
+       
         }
     }
 }

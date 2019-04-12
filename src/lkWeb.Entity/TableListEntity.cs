@@ -92,7 +92,6 @@ namespace lkWeb.Entity
         /// </summary>
         public string JavaScript { get; set; }
 
-        public virtual ICollection<TableColumnEntity> TableColumns { get; set; }
 
     }
 }

@@ -12,12 +12,7 @@ namespace lkWeb.Data.Config
         public void Configure(EntityTypeBuilder<OperationLogEntity> builder)
         {
             builder.ToTable("Sys_OperationLog");
-            builder.HasKey(item => item.Id);
-            builder.Property(item => item.Id).ValueGeneratedOnAdd();
-            builder.Property(item => item.OperationUrl).HasColumnType("varchar(300)");
-            builder.Property(item => item.OperationDescription).HasColumnType("varchar(100)").IsRequired();
-            builder.Property(item => item.ClientIP).HasColumnType("varchar(15)").IsRequired();
-            builder.Property(item => item.ClientMac).HasColumnType("varchar(40)").IsRequired();
+           
         }
     }
 }

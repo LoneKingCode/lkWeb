@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using lkWeb.Service.Enum;
 using System.Linq;
 using System.IO;
 using OfficeOpenXml;
 using System.Globalization;
 using Microsoft.AspNetCore.Http;
-using lkWeb.Service.Util;
+using lkWeb.Core.Helper;
 
 namespace lkWeb.Service.Abstracts
 {
@@ -40,7 +40,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<List<TableColumnDto>>> GenerateColumn(int tableId)
         {
             var result = new Result<List<TableColumnDto>>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -51,7 +51,7 @@ namespace lkWeb.Service.Abstracts
             var tableData = await _sqlService.Query(string.Format("select * from v_TableInfo where tablename = '{0}'",
                 tableDto.Name));
             var tableColumns = new List<TableColumnDto>();
-            var delResult = await _tableColumnService.Delete(item => item.TableId == tableId);
+            var delResult = await _tableColumnService.DeleteAsync(item => item.TableId == tableId);
             foreach (var row in tableData)
             {
                 var dataType = "String";
@@ -74,7 +74,7 @@ namespace lkWeb.Service.Abstracts
                     TableId = tableDto.Id,
                 });
             }
-            var addResult = await _tableColumnService.Add(tableColumns);
+            var addResult = await _tableColumnService.AddAsync(tableColumns);
             return addResult;
 
         }
@@ -111,7 +111,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<List<Dictionary<string, object>>>> GetData(int tableId, string columns, string condition, string orderBy)
         {
             var result = new Result<List<Dictionary<string, object>>>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -136,7 +136,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<ResultDto<Dictionary<string, object>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase)
         {
             var result = new ResultDto<Dictionary<string, object>>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
                 return result;
             if (tableResult.data.AllowView == 0)
@@ -169,7 +169,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<string>> GetColumnNames(int tableId, string condition, string orderBy)
         {
             var result = new Result<String>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -197,7 +197,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<bool>> Add(int tableId, Dictionary<string, string> addModel)
         {
             var result = new Result<bool>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -233,7 +233,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel, int id)
         {
             var result = new Result<bool>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -270,7 +270,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<bool>> Delete(int tableId, List<int> ids)
         {
             var result = new Result<bool>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -366,7 +366,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<string>> ImportExcel(int tableId, IFormFile formFile)
         {
             var result = new Result<string>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -378,7 +378,7 @@ namespace lkWeb.Service.Abstracts
                 result.msg = "不允许导入";
                 return result;
             }
-            var colDtos = (await _tableColumnService.GetList(item => item.TableId == tableId && item.ImportVisible == 1)).data;
+            var colDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ImportVisible == 1)).data;
             if (!colDtos.Any())
             {
                 result.msg = "无可导入的列";
@@ -517,7 +517,7 @@ namespace lkWeb.Service.Abstracts
                 else if (tableDto.ImportType == TableImportType.更新)
                 {
                     string sqlTpl = "update {0} set {1} where {2}";
-                    var primaryKeyResult = await _tableColumnService.GetList(c => c.TableId == tableId && c.PrimaryKey == 1);
+                    var primaryKeyResult = await _tableColumnService.GetListAsync(c => c.TableId == tableId && c.PrimaryKey == 1);
                     if (primaryKeyResult.data == null)
                     {
                         result.msg = "请设置主键，因为导入类型为更新";
@@ -566,7 +566,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<string>> ExportExcel(int tableId)
         {
             var result = new Result<string>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -595,7 +595,7 @@ namespace lkWeb.Service.Abstracts
                 var colNames = string.Empty;
                 // 添加worksheet
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
-                var colDtos = await _tableColumnService.GetList(item => item.TableId == tableId && item.ExportVisible == 1);
+                var colDtos = await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ExportVisible == 1);
                 if (colDtos.data.Count() < 1)
                 {
                     result.msg += "导出可见的列数量为" + colDtos.data.Count();
@@ -661,7 +661,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<string>> DownloadImportTemplate(int tableId)
         {
             var result = new Result<string>();
-            var tableResult = await _tableListService.GetById(tableId);
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -686,7 +686,7 @@ namespace lkWeb.Service.Abstracts
                 var colNames = string.Empty;
                 // 添加worksheet
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
-                var colDtos = await _tableColumnService.GetList(item => item.TableId == tableId && item.ImportVisible == 1);
+                var colDtos = await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ImportVisible == 1);
                 if (colDtos.data.Count() < 1)
                 {
                     result.msg += "导入可见的列数量为" + colDtos.data.Count();

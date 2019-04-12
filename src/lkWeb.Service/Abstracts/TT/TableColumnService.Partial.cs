@@ -6,7 +6,7 @@ using System.Text;
 using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -19,12 +19,12 @@ namespace lkWeb.Service.Abstracts
 		{
 
 		}
-		    /// <summary>
+		/// <summary>
         ///添加单个tablecolumn
         /// </summary>
         /// <param name="dto">tablecolumn实体</param>
         /// <returns></returns>
-        public async Task<Result<TableColumnDto>> Add(TableColumnDto dto)
+        public async Task<Result<TableColumnDto>> AddAsync(TableColumnDto dto)
         {
             using (var db = GetDb())
             {
@@ -41,14 +41,14 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">tablecolumn集合</param>
         /// <returns></returns>
-        public async Task<Result<List<TableColumnDto>>> Add(List<TableColumnDto> dtos)
+        public async Task<Result<List<TableColumnDto>>> AddAsync(List<TableColumnDto> dtos)
         {
             using (var db = GetDb())
             {
                 var result = new Result<List<TableColumnDto>>();
                 var ds = GetDbSet(db);
                 var entities = MapTo<List<TableColumnDto>, List<TableColumnEntity>>(dtos);
-                ds.AddRange(entities);
+                await ds.AddRangeAsync(entities);
                 result.flag = (await db.SaveChangesAsync()) > 0;
                 return result;
             }
@@ -58,7 +58,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">tablecolumn实体</param>
         /// <returns></returns>
-        public async Task<Result<TableColumnDto>> Update(TableColumnDto dto)
+        public async Task<Result<TableColumnDto>> UpdateAsync(TableColumnDto dto)
         {
             using (var db = GetDb())
             {
@@ -73,7 +73,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dtos">tablecolumn集合</param>
         /// <returns></returns>
-        public async Task<Result<List<TableColumnDto>>> Update(List<TableColumnDto> dtos)
+        public async Task<Result<List<TableColumnDto>>> UpdateAsync(List<TableColumnDto> dtos)
         {
             using (var db = GetDb())
             {
@@ -90,7 +90,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<Result<TableColumnDto>> Delete(int id)
+        public async Task<Result<TableColumnDto>> DeleteAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -107,7 +107,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        public async Task<Result<List<TableColumnDto>>> Delete(List<int> ids)
+        public async Task<Result<List<TableColumnDto>>> DeleteAsync(List<int> ids)
         {
             using (var db = GetDb())
             {
@@ -127,7 +127,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">tablecolumn实体</param>
         /// <returns></returns>
-        public async Task<Result<TableColumnDto>> Delete(TableColumnDto dto)
+        public async Task<Result<TableColumnDto>> DeleteAsync(TableColumnDto dto)
         {
             using (var db = GetDb())
             {
@@ -144,7 +144,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Result<TableColumnDto>> GetById(int id)
+        public async Task<Result<TableColumnDto>> GetByIdAsync(int id)
         {
             using (var db = GetDb())
             {
@@ -167,7 +167,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public async Task<ResultDto<TableColumnDto>> GetPageData(QueryBase queryBase, Expression<Func<TableColumnDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<ResultDto<TableColumnDto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<TableColumnDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
@@ -191,7 +191,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        public async Task<ResultDto<TableColumnDto>> GetList(Expression<Func<TableColumnDto, bool>> queryExp)
+        public async Task<ResultDto<TableColumnDto>> GetListAsync(Expression<Func<TableColumnDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
@@ -214,7 +214,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<TableColumnDto>> GetByExp(Expression<Func<TableColumnDto, bool>> exp)
+        public async Task<Result<TableColumnDto>> GetByExpAsync(Expression<Func<TableColumnDto, bool>> exp)
         {
             using (var db = GetDb())
             {
@@ -235,7 +235,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public async Task<Result<TableColumnDto>> Delete(Expression<Func<TableColumnDto, bool>> exp)
+        public async Task<Result<TableColumnDto>> DeleteAsync(Expression<Func<TableColumnDto, bool>> exp)
         {
             using (var db = GetDb())
             {

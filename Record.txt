@@ -1,4 +1,16 @@
- 
+功能完善 对照老师那个
+
+
+一个统一的配置文件 像老师的那个那样  当前用户， 各种信息提示，用format
+
+
+
+ public async Task<Result<UserDto>> DeleteAsync  //这种 不需要返回 result，直接一个bool就行
+
+ util 放 lkweb.core就行了吧？  ISqlService ISysService             
+ services.AddScoped<ISysService, SysService>();            services.AddScoped<ISqlService, SqlService>();
+ 改成 helper吧
+
 
 调整startup.cs 里面太乱
 

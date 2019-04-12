@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +48,7 @@ namespace lkWeb.Areas.Admin.Controllers
             Expression<Func<LoginLogDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey));
-            var dto = await _loginLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var dto = await _loginLogService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -75,7 +75,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
                 || x.OperationUrl.Contains(queryBase.SearchKey));
-            var dto = await _operationLogService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var dto = await _operationLogService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -101,7 +101,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetChartDataByDay()
         {
-            var result = await _operationLogService.GetList(
+            var result = await _operationLogService.GetListAsync(
                 item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
             var xAxis = new List<string>();
             var visitors = new List<int>();
@@ -128,7 +128,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetChartDataByWeek()
         {
             var weekAgo = DateTime.Now.AddDays(-7);
-            var result = await _operationLogService.GetList(
+            var result = await _operationLogService.GetListAsync(
                 item => DateTime.Compare(item.CreateDateTime, weekAgo) >= 0);
             var xAxis = new List<string>();
             var visitors = new List<int>();
@@ -155,7 +155,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetChartDataByMonth()
         {
             var lastMonth = DateTime.Now.AddMonths(-1);
-            var result = await _operationLogService.GetList(
+            var result = await _operationLogService.GetListAsync(
                 item => DateTime.Compare(item.CreateDateTime, lastMonth) > 0);
             var xAxis = new List<string>();
             var visitors = new List<int>();
@@ -184,7 +184,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetChartDataByYear()
         {
             var yearAgo = DateTime.Now.AddYears(-1);
-            var result = await _operationLogService.GetList(
+            var result = await _operationLogService.GetListAsync(
                 item => item.CreateDateTime.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"));
             var xAxis = new List<string>();
             var visitors = new List<int>();
@@ -210,14 +210,14 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearLoginLog()
         {
-            var result = await _loginLogService.Delete(x => x.Id > 0);
+            var result = await _loginLogService.DeleteAsync(x => x.Id > 0);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearOperationLog()
         {
-            var result = await _operationLogService.Delete(x => x.Id > 0);
+            var result = await _operationLogService.DeleteAsync(x => x.Id > 0);
             return Json(result);
         }
         #endregion

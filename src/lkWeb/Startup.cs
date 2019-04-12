@@ -11,16 +11,13 @@ using Microsoft.EntityFrameworkCore;
 using lkWeb.Service.Abstracts;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using lkWeb.Entity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Hangfire;
 using lkWeb.Filter;
-using lkWeb.Core.Extensions;
-using lkWeb.Service.Util;
+using lkWeb.Core.Extension;
+using lkWeb.Core.Helper;
 
 namespace lkWeb
 {
@@ -71,6 +68,7 @@ namespace lkWeb
             // Add application services. For instance:
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserRoleService, UserRoleService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IRoleMenuService, RoleMenuService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
@@ -85,29 +83,7 @@ namespace lkWeb
             services.AddScoped<ISysService, SysService>();
 
 
-            services.AddIdentity<UserEntity, RoleEntity>()
-                .AddEntityFrameworkStores<lkWebContext>()
-                .AddDefaultTokenProviders();
-
-            services.Configure<IdentityOptions>(options =>
-            {
-                // Password settings
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 5;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequiredUniqueChars = 6;
-
-                // Lockout settings
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                options.Lockout.MaxFailedAccessAttempts = 10;
-                options.Lockout.AllowedForNewUsers = true;
-
-                // User settings
-                options.User.RequireUniqueEmail = true;
-            });
-
+  
             services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings
@@ -133,8 +109,6 @@ namespace lkWeb
             ServiceLocator.Instance = app.ApplicationServices;
 
             app.UseStaticFiles();//使用静态文件
-
-            app.UseAuthentication(); //使用Identity
 
             app.UseSession();
 
@@ -184,8 +158,7 @@ namespace lkWeb
                 Authorization = new[] { new HangfireAuthorizationFilter() }
             };
             app.UseHangfireDashboard("/jobs", options);
-            //初始数据库数据
-            //SeedData.Initialize(app.ApplicationServices);
+      
         }
     }
 }

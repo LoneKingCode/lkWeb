@@ -7,7 +7,7 @@ using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using lkWeb.Areas.Admin.Models;
 using System.Linq.Expressions;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using Microsoft.AspNetCore.Identity;
 using lkWeb.Entity;
 using lkWeb.Filter;
@@ -48,7 +48,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var role = (await _roleService._GetById(param.id)).data;
+            var role = (await _roleService.GetByIdAsync(param.id)).data;
             return View(role);
         }
         public IActionResult Authen(UrlParameter param)
@@ -67,7 +67,7 @@ namespace lkWeb.Areas.Admin.Controllers
             Expression<Func<RoleDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
-            var result = await _roleService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var result = await _roleService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -89,14 +89,14 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UrlParameter param, RoleDto role)
         {
-            var result = await _roleService._Update(role);
+            var result = await _roleService.UpdateAsync(role);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, RoleDto role)
         {
-            var result = await _roleService._Add(role);
+            var result = await _roleService.AddAsync(role);
 
             return Json(result);
         }
@@ -105,16 +105,16 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(UrlParameter param)
         {
             if (param.ids != null && param.ids.Any())
-                return Json(await _roleService._Delete(param.ids));
+                return Json(await _roleService.DeleteAsync(param.ids));
             else
-                return Json(await _roleService._Delete(param.id));
+                return Json(await _roleService.DeleteAsync(param.id));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetRoleList(UrlParameter param)
         {
-            var result = await _roleService.GetList(item => item.Id > 0);
+            var result = await _roleService.GetListAsync(item => item.Id > 0);
             var strData = result.data.Select(d => new
             {
                 id = d.Id,
@@ -129,8 +129,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetMenuList(UrlParameter param)
         {
             var result = new List<object>();
-            var moduleList = (await _moduleService.GetList(item => item.Id > 0)).data;
-            var menuList = (await _menuService.GetList(item => item.Id > 0)).data;
+            var moduleList = (await _moduleService.GetListAsync(item => item.Id > 0)).data;
+            var menuList = (await _menuService.GetListAsync(item => item.Id > 0)).data;
             var menus = menuList.Select(d => new
             {
                 id = d.Id.ToString(),
@@ -157,7 +157,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetRoleMenus(int roleId)
         {
-            var result = await _roleMenuService.GetList(item => item.RoleId == roleId);
+            var result = await _roleMenuService.GetListAsync(item => item.RoleId == roleId);
             var strData = result.data.Select(d => new
             {
                 id = d.Id,
@@ -173,9 +173,9 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = new Result<RoleMenuDto>();
             foreach (var roleId in model.RoleIds)
             {
-                var exist = (await _roleMenuService.GetList(item => item.RoleId == roleId)).data.Count > 0;
+                var exist = (await _roleMenuService.GetListAsync(item => item.RoleId == roleId)).data.Count > 0;
 
-                var delResult = await _roleMenuService.Delete(item => item.RoleId == roleId);
+                var delResult = await _roleMenuService.DeleteAsync(item => item.RoleId == roleId);
                 if (!delResult.flag && exist)
                     result.msg += delResult.msg + "\n";
                 if (model.MenuIds != null)
@@ -183,10 +183,10 @@ namespace lkWeb.Areas.Admin.Controllers
                     if (model.MenuIds.Any())
                     {
                         var newRoleMenus = model.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
-                        var addResult = await _roleMenuService.Add(newRoleMenus);
+                        var addResult = await _roleMenuService.AddAsync(newRoleMenus);
                         if (!addResult.flag)
                             result.msg += addResult.msg + "\n";
-                        result.flag = addResult.flag && delResult.flag;
+                        result.flag = addResult.flag && !(delResult.flag^exist); //((!delResult.flag && !exist) || (delResult.flag && exist))
                     }
                     else
                     {

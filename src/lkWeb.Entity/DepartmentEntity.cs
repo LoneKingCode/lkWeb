@@ -25,9 +25,6 @@ namespace lkWeb.Entity
         /// </summary>
         public int ParentId { get; set; }
 
-        /// <summary>
-        /// 部门用户
-        /// </summary>
-        public virtual ICollection<UserDepartmentEntity> UserDepartments { get; set; }
+        
     }
 }

@@ -15,14 +15,7 @@ namespace lkWeb.Entity
         /// 用户ID
         /// </summary>
         public int UserId { get; set; }
-        /// <summary>
-        /// 用户
-        /// </summary>
-        public virtual UserEntity User{ get; set; }
-        /// <summary>
-        /// 部门
-        /// </summary>
-        public virtual DepartmentEntity Department { get; set; }
+    
 
     }
 }

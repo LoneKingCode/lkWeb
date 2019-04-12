@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using lkWeb.Service.Enum;
@@ -30,7 +30,7 @@ namespace lkWeb.Areas.Admin.Controllers
         #region Page
         public async Task<IActionResult> Index(UrlParameter param)
         {
-            var tableDtos = await _tableListService.GetList(item => item.Id > 0);
+            var tableDtos = await _tableListService.GetListAsync(item => item.Id > 0);
             List<SelectListItem> tableList = new List<SelectListItem>();
             foreach (var dto in tableDtos.data)
             {
@@ -45,7 +45,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Add(UrlParameter param)
         {
-            var result = await _tableListService.GetList(item => item.Id > 0);
+            var result = await _tableListService.GetListAsync(item => item.Id > 0);
             ViewBag.TableList = new SelectList(result.data, "Id", "Name");
             ViewBag.DataTypeList = new SelectList(ColumnType.list);
 
@@ -53,10 +53,10 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var colDto = (await _tableColumnService.GetById(param.id)).data;
+            var colDto = (await _tableColumnService.GetByIdAsync(param.id)).data;
 
             //获取所有表 放到下拉中 且选中当前列所属表
-            var result = await _tableListService.GetList(item => item.Id > 0);
+            var result = await _tableListService.GetListAsync(item => item.Id > 0);
             var items = new List<SelectListItem>();
             foreach (var item in result.data)
             {
@@ -91,9 +91,9 @@ namespace lkWeb.Areas.Admin.Controllers
                 else
                     queryExp = x => (x.Description.Contains(searchKey) || x.Name.Contains(searchKey));
             }
-            var allTable = (await _tableListService.GetList(item => item.Id > 0))
+            var allTable = (await _tableListService.GetListAsync(item => item.Id > 0))
                    .data.ToDictionary(item => item.Id, item => item.Name);
-            var dto = await _tableColumnService.GetPageData(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var dto = await _tableColumnService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -121,7 +121,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UrlParameter param, TableColumnDto dto)
         {
-            var result = await _tableColumnService.Update(dto);
+            var result = await _tableColumnService.UpdateAsync(dto);
             return Json(result);
         }
 
@@ -129,7 +129,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, TableColumnDto dto)
         {
-            var result = await _tableColumnService.Add(dto);
+            var result = await _tableColumnService.AddAsync(dto);
             return Json(result);
         }
         [HttpPost]
@@ -137,18 +137,18 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(UrlParameter param)
         {
             if (param.ids != null && param.ids.Any())
-                return Json(await _tableColumnService.Delete(param.ids));
+                return Json(await _tableColumnService.DeleteAsync(param.ids));
             else
-                return Json(await _tableColumnService.Delete(param.id));
+                return Json(await _tableColumnService.DeleteAsync(param.id));
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Copy(UrlParameter param)
         {
-            var resourceDto = (await _tableColumnService.GetById(param.id)).data;
+            var resourceDto = (await _tableColumnService.GetByIdAsync(param.id)).data;
             var newDto = resourceDto;
             newDto.Id = default(int);
-            var result = await _tableColumnService.Add(newDto);
+            var result = await _tableColumnService.AddAsync(newDto);
             return Json(result);
         }
         [HttpPost]

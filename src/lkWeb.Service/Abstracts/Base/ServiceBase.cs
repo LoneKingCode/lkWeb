@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using lkWeb.Core.Extensions;
+using lkWeb.Core.Extension;
 using System.Data.Common;
 
 namespace lkWeb.Service.Abstracts

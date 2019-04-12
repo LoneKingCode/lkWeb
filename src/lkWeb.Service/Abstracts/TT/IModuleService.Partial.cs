@@ -15,61 +15,61 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">module实体</param>
         /// <returns></returns>
-        Task<Result<ModuleDto>> Add(ModuleDto dto);
+        Task<Result<ModuleDto>> AddAsync(ModuleDto dto);
         /// <summary>
         /// 批量添加module
         /// </summary>
         /// <param name="dto">module实体集合</param>
         /// <returns></returns>
-        Task<Result<List<ModuleDto>>> Add(List<ModuleDto> dtos);
+        Task<Result<List<ModuleDto>>> AddAsync(List<ModuleDto> dtos);
         /// <summary>
         /// 根据id获取单个module数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<ModuleDto>> GetById(int id);
+        Task<Result<ModuleDto>> GetByIdAsync(int id);
 		 /// <summary>
         /// 根据条件获取单个module数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<ModuleDto>> GetByExp(Expression<Func<ModuleDto, bool>> exp);
+        Task<Result<ModuleDto>> GetByExpAsync(Expression<Func<ModuleDto, bool>> exp);
         /// <summary>
         /// 根据id删除module数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<ModuleDto>> Delete(int id);
+        Task<Result<ModuleDto>> DeleteAsync(int id);
         /// <summary>
         /// 批量删除module数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        Task<Result<List<ModuleDto>>> Delete(List<int> ids);
+        Task<Result<List<ModuleDto>>> DeleteAsync(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto">module实体</param>
         /// <returns></returns>
-        Task<Result<ModuleDto>> Delete(ModuleDto dto);
+        Task<Result<ModuleDto>> DeleteAsync(ModuleDto dto);
         /// <summary>
         /// 根据条件删除module数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<ModuleDto>> Delete(Expression<Func<ModuleDto, bool>> exp);
+        Task<Result<ModuleDto>> DeleteAsync(Expression<Func<ModuleDto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">module实体</param>
         /// <returns></returns>
-        Task<Result<ModuleDto>> Update(ModuleDto dto);
+        Task<Result<ModuleDto>> UpdateAsync(ModuleDto dto);
         /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto">module实体集合</param>
         /// <returns></returns>
-        Task<Result<List<ModuleDto>>> Update(List<ModuleDto> dtos);
+        Task<Result<List<ModuleDto>>> UpdateAsync(List<ModuleDto> dtos);
         /// <summary>
         /// 获取module分页数据
         /// </summary>
@@ -78,14 +78,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<ModuleDto>> GetPageData(QueryBase queryBase,
+        Task<ResultDto<ModuleDto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<ModuleDto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<ModuleDto>> GetList(Expression<Func<ModuleDto, bool>> queryExp);
+        Task<ResultDto<ModuleDto>> GetListAsync(Expression<Func<ModuleDto, bool>> queryExp);
 	}
 }
 

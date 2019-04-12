@@ -12,8 +12,7 @@ namespace lkWeb.Data.Config
         public void Configure(EntityTypeBuilder<UserEntity> builder)
         {
             builder.ToTable("Sys_User");
-            builder.Property(item => item.NormalizedEmail).HasMaxLength(100);
-            builder.Property(item => item.NormalizedUserName).HasMaxLength(100);
+        
         }
     }
 }

@@ -15,61 +15,61 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="dto">department实体</param>
         /// <returns></returns>
-        Task<Result<DepartmentDto>> Add(DepartmentDto dto);
+        Task<Result<DepartmentDto>> AddAsync(DepartmentDto dto);
         /// <summary>
         /// 批量添加department
         /// </summary>
         /// <param name="dto">department实体集合</param>
         /// <returns></returns>
-        Task<Result<List<DepartmentDto>>> Add(List<DepartmentDto> dtos);
+        Task<Result<List<DepartmentDto>>> AddAsync(List<DepartmentDto> dtos);
         /// <summary>
         /// 根据id获取单个department数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<DepartmentDto>> GetById(int id);
+        Task<Result<DepartmentDto>> GetByIdAsync(int id);
 		 /// <summary>
         /// 根据条件获取单个department数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<DepartmentDto>> GetByExp(Expression<Func<DepartmentDto, bool>> exp);
+        Task<Result<DepartmentDto>> GetByExpAsync(Expression<Func<DepartmentDto, bool>> exp);
         /// <summary>
         /// 根据id删除department数据
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        Task<Result<DepartmentDto>> Delete(int id);
+        Task<Result<DepartmentDto>> DeleteAsync(int id);
         /// <summary>
         /// 批量删除department数据
         /// </summary>
         /// <param name="ids">id集合</param>
         /// <returns></returns>
-        Task<Result<List<DepartmentDto>>> Delete(List<int> ids);
+        Task<Result<List<DepartmentDto>>> DeleteAsync(List<int> ids);
         /// <summary>
         /// 删除单个数据
         /// </summary>
         /// <param name="dto">department实体</param>
         /// <returns></returns>
-        Task<Result<DepartmentDto>> Delete(DepartmentDto dto);
+        Task<Result<DepartmentDto>> DeleteAsync(DepartmentDto dto);
         /// <summary>
         /// 根据条件删除department数据
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        Task<Result<DepartmentDto>> Delete(Expression<Func<DepartmentDto, bool>> exp);
+        Task<Result<DepartmentDto>> DeleteAsync(Expression<Func<DepartmentDto, bool>> exp);
         /// <summary>
         /// 更新单个数据
         /// </summary>
         /// <param name="dto">department实体</param>
         /// <returns></returns>
-        Task<Result<DepartmentDto>> Update(DepartmentDto dto);
+        Task<Result<DepartmentDto>> UpdateAsync(DepartmentDto dto);
         /// <summary>
         /// 批量更新数据
         /// </summary>
         /// <param name="dto">department实体集合</param>
         /// <returns></returns>
-        Task<Result<List<DepartmentDto>>> Update(List<DepartmentDto> dtos);
+        Task<Result<List<DepartmentDto>>> UpdateAsync(List<DepartmentDto> dtos);
         /// <summary>
         /// 获取department分页数据
         /// </summary>
@@ -78,14 +78,14 @@ namespace lkWeb.Service.Abstracts
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<DepartmentDto>> GetPageData(QueryBase queryBase,
+        Task<ResultDto<DepartmentDto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<DepartmentDto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<DepartmentDto>> GetList(Expression<Func<DepartmentDto, bool>> queryExp);
+        Task<ResultDto<DepartmentDto>> GetListAsync(Expression<Func<DepartmentDto, bool>> queryExp);
 	}
 }
 
