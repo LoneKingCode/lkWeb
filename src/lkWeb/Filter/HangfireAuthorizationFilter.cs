@@ -12,7 +12,7 @@ namespace lkWeb.Filter
         //这里需要配置权限规则
         public bool Authorize(DashboardContext context)
         {
-            var _userService = ServiceLocator.Get<IUserService>();
+            var _userService = ServiceLocator.Get<ISys_UserService>();
             var userResult = _userService.GetCurrentUser();
             //如果未登录
             if (!userResult.flag)

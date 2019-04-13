@@ -17,16 +17,16 @@ namespace lkWeb.Service.Abstracts
     public class SysService : ISysService
     {
         public readonly ISqlService _sqlService;
-        public readonly ITableListService _tableListService;
-        public readonly ITableColumnService _tableColumnService;
+        public readonly ISys_TableListService _tableListService;
+        public readonly ISys_TableColumnService _tableColumnService;
         /// <summary>
         /// 当前用户Id
         /// </summary>
         public static string currentUserId;
 
         public SysService(ISqlService sqlService,
-            ITableListService tableListService,
-            ITableColumnService tableColumnService)
+            ISys_TableListService tableListService,
+            ISys_TableColumnService tableColumnService)
         {
             _sqlService = sqlService;
             _tableListService = tableListService;
@@ -37,9 +37,9 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <returns></returns>
-        public async Task<Result<List<TableColumnDto>>> GenerateColumn(int tableId)
+        public async Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId)
         {
-            var result = new Result<List<TableColumnDto>>();
+            var result = new Result<List<Sys_TableColumnDto>>();
             var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
@@ -50,7 +50,7 @@ namespace lkWeb.Service.Abstracts
             //此SQL语句可以查询制定表的所有列
             var tableData = await _sqlService.Query(string.Format("select * from v_TableInfo where tablename = '{0}'",
                 tableDto.Name));
-            var tableColumns = new List<TableColumnDto>();
+            var tableColumns = new List<Sys_TableColumnDto>();
             var delResult = await _tableColumnService.DeleteAsync(item => item.TableId == tableId);
             foreach (var row in tableData)
             {
@@ -66,7 +66,7 @@ namespace lkWeb.Service.Abstracts
                     dataType = "Datetime";
                 else if (columnType.Contains("date"))
                     dataType = "Date";
-                tableColumns.Add(new TableColumnDto
+                tableColumns.Add(new Sys_TableColumnDto
                 {
                     Name = row["colName"].ToString(),
                     DataType = dataType,
@@ -86,9 +86,9 @@ namespace lkWeb.Service.Abstracts
         /// <param name="filedName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public async Task<Result<List<TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value)
+        public async Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value)
         {
-            var result = new Result<List<TableColumnDto>>();
+            var result = new Result<List<Sys_TableColumnDto>>();
             List<string> listSql = new List<string>();
             foreach (var id in ids)
             {

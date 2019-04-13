@@ -14,7 +14,7 @@
         //定义输出文件
         manager.StartNewFile("I"+name+"Service.Partial.cs", string.Empty);
 #>
-
+using lkWeb.Service.Base.Dto;
 using lkWeb.Service.Dto;
 using System;
 using System.Collections.Generic;

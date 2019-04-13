@@ -16,14 +16,13 @@ namespace lkWeb.Data
     {
         //数据库连接串 在StartUp.cs中为其赋值
         public static string connectionString = ConfigurationHelper.getConnStr();
-        public DbSet<LoginLogEntity> LoginLog { get; set; }
-        public DbSet<MenuEntity> Menu { get; set; }
-        public DbSet<RoleMenuEntity> RoleMenu { get; set; }
-        public DbSet<OperationLogEntity> OperationLog { get; set; }
-        public DbSet<ModuleEntity> Module { get; set; }
-        public DbSet<RoleEntity> Role { get; set; }
-        public DbSet<UserEntity> User { get; set; }
-        public DbSet<UserRoleEntity> UserRole { get; set; }
+        public DbSet<Sys_LoginLogEntity> LoginLog { get; set; }
+        public DbSet<Sys_MenuEntity> Menu { get; set; }
+        public DbSet<Sys_RoleMenuEntity> RoleMenu { get; set; }
+        public DbSet<Sys_OperationLogEntity> OperationLog { get; set; }
+        public DbSet<Sys_RoleEntity> Role { get; set; }
+        public DbSet<Sys_UserEntity> User { get; set; }
+        public DbSet<Sys_UserRoleEntity> UserRole { get; set; }
         public lkWebContext(DbContextOptions<lkWebContext> options) : base(options)
         {
         }
@@ -41,12 +40,12 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new UserRoleConfig());
             modelBuilder.ApplyConfiguration(new DepartmentConfig());
             modelBuilder.ApplyConfiguration(new UserDepartmentConfig());
-            modelBuilder.ApplyConfiguration(new ModuleConfig());
             modelBuilder.ApplyConfiguration(new TableListConfig());
             modelBuilder.ApplyConfiguration(new TableColumnConfig());
             modelBuilder.ApplyConfiguration(new SystemOptionConfig());
+            modelBuilder.ApplyConfiguration(new SubSystemConfig());
+            modelBuilder.ApplyConfiguration(new SubSystemTypeConfig());
 
-            modelBuilder.ApplyConfiguration(new TestLeaderConfig());
         }
         public override int SaveChanges()
         {

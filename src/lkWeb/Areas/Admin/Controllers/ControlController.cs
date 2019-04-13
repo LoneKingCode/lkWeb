@@ -19,8 +19,8 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class ControlController : AdminBaseController
     {
-        public readonly IUserService _userService;
-        public ControlController(IUserService userService)
+        public readonly ISys_UserService _userService;
+        public ControlController(ISys_UserService userService)
         {
             _userService = userService;
         }

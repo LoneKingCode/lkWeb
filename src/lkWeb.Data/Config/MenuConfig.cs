@@ -7,9 +7,9 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class MenuConfig : IEntityTypeConfiguration<MenuEntity>
+    public class MenuConfig : IEntityTypeConfiguration<Sys_MenuEntity>
     {
-        public void Configure(EntityTypeBuilder<MenuEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_MenuEntity> builder)
         {
             builder.ToTable("Sys_Menu");
       

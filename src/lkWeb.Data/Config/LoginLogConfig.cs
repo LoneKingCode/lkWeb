@@ -7,9 +7,9 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class LoginLogConfig : IEntityTypeConfiguration<LoginLogEntity>
+    public class LoginLogConfig : IEntityTypeConfiguration<Sys_LoginLogEntity>
     {
-        public void Configure(EntityTypeBuilder<LoginLogEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_LoginLogEntity> builder)
         {
             builder.ToTable("Sys_LoginLog");
   

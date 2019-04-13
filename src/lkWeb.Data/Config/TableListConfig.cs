@@ -7,9 +7,9 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-   public  class TableListConfig : IEntityTypeConfiguration<TableListEntity>
+   public  class TableListConfig : IEntityTypeConfiguration<Sys_TableListEntity>
     {
-        public void Configure(EntityTypeBuilder<TableListEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_TableListEntity> builder)
         {
             builder.ToTable("Sys_TableList");
      

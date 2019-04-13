@@ -7,9 +7,9 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class DepartmentConfig : IEntityTypeConfiguration<DepartmentEntity>
+    public class DepartmentConfig : IEntityTypeConfiguration<Sys_DepartmentEntity>
     {
-        public void Configure(EntityTypeBuilder<DepartmentEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_DepartmentEntity> builder)
         {
             builder.ToTable("Sys_Department");
      

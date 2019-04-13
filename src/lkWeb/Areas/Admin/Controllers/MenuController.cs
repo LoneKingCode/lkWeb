@@ -16,12 +16,15 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class MenuController : AdminBaseController
     {
-        public readonly IMenuService _menuService;
-        public readonly IModuleService _moduleService;
-        public MenuController(IMenuService menuService, IModuleService moduleService)
+        public readonly ISys_MenuService _menuService;
+        public readonly ISys_SubSystemService _subSystemService;
+        public readonly ISys_SubSystemTypeService _subSystemTypeService;
+
+        public MenuController(ISys_MenuService menuService, ISys_SubSystemService subSystemService, ISys_SubSystemTypeService subSystemTypeService)
         {
             _menuService = menuService;
-            _moduleService = moduleService;
+            _subSystemService = subSystemService;
+            _subSystemTypeService = subSystemTypeService;
         }
 
         #region Page
@@ -32,28 +35,31 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Add(UrlParameter param)
         {
+            //在列表选中某个菜单后 点击添加菜单 会默认以选中的菜单为上级菜单
             if (param.id > 0)
             {
                 var menu = (await _menuService.GetByIdAsync(param.id)).data;
-                ViewBag.ParentID = menu.Id;
+                ViewBag.ParentId = menu.Id;
                 ViewBag.ParentName = menu.Name;
             }
-            var result = await _moduleService.GetListAsync(item => item.Id > 0);
-            ViewBag.Modules = new SelectList(result.data, "Id", "Name");
-            if (result.data.Count > 0)
-                ViewBag.ModuleID = result.data.First().Id;
+            var subSystems = await _subSystemService.GetListAsync(item => item.Id > 0);
+            ViewBag.subSystem = new MultiSelectList(subSystems.data, "Id", "Name",new string[] { "1","2"});
+
             return View();
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             var menu = (await _menuService.GetByIdAsync(param.id)).data;
-            if (menu.ParentId > 0)
-                ViewBag.ParentName = (await _menuService.GetByIdAsync(menu.ParentId)).data.Name;
-            else
-                ViewBag.ParentName = "无";
-            var result = await _moduleService.GetListAsync(item => item.Id > 0);
-            ViewBag.Modules = new SelectList(result.data, "Id", "Name", menu.ModuleId);
-            ViewBag.ModuleID = menu.ModuleId;
+            if (menu.ParentId != 0)
+            {
+                var parentMenu = (await _menuService.GetByIdAsync(menu.ParentId)).data;
+                ViewBag.ParentId = parentMenu.Id;
+                ViewBag.ParentName = parentMenu.Name;
+            }
+
+            var subSystemIds = menu.SubSystemId.Split(',');
+            var subSystems = await _subSystemService.GetListAsync(item => item.Id > 0);
+            ViewBag.subSystem = new MultiSelectList(subSystems.data, "Id", "Name", subSystemIds);
             return View(menu);
         }
         #endregion
@@ -63,7 +69,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetList(UrlParameter param, string searchKey)
         {
-            Expression<Func<MenuDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_MenuDto, bool>> queryExp = item => item.Id > 0;
             if (searchKey.IsNotEmpty())
                 queryExp = item => item.Id > 0 && (item.Name.Contains(searchKey) || item.Url.Contains(searchKey));
             var result = await _menuService.GetListAsync(queryExp);
@@ -78,14 +84,13 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<MenuDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_MenuDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => x.Name.Contains(queryBase.SearchKey);
             var result = await _menuService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var allMenu = (await _menuService.GetListAsync(item => item.Id > 0))
                             .data.ToDictionary(item => item.Id, item => item.Name);
-            var allModule = (await _moduleService.GetListAsync(item => item.Id > 0))
-                            .data.ToDictionary(item => item.Id, item => item.Name);
+          
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -95,8 +100,6 @@ namespace lkWeb.Areas.Admin.Controllers
                 {
                     rowNum = ++queryBase.Start,
                     name = d.Name,
-                    moduleId = d.ModuleId,
-                    moduleName = allModule.ContainsKey(d.ModuleId) ? allModule[d.ModuleId] : "无",
                     parentId = d.ParentId,
                     parentName = allMenu.ContainsKey(d.ParentId) ? allMenu[d.ParentId] : "无",
                     id = d.Id.ToString(),
@@ -112,9 +115,10 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UrlParameter param, MenuDto menu)
+        public async Task<IActionResult> Edit(UrlParameter param, Sys_MenuDto menu)
         {
             await SetMenu(menu);
+            menu.SubSystemId = Request.Form["SubSystemIdA"];
             var result = await _menuService.UpdateAsync(menu);
             return Json(result);
         }
@@ -122,7 +126,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UrlParameter param, MenuDto menu)
+        public async Task<IActionResult> Add(UrlParameter param, Sys_MenuDto menu)
         {
             await SetMenu(menu);
 
@@ -140,7 +144,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 return Json(await _menuService.DeleteAsync(param.id));
         }
 
-        private async Task SetMenu(MenuDto menu)
+        private async Task SetMenu(Sys_MenuDto menu)
         {
             if (menu.ParentId > 0)
             {

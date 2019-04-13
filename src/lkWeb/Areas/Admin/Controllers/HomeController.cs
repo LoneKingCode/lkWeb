@@ -12,9 +12,9 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class HomeController : AdminBaseController
     {
-        public readonly IRoleService _roleService;
+        public readonly ISys_RoleService _roleService;
         public readonly ISqlService _sqlService;
-        public HomeController(IRoleService roleService, ISqlService sqlService)
+        public HomeController(ISys_RoleService roleService, ISqlService sqlService)
         {
             _roleService = roleService;
             _sqlService = sqlService;

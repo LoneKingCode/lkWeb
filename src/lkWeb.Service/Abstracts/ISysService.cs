@@ -15,7 +15,7 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <returns></returns>
-        Task<Result<List<TableColumnDto>>> GenerateColumn(int tableId);
+        Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId);
 
         /// <summary>
         /// 设置列属性值
@@ -24,7 +24,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="filedName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        Task<Result<List<TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value);
+        Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value);
 
         /// <summary>
         /// 获取表数据

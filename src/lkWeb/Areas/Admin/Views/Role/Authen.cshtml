@@ -103,8 +103,7 @@
             var treeObj = $.fn.zTree.getZTreeObj("menuTree");
             nodes = treeObj.getCheckedNodes(true);
             for (var i = 0; i < nodes.length; i++) {
-                if(nodes[i].type!="module") //防止 第一级节点的模块的ID被设置权限 这个模块是总的系统里的模块
-                    data.MenuIds.push(nodes[i].id);
+                data.MenuIds.push(nodes[i].id);
             }
             return data;
         }

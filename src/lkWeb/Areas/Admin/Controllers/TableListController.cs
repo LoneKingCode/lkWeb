@@ -15,13 +15,13 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class TableListController : AdminBaseController
     {
-        public readonly ITableListService _tableListService;
-        public readonly ITableColumnService _tableColumnService;
+        public readonly ISys_TableListService _tableListService;
+        public readonly ISys_TableColumnService _tableColumnService;
         public readonly ISqlService _sqlService;
         public readonly ISysService _sysService;
 
-        public TableListController(ITableListService tableListService,
-            ITableColumnService tableColumnService,
+        public TableListController(ISys_TableListService tableListService,
+            ISys_TableColumnService tableColumnService,
             ISqlService sqlService,
             ISysService sysService)
         {
@@ -54,7 +54,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
-            Expression<Func<TableListDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_TableListDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var dto = await _tableListService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
@@ -81,7 +81,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UrlParameter param, TableListDto dto)
+        public async Task<IActionResult> Edit(UrlParameter param, Sys_TableListDto dto)
         {
             var result = await _tableListService.UpdateAsync(dto);
             return Json(result);
@@ -89,7 +89,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UrlParameter param, TableListDto dto)
+        public async Task<IActionResult> Add(UrlParameter param, Sys_TableListDto dto)
         {
             var result = await _tableListService.AddAsync(dto);
             return Json(result);

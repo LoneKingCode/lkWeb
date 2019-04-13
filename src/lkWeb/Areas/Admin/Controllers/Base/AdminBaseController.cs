@@ -22,7 +22,7 @@ namespace lkWeb.Areas.Admin.Controllers
         /// <summary>
         /// 当前登录用户
         /// </summary>
-        protected UserDto CurrentUser
+        protected Sys_UserDto CurrentUser
         {
             get; set;
         }
@@ -42,10 +42,10 @@ namespace lkWeb.Areas.Admin.Controllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
 
-            var currentUserResult = UserService.GetCurrentUserBySession();
+            var currentUserResult = Sys_UserService.GetCurrentUserBySession();
             if (currentUserResult.flag)
             {
-                CurrentUser = new UserDto
+                CurrentUser = new Sys_UserDto
                 {
                     Id = currentUserResult.data.Id,
                     UserName = currentUserResult.data.UserName
@@ -53,8 +53,8 @@ namespace lkWeb.Areas.Admin.Controllers
                 SysService.currentUserId = CurrentUser.Id.ToString();
                 if (!WebHelper.IsAjax(context.HttpContext))
                 {
-                    var operationLogService = ServiceLocator.Get<IOperationLogService>();
-                    operationLogService.AddAsync(new OperationLogDto
+                    var operationLogService = ServiceLocator.Get<ISys_OperationLogService>();
+                    operationLogService.AddAsync(new Sys_OperationLogDto
                     {
                         ClientIP = WebHelper.GetClientIP(),
                         ClientMac = WebHelper.GetClientMac(),
@@ -70,8 +70,8 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 if (!WebHelper.IsAjax(context.HttpContext))
                 {
-                    var operationLogService = ServiceLocator.Get<IOperationLogService>();
-                    operationLogService.AddAsync(new OperationLogDto
+                    var operationLogService = ServiceLocator.Get<ISys_OperationLogService>();
+                    operationLogService.AddAsync(new Sys_OperationLogDto
                     {
                         ClientIP = WebHelper.GetClientIP(),
                         ClientMac = WebHelper.GetClientMac(),

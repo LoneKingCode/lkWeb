@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace lkWeb.Data.Config
 {
-    public class RoleMenuConfig : IEntityTypeConfiguration<RoleMenuEntity>
+    public class RoleMenuConfig : IEntityTypeConfiguration<Sys_RoleMenuEntity>
     {
-        public void Configure(EntityTypeBuilder<RoleMenuEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_RoleMenuEntity> builder)
         {
             builder.ToTable("Sys_RoleMenu");
          

@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace lkWeb.Data.Config
 {
-    public class RoleConfig : IEntityTypeConfiguration<RoleEntity>
+    public class RoleConfig : IEntityTypeConfiguration<Sys_RoleEntity>
     {
-        public void Configure(EntityTypeBuilder<RoleEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_RoleEntity> builder)
         {
             builder.ToTable("Sys_Role");
          

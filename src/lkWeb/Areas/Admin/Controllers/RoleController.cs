@@ -18,21 +18,19 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class RoleController : AdminBaseController
     {
-        public readonly IRoleService _roleService;
-        public readonly IMenuService _menuService;
-        public readonly IRoleMenuService _roleMenuService;
-        public readonly IModuleService _moduleService;
-        public readonly IUserService _userService;
-        public RoleController(IRoleService roleService,
-           IMenuService menuService,
-           IRoleMenuService roleMenuService,
-           IModuleService moduleService,
-           IUserService userService)
+        public readonly ISys_RoleService _roleService;
+        public readonly ISys_MenuService _menuService;
+        public readonly ISys_RoleMenuService _roleMenuService;
+        public readonly ISys_UserService _userService;
+
+        public RoleController(ISys_RoleService roleService,
+           ISys_MenuService menuService,
+           ISys_RoleMenuService roleMenuService,
+           ISys_UserService userService)
         {
             _roleService = roleService;
             _menuService = menuService;
             _roleMenuService = roleMenuService;
-            _moduleService = moduleService;
             _userService = userService;
         }
 
@@ -64,7 +62,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<RoleDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_RoleDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var result = await _roleService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
@@ -87,14 +85,14 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UrlParameter param, RoleDto role)
+        public async Task<IActionResult> Edit(UrlParameter param, Sys_RoleDto role)
         {
             var result = await _roleService.UpdateAsync(role);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UrlParameter param, RoleDto role)
+        public async Task<IActionResult> Add(UrlParameter param, Sys_RoleDto role)
         {
             var result = await _roleService.AddAsync(role);
 
@@ -129,27 +127,16 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetMenuList(UrlParameter param)
         {
             var result = new List<object>();
-            var moduleList = (await _moduleService.GetListAsync(item => item.Id > 0)).data;
             var menuList = (await _menuService.GetListAsync(item => item.Id > 0)).data;
             var menus = menuList.Select(d => new
             {
                 id = d.Id.ToString(),
-                pId = d.Type == Service.Enum.MenuType.模块 ? d.ModuleId.ToString() + "_m" : d.ParentId.ToString(),
+                pId = d.ParentId,
                 name = d.Name,
                 open = d.Type == Service.Enum.MenuType.模块
             });
-            var modules = moduleList.Select(d => new
-            {
-                id = d.Id.ToString() + "_m",
-                pid = "0",
-                name = "---------" + d.Name + "---------",
-                open = false,
-                type = "module"
-            });
-            //因为这个管理系统里又分了一个模块， 而菜单里里也有模块
-            //防止设置权限时设置错误，前台会判断下是否有type=module
+
             result.AddRange(menus);
-            result.AddRange(modules);
             return Json(result);
         }
 
@@ -170,7 +157,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AuthMenus(UrlParameter param, AuthMenuModel model)
         {
-            var result = new Result<RoleMenuDto>();
+            var result = new Result<Sys_RoleMenuDto>();
             foreach (var roleId in model.RoleIds)
             {
                 var exist = (await _roleMenuService.GetListAsync(item => item.RoleId == roleId)).data.Count > 0;
@@ -182,11 +169,11 @@ namespace lkWeb.Areas.Admin.Controllers
                 {
                     if (model.MenuIds.Any())
                     {
-                        var newRoleMenus = model.MenuIds.Select(item => new RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
+                        var newRoleMenus = model.MenuIds.Select(item => new Sys_RoleMenuDto { RoleId = roleId, MenuId = item }).ToList();
                         var addResult = await _roleMenuService.AddAsync(newRoleMenus);
                         if (!addResult.flag)
                             result.msg += addResult.msg + "\n";
-                        result.flag = addResult.flag && !(delResult.flag^exist); //((!delResult.flag && !exist) || (delResult.flag && exist))
+                        result.flag = addResult.flag && !(delResult.flag ^ exist); //((!delResult.flag && !exist) || (delResult.flag && exist))
                     }
                     else
                     {

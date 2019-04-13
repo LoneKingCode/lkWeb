@@ -21,13 +21,13 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class UserController : AdminBaseController
     {
-        public readonly IUserService _userService;
-        public readonly IDepartmentService _departmentService;
-        public readonly IUserDepartmentService _userDepartmentService;
+        public readonly ISys_UserService _userService;
+        public readonly ISys_DepartmentService _departmentService;
+        public readonly ISys_UserDepartmentService _userDepartmentService;
 
-        public UserController(IUserService userService,
-            IDepartmentService departmentService,
-            IUserDepartmentService userDepartmentService)
+        public UserController(ISys_UserService userService,
+            ISys_DepartmentService departmentService,
+            ISys_UserDepartmentService userDepartmentService)
         {
             _userService = userService;
             _departmentService = departmentService;
@@ -53,7 +53,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var user = new UserDto();
+            var user = new Sys_UserDto();
             if (param.id != 0)
                 user = (await _userService.GetByIdAsync(param.id)).data;
             else
@@ -95,7 +95,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(UserDto dto)
+        public async Task<IActionResult> Login(Sys_UserDto dto)
         {
             var result = await _userService.Login(dto);
             return Json(result);
@@ -104,7 +104,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(UserDto dto)
+        public async Task<IActionResult> Register(Sys_UserDto dto)
         {
             var result = await _userService.Register(dto);
             return Json(result);
@@ -114,7 +114,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_UserDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey));
             var result = await _userService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
@@ -138,7 +138,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetMyRoles(QueryBase queryBase, RoleDto dto)
+        public async Task<IActionResult> GetMyRoles(QueryBase queryBase, Sys_RoleDto dto)
         {
             var roles = await _userService.GetUserRoles(dto.Id);
             var strData = roles.data.Select(d => new
@@ -157,7 +157,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetNotMyRoles(QueryBase queryBase, RoleDto dto)
+        public async Task<IActionResult> GetNotMyRoles(QueryBase queryBase, Sys_RoleDto dto)
         {
             var roles = await _userService.GetNotUserRoles(dto.Id);
             var strData = roles.data.Select(d => new
@@ -176,16 +176,16 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UrlParameter param, UserDto user)
+        public async Task<IActionResult> Edit(UrlParameter param, Sys_UserDto user)
         {
             var result = await _userService.UpdateAsync(user);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UrlParameter param, UserDto user)
+        public async Task<IActionResult> Add(UrlParameter param, Sys_UserDto user)
         {
-            var result = new Result<UserDto>();
+            var result = new Result<Sys_UserDto>();
             var existResult = await _userService.GetByExpAsync(item => item.UserName == user.UserName);
             if (existResult.flag)
             {
@@ -200,7 +200,7 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ForgetPwd(UserDto user)
+        public IActionResult ForgetPwd(Sys_UserDto user)
         {
             return View();
         }
@@ -218,7 +218,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 var result = await _userService.DeleteAsync(param.id);
                 return Json(result);
             }
-            return Json(new Result<UserDto>());
+            return Json(new Result<Sys_UserDto>());
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -252,7 +252,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var departmentID = queryBase.Value.ToInt32();
             var users = (await _userDepartmentService.GetListAsync(item => item.Id > 0 && item.DepartmentId == departmentID))
                 .data.Select(item => item.UserId).ToList();
-            Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0 && users.Contains(item.Id);
+            Expression<Func<Sys_UserDto, bool>> queryExp = item => item.Id > 0 && users.Contains(item.Id);
             var dto = await _userService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var result = new DataTableModel
             {
@@ -280,7 +280,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var departmentID = Convert.ToInt32(queryBase.Value);
             var users = (await _userDepartmentService.GetListAsync(item => item.Id > 0 && item.DepartmentId == departmentID))
                 .data.Select(item => item.UserId).ToList();
-            Expression<Func<UserDto, bool>> queryExp = item => item.Id > 0 && !users.Contains(item.Id);
+            Expression<Func<Sys_UserDto, bool>> queryExp = item => item.Id > 0 && !users.Contains(item.Id);
             var dto = await _userService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var result = new DataTableModel
             {
@@ -307,10 +307,10 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 return Json(new { });
             }
-            var dtos = new List<UserDepartmentDto>();
+            var dtos = new List<Sys_UserDepartmentDto>();
             foreach (int userId in dto.UserIds)
             {
-                dtos.Add(new UserDepartmentDto
+                dtos.Add(new Sys_UserDepartmentDto
                 {
                     UserId = userId,
                     DepartmentId = dto.DepartmentId

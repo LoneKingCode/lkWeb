@@ -46,7 +46,7 @@ namespace lkWeb.Filter
             {
                 return;
             }
-            var _userService = ServiceLocator.Get<IUserService>();
+            var _userService = ServiceLocator.Get<ISys_UserService>();
             var userResult = _userService.GetCurrentUser();
             //如果未登录
             if (!userResult.flag)
@@ -93,7 +93,7 @@ namespace lkWeb.Filter
                 else //判断权限
                 {
                     var menuUrl = "/admin/" + httpContext.GetRouteValue("controller") + "/" + httpContext.GetRouteValue("action");
-                    var menuService = ServiceLocator.Get<IMenuService>();
+                    var menuService = ServiceLocator.Get<ISys_MenuService>();
                     var menu = menuService.GetByExpAsync(item => item.Url == menuUrl).Result;
                     if (menu.data == null)
                     {
@@ -101,7 +101,7 @@ namespace lkWeb.Filter
                     }
                     else
                     {
-                        var _roleMenuService = ServiceLocator.Get<IRoleMenuService>();
+                        var _roleMenuService = ServiceLocator.Get<ISys_RoleMenuService>();
                         var userRoles = _userService.GetUserRoles(user.Id).Result;
                         if (userRoles.data != null && userRoles.data.Any())
                         {

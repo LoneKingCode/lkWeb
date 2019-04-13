@@ -11,47 +11,47 @@ public partial class AutoMapperConfiguration : Profile
      public void AutoMapperConfiguration_Auto()
        {
 
-		  				/*	CreateMap<DepartmentEntity, DepartmentDto>();
-					CreateMap<DepartmentDto, DepartmentEntity>();
+		  				/*	CreateMap<Sys_DepartmentEntity, Sys_DepartmentDto>();
+					CreateMap<Sys_DepartmentDto, Sys_DepartmentEntity>();
 					*/
-				/*	CreateMap<LoginLogEntity, LoginLogDto>();
-					CreateMap<LoginLogDto, LoginLogEntity>();
+				/*	CreateMap<Sys_LoginLogEntity, Sys_LoginLogDto>();
+					CreateMap<Sys_LoginLogDto, Sys_LoginLogEntity>();
 					*/
-				/*	CreateMap<MenuEntity, MenuDto>();
-					CreateMap<MenuDto, MenuEntity>();
+				/*	CreateMap<Sys_MenuEntity, Sys_MenuDto>();
+					CreateMap<Sys_MenuDto, Sys_MenuEntity>();
 					*/
-				/*	CreateMap<ModuleEntity, ModuleDto>();
-					CreateMap<ModuleDto, ModuleEntity>();
+				/*	CreateMap<Sys_OperationLogEntity, Sys_OperationLogDto>();
+					CreateMap<Sys_OperationLogDto, Sys_OperationLogEntity>();
 					*/
-				/*	CreateMap<OperationLogEntity, OperationLogDto>();
-					CreateMap<OperationLogDto, OperationLogEntity>();
+				/*	CreateMap<Sys_RoleEntity, Sys_RoleDto>();
+					CreateMap<Sys_RoleDto, Sys_RoleEntity>();
 					*/
-				/*	CreateMap<RoleEntity, RoleDto>();
-					CreateMap<RoleDto, RoleEntity>();
+				/*	CreateMap<Sys_RoleMenuEntity, Sys_RoleMenuDto>();
+					CreateMap<Sys_RoleMenuDto, Sys_RoleMenuEntity>();
 					*/
-				/*	CreateMap<RoleMenuEntity, RoleMenuDto>();
-					CreateMap<RoleMenuDto, RoleMenuEntity>();
+				/*	CreateMap<Sys_SubSystemEntity, Sys_SubSystemDto>();
+					CreateMap<Sys_SubSystemDto, Sys_SubSystemEntity>();
 					*/
-				/*	CreateMap<SystemOptionEntity, SystemOptionDto>();
-					CreateMap<SystemOptionDto, SystemOptionEntity>();
+				/*	CreateMap<Sys_SubSystemTypeEntity, Sys_SubSystemTypeDto>();
+					CreateMap<Sys_SubSystemTypeDto, Sys_SubSystemTypeEntity>();
 					*/
-				/*	CreateMap<TableColumnEntity, TableColumnDto>();
-					CreateMap<TableColumnDto, TableColumnEntity>();
+				/*	CreateMap<Sys_SystemOptionEntity, Sys_SystemOptionDto>();
+					CreateMap<Sys_SystemOptionDto, Sys_SystemOptionEntity>();
 					*/
-				/*	CreateMap<TableListEntity, TableListDto>();
-					CreateMap<TableListDto, TableListEntity>();
+				/*	CreateMap<Sys_TableColumnEntity, Sys_TableColumnDto>();
+					CreateMap<Sys_TableColumnDto, Sys_TableColumnEntity>();
 					*/
-				/*	CreateMap<TestLeaderEntity, TestLeaderDto>();
-					CreateMap<TestLeaderDto, TestLeaderEntity>();
+				/*	CreateMap<Sys_TableListEntity, Sys_TableListDto>();
+					CreateMap<Sys_TableListDto, Sys_TableListEntity>();
 					*/
-				/*	CreateMap<UserDepartmentEntity, UserDepartmentDto>();
-					CreateMap<UserDepartmentDto, UserDepartmentEntity>();
+				/*	CreateMap<Sys_UserDepartmentEntity, Sys_UserDepartmentDto>();
+					CreateMap<Sys_UserDepartmentDto, Sys_UserDepartmentEntity>();
 					*/
-				/*	CreateMap<UserEntity, UserDto>();
-					CreateMap<UserDto, UserEntity>();
+				/*	CreateMap<Sys_UserEntity, Sys_UserDto>();
+					CreateMap<Sys_UserDto, Sys_UserEntity>();
 					*/
-				/*	CreateMap<UserRoleEntity, UserRoleDto>();
-					CreateMap<UserRoleDto, UserRoleEntity>();
+				/*	CreateMap<Sys_UserRoleEntity, Sys_UserRoleDto>();
+					CreateMap<Sys_UserRoleDto, Sys_UserRoleEntity>();
 					*/
 
         }

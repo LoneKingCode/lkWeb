@@ -7,9 +7,9 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class SystemOptionConfig : IEntityTypeConfiguration<SystemOptionEntity>
+    public class SystemOptionConfig : IEntityTypeConfiguration<Sys_SystemOptionEntity>
     {
-        public void Configure(EntityTypeBuilder<SystemOptionEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_SystemOptionEntity> builder)
         {
             builder.ToTable("Sys_SystemOption");
          

@@ -7,9 +7,9 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class OperationLog : IEntityTypeConfiguration<OperationLogEntity>
+    public class OperationLog : IEntityTypeConfiguration<Sys_OperationLogEntity>
     {
-        public void Configure(EntityTypeBuilder<OperationLogEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_OperationLogEntity> builder)
         {
             builder.ToTable("Sys_OperationLog");
            

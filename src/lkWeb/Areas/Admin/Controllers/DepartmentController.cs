@@ -14,9 +14,9 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class DepartmentController : AdminBaseController
     {
-        public readonly IDepartmentService _departmentService;
+        public readonly ISys_DepartmentService _departmentService;
 
-        public DepartmentController(IDepartmentService departmentService)
+        public DepartmentController(ISys_DepartmentService departmentService)
         {
             _departmentService = departmentService;
         }
@@ -50,7 +50,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<DepartmentDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_DepartmentDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)
                 || x.Leader.Contains(queryBase.SearchKey));
@@ -79,7 +79,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UrlParameter param, DepartmentDto dto)
+        public async Task<IActionResult> Edit(UrlParameter param, Sys_DepartmentDto dto)
         {
             var result = await _departmentService.UpdateAsync(dto);
             return Json(result);
@@ -87,7 +87,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UrlParameter param, DepartmentDto dto)
+        public async Task<IActionResult> Add(UrlParameter param, Sys_DepartmentDto dto)
         {
             var result = await _departmentService.AddAsync(dto);
             return Json(result);
@@ -98,7 +98,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             if (param.ids != null && param.ids.Any())
             {
-                var result = new Result<List<DepartmentDto>>();
+                var result = new Result<List<Sys_DepartmentDto>>();
                 bool flag = false;
                 foreach (var id in param.ids)
                 {
@@ -118,7 +118,7 @@ namespace lkWeb.Areas.Admin.Controllers
             }
             else
             {
-                var result = new Result<DepartmentDto>();
+                var result = new Result<Sys_DepartmentDto>();
                 var dtos = (await _departmentService.GetListAsync(item => item.ParentId == param.id)).data;
                 if (dtos.Count > 0)
                 {

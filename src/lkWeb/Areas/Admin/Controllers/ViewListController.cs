@@ -22,12 +22,12 @@ namespace lkWeb.Areas.Admin.Controllers
     /// </summary>
     public class ViewListController : AdminBaseController
     {
-        public readonly ITableColumnService _tableColumnService;
-        public readonly ITableListService _tableListService;
+        public readonly ISys_TableColumnService _tableColumnService;
+        public readonly ISys_TableListService _tableListService;
         public readonly ISqlService _sqlService;
         public readonly ISysService _sysService;
-        public ViewListController(ITableColumnService tableColumnService,
-            ITableListService tableListService,
+        public ViewListController(ISys_TableColumnService tableColumnService,
+            ISys_TableListService tableListService,
             ISqlService sqlService,
             ISysService sysService)
         {
@@ -66,7 +66,8 @@ namespace lkWeb.Areas.Admin.Controllers
                 ShowDelBtn = model.Table.AllowDelete == 1,
                 ShowImportBtn = model.Table.AllowImport == 1,
                 ShowExportBtn = model.Table.AllowExport == 1,
-                ShowViewBtn = model.Table.AllowView == 1,
+                ShowDetailBtn = model.Table.AllowDetail == 1,
+                
                 TopExtendFunction = model.Table.TopExtendFunction,
             };
             ViewBag.ShowButton = showBtnModel;
@@ -82,7 +83,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
             foreach (var column in model.TableColumn)
             {
-                if (column.DataType == "out")
+                if (column.DataType == ColumnType.Out)
                 {
                     string[] outSql = column.OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
                     var colNames = outSql[0].Split(','); //value,text
@@ -109,7 +110,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
                 }
-                else if (column.DataType == "Enum")
+                else if (column.DataType == ColumnType.Enum)
                 {
                     var enumStr = column.EnumRange.Split(','); //value,value
                     var items = new List<SelectListItem>();
@@ -124,7 +125,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
                 }
-                else if (column.DataType == "Checkbox")
+                else if (column.DataType == ColumnType.CheckBox)
                 {
                     var checkStr = column.SelectRange.Split(','); //选项1,选项2
                     var items = new List<SelectListItem>();
@@ -301,7 +302,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     {
                         temp[item.Key] = (await _sysService.GetOutValue(tableId, item.Key, item.Value.ToString())).data;
                     }
-                    if(customColNames.Contains(item.Key))
+                    else         if(customColNames.Contains(item.Key))
                     {
                         var model = (await _tableColumnService.GetByExpAsync(x => x.Name == item.Key && x.TableId == tableId)).data;
                         temp[item.Key] = model.CustomContent.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());

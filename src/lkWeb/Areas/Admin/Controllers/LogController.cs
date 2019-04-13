@@ -13,9 +13,9 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class LogController : AdminBaseController
     {
-        public readonly ILoginLogService _loginLogService;
-        public readonly IOperationLogService _operationLogService;
-        public LogController(ILoginLogService loginLogService, IOperationLogService operationLogService)
+        public readonly ISys_LoginLogService _loginLogService;
+        public readonly ISys_OperationLogService _operationLogService;
+        public LogController(ISys_LoginLogService loginLogService, ISys_OperationLogService operationLogService)
         {
             _loginLogService = loginLogService;
             _operationLogService = operationLogService;
@@ -45,7 +45,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageDataWithLogin(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<LoginLogDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_LoginLogDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey));
             var dto = await _loginLogService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
@@ -71,7 +71,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageDataWithOperation(UrlParameter param, QueryBase queryBase)
         {
-            Expression<Func<OperationLogDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_OperationLogDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
                 || x.OperationUrl.Contains(queryBase.SearchKey));

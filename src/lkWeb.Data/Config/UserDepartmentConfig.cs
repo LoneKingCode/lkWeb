@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace lkWeb.Data.Config
 {
-    public class UserDepartmentConfig : IEntityTypeConfiguration<UserDepartmentEntity>
+    public class UserDepartmentConfig : IEntityTypeConfiguration<Sys_UserDepartmentEntity>
     {
-        public void Configure(EntityTypeBuilder<UserDepartmentEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_UserDepartmentEntity> builder)
         {
             builder.ToTable("Sys_UserDepartment");
          

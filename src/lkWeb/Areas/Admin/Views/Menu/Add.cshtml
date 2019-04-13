@@ -3,8 +3,10 @@
     ViewBag.Title = "添加菜单";
 }
 @section Scripts{
+
     <script src="~/lib/bootstrap-suggest-plugin/dist/bootstrap-suggest.min.js"></script>
     <script type="text/javascript">
+
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.RefreshAndClose()
@@ -33,7 +35,15 @@
                 }).on('onUnsetSelectValue', function () {
                  });
             })
+            //下拉多选
+            $('.chosen-checkbox').attr('data-placeholder', '请选择')
+            $('.chosen-checkbox').chosen({
+                allow_single_deselect: true,
+                width: "100%",
+            });
         })
+
+    
 
         function ViewIcon() {
             var url = " http://www.fontawesome.com.cn/faicons/";
@@ -44,9 +54,9 @@
 <form class="form-horizontal" action="@Url.Action("Add", new { id = 0 })" method="post" id="lkForm">
     @Html.AntiForgeryToken()
     <div class="form-group">
-        <label class="col-md-3 control-label">所属模块</label>
+        <label class="col-md-3 control-label">所属子系统</label>
         <div class="col-md-7">
-            @Html.DropDownList("ModuleId", (SelectList)ViewBag.Modules, new { @class = "form-control" })
+            @Html.DropDownList("SubSystemId", (MultiSelectList)ViewBag.subSystem, new { @class = "chosen-checkbox", multiple = "multiple", id = "chosen-SubSystem" })
         </div>
     </div>
     <div class="form-group">

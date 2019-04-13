@@ -15,11 +15,11 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class TableColumnController : AdminBaseController
     {
-        public readonly ITableColumnService _tableColumnService;
-        public readonly ITableListService _tableListService;
+        public readonly ISys_TableColumnService _tableColumnService;
+        public readonly ISys_TableListService _tableListService;
         public readonly ISysService _sysService;
-        public TableColumnController(ITableColumnService tableColumnService,
-            ITableListService tableListService,
+        public TableColumnController(ISys_TableColumnService tableColumnService,
+            ISys_TableListService tableListService,
             ISysService sysService)
         {
             _tableColumnService = tableColumnService;
@@ -79,7 +79,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
-            Expression<Func<TableColumnDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_TableColumnDto, bool>> queryExp = item => item.Id > 0;
             var searchKey = queryBase.SearchKey;
             if (searchKey.IsNotEmpty())
             {
@@ -119,7 +119,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UrlParameter param, TableColumnDto dto)
+        public async Task<IActionResult> Edit(UrlParameter param, Sys_TableColumnDto dto)
         {
             var result = await _tableColumnService.UpdateAsync(dto);
             return Json(result);
@@ -127,7 +127,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UrlParameter param, TableColumnDto dto)
+        public async Task<IActionResult> Add(UrlParameter param, Sys_TableColumnDto dto)
         {
             var result = await _tableColumnService.AddAsync(dto);
             return Json(result);

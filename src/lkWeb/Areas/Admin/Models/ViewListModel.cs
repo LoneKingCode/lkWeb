@@ -11,11 +11,11 @@ namespace lkWeb.Areas.Admin.Models
         /// <summary>
         /// 列集合
         /// </summary>
-        public List<TableColumnDto> TableColumn { get; set; }
+        public List<Sys_TableColumnDto> TableColumn { get; set; }
         /// <summary>
         /// 所属表
         /// </summary>
-        public TableListDto Table { get; set; }
+        public Sys_TableListDto Table { get; set; }
 
     }
 }

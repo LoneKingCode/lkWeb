@@ -13,8 +13,8 @@ namespace lkWeb.Areas.Admin.Controllers
 {
     public class SystemOptionController : AdminBaseController
     {
-        public readonly ISystemOptionService _systemOptionService;
-        public SystemOptionController(ISystemOptionService systemOptionService)
+        public readonly ISys_SystemOptionService _systemOptionService;
+        public SystemOptionController(ISys_SystemOptionService systemOptionService)
         {
             _systemOptionService = systemOptionService;
         }
@@ -40,7 +40,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
-            Expression<Func<SystemOptionDto, bool>> queryExp = item => item.Id > 0;
+            Expression<Func<Sys_SystemOptionDto, bool>> queryExp = item => item.Id > 0;
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => x.Code.Contains(queryBase.SearchKey);
             var dto = await _systemOptionService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
@@ -62,7 +62,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UrlParameter param, SystemOptionDto dto)
+        public async Task<IActionResult> Edit(UrlParameter param, Sys_SystemOptionDto dto)
         {
             var result = await _systemOptionService.UpdateAsync(dto);
             return Json(result);
@@ -70,10 +70,10 @@ namespace lkWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(UrlParameter param, SystemOptionDto dto)
+        public async Task<IActionResult> Add(UrlParameter param, Sys_SystemOptionDto dto)
         {
             var existDto = await _systemOptionService.GetByExpAsync(item => item.Code == dto.Code);
-            var result = new Result<SystemOptionDto>();
+            var result = new Result<Sys_SystemOptionDto>();
             if (existDto.data != null)
             {
                 result.msg = "Code已存在，请更换";
