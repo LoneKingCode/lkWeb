@@ -139,7 +139,8 @@ namespace lkWeb
                   template: "{area:exists}/{controller=Control}/{action=Index}/{id?}/{value?}");
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                      template: "{area=Front}/{controller=Home}/{action=ChooseSystem}/{id?}/{value?}");
+         
             });
 
             loggerFactory.AddNLog();//添加NLog

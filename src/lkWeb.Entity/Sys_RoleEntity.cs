@@ -16,7 +16,10 @@ namespace lkWeb.Entity
         /// </summary>
         public string Description { get; set; }
 
-      
+        /// <summary>
+        /// 子系统id
+        /// </summary>
+        public int SubSystemId { get; set; }
     }
 
 }

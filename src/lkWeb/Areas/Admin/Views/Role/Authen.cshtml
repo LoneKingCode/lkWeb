@@ -152,7 +152,9 @@
                 )
             })
 
-
+            $("#SubSystemId").change(function () {
+                var sysId = $(this).val();
+            })
 
         })
     </script>
@@ -166,8 +168,17 @@
 </div>
 <hr />
 @Html.AntiForgeryToken()
+
 <div class="row">
     <div class="col-sm-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                选择子系统
+            </div>
+            <div class="panel-body">
+                @Html.DropDownList("SubSystemId", (SelectList)ViewBag.subSystem, new { @class = "form-control", @id = "SubSystemId" })
+            </div>
+        </div>
         <div class="panel panel-info">
             <div class="panel-heading">
                 角色列表

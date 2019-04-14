@@ -160,24 +160,7 @@ namespace lkWeb.Service.Abstracts
                 }
             }
             result = await _userRoleService.AddAsync(userRoles);
-            //foreach (var roleId in roleIds)
-            //{
-            //    var roleResult = await _roleService.GetByIdAsync(roleId);
-            //    if (roleResult.flag)
-            //        roleNames.Add(roleResult.data.Name);
-            //}
-            //var _result = await _userManager.AddToRolesAsync(user, roleNames);
-            //if (_result.Succeeded)
-            //{
-            //    result.flag = true;
-            //}
-            //else
-            //{
-            //    foreach (var err in _result.Errors)
-            //    {
-            //        result.msg += err.Description + "\n";
-            //    }
-            //}
+
             return result;
         }
         public async Task<Result<Sys_UserRoleDto>> RemoveRoles(int userId, List<int> roleIds)
@@ -196,23 +179,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
             result = await _userRoleService.DeleteAsync(item => roleIds.Contains(item.RoleId));
-            //foreach (var roleId in roleIds)
-            //{
-            //    var role = await _roleManage.FindByIdAsync(roleId.ToString());
-            //    roleNames.Add(role.Name);
-            //}
-            //var _result = await _userManager.RemoveFromRolesAsync(user, roleNames);
-            //if (_result.Succeeded)
-            //{
-            //    result.flag = true;
-            //}
-            //else
-            //{
-            //    foreach (var err in _result.Errors)
-            //    {
-            //        result.msg += err.Description + "\n";
-            //    }
-            //}
+
             return result;
         }
 
@@ -222,12 +189,12 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<Result<List<Sys_MenuDto>>> GetUserMenu(int id)
+        public async Task<Result<List<Sys_MenuDto>>> GetUserMenu(int userId)
         {
             using (var db = GetDb())
             {
                 var result = new Result<List<Sys_MenuDto>>();
-                var roleResult = await GetUserRoles(id);
+                var roleResult = await GetUserRoles(userId);
                 var roleIds = roleResult.data.Select(x => x.Id).ToList();
                 Expression<Func<Sys_RoleMenuEntity, bool>> exp = item => roleIds.Contains(item.RoleId);
                 var roleMenus = await db.RoleMenu.Where(exp).ToListAsync();
@@ -242,13 +209,13 @@ namespace lkWeb.Service.Abstracts
         /// <summary>
         /// 获取用户角色数据
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="userId">userId</param>
         /// <returns></returns>
-        public async Task<ResultDto<Sys_RoleDto>> GetUserRoles(int id)
+        public async Task<ResultDto<Sys_RoleDto>> GetUserRoles(int userId)
         {
             using (var db = GetDb())
             {
-                var userRoles = await db.UserRole.Where(x => x.UserId == id).ToListAsync();
+                var userRoles = await db.UserRole.Where(x => x.UserId == userId).ToListAsync();
                 var roleIds = userRoles.Select(x => x.RoleId).ToList();
                 Expression<Func<Sys_RoleEntity, bool>> exp = item => roleIds.Contains(item.Id);
                 var roles = await db.Role.Where(exp).ToListAsync();
@@ -266,13 +233,13 @@ namespace lkWeb.Service.Abstracts
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<ResultDto<Sys_RoleDto>> GetNotUserRoles(int userID)
+        public async Task<ResultDto<Sys_RoleDto>> GetNotUserRoles(int userId)
         {
             using (var db = GetDb())
             {
                 var roles = await db.Role.ToListAsync();
                 var roleIds = roles.Select(x => x.Id).ToList();
-                var userRoles = await db.UserRole.Where(x => x.UserId == userID).ToListAsync();
+                var userRoles = await db.UserRole.Where(x => x.UserId == userId).ToListAsync();
                 var userRoleIds = userRoles.Select(x => x.RoleId).ToList();
 
                 Expression<Func<Sys_RoleEntity, bool>> exp = item => !userRoleIds.Contains(item.Id);

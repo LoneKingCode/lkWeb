@@ -11,6 +11,7 @@ using lkWeb.Core.Extension;
 using Microsoft.AspNetCore.Identity;
 using lkWeb.Entity;
 using lkWeb.Filter;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,16 +23,19 @@ namespace lkWeb.Areas.Admin.Controllers
         public readonly ISys_MenuService _menuService;
         public readonly ISys_RoleMenuService _roleMenuService;
         public readonly ISys_UserService _userService;
+        public readonly ISys_SubSystemService _subSystemService;
 
         public RoleController(ISys_RoleService roleService,
            ISys_MenuService menuService,
            ISys_RoleMenuService roleMenuService,
-           ISys_UserService userService)
+           ISys_UserService userService,
+            ISys_SubSystemService subSystemService)
         {
             _roleService = roleService;
             _menuService = menuService;
             _roleMenuService = roleMenuService;
             _userService = userService;
+            _subSystemService = subSystemService;
         }
 
         #region Page
@@ -40,17 +44,23 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Add(UrlParameter param)
+        public async Task<IActionResult> Add(UrlParameter param)
         {
+            var result = await _subSystemService.GetListAsync(item => item.Id > 0);
+            ViewBag.subSystem = new SelectList(result.data, "Id", "Name");
             return View();
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             var role = (await _roleService.GetByIdAsync(param.id)).data;
+            var result = await _subSystemService.GetListAsync(item => item.Id > 0);
+            ViewBag.subSystem = new SelectList(result.data, "Id", "Name",role.SubSystemId);
             return View(role);
         }
-        public IActionResult Authen(UrlParameter param)
+        public async Task<IActionResult> Authen(UrlParameter param)
         {
+            var result = await _subSystemService.GetListAsync(item => item.Id > 0);
+            ViewBag.subSystem = new SelectList(result.data, "Id", "Name");
             return View();
         }
         #endregion
@@ -66,6 +76,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (queryBase.SearchKey.IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var result = await _roleService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var subSystemsResult = await _subSystemService.GetListAsync(x => x.Id > 0);
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
@@ -75,6 +86,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 {
                     rowNum = ++queryBase.Start,
                     name = d.Name,
+                    subSystem = subSystemsResult.data.Where(x => x.Id == d.SubSystemId).FirstOrDefault().Name,
                     description = d.Description,
                     id = d.Id.ToString(),
                 })

@@ -16,6 +16,10 @@ namespace lkWeb.Entity
         /// </summary>
         public string Description { get; set; }
         /// <summary>
+        /// 分类
+        /// </summary>
+        public int TypeId { get; set; }
+        /// <summary>
         /// 显示顺序
         /// </summary>
         public int ListOrder { get; set; }

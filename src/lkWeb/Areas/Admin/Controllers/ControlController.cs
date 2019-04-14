@@ -27,8 +27,9 @@ namespace lkWeb.Areas.Admin.Controllers
 
         #region Page
         // GET: /<controller>/
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(UrlParameter param)
         {
+            var sysId = param.id;
             if (IsLogined)
             {
                 ViewBag.UserID = CurrentUser.Id;

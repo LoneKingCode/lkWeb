@@ -178,6 +178,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UrlParameter param, Sys_UserDto user)
         {
+            user.Password = SecurityHelper.Md5(user.Password);
             var result = await _userService.UpdateAsync(user);
             return Json(result);
         }

@@ -24,6 +24,10 @@ namespace lkWeb.Service.Dto
         /// </summary>
         [Required, DisplayName("描述"), MinLength(1), MaxLength(200)]
         public string Description { get; set; }
- 
-     }
+        /// <summary>
+        /// 子系统id
+        /// </summary>
+        public int SubSystemId { get; set; }
+
+    }
 }

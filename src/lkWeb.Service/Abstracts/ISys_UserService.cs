@@ -13,8 +13,8 @@ namespace lkWeb.Service.Abstracts
         //以下都为.net core identity中usermanage中的操作
         Result<string> Logout();
 
-        Task<Result<List<Sys_UserRoleDto>>> AddRoles(int userID, List<int> roleIds);
-        Task<Result<Sys_UserRoleDto>> RemoveRoles(int userID, List<int> roleIds);
+        Task<Result<List<Sys_UserRoleDto>>> AddRoles(int userId, List<int> roleIds);
+        Task<Result<Sys_UserRoleDto>> RemoveRoles(int userId, List<int> roleIds);
         Result<Sys_UserDto> GetCurrentUser();
     
         //Task<Result<UserDto>> UserLogin(UserDto dto);
@@ -33,20 +33,20 @@ namespace lkWeb.Service.Abstracts
         /// <summary>
         /// 获取用户菜单数据
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="userId">userId</param>
         /// <returns></returns>
-        Task<Result<List<Sys_MenuDto>>> GetUserMenu(int id);
+        Task<Result<List<Sys_MenuDto>>> GetUserMenu(int userId);
         /// <summary>
         /// 获取用户角色数据
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="userId">userId</param>
         /// <returns></returns>
-        Task<ResultDto<Sys_RoleDto>> GetUserRoles(int id);
+        Task<ResultDto<Sys_RoleDto>> GetUserRoles(int userId);
         /// <summary>
         /// 获取不是用户所属的角色数据
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="userId">userId</param>
         /// <returns></returns>
-        Task<ResultDto<Sys_RoleDto>> GetNotUserRoles(int id);
+        Task<ResultDto<Sys_RoleDto>> GetNotUserRoles(int userId);
     }
 }

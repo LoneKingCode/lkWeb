@@ -1,0 +1,397 @@
+﻿@using lkWeb.Areas.Front.Models;
+@{
+    ViewData["Title"] = "选择子系统";
+    Layout = "~/Areas/Front/Views/Shared/_Layout.cshtml";
+}
+@model SubSystemViewModel
+@section Styles{
+    <style>
+        .div {
+            width: 1090px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        /* 个人信息 */
+
+        .Personal {
+            width: 100%;
+            display: block;
+            margin: 35px auto;
+            overflow: hidden;
+            height: 300px;
+            position: relative;
+            z-index: -1;
+        }
+
+            .Personal .div {
+                position: absolute;
+                z-index: 9999;
+                top: 50px;
+                left: 50%;
+                margin-left: -545px;
+                padding-left: 28px;
+            }
+
+        .Personal-div {
+            background-color: rgba(255, 255, 255, .92);
+            border-radius: 6px;
+            display: block;
+            padding: 30px 10px;
+            width: 300px;
+            box-sizing: border-box;
+            float: left;
+            display: block;
+        }
+
+            .Personal-div dl {
+                width: 100%;
+                float: left;
+                display: block;
+                margin-bottom: 30px;
+            }
+
+                .Personal-div dl dt,
+                .Personal-div dl dd {
+                    float: left;
+                    display: block;
+                }
+
+                .Personal-div dl dt {
+                    width: 60px;
+                    margin-right: 20px;
+                    margin-left: 20px;
+                }
+
+                    .Personal-div dl dt img {
+                        border-radius: 50%;
+                        width: 100%;
+                    }
+
+                .Personal-div dl dd h4 {
+                    font-size: 14px;
+                    color: #000;
+                }
+
+                .Personal-div dl dd p {
+                    color: #333;
+                    font-size: 12px;
+                }
+
+            .Personal-div ul {
+                width: 100%;
+                float: left;
+                display: block;
+                text-align: center;
+                margin: 0;
+            }
+
+                .Personal-div ul li {
+                    text-align: center;
+                    display: block;
+                    width: 25%;
+                    float: left;
+                    border-left: 1px solid #F3F3F3;
+                    color: #333;
+                    font-size: 12px;
+                    cursor: pointer;
+                }
+
+                    .Personal-div ul li a {
+                        text-decoration: none;
+                        color: #333;
+                    }
+
+                    .Personal-div ul li:first-child {
+                        border-left: 0;
+                    }
+
+                    .Personal-div ul li span {
+                        font-size: 16px;
+                        line-height: 2em;
+                    }
+
+                    .Personal-div ul li p {
+                        margin-bottom: 0;
+                    }
+        /* 服务中心 */
+
+        .service {
+            background-color: #fff;
+            border-radius: 6px;
+            padding: 20px 28px 30px;
+            margin: 20px auto;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .service-h4 {
+            position: absolute;
+            display: block;
+            left: 28px;
+            top: 19px;
+            font-size: 20px;
+        }
+
+        .serviceUl {
+            width: 100%;
+            display: block;
+            float: left;
+            margin: 20px 0;
+        }
+
+            .serviceUl li {
+                float: left;
+                display: block;
+                margin-top: 20px;
+                width: 90px;
+                padding: 0 11px;
+                box-sizing: content-box;
+                text-align: center;
+                font-weight: 300;
+                cursor: pointer;
+            }
+
+        .service .nav-tabs {
+            border: 0;
+            width: 100%;
+            text-align: center;
+            top: 10px;
+        }
+
+            .service .nav-tabs > li {
+                clear: both;
+                display: inline-block;
+                float: none;
+                font-size: 16px;
+                color: #333;
+            }
+
+                .service .nav-tabs > li > a,
+                .service .nav-tabs > li > a:focus {
+                    border: 0;
+                    background-color: #fff;
+                    color: #333;
+                    font-weight: 300;
+                }
+
+                    .service .nav-tabs > li > a:hover {
+                        color: #2FBA67;
+                    }
+
+                .service .nav-tabs > li > a {
+                    padding: 7px 20px 14px;
+                }
+
+                .service .nav-tabs > li.active > a,
+                .service .nav-tabs > li.active > a:focus,
+                .service .nav-tabs > li.active > a:hover {
+                    box-shadow: none;
+                    color: #2FBA67;
+                    border: 0;
+                }
+
+                    .service .nav-tabs > li.active > a::after,
+                    .service .nav-tabs > li.active > a:focus::after,
+                    .service .nav-tabs > li.active > a:hover::after {
+                        content: "";
+                        position: absolute;
+                        width: 26px;
+                        left: 50%;
+                        margin-left: -13px;
+                        bottom: 0px;
+                        height: 2px;
+                        background-color: #2FBA67;
+                    }
+
+        .service .tab-content {
+            border: 0;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        /* 友情链接 */
+
+        .link {
+            width: 100%;
+            background-color: #fff;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 20px 0 50px;
+        }
+
+        .link-h4 {
+            font-size: 20px;
+            padding-left: 28px;
+        }
+
+        .link-ul {
+            width: 25%;
+            float: left;
+            display: block;
+            margin: 0;
+            padding-left: 28px;
+            margin-top: 10px;
+        }
+
+            .link-ul li {
+                list-style: none;
+                margin-top: 8px;
+                font-size: 14px;
+                font-weight: 300;
+            }
+
+                .link-ul li a {
+                    color: #999;
+                    text-decoration: none;
+                }
+
+                    .link-ul li a:hover {
+                        color: #2FBA67;
+                    }
+
+
+        /* 页尾 */
+
+        .footer {
+            width: 100%;
+            display: block;
+            margin: 10px auto;
+            overflow: hidden;
+            padding: 0;
+            height: 40px;
+        }
+
+        .footerP {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            line-height: 40px;
+            height: 40px;
+        }
+    </style>
+
+}
+
+@section Scripts{
+    <script>
+        function entrySubSystem(sysId) {
+            window.location.href = "/admin/control/index/" + sysId;
+        }
+    </script>
+}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+
+        <div class="navbar-header">
+            <a href="" class="navbar-brand" style="width:250px;">
+                lkWeb
+            </a>
+        </div>
+    </div>
+</nav>
+<div class="Personal">
+
+    <div class="div">
+        <div class="Personal-div ">
+            <dl>
+                <dt><img src="../../assets/images/home/Head.jpg "></dt>
+                <dd>
+                    <h4>@Model.RealName (@Model.UserName)</h4>
+                    <p>部门哦哦哦-经理角色</p>
+                </dd>
+            </dl>
+            <ul>
+                <li>
+                    <a href="# ">
+                        <span>0</span>
+                        <p>待办</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="# ">
+                        <span>0</span>
+                        <p>申请</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="# ">
+                        <span>0</span>
+                        <p>文档</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="# ">
+                        <span>0</span>
+                        <p>站点</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="div service">
+    <h4 class="service-h4">服务中心</h4>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist" id="sub_sys_type">
+        <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">全部</a></li>
+        @foreach (var item in Model.subSystemType)
+        {
+            <li role="presentation" class=""><a href="#sub_@item.Id" role="tab" data-toggle="tab">@item.Name</a></li>
+        }
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="all">
+            <ul class="serviceUl">
+                @foreach (var type in Model.subSystem.Keys)
+                {
+                    @foreach (var subSys in Model.subSystem[type])
+                    {
+                        <li onclick="entrySubSystem(@subSys.Id)">
+                            <img style="width:70px;height:70px" src="@subSys.Icon" />
+                            <p>@subSys.Name</p>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        @foreach (var type in Model.subSystem.Keys)
+        {
+            <div role="tabpanel" class="tab-pane" id="sub_@type">
+                <ul class="serviceUl">
+                    @foreach (var subSys in Model.subSystem[type])
+                    {
+                        <li onclick="entrySubSystem(@subSys.Id)">
+                            <img style="width:70px;height:70px" src="@subSys.Icon" />
+                            <p>@subSys.Name</p>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+
+    <div class="link">
+        <div class="div">
+            <h4 class="link-h4">友情链接</h4>
+            <ul class="link-ul">
+                <li><a href="#" target="_blank">lkWeb</a></li>
+            </ul>
+            <ul class="link-ul ">
+                <li><a href="#" target="_blank">lkWeb</a></li>
+            </ul>
+            <ul class="link-ul">
+                <li><a href="#" target="_blank">lkWeb</a></li>
+            </ul>
+            <ul class="link-ul">
+                <li><a href="#" target="_blank">lkWeb</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="footerP">版权所有 lkWeb</p>
+    </div>
+</div>
