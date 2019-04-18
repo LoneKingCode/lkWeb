@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
-    ViewBag.Title = "用户部门管理";
+    ViewBag.Title = "角色用户管理";
 
 }
 @section Scripts{
@@ -15,14 +15,22 @@
                 $(".checkChild").prop("checked", check);
             });
 
-            InitDepartmentTree();
+            $("#SubSystemId").change(function () {
+                roleId = '';
+                var sysId = $(this).val();
+
+                LoadRole(sysId);
+            })
+
+            LoadRole($("#SubSystemId").val());
+
         })
 
-        var departmentID = "";
+        var roleId = "";
         var lkTable;
 
-        var zNodes_department = [];
-        var setting_department= {
+        var zNodes_role = [];
+        var setting_role= {
             check: {
                 enable: false, //不开启
                 chkboxType: { "Y": "", "N": "" }
@@ -38,36 +46,32 @@
         };
 
         function onNodeClick( treeId, treeNode, clickFlag) {
-            departmentID = treeNode.id;
+            roleId = treeNode.id;
             LoadDataTable();
             lkTable.draw();
         }
 
-        function InitDepartmentTree() {
-            LoadData();
 
-            $.fn.zTree.init($("#departmentTree"), setting_department, zNodes_department);
-
-        }
-      function LoadData() {
+      function LoadRole(sysId) {
             $.ajax({
                 type: "post",
-                url:"@Url.Action("GetList", "Department")",
+                url:"@Url.Action("GetRoleList", "Role")",
                 dataType: "json",
-                data: { __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
+                data: { id: sysId, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
                 async: false,
                 success: function (data) {
-                    zNodes_department = data;
+                    zNodes_role = data;
 
                 },
                 error: function (err) {
                     console.log(err);
                 }
             })
+          $.fn.zTree.init($("#roleTree"), setting_role, zNodes_role);
 
         }
         function LoadDataTable() {
-            var dataUrl = '@Url.Action("GetListByDepartment")';
+            var dataUrl = '@Url.Action("GetUserListByRole")';
             var columns = [
                 {
                     "sClass": "text-center",
@@ -83,7 +87,7 @@
                 { "mData": "email", "sClass": "text-center", "bSortable": false },
                 { "mData": "statusName",  "sClass": "text-center" }
             ];
-            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl, departmentID)
+            lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl, roleId)
          }
 
         function DelUser() {
@@ -95,12 +99,12 @@
             parent.layer.confirm("确认删除" + ids.length + "条数据？", {
                 btn: ["确认", "取消"]
             }, function () {
-                var data = { UserIDs: [], DepartmentID: departmentID, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() };
+                var data = { UserIDs: [], roleId: roleId, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() };
                 data.UserIDs = ids;
                 $.ajax(
                     {
                         type: 'post',
-                        url: '@Url.Action("DelUserDepartment","User") ',
+                        url: '@Url.Action("DelUserRole","Role") ',
                         data: data,
                         success: function (result) {
                             if (result.flag == true) {
@@ -123,11 +127,11 @@
         }
 
         function AddUser() {
-            if (IsEmpty(departmentID)) {
-                layer.alert('请选择部门')
+            if (IsEmpty(roleId)) {
+                layer.alert('请选择角色')
                 return;
             }
-            lkWeb.GoAction("admin","user", "selectUser", departmentID, true, "选择用户", "80%", "80%");
+            lkWeb.GoAction("admin","role", "selectUser", roleId, true, "选择用户", "80%", "80%");
         }
 
 
@@ -137,10 +141,18 @@
     <div class="col-sm-4">
         <div class="panel panel-info">
             <div class="panel-heading">
-                部门列表
+                选择子系统
             </div>
             <div class="panel-body">
-                <ul id="departmentTree" class="ztree"></ul>
+                @Html.DropDownList("SubSystemId", (SelectList)ViewBag.subSystem, new { @class = "form-control", @id = "SubSystemId" })
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                角色列表
+            </div>
+            <div class="panel-body">
+                <ul id="roleTree" class="ztree"></ul>
             </div>
         </div>
     </div>

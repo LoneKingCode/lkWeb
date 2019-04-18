@@ -304,10 +304,6 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetDepartment(SetDepartmentModel dto)
         {
-            if (dto.UserIds.Count() < 1 || dto.DepartmentId < 1)
-            {
-                return Json(new { });
-            }
             var dtos = new List<Sys_UserDepartmentDto>();
             foreach (int userId in dto.UserIds)
             {

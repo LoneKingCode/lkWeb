@@ -23,25 +23,39 @@ namespace lkWeb.Areas.Admin.Controllers
         public readonly ISys_MenuService _menuService;
         public readonly ISys_RoleMenuService _roleMenuService;
         public readonly ISys_UserService _userService;
+        public readonly ISys_UserRoleService _userRoleService;
         public readonly ISys_SubSystemService _subSystemService;
 
         public RoleController(ISys_RoleService roleService,
            ISys_MenuService menuService,
            ISys_RoleMenuService roleMenuService,
            ISys_UserService userService,
-            ISys_SubSystemService subSystemService)
+            ISys_SubSystemService subSystemService,
+             ISys_UserRoleService userRoleService)
         {
             _roleService = roleService;
             _menuService = menuService;
             _roleMenuService = roleMenuService;
             _userService = userService;
             _subSystemService = subSystemService;
+            _userRoleService = userRoleService;
         }
 
         #region Page
         // GET: /<controller>/
         public IActionResult Index(UrlParameter param)
         {
+            return View();
+        }
+        public async Task<IActionResult> User(UrlParameter param)
+        {
+            var result = await _subSystemService.GetListAsync(item => item.Id > 0);
+            ViewBag.subSystem = new SelectList(result.data, "Id", "Name");
+            return View();
+        }
+        public IActionResult SelectUser(UrlParameter param)
+        {
+            ViewBag.RoleId = param.id;
             return View();
         }
         public async Task<IActionResult> Add(UrlParameter param)
@@ -54,7 +68,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var role = (await _roleService.GetByIdAsync(param.id)).data;
             var result = await _subSystemService.GetListAsync(item => item.Id > 0);
-            ViewBag.subSystem = new SelectList(result.data, "Id", "Name",role.SubSystemId);
+            ViewBag.subSystem = new SelectList(result.data, "Id", "Name", role.SubSystemId);
             return View(role);
         }
         public async Task<IActionResult> Authen(UrlParameter param)
@@ -124,7 +138,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetRoleList(UrlParameter param)
         {
-            var result = await _roleService.GetListAsync(item => item.Id > 0);
+            var result = await _roleService.GetListAsync(item => item.SubSystemId == param.id);
             var strData = result.data.Select(d => new
             {
                 id = d.Id,
@@ -139,7 +153,15 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetMenuList(UrlParameter param)
         {
             var result = new List<object>();
-            var menuList = (await _menuService.GetListAsync(item => item.Id > 0)).data;
+            //菜单属于多个子系统
+            var allMenuList = (await _menuService.GetListAsync(item => item.Id > 0)).data;
+            var menuIds = new List<int>();
+            foreach (var item in allMenuList)
+            {
+                if (item.SubSystemId.Split(',').ToList().Contains(param.id.ToString()))
+                    menuIds.Add(item.Id);
+            }
+            var menuList = (await _menuService.GetListAsync(item => menuIds.Contains(item.Id))).data;
             var menus = menuList.Select(d => new
             {
                 id = d.Id.ToString(),
@@ -199,7 +221,88 @@ namespace lkWeb.Areas.Admin.Controllers
             }
             return Json(result);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetUserListByRole(QueryBase queryBase)
+        {
+            if (queryBase.Value.IsEmpty())
+                return Json(new { });
+            var roleId = queryBase.Value.ToInt32();
+            var users = (await _userRoleService.GetListAsync(item => item.Id > 0 && item.RoleId == roleId))
+                .data.Select(item => item.UserId).ToList();
+            Expression<Func<Sys_UserDto, bool>> queryExp = item => item.Id > 0 && users.Contains(item.Id);
+            var dto = await _userService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var result = new DataTableModel
+            {
+                draw = queryBase.Draw,
+                recordsTotal = dto.recordsTotal,
+                recordsFiltered = dto.recordsTotal,
+                data = dto.data.Select(d => new
+                {
+                    rowNum = ++queryBase.Start,
+                    userName = d.UserName,
+                    realName = d.RealName,
+                    email = d.Email,
+                    statusName = d.StatusName,
+                    id = d.Id.ToString(),
+                })
+            };
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetUserListByNotRole(QueryBase queryBase)
+        {
+            if (queryBase.Value.IsEmpty())
+                return Json(new { });
+            var roleId = Convert.ToInt32(queryBase.Value);
+            var users = (await _userRoleService.GetListAsync(item => item.Id > 0 && item.RoleId == roleId))
+                .data.Select(item => item.UserId).ToList();
+            Expression<Func<Sys_UserDto, bool>> queryExp = item => item.Id > 0 && !users.Contains(item.Id);
+            var dto = await _userService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
+            var result = new DataTableModel
+            {
+                draw = queryBase.Draw,
+                recordsTotal = dto.recordsTotal,
+                recordsFiltered = dto.recordsTotal,
+                data = dto.data.Select(d => new
+                {
+                    rowNum = ++queryBase.Start,
+                    userName = d.UserName,
+                    realName = d.RealName,
+                    email = d.Email,
+                    statusName = d.StatusName,
+                    id = d.Id.ToString(),
+                })
+            };
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetUserRole(SetRoleModel dto)
+        {
+            var dtos = new List<Sys_UserRoleDto>();
+            foreach (int userId in dto.UserIds)
+            {
+                dtos.Add(new Sys_UserRoleDto
+                {
+                    UserId = userId,
+                    RoleId = dto.RoleId
+                });
+            }
 
+            var result = await _userRoleService.AddAsync(dtos);
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DelUserRole(SetRoleModel model)
+        {
+            var result = await _userRoleService.DeleteAsync(
+                item => model.UserIds.Contains(item.UserId)
+                && item.RoleId == model.RoleId);
+            return Json(result);
+        }
         #endregion
     }
 }

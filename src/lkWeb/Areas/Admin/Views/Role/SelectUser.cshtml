@@ -5,7 +5,7 @@
 @section Scripts{
     <script type="text/javascript">
         var table_user;
-        var departmentID = '@ViewBag.DepartmentID';
+        var roleId = '@ViewBag.RoleId';
         $(function () {
             $(".checkAll").click(function () {
                 var check = $(this).prop("checked");
@@ -15,7 +15,7 @@
             LoadDataTable();
         })
           function LoadDataTable() {
-            var dataUrl = '@Url.Action("GetListByNotDepartment")';
+            var dataUrl = '@Url.Action("GetUserListByNotRole")';
             var columns = [
                 {
                     "sClass": "text-center",
@@ -31,7 +31,7 @@
                 { "mData": "email", "name": "Email","sClass": "text-center", "bSortable": false },
                 { "mData": "statusName", "name": "StatusName","sClass": "text-center" }
         ];
-            table_user = lkWeb.LoadTable("table_user", columns, dataUrl,departmentID)
+            table_user = lkWeb.LoadTable("table_user", columns, dataUrl,roleId)
         }
           function Submit() {
               var ids = lkWeb.GetCheckValueList($(".checkChild"));
@@ -40,12 +40,12 @@
                   return;
               }
               var dto = {};
-              dto.DepartmentID = departmentID;
+              dto.roleId = roleId;
               dto.UserIDs = ids;
               dto.__RequestVerificationToken=$("input[name='__RequestVerificationToken']").val();
               $.ajax({
                   type: "post",
-                  url: "@Url.Action("SetDepartment","User")",
+                  url: "@Url.Action("SetUserRole","Role")",
                   data: dto,
                   dataType: "json",
                   async: false,

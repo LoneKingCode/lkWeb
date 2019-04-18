@@ -9,39 +9,6 @@
 
         var zNodes_menu = [];
 
-        function LoadData() {
-            $.ajax({
-                type: "post",
-                url: "@Url.Action("GetRoleList", "Role")",
-                data: {
-                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
-                },
-                dataType:"json",
-                async: false,
-                success: function (data) {
-                    zNodes_role = data;
-
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-            $.ajax({
-                type: "post",
-                url: "@Url.Action("GetMenuList", "Role")",
-                data: {
-                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
-                },
-                dataType:"json",
-                async: false,
-                success: function (data) {
-                    zNodes_menu = data;
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-        }
         var setting_role = {
             check: {
                 enable: true,
@@ -88,6 +55,7 @@
                     treeObj.checkAllNodes(false);
                     $.each(data,function (n,value) {
                         var node = treeObj.getNodeByParam("id", value.menuId);
+                        if (IsNotEmpty(node))
                         treeObj.checkNode(node, true, true);
                     })
                 },
@@ -107,13 +75,51 @@
             }
             return data;
         }
+        function LoadRole(subSysId) {
+             $.ajax({
+                type: "post",
+                url: "@Url.Action("GetRoleList", "Role")",
+                 data: {
+                     id: subSysId,
+                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
+                },
+                dataType:"json",
+                async: false,
+                success: function (data) {
+                    zNodes_role = data;
+
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+            $.fn.zTree.init($("#roleTree"), setting_role, zNodes_role);
+        }
+        function LoadMenu(subSysId) {
+             $.ajax({
+                type: "post",
+                url: "@Url.Action("GetMenuList", "Role")",
+                 data: {
+                     id: subSysId,
+                    __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
+                },
+                dataType:"json",
+                async: false,
+                success: function (data) {
+                    zNodes_menu = data;
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+                })
+                $.fn.zTree.init($("#menuTree"), setting_menu, zNodes_menu);
+
+        }
 
         $(function () {
 
-            LoadData();
-
-            $.fn.zTree.init($("#menuTree"), setting_menu, zNodes_menu);
-            $.fn.zTree.init($("#roleTree"), setting_role, zNodes_role);
+            LoadRole($("#SubSystemId").val());
+            LoadMenu($("#SubSystemId").val())
 
             $("#btnClear").click(function () {
                 var treeObj = $.fn.zTree.getZTreeObj("menuTree");
@@ -153,7 +159,10 @@
             })
 
             $("#SubSystemId").change(function () {
+                roleId = '';
                 var sysId = $(this).val();
+                LoadMenu(sysId);
+                LoadRole(sysId);
             })
 
         })

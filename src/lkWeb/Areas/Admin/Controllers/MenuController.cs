@@ -43,7 +43,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 ViewBag.ParentName = menu.Name;
             }
             var subSystems = await _subSystemService.GetListAsync(item => item.Id > 0);
-            ViewBag.subSystem = new MultiSelectList(subSystems.data, "Id", "Name",new string[] { "1","2"});
+            ViewBag.subSystem = new MultiSelectList(subSystems.data, "Id", "Name");
 
             return View();
         }
@@ -90,7 +90,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _menuService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var allMenu = (await _menuService.GetListAsync(item => item.Id > 0))
                             .data.ToDictionary(item => item.Id, item => item.Name);
-          
+
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,

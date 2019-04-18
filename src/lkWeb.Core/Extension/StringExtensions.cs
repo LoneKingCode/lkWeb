@@ -6,6 +6,11 @@ namespace lkWeb.Core.Extension
 {
     public static class StringExtensions
     {
+        public static string[] Ext_Split(this string s,char separator)
+        {
+            return s.Split(separator);
+        }
+
         /// <summary>
         /// 是否为空
         /// </summary>

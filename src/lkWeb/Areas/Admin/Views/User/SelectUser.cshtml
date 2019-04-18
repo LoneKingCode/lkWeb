@@ -55,7 +55,7 @@
                           lkWeb.RefreshAndClose()
                       }
                       else {
-                          if (result.msg.IsNotEmpty())
+                          if (IsNotEmpty(result.msg))
                               parent.layer.alert(result.msg);
                           else
                               parent.layer.alert("删除失败");
