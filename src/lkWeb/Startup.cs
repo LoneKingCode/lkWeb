@@ -80,6 +80,10 @@ namespace lkWeb
             services.AddScoped<ISys_SubSystemService, Sys_SubSystemService>();
             services.AddScoped<ISys_SubSystemTypeService, Sys_SubSystemTypeService>();
             services.AddScoped<ISys_SystemOptionService, Sys_SystemOptionService>();
+            services.AddScoped<ISys_ValueListService, Sys_ValueListService>();
+            services.AddScoped<ISys_InfoReleaseService, Sys_InfoReleaseService>();
+            services.AddScoped<ISys_InfoTypeService, Sys_InfoTypeService>();
+
             services.AddScoped<ISqlService, SqlService>();
             services.AddScoped<ISysService, SysService>();
 
@@ -136,10 +140,10 @@ namespace lkWeb
             {
                 routes.MapRoute(
                   name: "Admin",
-                  template: "{area:exists}/{controller=Control}/{action=Index}/{id?}/{value?}");
+                  template: "{area:exists}/{controller=Control}/{action=Index}/{id?}/{extraValue?}");
                 routes.MapRoute(
                     name: "default",
-                      template: "{area=Front}/{controller=Home}/{action=ChooseSystem}/{id?}/{value?}");
+                      template: "{area=Front}/{controller=Home}/{action=ChooseSystem}/{id?}/{extraValue?}");
          
             });
 

@@ -67,7 +67,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 ShowImportBtn = model.Table.AllowImport == 1,
                 ShowExportBtn = model.Table.AllowExport == 1,
                 ShowDetailBtn = model.Table.AllowDetail == 1,
-                
+
                 TopExtendFunction = model.Table.TopExtendFunction,
             };
             ViewBag.ShowButton = showBtnModel;
@@ -146,7 +146,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.Table = (await _tableListService.GetByIdAsync(param.value.ToInt32())).data;
+            model.Table = (await _tableListService.GetByIdAsync(param.extraValue.ToInt32())).data;
             var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.EditVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             string sql = "select {0} from {1} where {2}";
@@ -156,7 +156,7 @@ namespace lkWeb.Areas.Admin.Controllers
             ViewBag.ColumnValue = columnValueResult.First();
             foreach (var column in model.TableColumn)
             {
-                if (column.DataType == "Out")
+                if (column.DataType == ColumnType.Out)
                 {
                     string[] outSql = column.OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
                     var colNames = outSql[0].Split(','); //value,text
@@ -185,7 +185,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text", outColId);
                 }
-                else if (column.DataType == "Enum")
+                else if (column.DataType == ColumnType.Enum)
                 {
                     //获取此条数据列类型为Enum的字段的值，以便之后SelectList的默认选中Selected使用
                     //var enumColValue = await _sqlService.GetSingle(
@@ -204,7 +204,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text", enumColValue);
                 }
-                else if (column.DataType == "CheckBox")
+                else if (column.DataType == ColumnType.CheckBox)
                 {
                     var checkColValues = columnValueResult.First()[column.Name].ToString().Split(',');
                     var checkStr = column.SelectRange.Split(','); //选项1,选项2
@@ -227,7 +227,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Detail(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.Table = (await _tableListService.GetByIdAsync(param.value.ToInt32())).data;
+            model.Table = (await _tableListService.GetByIdAsync(param.extraValue.ToInt32())).data;
             var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.ViewVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.ViewOrder).ToList();
             string sql = "select {0} from {1} where {2}";
@@ -239,7 +239,7 @@ namespace lkWeb.Areas.Admin.Controllers
             ViewBag.ColumnValue = columnValue;
             foreach (var column in model.TableColumn)
             {
-                if (column.DataType == "Out")
+                if (column.DataType == ColumnType.Out)
                 {
                     var outColValue = await _sysService.GetOutValue(model.Table.Id, column.Name, columnValue[column.Name].ToString());
                     ViewBag.OutColumn[column.Name] = outColValue.data;
@@ -287,11 +287,11 @@ namespace lkWeb.Areas.Admin.Controllers
             var tableData = await _sysService.GetPageData(tableId, columnNames, condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
             var outTypeColumnNames = (await _sysService.GetColumnNames(tableId,
-                "ListVisible=1 and DataType='Out'", "ListOrder")).data.Split(',');
+                $"ListVisible=1 and DataType='{ColumnType.Out}'", "ListOrder")).data.Split(',');
             var fileTypeColNames = (await _sysService.GetColumnNames(tableId,
-                "ListVisible=1 and DataType='File'", "ListOrder")).data.Split(',');
+                $"ListVisible=1 and DataType='{ColumnType.File}'", "ListOrder")).data.Split(',');
             var customColNames = (await _sysService.GetColumnNames(tableId,
-    "ListVisible=1 and DataType='Custom'", "ListOrder")).data.Split(',');
+                $"ListVisible=1 and DataType='{ColumnType.Custom}'", "ListOrder")).data.Split(',');
             foreach (var dicList in tableData.data)
             {
                 Dictionary<string, object> temp = new Dictionary<string, object>();
@@ -302,7 +302,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     {
                         temp[item.Key] = (await _sysService.GetOutValue(tableId, item.Key, item.Value.ToString())).data;
                     }
-                    else         if(customColNames.Contains(item.Key))
+                    else if (customColNames.Contains(item.Key))
                     {
                         var model = (await _tableColumnService.GetByExpAsync(x => x.Name == item.Key && x.TableId == tableId)).data;
                         temp[item.Key] = model.CustomContent.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
@@ -388,7 +388,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param, IFormCollection formData)
         {
             var model = new ViewListModel();
-            var tableId = param.value.ToInt32();
+            var tableId = param.extraValue.ToInt32();
             var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.EditVisible == 1);
             var tableColumns = columnResult.data;
             var table = (await _tableListService.GetByIdAsync(tableId)).data;
@@ -423,7 +423,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(UrlParameter param)
         {
-            var tableId = param.value.ToInt32();
+            var tableId = param.extraValue.ToInt32();
             var result = await _sysService.Delete(tableId, param.ids);
             return Json(result);
         }

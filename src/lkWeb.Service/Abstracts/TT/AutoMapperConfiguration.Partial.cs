@@ -14,6 +14,12 @@ public partial class AutoMapperConfiguration : Profile
 		  				/*	CreateMap<Sys_DepartmentEntity, Sys_DepartmentDto>();
 					CreateMap<Sys_DepartmentDto, Sys_DepartmentEntity>();
 					*/
+				/*	CreateMap<Sys_InfoReleaseEntity, Sys_InfoReleaseDto>();
+					CreateMap<Sys_InfoReleaseDto, Sys_InfoReleaseEntity>();
+					*/
+				/*	CreateMap<Sys_InfoTypeEntity, Sys_InfoTypeDto>();
+					CreateMap<Sys_InfoTypeDto, Sys_InfoTypeEntity>();
+					*/
 				/*	CreateMap<Sys_LoginLogEntity, Sys_LoginLogDto>();
 					CreateMap<Sys_LoginLogDto, Sys_LoginLogEntity>();
 					*/
@@ -52,6 +58,9 @@ public partial class AutoMapperConfiguration : Profile
 					*/
 				/*	CreateMap<Sys_UserRoleEntity, Sys_UserRoleDto>();
 					CreateMap<Sys_UserRoleDto, Sys_UserRoleEntity>();
+					*/
+				/*	CreateMap<Sys_ValueListEntity, Sys_ValueListDto>();
+					CreateMap<Sys_ValueListDto, Sys_ValueListEntity>();
 					*/
 
         }

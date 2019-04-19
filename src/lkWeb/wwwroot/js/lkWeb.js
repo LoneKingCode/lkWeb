@@ -48,11 +48,16 @@ lkWeb.CloseLayer = function () {
 }
 //主要用在 添加/编辑页面
 lkWeb.RefreshAndClose = function () {
-    parent.lkTable.draw(false)
-    parent.lkWeb.CloseLayer()
+    if (parent.lkTable)
+        parent.lkTable.draw(false);
+    parent.lkWeb.CloseLayer();
+}
+lkWeb.Reload = function () {
+    parent.window.location.reload();
 }
 lkWeb.Close = function () {
-    parent.lkWeb.CloseLayer()
+    parent.lkWeb.CloseLayer();
+
 }
 lkWeb.GetCsrfToken = function () {
     return $("input[name='__RequestVerificationToken']").val();

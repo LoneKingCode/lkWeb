@@ -446,7 +446,7 @@ namespace lkWeb.Service.Abstracts
                         else
                         {
                             //如果为out类型 需要转换值为对应表的主键Id值
-                            if (currentColDto.DataType == "Out")
+                            if (currentColDto.DataType == ColumnType.Out)
                             {
                                 if (colValue.IsEmpty()) //out列 允许为空
                                     colValues[colValueCount].Add(colValue);
@@ -624,14 +624,14 @@ namespace lkWeb.Service.Abstracts
                         var col = tableData.data[i - 1];
                         var colName = colNameArr[j - 1];
                         //如果为日期 修改excel单元格自定义格式
-                        if (colDataType[colName] == "Datetime")
+                        if (colDataType[colName] == ColumnType.Datetime || colDataType[colName] == ColumnType.Date)
                         {
                             worksheet.Cells[rowNum, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
          " " + DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
                             worksheet.Cells[rowNum, j].Value = col[colName];
                         }
                         //如果为OUT类型
-                        else if (colDataType[colName] == "Out")
+                        else if (colDataType[colName] == ColumnType.Out)
                         {
                             var outValueResult = await GetOutValue(tableId, colName, col[colName].ToString());
                             worksheet.Cells[rowNum, j].Value = outValueResult.data;

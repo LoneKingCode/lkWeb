@@ -173,11 +173,11 @@
         {
             <button type="button" class="btn btn-success" onclick="Detail()">查看详情</button>
         }
-        if (btnModel.ShowAddBtn)
+        if (btnModel.ShowAddBtn && Model.Table.IsView != 1)
         {
             <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
         }
-        if (btnModel.ShowEditBtn)
+        if (btnModel.ShowEditBtn && Model.Table.IsView != 1)
         {
             <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
         }

@@ -11,6 +11,6 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 作为额外补充的值
         /// </summary>
-        public string value { get; set; }
+        public string extraValue { get; set; }
     }
 }

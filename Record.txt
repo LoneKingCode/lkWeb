@@ -1,56 +1,44 @@
+权限:
+	不同子系统 遍历该子系统的菜单
+
+	菜单管理     可以下拉选择菜单 查看此菜单的子菜单 也可以下拉选择子系统
+
+	判断用户权限就得判断 他的角色 是否存在这个子系统的，还有他这个角色是否有菜单权限
+
+	用户访问 访问子系统 判断用户的所有角色是否有该子系统权限 然后获取此角色(第一个 怕多个角色对应一个子系统 而用户又正好 有这些角色 以防万一)的菜单
 
 
-不同子系统 遍历该子系统的菜单
-
- 
-
-菜单管理     可以下拉选择菜单 查看此菜单的子菜单 也可以下拉选择子系统
-
-判断用户权限就得判断 他的角色 是否存在这个子系统的，还有他这个角色是否有菜单权限
-
-
-1。系统参数 表管理配
-
-2.字典管理
 3.添加页JS 编辑页JS 列表页JS 详情页JS
-4.视图不可添加编辑
-7. 信息发布
 
 6.列生成，重新生成 追加生成
+
 5.查询 可以下拉等
-
-service调用精简为 services.sdsdsadasd
-   $.ajax({ 封装
-
-DataType == ColumnType.Out 都修改下
-
-   菜单编辑页 fuck 不能用SubSystemId不然就不会选中   @Html.DropDownList("SubSystemIdA",    menu.SubSystemId = Request.Form["SubSystemIdA"];
 
 //基础数据菜单权限 导入 导出 详情 到底判断了没?
 
-entity 都加前缀 和表名相同 。。，，， 各种命名 改下
-
 syshelper,获取字典下拉选项
 
-http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
+代码调整
+ 加 region  ajax page
+  service调用精简为 services.sdsdsadasd
+   $.ajax({ 封装
+   entity 都加前缀 和表名相同 。。，，， 各种命名 改下
+  dbconfig  没必要单独文件 都放context里
+  services.AddScoped<ISys_UserService, Sys_UserService>(); t4生成 自动注册
+   util 放 lkweb.core就行了吧？  ISqlService ISysService             
+   services.AddScoped<ISysService, SysService>();            services.AddScoped<ISqlService, SqlService>();
+   改成 helper吧
+   调整startup.cs 里面太乱   
+   一个统一的配置文件 像老师的那个那样  当前用户， 各种信息提示，用format
+   public async Task<Result<UserDto>> DeleteAsync  //这种 不需要返回 result，直接一个bool就行
 
+延后功能:
+ http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
+	信息发布的 ueditor 上传文件等等。。。 .net core版本
 
-一个统一的配置文件 像老师的那个那样  当前用户， 各种信息提示，用format
+延后问题:
+	菜单编辑页 fuck 不能用SubSystemId不然就不会选中   @Html.DropDownList("SubSystemIdA",    menu.SubSystemId = Request.Form["SubSystemIdA"];
 
-
-
- public async Task<Result<UserDto>> DeleteAsync  //这种 不需要返回 result，直接一个bool就行
-
- util 放 lkweb.core就行了吧？  ISqlService ISysService             
- services.AddScoped<ISysService, SysService>();            services.AddScoped<ISqlService, SqlService>();
- 改成 helper吧
-
-
-调整startup.cs 里面太乱
-
-菜单 自适应缩放
-
-注意lkWebDbContextFactory 里写的明文 SQL链接
 
 hangfire 定时任务
 * datatable 排序 后台暂时写死不是根据前台参数修改的 所有columns定义的 里面多加个Name.

@@ -20,16 +20,19 @@
     <Compile Remove="wwwroot\lib\datatables\scripts\**" />
     <Compile Remove="wwwroot\lib\layer\build\**" />
     <Compile Remove="wwwroot\lib\layer\src\skin\**" />
+    <Compile Remove="wwwroot\lib\ueditor\net\**" />
     <EmbeddedResource Remove="wwwroot\lib\datatables\media\src\**" />
     <EmbeddedResource Remove="wwwroot\lib\datatables\media\unit_testing\**" />
     <EmbeddedResource Remove="wwwroot\lib\datatables\scripts\**" />
     <EmbeddedResource Remove="wwwroot\lib\layer\build\**" />
     <EmbeddedResource Remove="wwwroot\lib\layer\src\skin\**" />
+    <EmbeddedResource Remove="wwwroot\lib\ueditor\net\**" />
     <None Remove="wwwroot\lib\datatables\media\src\**" />
     <None Remove="wwwroot\lib\datatables\media\unit_testing\**" />
     <None Remove="wwwroot\lib\datatables\scripts\**" />
     <None Remove="wwwroot\lib\layer\build\**" />
     <None Remove="wwwroot\lib\layer\src\skin\**" />
+    <None Remove="wwwroot\lib\ueditor\net\**" />
   </ItemGroup>
 
   <ItemGroup>

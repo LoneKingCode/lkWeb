@@ -44,11 +44,18 @@ namespace lkWeb.Service
             CreateMap<Sys_RoleMenuDto, Sys_RoleMenuEntity>();
             CreateMap<Sys_UserDepartmentEntity, Sys_UserDepartmentDto>();
             CreateMap<Sys_UserDepartmentDto, Sys_UserDepartmentEntity>();
-
             CreateMap<Sys_SystemOptionEntity, Sys_SystemOptionDto>();
             CreateMap<Sys_SystemOptionDto, Sys_SystemOptionEntity>();
-            //CreateMap<UserEntity, UserDto>();
-            //CreateMap<UserDto, UserEntity>();
+            CreateMap<Sys_ValueListEntity, Sys_ValueListDto>();
+            CreateMap<Sys_ValueListDto, Sys_ValueListEntity>();
+            CreateMap<Sys_InfoTypeDto, Sys_InfoTypeEntity>();
+            CreateMap<Sys_InfoTypeEntity, Sys_InfoTypeDto>();
+            CreateMap<Sys_InfoReleaseDto, Sys_InfoReleaseEntity>();
+            CreateMap<Sys_InfoReleaseEntity, Sys_InfoReleaseDto>();
+            CreateMap<Sys_SubSystemDto, Sys_SubSystemEntity>();
+            CreateMap<Sys_SubSystemEntity, Sys_SubSystemDto>();
+            CreateMap<Sys_SubSystemTypeDto, Sys_SubSystemTypeEntity>();
+            CreateMap<Sys_SubSystemTypeEntity, Sys_SubSystemTypeDto>();
 
         }
     }

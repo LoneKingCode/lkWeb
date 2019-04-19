@@ -45,7 +45,9 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new SystemOptionConfig());
             modelBuilder.ApplyConfiguration(new SubSystemConfig());
             modelBuilder.ApplyConfiguration(new SubSystemTypeConfig());
-
+            modelBuilder.ApplyConfiguration(new SysValueListConfig());
+            modelBuilder.ApplyConfiguration(new InfoTypeConfig());
+            modelBuilder.ApplyConfiguration(new InfoReleaseConfig());
         }
         public override int SaveChanges()
         {
