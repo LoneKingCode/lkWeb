@@ -14,17 +14,18 @@ namespace lkWeb.Service.Abstracts
         /// 生成列
         /// </summary>
         /// <param name="tableId">表Id</param>
+        /// <param name="isSync">是否同步生成</param>
         /// <returns></returns>
-        Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId);
+        Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId, bool isSync = false);
 
         /// <summary>
         /// 设置列属性值
         /// </summary>
         /// <param name="ids"></param>
-        /// <param name="filedName"></param>
+        /// <param name="fieldName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value);
+        Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string fieldName, string value);
 
         /// <summary>
         /// 获取表数据

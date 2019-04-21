@@ -96,8 +96,36 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public string DeleteTableName { get; set; }
         /// <summary>
-        /// JavaScript脚本 onload时执行
+        /// 列表页JavaScript脚本
         /// </summary>
-        public string JavaScript { get; set; }
+        public string ListPageJavaScript { get; set; }
+        /// <summary>
+        /// 添加页JavaScript脚本
+        /// </summary>
+        public string AddPageJavaScript { get; set; }
+        /// <summary>
+        /// 编辑页JavaScript脚本
+        /// </summary>
+        public string EditPageJavaScript { get; set; }
+        /// <summary>
+        /// 详情页JavaScript脚本
+        /// </summary>
+        public string DetailPageJavaScript { get; set; }
+        /// <summary>
+        /// 列表页样式
+        /// </summary>
+        public string ListPageCssStyle { get; set; }
+        /// <summary>
+        /// 添加页样式
+        /// </summary>
+        public string AddPageCssStyle { get; set; }
+        /// <summary>
+        /// 编辑页样式
+        /// </summary>
+        public string EditPageCssStyle { get; set; }
+        /// <summary>
+        /// 详情页样式
+        /// </summary>
+        public string DetailPageCssStyle { get; set; }
     }
 }

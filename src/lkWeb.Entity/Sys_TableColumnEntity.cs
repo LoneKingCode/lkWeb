@@ -33,6 +33,10 @@ namespace lkWeb.Entity
         /// 输入控制
         /// </summary>
         public int MaxLength { get; set; }
+        /// <summary>
+        /// 列宽
+        /// </summary>
+        public string ColumnWidth { get; set; }
         #endregion
 
         #region 显示顺序

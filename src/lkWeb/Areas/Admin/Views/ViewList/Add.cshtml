@@ -14,10 +14,17 @@
             border: none;
         }
     </style>
+
+    <style type="text/css">
+     @Html.Raw(Model.Table.AddPageCssStyle)
+    </style>
+
 }
 
 @section Scripts{
     <script type="text/javascript">
+        @Html.Raw(Model.Table.EditPageJavaScript)
+
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.RefreshAndClose()
@@ -111,7 +118,7 @@
                         var sltHtml = writer.ToString();
                         sb.Append(string.Format(selectTpl, column.Description, sltHtml));
                     }
-                    else if (column.DataType == ColumnType.Date|| column.DataType ==ColumnType.Datetime)
+                    else if (column.DataType == ColumnType.Date || column.DataType == ColumnType.Datetime)
                     {
                         string _class = column.DataType == "Date" ? "datepicker-date" : "datepicker-datetime";
                         string type = column.DataType == "Date" ? "日期" : "时间";

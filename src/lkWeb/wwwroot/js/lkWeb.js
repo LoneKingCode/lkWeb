@@ -82,7 +82,7 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
                 url: postUrl,
                 data: {
                     ids: ids,
-                    value: _value,
+                    extraValue: _value,
                     __RequestVerificationToken: lkWeb.GetCsrfToken()
                 },
                 success: function (result) {
@@ -172,7 +172,10 @@ lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
                     if (IsFunction(successCallBack))
                         successCallBack(result);
                     else
-                        parent.layer.alert("操作成功");
+                        if (IsNotEmpty(result.msg))
+                            parent.layer.alert(result.msg);
+                        else
+                            parent.layer.alert("操作成功");
                 }
                 else {
                     if (IsNotEmpty(result.msg))
@@ -364,9 +367,16 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
         "aoColumns": colums,
         "destroy": true,
         "order": [],
+        "fnInitComplete": function (oSettings, json) {
+            //为每个td设置title属性 有的内容过长 省略号隐藏了 
+            //这样的话鼠标放上面可以显示全部
+            $("#" + tableID + " tbody td").each(function (i, n) {
+                $(n).attr("title", $(n).text());
+            });
+        }
     };
     var table = $("#" + tableID).DataTable(config);
-
+ 
     return table;
 }
 

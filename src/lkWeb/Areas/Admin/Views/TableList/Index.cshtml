@@ -46,19 +46,26 @@
             })
             })
         }
-        function BuildColumn() {
+        function GenerateColumn() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
             if (id == "") {
                 parent.layer.alert("请选择");
                 return;
             }
-             lkWeb.Confirm("确认生成", function () {
-                lkWeb.AjaxPost("@Url.Action("BuildColumn")", { id: id }, function () {
-                    parent.layer.alert("生成成功");
-             })
-            })
+            lkWeb.Confirm("确认生成？将清除之前的数据", function () {
+                lkWeb.AjaxPost("@Url.Action("GenerateColumn")", { id: id });
+            });
         }
-
+        function SyncGenerateColumn() {
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (id == "") {
+                parent.layer.alert("请选择");
+                return;
+            }
+            lkWeb.Confirm("确认同步生成？", function () {
+                lkWeb.AjaxPost("@Url.Action("SyncGenerateColumn")", { id: id });
+            });
+        }
         var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
@@ -86,13 +93,14 @@
     </script>
 }
 
-<div class="form-group">
-    <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
-    <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
-    <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
-    <button type="button" class="btn btn-warning" onclick="CopyModel()">复制</button>
-    <button type="button" class="btn" onclick="BuildColumn()">生成列</button>
-</div>
+    <div class="form-group">
+        <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
+        <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
+        <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+        <button type="button" class="btn btn-warning" onclick="CopyModel()">复制</button>
+        <button type="button" class="btn" onclick="GenerateColumn()">生成列</button>
+        <button type="button" class="btn" onclick="SyncGenerateColumn()">同步生成列</button>
+    </div>
 <div class="form-group">
     <div class="input-group">
         <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">

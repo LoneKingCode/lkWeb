@@ -40,6 +40,12 @@ textarea {
     resize: none;
 }
 
+.table td {
+    white-space: nowrap; /*不换行*/
+    text-overflow: ellipsis; /*超出部分用....代替*/
+    overflow: hidden;
+}
+
 #wrapper {
     width: 100%;
     overflow-x: hidden;

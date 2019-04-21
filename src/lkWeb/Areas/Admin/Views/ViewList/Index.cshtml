@@ -7,8 +7,11 @@
     ViewBag.Title = ViewBag.TableName;
 }
 @model ViewListModel
+
 @section Scripts{
     <script>
+        @Html.Raw(Model.Table.ListPageJavaScript)
+
         $(function () {
             InitDataTable();
 
@@ -29,13 +32,8 @@
                 })
             })
 
-          customScript()
 
         });
-
-        function customScript() {
-            @Html.Raw(Model.Table.JavaScript)
-        }
 
         function AddModel() {
             lkWeb.GoAction("admin", "viewlist", "add", "@Model.Table.Id", true, '添加', '@ViewBag.addEditWidth', '@ViewBag.addEditHeight');
@@ -132,7 +130,7 @@
                 { "mData": "rowNum", "sClass": "text-center" },
                 @{
                     StringBuilder columnStr = new StringBuilder();
-                    string str = "{{\"mData\": \"{0}\", \"sClass\": \"text-center\",\"bSortable\":{1}}},";
+                    string str = "{{\"mData\": \"{0}\", \"sClass\": \"text-center\",\"bSortable\":{1},{2}}},";
                     string hiddenStr = "{{\"mData\": \"{0}\",\"visible\": false, \"sClass\": \"text-center\"}},";
                     foreach (var column in Model.TableColumn)
                     {
@@ -140,15 +138,17 @@
                         {
                             columnStr.Append(string.Format(hiddenStr, column.Name));
                         }
-                        else if(column.DataType=="Custom")
-                        {
-
-                            columnStr.Append(string.Format(str, column.Name,"false"));
-
-                        }
                         else
                         {
-                            columnStr.Append(string.Format(str, column.Name, "true"));
+                            var sortable = (column.DataType == "Custom").ToString().ToLower();
+                            if (column.ColumnWidth.IsNotEmpty())
+                            {
+                                columnStr.Append(string.Format(str, column.Name, sortable, $"sWidth:\"{column.ColumnWidth}\""));
+                            }
+                            else
+                            {
+                                columnStr.Append(string.Format(str, column.Name, sortable, ""));
+                            }
                         }
                     }
                      @Html.Raw(columnStr.ToString());
@@ -161,9 +161,18 @@
             }
             ];
             lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl, '@Model.Table.Id')
-
         }
     </script>
+}
+@section Styles{
+    <style>
+        .table {
+            table-layout: fixed;
+        }
+    </style>
+    <style type="text/css">
+     @Html.Raw(Model.Table.ListPageCssStyle)
+    </style>
 }
 
 <div class="form-group">
@@ -215,7 +224,7 @@
     </div>
 </div>
 @Html.AntiForgeryToken()
-<table class="table table-striped table-hover" id="lkTable">
+<table class="table table-striped table-hover" id="lkTable" style="table-layout:fixed">
     <thead>
         <tr>
             <th>
@@ -226,7 +235,14 @@
                 StringBuilder headerStr = new StringBuilder();
                 foreach (var column in Model.TableColumn)
                 {
-                    headerStr.Append("<th>" + column.Description + "</th>");
+                    if (column.ColumnWidth.IsNotEmpty())
+                    {
+                        headerStr.Append("<th style='width:" + column.ColumnWidth + ";'>" + column.Description + "</th>");
+                    }
+                    else
+                    {
+                        headerStr.Append("<th>" + column.Description + "</th>");
+                    }
                 }
                 if (Model.Table.ExtendFunction.IsNotEmpty())
                 {

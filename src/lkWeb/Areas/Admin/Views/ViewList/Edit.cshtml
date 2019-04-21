@@ -14,10 +14,15 @@
             border: none;
         }
     </style>
+    <style type="text/css">
+     @Html.Raw(Model.Table.EditPageCssStyle)
+    </style>
 }
 @section Scripts{
 
     <script type="text/javascript">
+        @Html.Raw(Model.Table.EditPageJavaScript)
+
         $(function () {
             lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.RefreshAndClose()

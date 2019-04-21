@@ -36,8 +36,9 @@ namespace lkWeb.Service.Abstracts
         /// 生成列
         /// </summary>
         /// <param name="tableId">表Id</param>
+        /// <param name="isSync">是否同步生成</param>
         /// <returns></returns>
-        public async Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId)
+        public async Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId, bool isSync = false)
         {
             var result = new Result<List<Sys_TableColumnDto>>();
             var tableResult = await _tableListService.GetByIdAsync(tableId);
@@ -48,33 +49,71 @@ namespace lkWeb.Service.Abstracts
             }
             var tableDto = tableResult.data;
             //此SQL语句可以查询制定表的所有列
-            var tableData = await _sqlService.Query(string.Format("select * from v_TableInfo where tablename = '{0}'",
+            var tableData = await _sqlService.Query(string.Format("select tablename,colName,colType,colLength from v_TableInfo where tablename = '{0}'",
                 tableDto.Name));
             var tableColumns = new List<Sys_TableColumnDto>();
-            var delResult = await _tableColumnService.DeleteAsync(item => item.TableId == tableId);
+            var tableColumnDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId)).data;
+            var columnNames = new List<string>();
+            if (!isSync) //如果非同步生成 删除之前的列数据
+                await _tableColumnService.DeleteAsync(item => item.TableId == tableId);
+            if (tableData.Count <= 0)
+            {
+                result.msg = $"获取表{tableDto.Name}中的列数据失败，可能表不存在，请检查";
+                return result;
+            }
+
             foreach (var row in tableData)
             {
-                var dataType = "String";
-                var columnType = row["colType"].ToString();
+                columnNames.Add(row["colName"].ToString());
+                var dataType = ColumnType.String;
+                var columnType = row["colType"].ToString().ToLower();
                 if (columnType.Contains("char"))
-                    dataType = "String";
+                    dataType = ColumnType.String;
                 else if (columnType.Contains("int") || columnType.Contains("bit"))
-                    dataType = "Int";
+                    dataType = ColumnType.Int;
                 else if (columnType.Contains("float") | columnType.Contains("decimal"))
-                    dataType = "Decimal";
+                    dataType = ColumnType.Decimal;
                 else if (columnType.Contains("datetime"))
-                    dataType = "Datetime";
+                    dataType = ColumnType.Datetime;
                 else if (columnType.Contains("date"))
-                    dataType = "Date";
-                tableColumns.Add(new Sys_TableColumnDto
+                    dataType = ColumnType.Date;
+                //如果同步生成
+                if (isSync)
                 {
-                    Name = row["colName"].ToString(),
-                    DataType = dataType,
-                    MaxLength = row["colLength"].ObjToInt(),
-                    TableId = tableDto.Id,
-                });
+                    //判断之前是否已存在此列 存在则不添加
+                    var exist = tableColumnDtos.Where(item => item.TableId == tableId && item.Name == row["colName"].ToString()).Count() > 0;
+                    if (!exist)
+                    {
+                        tableColumns.Add(new Sys_TableColumnDto
+                        {
+                            Name = row["colName"].ToString(),
+                            DataType = dataType,
+                            MaxLength = row["colLength"].ObjToInt(),
+                            TableId = tableDto.Id,
+                        });
+                    }
+                }
+                else
+                {
+                    tableColumns.Add(new Sys_TableColumnDto
+                    {
+                        Name = row["colName"].ToString(),
+                        DataType = dataType,
+                        MaxLength = row["colLength"].ObjToInt(),
+                        TableId = tableDto.Id,
+                    });
+                }
             }
             var addResult = await _tableColumnService.AddAsync(tableColumns);
+            //有时同步列 如果列数据没变化 count就为0
+            addResult.flag = (tableColumns.Count == 0 && isSync) || addResult.flag;
+            if (isSync)
+            {
+                addResult.msg = $"同步成功，新增{tableColumns.Count}条列数据";
+                //删除已经不需要的列
+                var deleteColumnDtos = (await _tableColumnService.DeleteAsync(item => item.TableId == tableId && !columnNames.Contains(item.Name))).data;
+            }
+
             return addResult;
 
         }

@@ -23,7 +23,7 @@
     <script type="text/javascript">
         $(function () {
             lkWeb.FormValidation($("#loginForm"), function () {
-                var returnUrl = '@ViewBag.ReturnUrl'
+                var returnUrl = getParam('ReturnUrl')
                 if (returnUrl != '')
                     window.location.href = returnUrl
                 else
