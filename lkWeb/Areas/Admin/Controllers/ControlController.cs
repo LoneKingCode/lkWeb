@@ -20,9 +20,13 @@ namespace lkWeb.Areas.Admin.Controllers
     public class ControlController : AdminBaseController
     {
         public readonly ISys_UserService _userService;
-        public ControlController(ISys_UserService userService)
+        public readonly ISys_UserRoleService _userRoleService;
+        public readonly ISys_RoleService _roleService;
+        public ControlController(ISys_UserService userService, ISys_UserRoleService userRoleService, ISys_RoleService roleService)
         {
             _userService = userService;
+            _userRoleService = userRoleService;
+            _roleService = roleService;
         }
 
         #region Page
@@ -34,7 +38,11 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 ViewBag.UserID = CurrentUser.Id;
                 ViewBag.UserName = CurrentUser.UserName;
-                ViewBag.Menus = (await _userService.GetUserMenu(CurrentUser.Id)).data;
+                var menuResult = await _userService.GetUserMenu(sysId);
+                if (menuResult.flag)
+                    ViewBag.Menus = menuResult.data;
+                else
+                    return RedirectToAction("AccessDenied");
                 return View();
             }
             else

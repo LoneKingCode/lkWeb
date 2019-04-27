@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using System.Reflection;
+using System.Linq;
 
 namespace lkWeb.Core.Extension
 {
@@ -99,8 +100,9 @@ namespace lkWeb.Core.Extension
                         else
                         {
                             var exp = Parser(parameter, memberAccess.Expression);
-                            var member = exp.Type.GetTypeInfo().GetMember(memberAccess.Member.Name)[0];
-                            //  var member = exp.Type
+                            //var member = exp.Type.GetTypeInfo().GetMember(memberAccess.Member.Name)[0];
+                            //memberAccess = Expression.MakeMemberAccess(exp, member);
+                            var member = exp.Type.GetMember(memberAccess.Member.Name).FirstOrDefault();
                             memberAccess = Expression.MakeMemberAccess(exp, member);
                         }
                         return memberAccess;

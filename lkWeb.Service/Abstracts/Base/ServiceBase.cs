@@ -16,6 +16,8 @@ namespace lkWeb.Service.Abstracts
     public abstract class ServiceBase<T> where T : class
     {
         public readonly IMapper _mapper;
+ 
+   
         static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
         static DbContextOptionsBuilder<lkWebContext> dbContextOptionBuilder = new DbContextOptionsBuilder<lkWebContext>(dbContextOption);
         public ServiceBase(IMapper mapper)
@@ -28,7 +30,7 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         public lkWebContext GetDb()
         {
-            return new lkWebContext(dbContextOptionBuilder.UseSqlServer(lkWebContext.connectionString).Options);
+             return new lkWebContext(dbContextOptionBuilder.UseSqlServer(lkWebContext.connectionString).Options);
         }
         /// <summary>
         /// 获取DbSet

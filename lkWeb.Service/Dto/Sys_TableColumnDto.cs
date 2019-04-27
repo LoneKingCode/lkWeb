@@ -37,6 +37,10 @@ namespace lkWeb.Service.Dto
         /// 列宽
         /// </summary>
         public string ColumnWidth { get; set; }
+        /// <summary>
+        /// 跨列
+        /// </summary>
+        public int ColSpan { get; set; }
         #endregion
 
         #region 显示顺序

@@ -15,11 +15,11 @@ namespace lkWeb.Service.Abstracts
 {
     public partial class Sys_UserRoleService : ServiceBase<Sys_UserRoleEntity>, ISys_UserRoleService
     {
-		public Sys_UserRoleService(IMapper mapper):base(mapper)
-		{
+        public Sys_UserRoleService(IMapper mapper) : base(mapper)
+        {
 
-		}
-		/// <summary>
+        }
+        /// <summary>
         ///添加单个sys_userrole
         /// </summary>
         /// <param name="dto">sys_userrole实体</param>
@@ -151,11 +151,11 @@ namespace lkWeb.Service.Abstracts
                 var result = new Result<Sys_UserRoleDto>();
                 var ds = GetDbSet(db);
                 var entity = await ds.FindAsync(id);
-			    if (entity != null)
+                if (entity != null)
                 {
-					 result.data = MapTo<Sys_UserRoleEntity, Sys_UserRoleDto>(entity);
-					 result.flag = true;
-		    	}
+                    result.data = MapTo<Sys_UserRoleEntity, Sys_UserRoleDto>(entity);
+                    result.flag = true;
+                }
                 return result;
             }
         }
@@ -209,7 +209,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
-		 /// <summary>
+        /// <summary>
         /// 根据条件获取单个sys_userrole数据
         /// </summary>
         /// <param name="exp"></param>
@@ -222,11 +222,11 @@ namespace lkWeb.Service.Abstracts
                 var ds = GetDbSet(db);
                 var _exp = exp.Cast<Sys_UserRoleDto, Sys_UserRoleEntity, bool>();
                 var entity = await ds.Where(_exp).FirstOrDefaultAsync();
-				   if (entity != null)
-                 {
-				    result.data = MapTo<Sys_UserRoleEntity,Sys_UserRoleDto>(entity);
-					result.flag=true;
-				 }
+                if (entity != null)
+                {
+                    result.data = MapTo<Sys_UserRoleEntity, Sys_UserRoleDto>(entity);
+                    result.flag = true;
+                }
                 return result;
             }
         }
@@ -248,7 +248,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
-	}
+    }
 
 }
 

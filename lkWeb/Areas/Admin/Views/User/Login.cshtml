@@ -24,10 +24,10 @@
         $(function () {
             lkWeb.FormValidation($("#loginForm"), function () {
                 var returnUrl = getParam('ReturnUrl')
-                if (returnUrl != '')
+                if (IsNotEmpty(returnUrl))
                     window.location.href = returnUrl
                 else
-                    lkWeb.GoAction("admin", "control", "index")
+                    lkWeb.GoAction("front", "home", "ChooseSystem")
             })
             //lkWeb.FormValidation($("#registerForm"), function () {
             //    lkWeb.GoAction("admin", "user", "login")

@@ -36,7 +36,7 @@ namespace lkWeb.Service.Abstracts
 
         public static Result<Sys_UserDto> GetCurrentUserBySession()
         {
-           
+
             var result = new Result<Sys_UserDto>();
             var sessionUser = WebHelper.GetSession<Sys_UserDto>(UserSessionName);
             if (sessionUser != null)
@@ -145,7 +145,7 @@ namespace lkWeb.Service.Abstracts
                 result.msg = "请选择要添加的角色";
                 return result;
             }
-                  var userRoleResult = await _userRoleService.GetListAsync(item => item.UserId == userResult.data.Id);
+            var userRoleResult = await _userRoleService.GetListAsync(item => item.UserId == userResult.data.Id);
             var userExistedRoleIds = userRoleResult.data.Select(item => item.RoleId).ToList();
             var userRoles = new List<Sys_UserRoleDto>();
             foreach (var roleId in roleIds)
@@ -187,25 +187,34 @@ namespace lkWeb.Service.Abstracts
         /// <summary>
         /// 获取用户菜单数据
         /// </summary>
-        /// <param name="id">id</param>
+        /// <param name="sysId">sysId</param>
         /// <returns></returns>
-        public async Task<Result<List<Sys_MenuDto>>> GetUserMenu(int userId)
+        public async Task<Result<List<Sys_MenuDto>>> GetUserMenu(int sysId)
         {
             using (var db = GetDb())
             {
                 var result = new Result<List<Sys_MenuDto>>();
-                var roleResult = await GetUserRoles(userId);
-                var roleIds = roleResult.data.Select(x => x.Id).ToList();
-                Expression<Func<Sys_RoleMenuEntity, bool>> exp = item => roleIds.Contains(item.RoleId);
-                var roleMenus = await db.RoleMenu.Where(exp).ToListAsync();
+
+                var userRoleIds = (await _userRoleService.GetListAsync(item => item.UserId == GetCurrentUser().data.Id)).data.Select(item => item.RoleId).ToList();
+                var userRoles = (await _roleService.GetListAsync(item => userRoleIds.Contains(item.Id))).data;
+                var userRolesSubSystemIds = userRoles.Select(item => item.SubSystemId).ToList();
+                if (!userRolesSubSystemIds.Contains(sysId))
+                {
+                    return result;
+                }
+                var userSubSystemRole = userRoles.Where(item => item.SubSystemId == sysId).First();
+                var subSystemRoleId = userSubSystemRole.Id;
+
+                var roleMenus = await db.RoleMenu.Where(item => item.RoleId == subSystemRoleId).ToListAsync();
                 var menuIds = roleMenus.Select(x => x.MenuId).ToList();
-                Expression<Func<Sys_MenuEntity, bool>> expMenu = item => menuIds.Contains(item.Id);
-                var menus = await db.Menu.Where(expMenu).OrderBy(item => item.ListOrder).ToListAsync();
+                var menus = await db.Menu.Where(item => menuIds.Contains(item.Id)).OrderBy(item => item.ListOrder).ToListAsync();
                 result.flag = true;
                 result.data = MapTo<List<Sys_MenuEntity>, List<Sys_MenuDto>>(menus);
                 return result;
             }
         }
+
+      
         /// <summary>
         /// 获取用户角色数据
         /// </summary>

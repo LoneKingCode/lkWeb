@@ -24,6 +24,16 @@
         @Html.Raw(Model.Table.EditPageJavaScript)
 
         $(function () {
+            //加载富文本
+            @{
+                var richTextColumns= Model.TableColumn.Where(item => item.DataType == ColumnType.RichText).ToList();
+                for (int i = 0; i < richTextColumns.Count; i++)
+                {
+                    @Html.Raw($"var editor{i} = UE.getEditor('{richTextColumns[i].Name}');")
+                    @Html.Raw($"$('#{richTextColumns[i].Name}').css('width', (window.innerWidth - 102 * {Model.Table.ColumnPerRow}) + 'px').css('height', Math.round(window.innerHeight * 0.3) + 'px');")
+                }
+            }
+
             lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.RefreshAndClose()
             })
@@ -70,26 +80,18 @@
 }
 <form class="form-horizontal" action="@Url.Action("Edit")" method="post" id="lkForm">
     @Html.AntiForgeryToken()
-    <table class="table">
+    <table class="table table-content">
         <tbody>
             @{
-                string selectTpl = "<div class=\"form-group\"><div class=\"\">" +
-            "<label class=\"col-md-2 control-label\">{0}</label>" +
-            "<div class=\"col-md-9\"> {1} </div></div></div>";
-                string inputTemplate = "<div class=\"form-group\"><div class=\"\">" +
-        "<label class=\"col-md-2 control-label\">{0}</label>" +
-        "<div class=\"col-md-9\">" +
-        "<input type=\"text\" class=\"form-control\" name=\"{1}\" value=\"{2}\" data-val-required=\"{0}不能为空\" {4} data-val-maxlength=\"{0}长度不能超过{3}个字符\" data-val-maxlength-max=\"{3}\" data-val=\"true\"/>" +
-        "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span></div> " +
-        "</div></div>";
-                string dateTpl =
-                  "<div class=\"form-group\">" +
-      "<label class=\"col-md-2 control-label\">{0}</label>" +
-      "<div class=\"col-md-9\">" +
-                  "<div class=\"c-datepicker-date-editor c-datepicker-single-editor {1}\">" +
+                string inputTpl = "<input type=\"text\" class=\"form-control\" name=\"{1}\"  value=\"{4}\" data-val=\"true\" {3} data-val-maxlength=\"{0}长度不能超过{2}个字符\" data-val-maxlength-max=\"{2}\"/>" +
+"<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span>";
+                string dateTpl = "<div class=\"c-datepicker-date-editor c-datepicker-single-editor {0}\">" +
 " <i class=\"c-datepicker-range__icon kxiconfont icon-clock\"></i>" +
-"<input type = \"text\" autocomplete=\"off\" name=\"{2}\" placeholder=\"选择{3}\" data-val=\"true\" {4}  class=\"c-datepicker-data-input only-date\" value=\"{5}\" style=\"width:100%;\"></div>" +
-              "<span class=\"field-validation-valid\" data-valmsg-for=\"{2}\" data-valmsg-replace=\"true\"></span></div></div>";
+"<input type = \"text\" autocomplete=\"off\" name=\"{1}\" placeholder=\"选择{2}\" data-val=\"true\" {3}  value=\"{4}\" class=\"c-datepicker-data-input only-date\" value=\"\" style=\"width:100%;\"></div>" +
+                "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span></div>";
+                string editorTpl = "<script id=\"{0}\" name=\"{0}\" type=\"text/plain\" style=\"height:250px;\">{1}</script>";
+
+
                 StringBuilder sb = new StringBuilder();
                 var numPerRow = Model.Table.ColumnPerRow < 1 ? 1 : Model.Table.ColumnPerRow;
                 var count = 0;
@@ -97,14 +99,20 @@
                 foreach (var column in Model.TableColumn)
                 {
                     count++;
-                    sb.Append($"<td style='width: {Math.Round(100.0 / numPerRow, 2)}%;'>");
+                    var colspan = 1;
+                    if (column.ColSpan > 1)
+                    {
+                        colspan = column.ColSpan;
+                    }
+                    var requireSpan = column.Required == 1 ? "<span class='require'>*</span>":"";
+                    string tempTpl = "<td class='td-left'>" + requireSpan + "<span class='name'>" + column.Description + "</span></td><td colspan='" + colspan + "'>{0}</td>";
                     if (column.DataType == ColumnType.Out || column.DataType == ColumnType.Enum)
                     {
                         var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], new { @class = "form-control chosen-radio" });
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
                         var sltHtml = writer.ToString();
-                        sb.Append(string.Format(selectTpl, column.Description, sltHtml));
+                        sb.Append(string.Format(tempTpl, sltHtml));
                     }
                     else if (column.DataType == ColumnType.CheckBox)
                     {
@@ -115,30 +123,38 @@
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
                         var sltHtml = writer.ToString();
-                        sb.Append(string.Format(selectTpl, column.Description, sltHtml));
+                        sb.Append(string.Format(tempTpl, sltHtml));
                     }
                     else if (column.DataType == ColumnType.Date || column.DataType == ColumnType.Datetime)
                     {
                         string _class = column.DataType == "Date" ? "datepicker-date" : "datepicker-datetime";
                         string type = column.DataType == "Date" ? "日期" : "时间";
-                        sb.Append(string.Format(dateTpl, column.Description, _class, column.Name, type,
-                            column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "", ViewBag.ColumnValue[column.Name]));
+                        string contentHtml = string.Format(dateTpl, _class, column.Name, type,
+        column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "", ViewBag.ColumnValue[column.Name]);
+                        sb.Append(string.Format(tempTpl, contentHtml));
 
                     }
                     else if (column.DataType == ColumnType.File)
                     {
-                        sb.Append(string.Format(inputTemplate, column.Description, column.Name, ViewBag.ColumnValue[column.Name],
-                        column.MaxLength, $" readonly placeholder='请选择文件' id='{column.Name}'" +
+                        var contentHtml = string.Format(inputTpl, column.Description, column.Name, column.MaxLength,
+                            $" readonly placeholder='请选择文件' id='{column.Name}'" +
                         (column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "")
-                        + $" onclick=\"$('#file{column.Name}').click()\" "));
+                        + $" onclick=\"$('#file{column.Name}').click()\" ", ViewBag.ColumnValue[column.Name]);
+                        sb.Append(string.Format(tempTpl, contentHtml));
                         sb.Append($"<input type='file' id='file{column.Name}' onchange='uploadFile(\"file{column.Name}\",\"{column.Name}\",\"{column.Id}\")' style='display:none;'/>");
+                    }
+                    else if (column.DataType == ColumnType.RichText)
+                    {
+                        var contentHtml = string.Format(editorTpl, column.Name, ViewBag.ColumnValue[column.Name]);
+                        sb.Append(string.Format(tempTpl, contentHtml));
                     }
                     else
                     {
-                        sb.Append(string.Format(inputTemplate, column.Description, column.Name, ViewBag.ColumnValue[column.Name], column.MaxLength,
-                        column.ValidationRule + $" placeholder='请输入{column.Description}' " + (column.Required == 1 ? " data-val-required=\"" + column.Description + "不能为空\"" : "")));
+                        var contentHtml = string.Format(inputTpl, column.Description, column.Name, column.MaxLength,
+                            $" placeholder='请输入{column.Description}' " + column.ValidationRule + (column.Required == 1 ? " data-val-required=\"" + column.Description + "不能为空\"" : ""),
+                            ViewBag.ColumnValue[column.Name]);
+                        sb.Append(string.Format(tempTpl, contentHtml));
                     }
-                    sb.Append("</td>");
                     if (count % numPerRow == 0)
                     {
                         sb.Append("</tr>");

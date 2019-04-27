@@ -33,9 +33,10 @@ namespace lkWeb.Service.Abstracts
         /// <summary>
         /// 获取用户菜单数据
         /// </summary>
-        /// <param name="userId">userId</param>
+        /// <param name="sysId">子系统Id</param>
         /// <returns></returns>
-        Task<Result<List<Sys_MenuDto>>> GetUserMenu(int userId);
+        Task<Result<List<Sys_MenuDto>>> GetUserMenu(int sysId);
+
         /// <summary>
         /// 获取用户角色数据
         /// </summary>

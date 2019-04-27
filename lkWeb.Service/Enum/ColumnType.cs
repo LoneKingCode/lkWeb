@@ -15,20 +15,23 @@ namespace lkWeb.Service.Enum
         public static string Enum { get { return "Enum"; } }
         public static string CheckBox { get { return "CheckBox"; } }
         public static string File { get { return "File"; } }
+        public static string Image { get { return "Image"; } }
         public static string Custom { get { return "Custom"; } }
+        public static string RichText { get { return "RichText"; } }
 
         public static List<string> list = new List<string>
         {
-            "String",
-            "Int",
-            "Decimal",
-            "Out",
-            "Date",
-            "Datetime",
-            "Enum",
-            "CheckBox",
-            "File",
-            "Custom",
+            String,
+            Int,
+            Decimal,
+            Out,
+            Date,
+            Datetime,
+            Enum,
+            CheckBox,
+            File,
+            Custom,
+            RichText
         };
     }
 

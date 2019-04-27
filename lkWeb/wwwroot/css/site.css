@@ -430,4 +430,19 @@ nav.page-tabs {
 .form-item {
     padding: 3px;
 }
+
+.table-content .td-left {
+    width: 110px;
+    text-align: right;
+    vertical-align: middle;
+}
+.table-content .td-left .name{
+    
+}
+    .table-content .td-left .require {
+        color: red;
+        position: relative;
+        top: 4px;
+        right: 3px;
+    }
 /*#endregion*/

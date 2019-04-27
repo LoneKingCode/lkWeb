@@ -134,7 +134,7 @@ namespace lkWeb
                 app.UseExceptionHandler("/Admin/Control/Error");
             }
 
-            app.UseStaticFiles();
+       
 
             app.UseMvc(routes =>
             {
