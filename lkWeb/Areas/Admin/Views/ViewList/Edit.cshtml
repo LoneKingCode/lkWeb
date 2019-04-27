@@ -114,7 +114,7 @@
                         var sltHtml = writer.ToString();
                         sb.Append(string.Format(tempTpl, sltHtml));
                     }
-                    else if (column.DataType == ColumnType.CheckBox)
+                    else if (column.DataType == ColumnType.MultiSelect)
                     {
                         var htmlAttr = new Object();
                         htmlAttr = new { @class = "form-control chosen-checkbox", multiple = "multiple", id = "chosen-" + column.Name };

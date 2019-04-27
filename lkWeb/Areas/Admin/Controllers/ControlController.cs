@@ -74,11 +74,11 @@ namespace lkWeb.Areas.Admin.Controllers
 
             if (feature != null)
             {
-                return View("~/Areas/Views/Shared/Error.cshtml", feature.Error);
+                return View(feature.Error);
             }
             else
             {
-                return View("~/Areas/Views/Shared/Error.cshtml", "");
+                return View();
             }
         }
         #endregion

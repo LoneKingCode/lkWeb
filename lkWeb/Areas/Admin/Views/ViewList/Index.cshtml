@@ -114,7 +114,34 @@
 
                  })
         }
-
+        function ShowBatchOperation(filedName) {
+            layer.open({
+                type: 1,
+                title: "批量操作",
+                closeBtn: 1,
+                scrollbar :false,
+                 area: '30%',
+                content: $('#batchOperation'),
+                 btn: ['确定', '取消'],
+                 yes: function (index, layero) {
+                     BatchOperation(filedName);
+                     layer.close(index);
+                                     }
+                , cancel: function (index, layero) {
+                    layer.close(index)
+                },
+            });
+        }
+        function BatchOperation(filedName) {
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
+            var value = $("#txtValue").val();
+            lkWeb.Confirm("确认修改", function () {
+                lkWeb.AjaxPost("@Url.Action("BatchOperation")", {id:@Model.Table.Id, ids: ids, Value: value, FiledName: filedName }, function () {
+                    parent.layer.alert("修改成功");
+                    lkTable.draw(false);
+                })
+            })
+        }
         var lkTable;
         function InitDataTable() {
             var dataUrl = '@Url.Action("GetPageData")';
@@ -174,7 +201,16 @@
      @Html.Raw(Model.Table.ListPageCssStyle)
     </style>
 }
-
+<div id="batchOperation" class="form-horizontal" style="display:none;margin-top:5px;">
+    <div class="form-group">
+        <label class="col-md-3 control-label">设置值</label>
+        <div class="col-md-7">
+            <input type="text" class="form-control" name="Value" id="txtValue"
+                   data-val="true" data-val-required="值不能为空" />
+            <span class="field-validation-valid" data-valmsg-for="Value" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+</div>
 <div class="form-group">
     @{
         ShowButtonModel btnModel = ViewBag.ShowButton;
@@ -209,6 +245,16 @@
         if (!string.IsNullOrEmpty(btnModel.TopExtendFunction))
         {
             @Html.Raw(btnModel.TopExtendFunction)
+        }
+        if (!string.IsNullOrEmpty(Model.Table.BatchOperation))
+        {
+            foreach (var item in Model.Table.BatchOperation.Split(','))
+            {
+                if (item.Split('|').Length == 2)
+                {
+                    <button type="button" class="btn btn-success" onclick="ShowBatchOperation('@item.Split('|')[0]')">@item.Split('|')[1]</button>
+                }
+            }
         }
     }
 </div>

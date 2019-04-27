@@ -85,13 +85,9 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 if (column.DataType == ColumnType.Out)
                 {
-                    string[] outSql = column.OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
-                    var colNames = outSql[0].Split(','); //value,text
-                    var tableName = outSql[1];
-                    var condition = outSql[2];
-                    var primaryKey = colNames[0]; //作为下拉菜单value的列
-                    var textKey = colNames[1]; //作为下拉菜单的text的列
-                    var queryResult = await _sqlService.Query(string.Format(sql, outSql[0], tableName, condition));
+                    var outSqlModel = new OutSqlModel(column.OutSql);
+                    var queryResult = await _sqlService.Query(string.Format(sql,
+                        outSqlModel.PrimaryKey + "," + outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.Condition));
                     var items = new List<SelectListItem>();
                     items.Add(new SelectListItem
                     {
@@ -103,8 +99,8 @@ namespace lkWeb.Areas.Admin.Controllers
                         items.Add(new SelectListItem
                         {
 
-                            Value = row[primaryKey].ToString(),
-                            Text = row[textKey].ToString(),
+                            Value = row[outSqlModel.PrimaryKey].ToString(),
+                            Text = row[outSqlModel.TextKey].ToString(),
                         });
 
                     }
@@ -125,7 +121,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
                 }
-                else if (column.DataType == ColumnType.CheckBox)
+                else if (column.DataType == ColumnType.MultiSelect)
                 {
                     var checkStr = column.SelectRange.Split(','); //选项1,选项2
                     var items = new List<SelectListItem>();
@@ -158,13 +154,9 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 if (column.DataType == ColumnType.Out)
                 {
-                    string[] outSql = column.OutSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
-                    var colNames = outSql[0].Split(','); //value,text
-                    var tableName = outSql[1];
-                    var condition = outSql[2];
-                    var primaryKey = colNames[0]; //作为下拉菜单value的列
-                    var textKey = colNames[1]; //作为下拉菜单的text的列
-                    var queryResult = await _sqlService.Query(string.Format(sql, outSql[0], tableName, condition));
+                    var outSqlModel = new OutSqlModel(column.OutSql);
+                    var queryResult = await _sqlService.Query(string.Format(sql,
+                        outSqlModel.PrimaryKey + "," + outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.Condition));
                     var items = new List<SelectListItem>();
                     //获取此条out列的主键值
                     var outColId = columnValueResult.First()[column.Name].ToString();
@@ -178,8 +170,8 @@ namespace lkWeb.Areas.Admin.Controllers
                     {
                         items.Add(new SelectListItem
                         {
-                            Value = row[primaryKey].ToString(),
-                            Text = row[textKey].ToString(),
+                            Value = row[outSqlModel.PrimaryKey].ToString(),
+                            Text = row[outSqlModel.TextKey].ToString(),
                         });
 
                     }
@@ -204,7 +196,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text", enumColValue);
                 }
-                else if (column.DataType == ColumnType.CheckBox)
+                else if (column.DataType == ColumnType.MultiSelect)
                 {
                     var checkColValues = columnValueResult.First()[column.Name].ToString().Split(',');
                     var checkStr = column.SelectRange.Split(','); //选项1,选项2
@@ -485,6 +477,14 @@ namespace lkWeb.Areas.Admin.Controllers
             return Json(result);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BatchOperation(UrlParameter param, SetColumnAttrModel model)
+        {
+            var tableId = param.id;
+            var result = await _sysService.BatchOperation(tableId, param.ids, model.FiledName, model.Value);
+            return Json(result);
+        }
         #endregion
     }
 }

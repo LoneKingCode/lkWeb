@@ -14,6 +14,70 @@ using lkWeb.Core.Helper;
 
 namespace lkWeb.Service.Abstracts
 {
+    /// <summary>
+    /// 外部Sql Model
+    /// </summary>
+    public class OutSqlModel
+    {
+        /// <summary>
+        /// OutSqlModel
+        /// </summary>
+        /// <param name="outSql">例如Id,Name|Sys_Activity|id>0|1|Sys_DeptActivity|DeptId,ActivityId (主键,显示列名|表名|条件|是否保存到它表|保存表名,当前表外键名,Out表外键名)</param>
+        public OutSqlModel(string outSql)
+        {
+            string[] outSqlArr = outSql.Split('|');
+            var colNames = outSqlArr[0].Split(',');
+            TableName = outSqlArr[1];
+            PrimaryKey = colNames[0]; //作为下拉菜单value的列
+            TextKey = colNames[1]; //作为下拉菜单的text的列
+            if (outSqlArr.Length <= 2)
+                Condition = "1=1";
+            else
+            {
+                Condition = outSqlArr[2];
+                IsSave = outSqlArr[3] == "1";
+                if (IsSave)
+                {
+                    SaveTableName = outSqlArr[4];
+                    CurrentTableForeignKey = outSqlArr[5];
+                    OutTableForeignKey = outSqlArr[6];
+                }
+            }
+        }
+        /// <summary>
+        /// 外部表名
+        /// </summary>
+        public string TableName { get; set; }
+        /// <summary>
+        /// 查询条件
+        /// </summary>
+        public string Condition { get; set; }
+        /// <summary>
+        /// 外部表主键
+        /// </summary>
+        public string PrimaryKey { get; set; }
+        /// <summary>
+        /// 外部表显示文本列
+        /// </summary>
+        public string TextKey { get; set; }
+        /// <summary>
+        /// 是否保存到它表
+        /// </summary>
+        public bool IsSave { get; set; }
+        /// <summary>
+        /// 保存表名
+        /// </summary>
+        public string SaveTableName { get; set; }
+        /// <summary>
+        /// 当前表外键名
+        /// </summary>
+        public string CurrentTableForeignKey { get; set; }
+        /// <summary>
+        /// 外部表外键名
+        /// </summary>
+        public string OutTableForeignKey { get; set; }
+    }
+
     public class SysService : ISysService
     {
         public readonly ISqlService _sqlService;
@@ -121,24 +185,52 @@ namespace lkWeb.Service.Abstracts
         /// <summary>
         /// 设置列属性值
         /// </summary>
-        /// <param name="ids"></param>
-        /// <param name="filedName"></param>
+        /// <param name="ids">TableColumn中id</param>
+        /// <param name="fieldName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public async Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string filedName, string value)
+        public async Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string fieldName, string value)
         {
             var result = new Result<List<Sys_TableColumnDto>>();
             List<string> listSql = new List<string>();
             foreach (var id in ids)
             {
-                listSql.Add(string.Format("update Sys_TableColumn set {0}='{1}' where Id={2}", filedName, value, id));
+                listSql.Add(string.Format("update Sys_TableColumn set {0}='{1}' where Id={2}", fieldName, value, id));
             }
             var execResult = await _sqlService.ExecuteBatch(listSql);
             result.flag = execResult == listSql.Count();
             result.msg = "影响数据条数" + execResult;
             return result;
         }
+        /// <summary>
+        /// 设置列属性值
+        /// </summary>
+        /// <param name="tableId">tableId</param>
+        /// <param name="ids">ids</param>
+        /// <param name="fieldName">字段名</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public async Task<Result<List<Sys_TableColumnDto>>> BatchOperation(int tableId, List<int> ids, string fieldName, string value)
+        {
+            var result = new Result<List<Sys_TableColumnDto>>();
+            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableDto = tableResult.data;
 
+            List<string> listSql = new List<string>();
+            foreach (var id in ids)
+            {
+                listSql.Add(string.Format("update {0} set {1}='{2}' where Id={3}", tableDto.Name, fieldName, value, id));
+            }
+            var execResult = await _sqlService.ExecuteBatch(listSql);
+            result.flag = execResult == listSql.Count();
+            result.msg = "影响数据条数" + execResult;
+            return result;
+        }
         /// <summary>
         /// 获取数据
         /// </summary>
@@ -355,13 +447,9 @@ namespace lkWeb.Service.Abstracts
             }
             string outSql = await _sqlService.GetSingle(
                 string.Format("select OutSql from Sys_TableColumn where TableId={0} and Name='{1}'", tableId, columnName));
-            string[] outSqlArr = outSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
-            var colNames = outSqlArr[0].Split(','); //value,text
-            var tableName = outSqlArr[1];
-            var condition = outSqlArr[2];
-            var primaryKey = colNames[0]; //作为下拉菜单value的列
-            var textKey = colNames[1]; //作为下拉菜单的text的列
-            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}", textKey, tableName, primaryKey, outId));
+            var outSqlModel = new OutSqlModel(outSql);
+            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}",
+                outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.PrimaryKey, outId));
             result.data = value.IsEmpty() ? "无" : value;
             result.flag = true;
             return result;
@@ -384,13 +472,9 @@ namespace lkWeb.Service.Abstracts
             }
             string outSql = await _sqlService.GetSingle(
                 string.Format("select OutSql from Sys_TableColumn where TableId={0} and Name='{1}'", tableId, columnName));
-            string[] outSqlArr = outSql.Split('|'); //Example: Id,Name|Sys_Department|ParentId=0
-            var colNames = outSqlArr[0].Split(','); //value,text
-            var tableName = outSqlArr[1];
-            var condition = outSqlArr[2];
-            var primaryKey = colNames[0]; //作为下拉菜单value的列
-            var textKey = colNames[1]; //作为下拉菜单的text的列
-            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'", primaryKey, tableName, textKey, outValue));
+            var outSqlModel = new OutSqlModel(outSql);
+            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
+                outSqlModel.PrimaryKey, outSqlModel.TableName, outSqlModel.TextKey, outValue));
             result.data = value;
             result.flag = true;
             return result;

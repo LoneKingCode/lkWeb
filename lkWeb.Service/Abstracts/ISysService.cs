@@ -21,12 +21,20 @@ namespace lkWeb.Service.Abstracts
         /// <summary>
         /// 设置列属性值
         /// </summary>
-        /// <param name="ids"></param>
+        /// <param name="ids">TableColumn中id</param>
         /// <param name="fieldName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
         Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string fieldName, string value);
-
+        /// <summary>
+        /// 设置列属性值
+        /// </summary>
+        /// <param name="tableId">tableId</param>
+        /// <param name="ids">ids</param>
+        /// <param name="fieldName">字段名</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        Task<Result<List<Sys_TableColumnDto>>> BatchOperation(int tableId, List<int> ids, string fieldName, string value);
         /// <summary>
         /// 获取表数据
         /// </summary>

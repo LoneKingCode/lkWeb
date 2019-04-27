@@ -124,6 +124,12 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-md-2 control-label">批量操作</label>
+            <div class="col-md-7">
+                <input type="text" class="form-control" asp-for="BatchOperation" data-toggle="tooltip" title="例如: IsTop|是否置顶,Hide|是否隐藏 IsTop为表中字段" />
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-md-2 control-label">列扩展方法</label>
             <div class="col-md-7">
                 <textarea class="form-control" asp-for="ExtendFunction" rows="3" data-toggle="tooltip" title="{Id}为Id,{UserId}为UserId">@Model.ExtendFunction</textarea>

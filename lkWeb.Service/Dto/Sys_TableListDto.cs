@@ -96,6 +96,10 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public string DeleteTableName { get; set; }
         /// <summary>
+        /// 批量操作
+        /// </summary>
+        public string BatchOperation { get; set; }
+        /// <summary>
         /// 列表页JavaScript脚本
         /// </summary>
         public string ListPageJavaScript { get; set; }

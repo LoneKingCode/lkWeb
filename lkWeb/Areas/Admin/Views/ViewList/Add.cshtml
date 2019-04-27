@@ -116,7 +116,7 @@
                         sb.Append(string.Format(tempTpl, sltHtml));
                     }
 
-                    else if (column.DataType == ColumnType.CheckBox)
+                    else if (column.DataType == ColumnType.MultiSelect)
                     {
                         var htmlAttr = new { @class = "chosen-checkbox", multiple = "multiple", id = "chosen-" + column.Name };
                         var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], htmlAttr);

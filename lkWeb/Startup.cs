@@ -57,7 +57,8 @@ namespace lkWeb
             services.AddHangfire(x => x.UseSqlServerStorage(lkWebContext.connectionString));
 
             // Add framework services.
-            services.AddMvc().AddJsonOptions(
+            services.AddMvc(option => option.Filters.Add<HttpGlobalExceptionFilter>())
+                .AddJsonOptions(
                 opt => opt.SerializerSettings.DateFormatString = "yyyy/M/d hh:mm:ss"
                 );
 
@@ -88,7 +89,7 @@ namespace lkWeb
             services.AddScoped<ISysService, SysService>();
 
 
-  
+
             services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings
@@ -121,9 +122,6 @@ namespace lkWeb
 
             loggerFactory.AddDebug();
 
-            // 异常处理中间件
-           // app.UseMiddleware(typeof(ExceptionHandlerMiddleWare));
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -134,7 +132,7 @@ namespace lkWeb
                 app.UseExceptionHandler("/Admin/Control/Error");
             }
 
-       
+
 
             app.UseMvc(routes =>
             {
@@ -144,7 +142,7 @@ namespace lkWeb
                 routes.MapRoute(
                     name: "default",
                       template: "{area=Front}/{controller=Home}/{action=ChooseSystem}/{id?}/{extraValue?}");
-         
+
             });
 
             loggerFactory.AddNLog();//添加NLog
@@ -164,7 +162,7 @@ namespace lkWeb
                 Authorization = new[] { new HangfireAuthorizationFilter() }
             };
             app.UseHangfireDashboard("/jobs", options);
-      
+
         }
     }
 }

@@ -1,18 +1,19 @@
-
-数据库链接 单例 依赖注入 service加个参数就行
-列默认值。。。
-批量操作  IsTop,是否置顶 
 viewlist/index?creator=1  可以接受这种url参数 当作where条件
-多表保存
+
+下拉样式出问题
 查询 可以下拉等  查询列数
-多选_out列类型
-生成列时 读取注释
+多选_out列类型 多表保存
+
 列 可以设定 文件/图片 像龚那样 图片 下载，预览
-//基础数据菜单权限 导入 导出 详情 到底判断了没?
-错误提示页面 详细点信息
+ 
+	生成列时 读取注释
+	列默认值。。。
+
 syshelper,获取字典下拉选项
 
 代码调整
+
+数据库链接 单例 依赖注入 service加个参数就行
  加 region  ajax page
   service调用精简为 services.sdsdsadasd
    $.ajax({ 封装
@@ -29,6 +30,7 @@ syshelper,获取字典下拉选项
 登陆页面，侧边栏菜单 超过 滚动条，点击保留高亮
 
 延后功能:
+统计图表
 超级管理与给予所有子系统权限
 word导出 可以多页 NPOI
  http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
