@@ -39,6 +39,7 @@ namespace lkWeb.Service.Abstracts
                     try
                     {
                         result = await db.Database.ExecuteSqlCommandAsync(sql);
+
                         tran.Commit();
                     }
                     catch (Exception)
@@ -50,6 +51,8 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
+
+
 
         /// <summary>
         /// 批量执行数据库语句
@@ -65,10 +68,13 @@ namespace lkWeb.Service.Abstracts
                 {
                     try
                     {
+                        var sqls = string.Empty;
                         foreach (var sql in listSql)
                         {
-                            result += await db.Database.ExecuteSqlCommandAsync(sql);
+                            //result += await db.Database.ExecuteSqlCommandAsync(sql);
+                            sqls += sql;
                         }
+                        result = await db.Database.ExecuteSqlCommandAsync(sqls);
                         tran.Commit();
                     }
                     catch (Exception)
@@ -80,6 +86,34 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
         }
+        /// <summary>
+        /// ExecuteScalar
+        /// </summary>
+        /// <param name="sql">SQL语句</param>
+        /// <returns></returns>
+        public async Task<string> ExecuteScalar(string sql)
+        {
+            var conn = GetDb().Database.GetDbConnection();
+            try
+            {
+                await conn.OpenAsync();
+                using (var command = conn.CreateCommand())
+                {
+                    string query = sql;
+                    command.CommandText = query;
+                    return (await command.ExecuteScalarAsync()).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
 
         /// <summary>
         /// 查询数据库语句

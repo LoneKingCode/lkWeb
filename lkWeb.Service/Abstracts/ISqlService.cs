@@ -21,6 +21,12 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<int> Execute(string sql);
         /// <summary>
+        /// ExecuteScalar
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
+        Task<string> ExecuteScalar(string sql);
+        /// <summary>
         /// 批量执行数据库语句
         /// </summary>
         /// <param name="listSql">SQL语句集合</param>

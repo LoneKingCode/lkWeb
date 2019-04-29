@@ -2,7 +2,7 @@ viewlist/index?creator=1  可以接受这种url参数 当作where条件
 
 下拉样式出问题
 查询 可以下拉等  查询列数
-多选_out列类型 多表保存
+多选_out列类型 导入导出要注意    详情的样式 富文本的宽度
 
 列 可以设定 文件/图片 像龚那样 图片 下载，预览
  
@@ -16,6 +16,7 @@ syshelper,获取字典下拉选项
 数据库链接 单例 依赖注入 service加个参数就行
  加 region  ajax page
   service调用精简为 services.sdsdsadasd
+  viewlist里方法都封装
    $.ajax({ 封装
    entity 都加前缀 和表名相同 。。，，， 各种命名 改下
   dbconfig  没必要单独文件 都放context里
@@ -32,11 +33,13 @@ syshelper,获取字典下拉选项
 延后功能:
 统计图表
 超级管理与给予所有子系统权限
-word导出 可以多页 NPOI
+word导出 可以多页 NPOI，用 wps的xml模板 可以插入图片
  http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
 	信息发布的 ueditor 上传文件等等。。。 .net core版本
+友情链接
 
 延后问题:
+	写详细使用文档
 	菜单管理     可以下拉选择菜单 查看此菜单的子菜单 也可以下拉选择子系统
 	菜单编辑页 fuck 不能用SubSystemId不然就不会选中   @Html.DropDownList("SubSystemIdA",    menu.SubSystemId = Request.Form["SubSystemIdA"];
 

@@ -325,9 +325,9 @@ namespace lkWeb.Service.Abstracts
         /// <param name="tableId">表Id</param>
         /// <param name="addModel">数据键值对</param>
         /// <returns></returns>
-        public async Task<Result<bool>> Add(int tableId, Dictionary<string, string> addModel)
+        public async Task<Result<string>> Add(int tableId, Dictionary<string, string> addModel)
         {
-            var result = new Result<bool>();
+            var result = new Result<string>();
             var tableResult = await _tableListService.GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
@@ -340,7 +340,7 @@ namespace lkWeb.Service.Abstracts
                 return result;
             }
             var tableName = tableResult.data.Name;
-            string sqlTpl = "insert into {0}({1}) values({2})";
+            string sqlTpl = "insert into {0}({1}) values({2}) Select SCOPE_IDENTITY()";
             StringBuilder sbColumn = new StringBuilder();
             StringBuilder sbValue = new StringBuilder();
             foreach (var item in addModel)
@@ -348,9 +348,11 @@ namespace lkWeb.Service.Abstracts
                 sbColumn.Append(item.Key + ",");
                 sbValue.AppendFormat("'{0}',", item.Value);
             }
-            var execResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
-            result.flag = execResult == 1;
-            result.msg = "影响数据条数" + execResult;
+            //返回新增数据的自增列值
+            var execResult = await _sqlService.ExecuteScalar(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
+            result.flag = execResult.IsNotEmpty();
+            result.msg = "操作成功";
+            result.data = execResult;
             return result;
         }
 
@@ -829,6 +831,21 @@ namespace lkWeb.Service.Abstracts
             }
             result.data = fileUrl;
             result.flag = true;
+            return result;
+        }
+
+        /// <summary>
+        /// 获取out数据(列表)
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+
+
+        public async Task<List<Dictionary<string, object>>> GetOutData(OutSqlModel model)
+        {
+            string sql = "select {0} from {1} where {2}";
+            var result = await _sqlService.Query(string.Format(sql,
+                        model.PrimaryKey + "," + model.TextKey, model.TableName, model.Condition));
             return result;
         }
     }

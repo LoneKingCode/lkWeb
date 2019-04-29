@@ -6,7 +6,19 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
     ViewBag.Title = ViewBag.TableName;
 }
+
 @model ViewListModel
+
+@section Styles{
+    <style>
+        .table {
+            table-layout: fixed;
+        }
+    </style>
+    <style type="text/css">
+     @Html.Raw(Model.Table.CustomCssStyle)
+    </style>
+}
 
 @section Scripts{
     <script>
@@ -191,16 +203,7 @@
         }
     </script>
 }
-@section Styles{
-    <style>
-        .table {
-            table-layout: fixed;
-        }
-    </style>
-    <style type="text/css">
-     @Html.Raw(Model.Table.ListPageCssStyle)
-    </style>
-}
+
 <div id="batchOperation" class="form-horizontal" style="display:none;margin-top:5px;">
     <div class="form-group">
         <label class="col-md-3 control-label">设置值</label>
@@ -216,7 +219,7 @@
         ShowButtonModel btnModel = ViewBag.ShowButton;
         if (btnModel.ShowDetailBtn)
         {
-            <button type="button" class="btn btn-success" onclick="Detail()">查看详情</button>
+            <button type="button" class="btn btn-success" onclick="Detail()">详情</button>
         }
         if (btnModel.ShowAddBtn && Model.Table.IsView != 1)
         {

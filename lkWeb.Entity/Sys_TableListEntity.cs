@@ -112,21 +112,9 @@ namespace lkWeb.Entity
         /// </summary>
         public string DetailPageJavaScript { get; set; }
         /// <summary>
-        /// 列表页样式
+        /// 自定义CSS样式
         /// </summary>
-        public string ListPageCssStyle { get; set; }
-        /// <summary>
-        /// 添加页样式
-        /// </summary>
-        public string AddPageCssStyle { get; set; }
-        /// <summary>
-        /// 编辑页样式
-        /// </summary>
-        public string EditPageCssStyle { get; set; }
-        /// <summary>
-        /// 详情页样式
-        /// </summary>
-        public string DetailPageCssStyle { get; set; }
+        public string CustomCssStyle { get; set; }
 
     }
 }

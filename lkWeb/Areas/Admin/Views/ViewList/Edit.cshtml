@@ -15,7 +15,7 @@
         }
     </style>
     <style type="text/css">
-     @Html.Raw(Model.Table.EditPageCssStyle)
+     @Html.Raw(Model.Table.CustomCssStyle)
     </style>
 }
 @section Scripts{
@@ -114,7 +114,7 @@
                         var sltHtml = writer.ToString();
                         sb.Append(string.Format(tempTpl, sltHtml));
                     }
-                    else if (column.DataType == ColumnType.MultiSelect)
+                    else if (column.DataType == ColumnType.MultiSelect || column.DataType == ColumnType.MultiSelect_Out)
                     {
                         var htmlAttr = new Object();
                         htmlAttr = new { @class = "form-control chosen-checkbox", multiple = "multiple", id = "chosen-" + column.Name };
@@ -147,6 +147,9 @@
                     {
                         var contentHtml = string.Format(editorTpl, column.Name, ViewBag.ColumnValue[column.Name]);
                         sb.Append(string.Format(tempTpl, contentHtml));
+                        sb.Append("</tr>");
+                        count++;
+                        continue;
                     }
                     else
                     {

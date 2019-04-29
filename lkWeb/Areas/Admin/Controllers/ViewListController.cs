@@ -79,21 +79,20 @@ namespace lkWeb.Areas.Admin.Controllers
             model.Table = (await _tableListService.GetByIdAsync(param.id)).data;
             var result = await _tableColumnService.GetListAsync(item => item.TableId == param.id && item.AddVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
-            string sql = "select {0} from {1} where {2}";
+
 
             foreach (var column in model.TableColumn)
             {
-                if (column.DataType == ColumnType.Out)
+                if (column.DataType == ColumnType.Out || column.DataType == ColumnType.MultiSelect_Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var queryResult = await _sqlService.Query(string.Format(sql,
-                        outSqlModel.PrimaryKey + "," + outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.Condition));
+                    var queryResult = await _sysService.GetOutData(outSqlModel);
                     var items = new List<SelectListItem>();
-                    items.Add(new SelectListItem
-                    {
-                        Value = "0",
-                        Text = "无"
-                    });
+                    //items.Add(new SelectListItem
+                    //{
+                    //    Value = "0",
+                    //    Text = "无"
+                    //});
                     foreach (var row in queryResult)
                     {
                         items.Add(new SelectListItem
@@ -145,7 +144,6 @@ namespace lkWeb.Areas.Admin.Controllers
             model.Table = (await _tableListService.GetByIdAsync(param.extraValue.ToInt32())).data;
             var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.EditVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
-            string sql = "select {0} from {1} where {2}";
             var tbName = model.Table.Name;
             var columnValueResult = await _sqlService.Query(
                 string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id));
@@ -155,11 +153,9 @@ namespace lkWeb.Areas.Admin.Controllers
                 if (column.DataType == ColumnType.Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var queryResult = await _sqlService.Query(string.Format(sql,
-                        outSqlModel.PrimaryKey + "," + outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.Condition));
+                    var queryResult = await _sysService.GetOutData(outSqlModel);
                     var items = new List<SelectListItem>();
-                    //获取此条out列的主键值
-                    var outColId = columnValueResult.First()[column.Name].ToString();
+
                     items.Add(new SelectListItem
                     {
                         Value = "0",
@@ -175,7 +171,33 @@ namespace lkWeb.Areas.Admin.Controllers
                         });
 
                     }
+                    //获取此条out列的主键值
+                    var outColId = columnValueResult.First()[column.Name].ToString();
                     ViewData[column.Name] = new SelectList(items, "Value", "Text", outColId);
+
+                }
+                else if (column.DataType == ColumnType.MultiSelect_Out)
+                {
+                    var outSqlModel = new OutSqlModel(column.OutSql);
+                    var queryResult = await _sysService.GetOutData(outSqlModel);
+                    var items = new List<SelectListItem>();
+                    //遍历outsql查询的数据中全部项
+                    foreach (var row in queryResult)
+                    {
+                        items.Add(new SelectListItem
+                        {
+                            Value = row[outSqlModel.PrimaryKey].ToString(),
+                            Text = row[outSqlModel.TextKey].ToString(),
+                        });
+
+                    }
+                    string sql = "select {0} from {1} where {2}";
+                    var _queryResult = await _sqlService.Query(string.Format(sql,
+                        outSqlModel.OutTableForeignKey + "," + outSqlModel.CurrentTableForeignKey,
+                        outSqlModel.SaveTableName,
+                        outSqlModel.CurrentTableForeignKey + "=" + param.id));
+                    var selectValues = _queryResult.Select(item => item[outSqlModel.OutTableForeignKey]).ToList();
+                    ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", selectValues);
                 }
                 else if (column.DataType == ColumnType.Enum)
                 {
@@ -198,19 +220,19 @@ namespace lkWeb.Areas.Admin.Controllers
                 }
                 else if (column.DataType == ColumnType.MultiSelect)
                 {
-                    var checkColValues = columnValueResult.First()[column.Name].ToString().Split(',');
+                    var selectValues = columnValueResult.First()[column.Name].ToString().Split(',');
                     var checkStr = column.SelectRange.Split(','); //选项1,选项2
                     var items = new List<SelectListItem>();
                     for (int i = 0; i < checkStr.Length; i++)
                     {
                         items.Add(new SelectListItem
                         {
-                            Selected = checkColValues.Contains(checkStr[i]),
+                            Selected = selectValues.Contains(checkStr[i]),
                             Value = checkStr[i],
                             Text = checkStr[i],
                         });
                     }
-                    ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", checkColValues);
+                    ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", selectValues);
                 }
             }
             return View(model);
@@ -235,6 +257,31 @@ namespace lkWeb.Areas.Admin.Controllers
                 {
                     var outColValue = await _sysService.GetOutValue(model.Table.Id, column.Name, columnValue[column.Name].ToString());
                     ViewBag.OutColumn[column.Name] = outColValue.data;
+                }
+                else if (column.DataType == ColumnType.MultiSelect_Out)
+                {
+                    var outSqlModel = new OutSqlModel(column.OutSql);
+                    var queryResult = await _sysService.GetOutData(outSqlModel);
+
+                    //如果保存到外表 查询的是外表值
+                    if (outSqlModel.IsSave)
+                    {
+                        var _queryResult = await _sqlService.Query(string.Format(sql,
+                            outSqlModel.OutTableForeignKey + "," + outSqlModel.CurrentTableForeignKey,
+                            outSqlModel.SaveTableName,
+                            outSqlModel.CurrentTableForeignKey + "=" + param.id));
+                        var selectValues = _queryResult.Select(item => item[outSqlModel.OutTableForeignKey].ToString()).ToList();
+                        var outColValues = queryResult.Where(item => selectValues.Contains(item[outSqlModel.PrimaryKey].ToString()))
+                            .Select(item => item[outSqlModel.TextKey]).ToList();
+                        ViewBag.OutColumn[column.Name] = string.Join(",", outColValues);
+                    }
+                    //否则查询本表此列值
+                    else
+                    {
+                        ViewBag.OutColumn[column.Name] = columnValue[column.Name];
+                    }
+
+
                 }
             }
             return View(model);
@@ -350,28 +397,65 @@ namespace lkWeb.Areas.Admin.Controllers
             var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == param.id && item.AddVisible == 1);
             var tableColumns = columnResult.data;
             var addModel = new Dictionary<string, string>();
-            var result = new Result<bool>();
+            var result = new Result<string>();
             var pk_cols = (await _tableColumnService.GetListAsync(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
+            var multiSelectOutData = new Dictionary<string, string>();
             foreach (var column in tableColumns)
             {
                 var exist = "0";
 
                 if (formData.ContainsKey(column.Name))
                 {
+                    var colValue = formData[column.Name];
+                    if (column.DataType == ColumnType.MultiSelect_Out)
+                    {
+                        var outSqlModel = new OutSqlModel(column.OutSql);
+                        //如果保存到外表
+                        if (outSqlModel.IsSave)
+                        {
+                            multiSelectOutData[column.Name] = colValue;
+                            continue;
+                        }
+                    }
+
                     if (pk_cols.Contains(column.Name))
-                        exist = await _sqlService.GetSingle($"select count(*) from {table.Name} where {column.Name} = '{formData[column.Name]}'");
+                        exist = await _sqlService.GetSingle($"select count(*) from {table.Name} where {column.Name} = '{colValue}'");
                     if (exist != "0")
                     {
-                        result.msg += column.Description + "字段为主键，值\"" + formData[column.Name] + "\"已存在,";
+                        result.msg += column.Description + "字段为主键，值\"" + colValue + "\"已存在,";
                     }
                     else
-                        addModel[column.Name] = formData[column.Name];
+                    {
+                        addModel[column.Name] = colValue;
+                    }
+
                 }
             }
             if (!string.IsNullOrEmpty(result.msg))
                 return Json(result);
             addModel["CreateDateTime"] = DateTime.Now.ToString(); //补充上创建时间
             result = await _sysService.Add(param.id, addModel);
+            var id = result.data; //新增数据的id
+
+            //保存到外表
+            if (multiSelectOutData.Keys.Count() > 0)
+            {
+                string sql = "insert into {0}({1}) values({2})";
+                var addSqls = new List<string>();
+                foreach (var key in multiSelectOutData.Keys)
+                {
+                    var outSqlModel = new OutSqlModel(tableColumns.Where(x => x.Name == key).First().OutSql);
+                    var outValues = multiSelectOutData[key].Split(',');
+                    foreach (var outValue in outValues)
+                    {
+                        var values = $"'{id}','{outValue}'";
+                        addSqls.Add(string.Format(sql, outSqlModel.SaveTableName,
+                            outSqlModel.CurrentTableForeignKey + "," + outSqlModel.OutTableForeignKey,
+                            values));
+                    }
+                }
+                await _sqlService.ExecuteBatch(addSqls);
+            }
             return Json(result);
         }
 
@@ -388,12 +472,24 @@ namespace lkWeb.Areas.Admin.Controllers
             var updateModel = new Dictionary<string, string>();
             var pk_cols = (await _tableColumnService.GetListAsync(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
             var result = new Result<bool>();
+            var multiSelectOutData = new Dictionary<string, string>();
 
             foreach (var column in tableColumns)
             {
                 var exist = "0";
                 if (formData.ContainsKey(column.Name))
                 {
+                    var colValue = formData[column.Name];
+                    if (column.DataType == ColumnType.MultiSelect_Out)
+                    {
+                        var outSqlModel = new OutSqlModel(column.OutSql);
+                        //如果保存到外表
+                        if (outSqlModel.IsSave)
+                        {
+                            multiSelectOutData[column.Name] = colValue;
+                            continue;
+                        }
+                    }
                     if (pk_cols.Contains(column.Name))
                         exist = await _sqlService.GetSingle(
                             $"select count(*) from {table.Name} where {column.Name} = '{formData[column.Name]}' and Id!={param.id}");
@@ -408,6 +504,28 @@ namespace lkWeb.Areas.Admin.Controllers
             if (!string.IsNullOrEmpty(result.msg))
                 return Json(result);
             result = await _sysService.Update(tableId, updateModel, param.id);
+            //保存到外表
+            if (multiSelectOutData.Keys.Count() > 0)
+            {
+                string sql = "insert into {0}({1}) values({2})";
+                var addSqls = new List<string>();
+                var delSqls = new List<string>();
+                foreach (var key in multiSelectOutData.Keys)
+                {
+                    var outSqlModel = new OutSqlModel(tableColumns.Where(x => x.Name == key).First().OutSql);
+                    var outValues = multiSelectOutData[key].Split(',');
+                    foreach (var outValue in outValues)
+                    {
+                        var values = $"'{param.id}','{outValue}'";
+                        addSqls.Add(string.Format(sql, outSqlModel.SaveTableName,
+                            outSqlModel.CurrentTableForeignKey + "," + outSqlModel.OutTableForeignKey,
+                            values));
+                    }
+                    delSqls.Add($"delete from {outSqlModel.SaveTableName} where {outSqlModel.CurrentTableForeignKey} = '{param.id}'");
+                }
+                await _sqlService.ExecuteBatch(delSqls);
+                await _sqlService.ExecuteBatch(addSqls);
+            }
             return Json(result);
         }
 

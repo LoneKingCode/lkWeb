@@ -69,7 +69,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="tableId">表Id</param>
         /// <param name="addModel">数据键值对</param>
         /// <returns></returns>
-        Task<Result<bool>> Add(int tableId, Dictionary<string, string> addModel);
+        Task<Result<string>> Add(int tableId, Dictionary<string, string> addModel);
 
         /// <summary>
         /// 更新数据
@@ -130,7 +130,13 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
 
         Task<Result<string>> GetOutValueId(int tableId, string columnName, string outValue);
+        /// <summary>
+        /// 获取out数据(列表)
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
 
+        Task<List<Dictionary<string, object>>> GetOutData(OutSqlModel model);
 
     }
 }

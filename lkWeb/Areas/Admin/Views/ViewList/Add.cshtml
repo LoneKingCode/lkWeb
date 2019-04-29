@@ -16,7 +16,7 @@
     </style>
 
     <style type="text/css">
-     @Html.Raw(Model.Table.AddPageCssStyle)
+     @Html.Raw(Model.Table.CustomCssStyle)
     </style>
 
 }
@@ -32,7 +32,7 @@
                 for (int i = 0; i < richTextColumns.Count; i++)
                 {
                     @Html.Raw($"var editor{i} = UE.getEditor('{richTextColumns[i].Name}');")
-                    @Html.Raw($"$('#{richTextColumns[i].Name}').css('width', (window.innerWidth - 100 * {Model.Table.ColumnPerRow+1}) + 'px').css('height', Math.round(window.innerHeight * 0.3) + 'px');")
+                    @Html.Raw($"$('#{richTextColumns[i].Name}').css('width', (window.innerWidth - 103 * {Model.Table.ColumnPerRow+1}) + 'px').css('height', Math.round(window.innerHeight * 0.3) + 'px');")
                 }
             }
 
@@ -105,7 +105,7 @@
                     {
                         colspan = column.ColSpan;
                     }
-                    var requireSpan = column.Required == 1 ? "<span class='require'>*</span>":"";
+                    var requireSpan = column.Required == 1 ? "<span class='require'>*</span>" : "";
                     string tempTpl = "<td class='td-left'>" + requireSpan + "<span class='name'>" + column.Description + "</span></td><td colspan='" + colspan + "'>{0}</td>";
                     if (column.DataType == ColumnType.Out || column.DataType == ColumnType.Enum)
                     {
@@ -116,7 +116,7 @@
                         sb.Append(string.Format(tempTpl, sltHtml));
                     }
 
-                    else if (column.DataType == ColumnType.MultiSelect)
+                    else if (column.DataType == ColumnType.MultiSelect || column.DataType == ColumnType.MultiSelect_Out)
                     {
                         var htmlAttr = new { @class = "chosen-checkbox", multiple = "multiple", id = "chosen-" + column.Name };
                         var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], htmlAttr);
@@ -145,8 +145,12 @@
                     }
                     else if (column.DataType == ColumnType.RichText)
                     {
+                        sb.Append("<tr>");
                         var contentHtml = string.Format(editorTpl, column.Name);
                         sb.Append(string.Format(tempTpl, contentHtml));
+                        sb.Append("</tr>");
+                        count++;
+                        continue;
                     }
                     else
                     {
