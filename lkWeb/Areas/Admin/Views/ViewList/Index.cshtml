@@ -52,14 +52,14 @@
         }
         function EditModel() {
             var id = lkWeb.GetCheckValue($(".checkChild"));
-            if (id == "")
+            if (IsEmpty(id))
                 parent.layer.alert("请选择");
             else
                 lkWeb.GoAction("admin", "viewlist", "edit", id + "/" + "@Model.Table.Id", true, '编辑', '@ViewBag.addEditWidth', '@ViewBag.addEditHeight');
         }
         function Detail() {
-                  var id = lkWeb.GetCheckValue($(".checkChild"));
-            if (id == "")
+            var id = lkWeb.GetCheckValue($(".checkChild"));
+            if (IsEmpty(id))
                 parent.layer.alert("请选择");
             else
                 lkWeb.GoAction("admin","viewlist", "detail", id+"/" + "@Model.Table.Id",true,"查看详情","@ViewBag.viewWidth","@ViewBag.viewHeight");
@@ -101,11 +101,16 @@
         }
 
         function Export() {
+            var ids = lkWeb.GetCheckValueList($(".checkChild"));
+            if (IsEmpty(ids)) {
+                parent.layer.alert("请选择");
+                return
+            }
                  $.ajax({
-                          url: "@Url.Action("Export")",
-                          type: "post",
-                          dataType: "json",
-                          data: { param: {id:@Model.Table.Id}, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()},
+                    url: "@Url.Action("Export")",
+                     type: "post",
+                     dataType: "json",
+                     data: { param: { id:@Model.Table.Id, ids: ids }, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() },
                           async: false,
                           success: function (data) {
                               if (data.flag == true)

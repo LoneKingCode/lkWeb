@@ -27,6 +27,14 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string fieldName, string value);
         /// <summary>
+        /// 获取列属性值
+        /// </summary>
+        /// <param name="tableId">tableId</param>
+        /// <param name="columnName">columnName</param>
+        /// <param name="fieldName">fieldName</param>
+        /// <returns></returns>
+        Task<string> GetColumnValue(int tableId, string columnName, string fieldName);
+        /// <summary>
         /// 设置列属性值
         /// </summary>
         /// <param name="tableId">tableId</param>
@@ -102,7 +110,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="tableId">表Id</param>
         /// <returns></returns>
 
-        Task<Result<string>> ExportExcel(int tableId);
+        Task<Result<string>> ExportExcel(int tableId,List<int> ids);
 
         /// <summary>
         /// 下载导入模板
@@ -119,7 +127,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="colName">列名</param>
         /// <param name="outId">外键Id值</param>
         /// <returns></returns>
-        Task<Result<string>> GetOutValue(int tableId, string columnName, string outId);
+        Task<Result<string>> GetOutValue(OutSqlModel outSqlModel, string outId);
 
         /// <summary>
         /// 根据外键值获取对应外键Id
@@ -129,7 +137,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="outValue">外键值</param>
         /// <returns></returns>
 
-        Task<Result<string>> GetOutValueId(int tableId, string columnName, string outValue);
+        Task<Result<string>> GetOutValueId(OutSqlModel outSqlModel, string outValue);
         /// <summary>
         /// 获取out数据(列表)
         /// </summary>
@@ -137,6 +145,15 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
 
         Task<List<Dictionary<string, object>>> GetOutData(OutSqlModel model);
+
+        /// <summary>
+        /// 根据外键Id获取对应值
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="colName">列名</param>
+        /// <param name="outId">外键Id值</param>
+        /// <returns></returns>
+        Task<Result<IList<object>>> GetMultiSelectOutValue(OutSqlModel outSqlModel,  string outId);
 
     }
 }

@@ -191,12 +191,8 @@ namespace lkWeb.Areas.Admin.Controllers
                         });
 
                     }
-                    string sql = "select {0} from {1} where {2}";
-                    var _queryResult = await _sqlService.Query(string.Format(sql,
-                        outSqlModel.OutTableForeignKey + "," + outSqlModel.CurrentTableForeignKey,
-                        outSqlModel.SaveTableName,
-                        outSqlModel.CurrentTableForeignKey + "=" + param.id));
-                    var selectValues = _queryResult.Select(item => item[outSqlModel.OutTableForeignKey]).ToList();
+
+                    var selectValues = (await _sysService.GetMultiSelectOutValue(outSqlModel, param.id.ToString())).data;
                     ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", selectValues);
                 }
                 else if (column.DataType == ColumnType.Enum)
@@ -255,7 +251,8 @@ namespace lkWeb.Areas.Admin.Controllers
             {
                 if (column.DataType == ColumnType.Out)
                 {
-                    var outColValue = await _sysService.GetOutValue(model.Table.Id, column.Name, columnValue[column.Name].ToString());
+                    var outSqlModel = new OutSqlModel(column.OutSql);
+                    var outColValue = await _sysService.GetOutValue(outSqlModel, columnValue[column.Name].ToString());
                     ViewBag.OutColumn[column.Name] = outColValue.data;
                 }
                 else if (column.DataType == ColumnType.MultiSelect_Out)
@@ -266,11 +263,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     //如果保存到外表 查询的是外表值
                     if (outSqlModel.IsSave)
                     {
-                        var _queryResult = await _sqlService.Query(string.Format(sql,
-                            outSqlModel.OutTableForeignKey + "," + outSqlModel.CurrentTableForeignKey,
-                            outSqlModel.SaveTableName,
-                            outSqlModel.CurrentTableForeignKey + "=" + param.id));
-                        var selectValues = _queryResult.Select(item => item[outSqlModel.OutTableForeignKey].ToString()).ToList();
+                        var selectValues = (await _sysService.GetMultiSelectOutValue(outSqlModel, param.id.ToString())).data;
                         var outColValues = queryResult.Where(item => selectValues.Contains(item[outSqlModel.PrimaryKey].ToString()))
                             .Select(item => item[outSqlModel.TextKey]).ToList();
                         ViewBag.OutColumn[column.Name] = string.Join(",", outColValues);
@@ -299,6 +292,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var tableId = queryBase.Value.ToInt32(); //表ID 保存在value中
             var tableDto = (await _tableListService.GetByIdAsync(tableId)).data;
+            var colDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ListVisible == 1)).data.OrderBy(item=>item.ListOrder);
             if (tableDto.AllowView != 1)
             {
                 return Json(new DataTableModel());
@@ -322,31 +316,49 @@ namespace lkWeb.Areas.Admin.Controllers
                 else
                     queryBase.OrderBy = tableDto.DefaultSort;
             }
-            var columnNames = (await _sysService.GetColumnNames(tableId, "ListVisible=1", "ListOrder")).data;
+            var columnNames = string.Join(',', colDtos.Select(item => item.Name));
             var tableData = await _sysService.GetPageData(tableId, columnNames, condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
-            var outTypeColumnNames = (await _sysService.GetColumnNames(tableId,
-                $"ListVisible=1 and DataType='{ColumnType.Out}'", "ListOrder")).data.Split(',');
-            var fileTypeColNames = (await _sysService.GetColumnNames(tableId,
-                $"ListVisible=1 and DataType='{ColumnType.File}'", "ListOrder")).data.Split(',');
-            var customColNames = (await _sysService.GetColumnNames(tableId,
-                $"ListVisible=1 and DataType='{ColumnType.Custom}'", "ListOrder")).data.Split(',');
+            //var outTypeColumnNames = (await _sysService.GetColumnNames(tableId,
+            //    $"ListVisible=1 and DataType='{ColumnType.Out}'", "ListOrder")).data.Split(',');
+            //var multiSelectOutTypeColumnNames = (await _sysService.GetColumnNames(tableId,
+            //    $"ListVisible=1 and DataType='{ColumnType.MultiSelect_Out}'", "ListOrder")).data.Split(',');
+            //var fileTypeColNames = (await _sysService.GetColumnNames(tableId,
+            //    $"ListVisible=1 and DataType='{ColumnType.File}'", "ListOrder")).data.Split(',');
+            //var customColNames = (await _sysService.GetColumnNames(tableId,
+            //    $"ListVisible=1 and DataType='{ColumnType.Custom}'", "ListOrder")).data.Split(',');
             foreach (var dicList in tableData.data)
             {
                 Dictionary<string, object> temp = new Dictionary<string, object>();
                 temp["rowNum"] = ++queryBase.Start;
                 foreach (var item in dicList)
                 {
-                    if (outTypeColumnNames.Contains(item.Key))
+                    var colDto = colDtos.Where(x => x.Name == item.Key).First();
+                    if (colDto.DataType == ColumnType.Out)
                     {
-                        temp[item.Key] = (await _sysService.GetOutValue(tableId, item.Key, item.Value.ToString())).data;
+                        var outSql = await _sysService.GetColumnValue(tableId, item.Key, "OutSql");
+                        var outSqlModel = new OutSqlModel(outSql);
+                        temp[item.Key] = (await _sysService.GetOutValue(outSqlModel, item.Value.ToString())).data;
                     }
-                    else if (customColNames.Contains(item.Key))
+                    else if (colDto.DataType == ColumnType.MultiSelect_Out)
+                    {
+                        var outSql = await _sysService.GetColumnValue(tableId, item.Key, "OutSql");
+                        var outSqlModel = new OutSqlModel(outSql);
+                        var colValueArr = item.Value.ToString().Split(',');
+                        var tempColValue = string.Empty;
+                        foreach (var cvalue in colValueArr)
+                        {
+                            var outValue = (await _sysService.GetOutValue(outSqlModel, cvalue)).data;
+                            tempColValue += outValue + ",";
+                        }
+                        temp[item.Key] = tempColValue.Trim(',');
+                    }
+                    else if (colDto.DataType == ColumnType.Custom)
                     {
                         var model = (await _tableColumnService.GetByExpAsync(x => x.Name == item.Key && x.TableId == tableId)).data;
                         temp[item.Key] = model.CustomContent.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
                     }
-                    else if (fileTypeColNames.Contains(item.Key))
+                    else if (colDto.DataType == ColumnType.File)
                     {
                         string url = string.Empty;
                         string text = string.Empty;
@@ -543,7 +555,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Export(UrlParameter param)
         {
             var tableId = param.id;
-            var result = await _sysService.ExportExcel(tableId);
+            var result = await _sysService.ExportExcel(tableId, param.ids);
             return Json(result);
         }
 

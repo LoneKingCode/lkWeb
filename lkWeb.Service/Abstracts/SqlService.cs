@@ -1,4 +1,5 @@
-﻿using lkWeb.Data;
+﻿using lkWeb.Core.Helper;
+using lkWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -42,8 +43,9 @@ namespace lkWeb.Service.Abstracts
 
                         tran.Commit();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        LoggerHelper.Logger.Error("执行数据库语句出错\n 语句:" + sql + "\n 错误原因:" + ex.Message + "\n 堆栈跟踪:" + ex.StackTrace);
                         tran.Rollback();
                         result = -1;
                     }
@@ -77,8 +79,10 @@ namespace lkWeb.Service.Abstracts
                         result = await db.Database.ExecuteSqlCommandAsync(sqls);
                         tran.Commit();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        LoggerHelper.Logger.Error("执行数据库语句出错\n 语句:" + string.Join(",", listSql) + "\n 错误原因:" + ex.Message + "\n 堆栈跟踪:" + ex.StackTrace);
+
                         tran.Rollback();
                         result = -1;
                     }
@@ -106,6 +110,8 @@ namespace lkWeb.Service.Abstracts
             }
             catch (Exception ex)
             {
+                LoggerHelper.Logger.Error("执行数据库语句出错\n 语句:" + sql + "\n 错误原因:" + ex.Message + "\n 堆栈跟踪:" + ex.StackTrace);
+
                 return string.Empty;
             }
             finally
@@ -122,6 +128,7 @@ namespace lkWeb.Service.Abstracts
         /// <returns></returns>
         public async Task<List<Dictionary<string, object>>> Query(string sql)
         {
+            var results = new List<Dictionary<string, object>>();
             var conn = GetDb().Database.GetDbConnection();
             try
             {
@@ -131,7 +138,7 @@ namespace lkWeb.Service.Abstracts
                     string query = sql;
                     command.CommandText = query;
                     DbDataReader reader = await command.ExecuteReaderAsync();
-                    var results = new List<Dictionary<string, object>>();
+                    
                     while (reader.Read())
                     {
                         results.Add(Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue));
@@ -140,6 +147,11 @@ namespace lkWeb.Service.Abstracts
                     return results;
 
                 }
+            }
+            catch (Exception ex)
+            {
+                LoggerHelper.Logger.Error("执行数据库语句出错\n 语句:" + sql + "\n 错误原因:" + ex.Message + "\n 堆栈跟踪:" + ex.StackTrace);
+                return results;
             }
             finally
             {
@@ -155,14 +167,23 @@ namespace lkWeb.Service.Abstracts
         public async Task<string> GetSingle(string sql)
         {
             var queryResult = await Query(sql);
-            if (queryResult.Any()) //如果有查询数据 返回第一行第一列数据
+            try
             {
-                return queryResult.First().First().Value.ToString();
+                if (queryResult.Any()) //如果有查询数据 返回第一行第一列数据
+                {
+                    return queryResult.First().First().Value.ToString();
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return string.Empty;
+                LoggerHelper.Logger.Error("执行数据库语句出错\n 语句:" + sql + "\n 错误原因:" + ex.Message + "\n 堆栈跟踪:" + ex.StackTrace);
             }
+            return string.Empty;
+           
         }
 
     }

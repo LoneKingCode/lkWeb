@@ -54,7 +54,7 @@
                     else if (column.DataType == ColumnType.RichText)
                     {
                         sb.Append("<tr>");
-                        var contentHtml = string.Format(tpl, ViewBag.ColumnValue[column.Name], "height:180px;display: block;overflow-y: scroll;");
+                        var contentHtml = string.Format(tpl, ViewBag.ColumnValue[column.Name], "height:autopx;display: block;");
                         sb.Append(string.Format(tempTpl, contentHtml));
                         sb.Append("</tr>");
                         count++;

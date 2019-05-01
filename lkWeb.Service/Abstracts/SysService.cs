@@ -439,7 +439,7 @@ namespace lkWeb.Service.Abstracts
         /// <param name="colName">列名</param>
         /// <param name="outId">外键Id值</param>
         /// <returns></returns>
-        public async Task<Result<string>> GetOutValue(int tableId, string columnName, string outId)
+        public async Task<Result<string>> GetOutValue(OutSqlModel outSqlModel, string outId)
         {
             var result = new Result<String>();
             if (outId.IsEmpty())
@@ -447,12 +447,34 @@ namespace lkWeb.Service.Abstracts
                 result.data = "无";
                 return result;
             }
-            string outSql = await _sqlService.GetSingle(
-                string.Format("select OutSql from Sys_TableColumn where TableId={0} and Name='{1}'", tableId, columnName));
-            var outSqlModel = new OutSqlModel(outSql);
             var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}",
                 outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.PrimaryKey, outId));
             result.data = value.IsEmpty() ? "无" : value;
+            result.flag = true;
+            return result;
+
+        }
+        /// <summary>
+        /// 根据外键Id获取对应值
+        /// </summary>
+        /// <param name="outSql">outSql</param>
+        /// <param name="colName">列名</param>
+        /// <param name="outId">外键Id值</param>
+        /// <returns></returns>
+        public async Task<Result<IList<object>>> GetMultiSelectOutValue(OutSqlModel outSqlModel, string outId)
+        {
+            var result = new Result<IList<object>>();
+            if (outId.IsEmpty())
+            {
+                return result;
+            }
+            string sql = "select {0} from {1} where {2}";
+            var queryResult = await _sqlService.Query(string.Format(sql,
+                outSqlModel.OutTableForeignKey + "," + outSqlModel.CurrentTableForeignKey,
+                outSqlModel.SaveTableName,
+                outSqlModel.CurrentTableForeignKey + "=" + outId));
+            var selectValues = queryResult.Select(item => item[outSqlModel.OutTableForeignKey]).ToList();
+            result.data = selectValues;
             result.flag = true;
             return result;
 
@@ -465,16 +487,13 @@ namespace lkWeb.Service.Abstracts
         /// <param name="colName">列名</param>
         /// <param name="outValue">外键值</param>
         /// <returns></returns>
-        public async Task<Result<string>> GetOutValueId(int tableId, string columnName, string outValue)
+        public async Task<Result<string>> GetOutValueId(OutSqlModel outSqlModel, string outValue)
         {
             var result = new Result<String>();
             if (outValue.IsEmpty())
             {
                 return result;
             }
-            string outSql = await _sqlService.GetSingle(
-                string.Format("select OutSql from Sys_TableColumn where TableId={0} and Name='{1}'", tableId, columnName));
-            var outSqlModel = new OutSqlModel(outSql);
             var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
                 outSqlModel.PrimaryKey, outSqlModel.TableName, outSqlModel.TextKey, outValue));
             result.data = value;
@@ -577,7 +596,9 @@ namespace lkWeb.Service.Abstracts
                                     colValues[colValueCount].Add(colValue);
                                 else
                                 {
-                                    var outValueId = (await GetOutValueId(tableId, currentColDto.Name, colValue)).data;
+                                    var outSql = await GetColumnValue(tableId, currentColDto.Name, "OutSql");
+                                    var outSqlModel = new OutSqlModel(outSql);
+                                    var outValueId = (await GetOutValueId(outSqlModel, colValue)).data;
                                     if (outValueId.IsNotEmpty())
                                         colValues[colValueCount].Add(outValueId);
                                     else
@@ -586,6 +607,33 @@ namespace lkWeb.Service.Abstracts
                                     }
                                 }
                             }
+
+                            else if (currentColDto.DataType == ColumnType.MultiSelect_Out)
+                            {
+                                if (colValue.IsEmpty()) //out列 允许为空
+                                    colValues[colValueCount].Add(colValue);
+                                else
+                                {
+                                    var outSql = await GetColumnValue(tableId, currentColDto.Name, "OutSql");
+                                    var outSqlModel = new OutSqlModel(outSql);
+                                    if (outSqlModel.IsSave)
+                                    {
+                                        result.msg += "第" + row + "行," + currentColDto.Description + ":" + colValue + " 错误,MultiSelect_Out列类型IsSave=1保存模式不支持导入";
+                                    }
+                                    else
+                                    {
+                                        var colValueArr = colValue.Split(',');
+                                        var tempColValue = string.Empty;
+                                        foreach (var cvalue in colValueArr)
+                                        {
+                                            var outValueId = (await GetOutValueId(outSqlModel, cvalue)).data;
+                                            tempColValue += outValueId + ",";
+                                        }
+                                        colValues[colValueCount].Add(tempColValue.Trim(','));
+                                    }
+                                }
+                            }
+
                             else if (currentColDto.PrimaryKey == 1)
                             {
                                 var exist = (await _sqlService.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
@@ -676,6 +724,7 @@ namespace lkWeb.Service.Abstracts
                 {
                     result.msg += "请在表管理中设置导入类型,";
                 }
+
                 var execResult = await _sqlService.ExecuteBatch(listSql);
                 result.flag = execResult == listSql.Count();
                 result.msg = "影响数据条数" + execResult;
@@ -684,11 +733,24 @@ namespace lkWeb.Service.Abstracts
         }
 
         /// <summary>
+        /// 获取列属性值
+        /// </summary>
+        /// <param name="tableId">tableId</param>
+        /// <param name="columnName">columnName</param>
+        /// <param name="fieldName">fieldName</param>
+        /// <returns></returns>
+        /// <returns></returns>
+        public async Task<string> GetColumnValue(int tableId, string columnName, string fieldName)
+        {
+            return await _sqlService.GetSingle($"select {fieldName} from Sys_TableColumn where TableId={tableId} and Name='{columnName}'");
+        }
+
+        /// <summary>
         /// 导出数据为Excel
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <returns></returns>
-        public async Task<Result<string>> ExportExcel(int tableId)
+        public async Task<Result<string>> ExportExcel(int tableId, List<int> ids)
         {
             var result = new Result<string>();
             var tableResult = await _tableListService.GetByIdAsync(tableId);
@@ -721,6 +783,7 @@ namespace lkWeb.Service.Abstracts
                 // 添加worksheet
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
                 var colDtos = await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ExportVisible == 1);
+
                 if (colDtos.data.Count() < 1)
                 {
                     result.msg += "导出可见的列数量为" + colDtos.data.Count();
@@ -731,6 +794,9 @@ namespace lkWeb.Service.Abstracts
                 for (int i = 1; i <= colDtos.data.Count; i++)
                 {
                     var col = colDtos.data[i - 1];
+                    if (col.DataType == ColumnType.MultiSelect_Out)
+                        if ((new OutSqlModel(col.OutSql)).IsSave)
+                            continue;
                     colDataType.Add(col.Name, col.DataType);
                     worksheet.Cells[rowNum, i].Value = col.Description;
                     colNames += col.Name + ",";
@@ -738,7 +804,7 @@ namespace lkWeb.Service.Abstracts
                 rowNum++;
                 colNames = colNames.Trim(',');
                 var colNameArr = colNames.Split(',');
-                var tableData = await GetData(tableId, colNames, "1=1", "Id");
+                var tableData = await GetData(tableId, colNames, $"id in({string.Join(",", ids)})", "Id");
 
                 //遍历每一行数据
                 for (int i = 1; i <= tableData.data.Count; i++)
@@ -758,8 +824,23 @@ namespace lkWeb.Service.Abstracts
                         //如果为OUT类型
                         else if (colDataType[colName] == ColumnType.Out)
                         {
-                            var outValueResult = await GetOutValue(tableId, colName, col[colName].ToString());
+                            var outSql = await GetColumnValue(tableId, colName, "OutSql");
+                            var outSqlModel = new OutSqlModel(outSql);
+                            var outValueResult = await GetOutValue(outSqlModel, col[colName].ToString());
                             worksheet.Cells[rowNum, j].Value = outValueResult.data;
+                        }
+                        else if (colDataType[colName] == ColumnType.MultiSelect_Out)
+                        {
+                            var outSql = await GetColumnValue(tableId, colName, "OutSql");
+                            var outSqlModel = new OutSqlModel(outSql);
+                            var colValueArr = col[colName].ToString().Split(',');
+                            var tempColValue = string.Empty;
+                            foreach (var cvalue in colValueArr)
+                            {
+                                var outValue = (await GetOutValue(outSqlModel, cvalue)).data;
+                                tempColValue += outValue + ",";
+                            }
+                            worksheet.Cells[rowNum, j].Value = tempColValue.Trim(',');
                         }
                         //普通情况 包括Enum类型Enum直接保存的为Text value和text一样
                         else
