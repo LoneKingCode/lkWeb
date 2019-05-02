@@ -1,19 +1,17 @@
-viewlist/index?creator=1  可以接受这种url参数 当作where条件
-
 下拉样式出问题
 查询 可以下拉等  查询列数
 
+enum multiselect 可以有value
+
 列 可以设定 文件/图片 像龚那样 图片 下载，预览
- 
-	生成列时 读取注释
-	列默认值。。。
+ 生成列时 读取注释
 
 syshelper,获取字典下拉选项
 
-代码调整
 
-数据库链接 单例 依赖注入 service加个参数就行
- 加 region  ajax page
+代码调整
+  数据库链接 单例 依赖注入 service加个参数就行
+  加 region  ajax page
   service调用精简为 services.sdsdsadasd
   viewlist里方法都封装
    $.ajax({ 封装
@@ -32,7 +30,6 @@ syshelper,获取字典下拉选项
 延后功能:
 统计图表
 超级管理与给予所有子系统权限
-word导出 可以多页 NPOI，用 wps的xml模板 可以插入图片
  http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
 	信息发布的 ueditor 上传文件等等。。。 .net core版本
 友情链接

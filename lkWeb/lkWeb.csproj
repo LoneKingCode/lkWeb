@@ -46,7 +46,6 @@
   <ItemGroup>
     <Content Include="wwwroot\js\contabs.js" />
     <Content Include="wwwroot\js\lkWeb.js" />
-    <Content Include="wwwroot\js\login.js" />
     <Content Include="wwwroot\js\site.js" />
     <Content Include="wwwroot\js\site.min.js" />
     <Content Include="wwwroot\css\jquery.dataTables.min.css" />
@@ -148,7 +147,6 @@
   <ItemGroup>
     <None Include="wwwroot\js\contabs.js" />
     <None Include="wwwroot\js\lkWeb.js" />
-    <None Include="wwwroot\js\login.js" />
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\js\site.min.js" />
   </ItemGroup>

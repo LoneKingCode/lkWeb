@@ -86,6 +86,10 @@ namespace lkWeb.Service.Dto
         /// </summary>
         public int ColumnPerRow { get; set; }
         /// <summary>
+        /// 查询每行列数
+        /// </summary>
+        public int SearchColumnPerRow { get; set; }
+        /// <summary>
         /// 导入类型  更新，插入，更新或插入
         /// </summary>
         public TableImportType ImportType { get; set; }

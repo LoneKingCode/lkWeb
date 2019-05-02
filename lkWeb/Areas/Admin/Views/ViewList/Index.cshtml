@@ -1,6 +1,8 @@
 ﻿@using lkWeb.Areas.Admin.Models
+@using lkWeb.Service.Enum;
 @using System.Text;
 @using lkWeb.Core.Extension;
+@using System.Text.Encodings.Web;
 
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
@@ -25,6 +27,39 @@
         @Html.Raw(Model.Table.ListPageJavaScript)
 
         $(function () {
+            //下拉单选
+            $('.chosen-radio').chosen({
+                ltl: true,
+                width: "100%",
+            });
+
+            //下拉多选
+            $('.chosen-checkbox').attr('data-placeholder', '请选择')
+            $('.chosen-checkbox').chosen({
+                allow_single_deselect: true,
+                width: "100%",
+            });
+
+            //选择日期
+            $('.datepicker-date').datePicker({
+                hasShortcut: true,
+                format: 'YYYY-MM-DD',
+                shortcutOptions: [{
+                    name: '今天',
+                    day: '0'
+                }, {
+                    name: '昨天',
+                    day: '-1'
+                }, {
+                    name: '一周前',
+                    day: '-7'
+                }]
+            });
+            //选择日期时间
+            $('.datepicker-datetime').datePicker({
+                format: 'YYYY-MM-DD HH:mm'
+            });
+
             InitDataTable();
 
             $(".checkAll").click(function () {
@@ -33,7 +68,9 @@
             });
 
             $("#btnSearch").click(function () {
-                lkWeb.Search($("#txtSearchKey").val(), lkTable);
+                var formObj = $('#searchForm').serializeObject();
+                var formJsonStr = JSON.stringify(formObj);   //通过3转化为json字符串
+                lkWeb.Search(formJsonStr, lkTable);
 
             })
 
@@ -161,7 +198,7 @@
         }
         var lkTable;
         function InitDataTable() {
-            var dataUrl = '@Url.Action("GetPageData")';
+            var dataUrl = '@Url.Action("GetPageData")@ViewBag.queryString';
             var columns = [
                 {
                     "sClass": "text-center",
@@ -208,6 +245,72 @@
         }
     </script>
 }
+
+<form class="form-horizontal" id="searchForm">
+    <table class="table table-content" style="table-layout: unset;">
+        <tbody>
+            @{
+                string inputTpl = "<input type=\"text\" class=\"form-control\" name=\"{0}\"/>";
+                string dateTpl = "<div class=\"c-datepicker-date-editor c-datepicker-single-editor {0}\" style='width: 35%;'>" +
+" <i class=\"c-datepicker-range__icon kxiconfont icon-clock\"></i>" +
+"<input type = \"text\" autocomplete=\"off\" name=\"{1}\" placeholder=\"选择{2}\" class=\"c-datepicker-data-input only-date\" value=\"\" style=\"width:100%;\"></div>";
+
+                StringBuilder sb = new StringBuilder();
+                var numPerRow = Model.Table.SearchColumnPerRow < 1 ? 1 : Model.Table.SearchColumnPerRow;
+                var count = 0;
+                var searchColumn = Model.TableColumn.Where(item => item.SearchVisible == 1);
+                sb.Append("<tr>");
+                foreach (var column in searchColumn)
+                {
+                    count++;
+
+                    string tempTpl = "<td class='td-left'><span class='name'>" + column.Description + "</span></td><td>{0}</td>";
+                    if (column.DataType == ColumnType.Out || column.DataType == ColumnType.Enum)
+                    {
+                        var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], new { @class = "form-control  chosen-radio" });
+                        var writer = new System.IO.StringWriter();
+                        content.WriteTo(writer, HtmlEncoder.Default);
+                        var sltHtml = writer.ToString();
+                        sb.Append(string.Format(tempTpl, sltHtml));
+                    }
+                    else if (column.DataType == ColumnType.Date || column.DataType == ColumnType.Datetime)
+                    {
+                        string _class = column.DataType == "Date" ? "datepicker-date" : "datepicker-datetime";
+                        string type = column.DataType == "Date" ? "日期" : "时间";
+                        string contentHtml = string.Format(dateTpl, _class, column.Name, type);
+                        contentHtml += "至" + string.Format(dateTpl, _class, column.Name + "_end", type);
+                        sb.Append(string.Format(tempTpl, contentHtml));
+
+                    }
+                    else
+                    {
+                        var contentHtml = string.Format(inputTpl, column.Name);
+                        sb.Append(string.Format(tempTpl, contentHtml));
+                    }
+                    if (count % numPerRow == 0)
+                    {
+                        sb.Append("</tr>");
+                        sb.Append("<tr>");
+                    }
+                }
+                sb.Append("</tr>");
+                @Html.Raw(sb.ToString());
+            }
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="99">
+                    <div class="form-group">
+                        <div class="col-md-3 col-md-offset-5">
+                            <button type="button" class="btn btn-success" id="btnSearch">查询</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</form>
 
 <div id="batchOperation" class="form-horizontal" style="display:none;margin-top:5px;">
     <div class="form-group">
@@ -269,14 +372,14 @@
 <div class="hidden">
     <input type="file" name="excelfile" id="excelFile" />
 </div>
-<div class="form-group">
-    <div class="input-group">
-        <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
-        <span class="input-group-btn">
-            <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
-        </span>
-    </div>
-</div>
+@*<div class="form-group">
+        <div class="input-group">
+            <input id="txtSearchKey" type="text" class="form-control" placeholder="搜索关键字">
+            <span class="input-group-btn">
+                <button id="btnSearch" class="btn btn-primary" type="button"> <i class="fa fa-search"></i> 搜索</button>
+            </span>
+        </div>
+    </div>*@
 @Html.AntiForgeryToken()
 <table class="table table-striped table-hover" id="lkTable" style="table-layout:fixed">
     <thead>

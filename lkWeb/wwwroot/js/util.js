@@ -308,7 +308,7 @@ String.prototype.format = function (args) {
 }
 
 String.prototype.contains = function (str) {
-    return this.indexOf(str) != -1
+    return this.indexOf(str) != -1;
 }
 
 
@@ -386,3 +386,4 @@ Date.prototype.addMonth = function (addMonth) {
     }
     return new Date(nextY, nextM, day);
 };
+

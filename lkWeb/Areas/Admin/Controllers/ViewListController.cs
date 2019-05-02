@@ -13,6 +13,7 @@ using lkWeb.Core.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -36,9 +37,11 @@ namespace lkWeb.Areas.Admin.Controllers
             _sqlService = sqlService;
             _sysService = sysService;
         }
+
         #region Page
         public async Task<IActionResult> Index(UrlParameter param)
         {
+            ViewBag.queryString = Request.QueryString.Value;
             var model = new ViewListModel();
             model.Table = (await _tableListService.GetByIdAsync(param.id)).data;
             var result = await _tableColumnService.GetListAsync(item => item.TableId == param.id && item.ListVisible == 1);
@@ -71,8 +74,60 @@ namespace lkWeb.Areas.Admin.Controllers
                 TopExtendFunction = model.Table.TopExtendFunction,
             };
             ViewBag.ShowButton = showBtnModel;
+
+            foreach (var column in model.TableColumn)
+            {
+                if (column.DataType == ColumnType.Out || column.DataType == ColumnType.MultiSelect_Out)
+                {
+                    var outSqlModel = new OutSqlModel(column.OutSql);
+                    var queryResult = await _sysService.GetOutData(outSqlModel);
+                    var items = new List<SelectListItem>();
+                    foreach (var row in queryResult)
+                    {
+                        items.Add(new SelectListItem
+                        {
+
+                            Value = row[outSqlModel.PrimaryKey].ToString(),
+                            Text = row[outSqlModel.TextKey].ToString(),
+                        });
+
+                    }
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text");
+                }
+                else if (column.DataType == ColumnType.Enum)
+                {
+                    var enumStr = column.EnumRange.Split(','); //value,value
+                    var items = new List<SelectListItem>();
+                    for (int i = 0; i < enumStr.Length; i++)
+                    {
+                        items.Add(new SelectListItem
+                        {
+
+                            Value = enumStr[i],
+                            Text = enumStr[i]
+                        });
+                    }
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text");
+                }
+                else if (column.DataType == ColumnType.MultiSelect)
+                {
+                    var checkStr = column.SelectRange.Split(','); //选项1,选项2
+                    var items = new List<SelectListItem>();
+                    for (int i = 0; i < checkStr.Length; i++)
+                    {
+                        items.Add(new SelectListItem
+                        {
+                            Value = checkStr[i],
+                            Text = checkStr[i],
+                        });
+                    }
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text");
+                }
+            }
+
             return View(model);
         }
+
         public async Task<IActionResult> Add(UrlParameter param)
         {
             var model = new ViewListModel();
@@ -198,8 +253,6 @@ namespace lkWeb.Areas.Admin.Controllers
                 else if (column.DataType == ColumnType.Enum)
                 {
                     //获取此条数据列类型为Enum的字段的值，以便之后SelectList的默认选中Selected使用
-                    //var enumColValue = await _sqlService.GetSingle(
-                    //    string.Format("select {0} from {1} where {2}", column.Name, tbName, "Id=" + param.id));
                     var enumColValue = columnValueResult.First()[column.Name].ToString();
                     var enumStr = column.EnumRange.Split(','); //value,value
                     var items = new List<SelectListItem>();
@@ -290,25 +343,54 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
+
             var tableId = queryBase.Value.ToInt32(); //表ID 保存在value中
             var tableDto = (await _tableListService.GetByIdAsync(tableId)).data;
-            var colDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ListVisible == 1)).data.OrderBy(item=>item.ListOrder);
+            var colDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ListVisible == 1)).data.OrderBy(item => item.ListOrder);
+            var columnNames = string.Join(',', colDtos.Select(item => item.Name));
             if (tableDto.AllowView != 1)
             {
                 return Json(new DataTableModel());
             }
+            var queryCondition = "1=1";
+            var count = 0;
+            foreach (var queryKey in Request.Query.Keys)
+            {
+                //首字母大写
+                var firstUpper = queryKey.Substring(0, 1).ToUpper() + queryKey.Substring(1).ToLower();
+                if (columnNames.Contains(firstUpper))
+                {
+                    queryCondition += $" {queryKey}='{Request.Query[queryKey]}' and";
+                    count++;
+                }
+            }
+            if (count > 0)
+                queryCondition = queryCondition.Substring(0, queryCondition.Length - 3);
+
+
             string condition = "1=1";
+
             if (queryBase.SearchKey.IsNotEmpty())
             {
-                condition = string.Empty;
-                var searchColumns = (await _sysService.GetColumnNames(tableId, "SearchVisible=1", "ListOrder")).data.Split(',');
-                foreach (var column in searchColumns)
-                {
-                    condition += string.Format(" {0} like '%{1}%' or", column, queryBase.SearchKey);
-                }
-                condition = condition.Substring(0, condition.Length - 2); // 为了去掉 like 条件末尾多余的or
-                condition = '(' + condition + ')';
+                var searchDic = JsonConvert.DeserializeObject(queryBase.SearchKey);
+               // condition = string.Empty;
+               // count = 0;
+               // var searchColumns = (await _sysService.GetColumnNames(tableId, "SearchVisible=1", "ListOrder")).data.Split(',');
+               // foreach (var column in searchColumns)
+               // {
+               //     if (column.IsNotEmpty())
+               //     {
+               //         condition += string.Format(" {0} like '%{1}%' or", column, queryBase.SearchKey);
+               //         count++;
+               //     }
+               // }
+               //if(count>0)
+               // {
+               //     condition = condition.Substring(0, condition.Length - 2); // 为了去掉 like 条件末尾多余的or
+               //     queryCondition = "(" + condition + ") and " + queryCondition;
+               // }
             }
+
             if (queryBase.OrderBy.IsEmpty())
             {
                 if (tableDto.DefaultSort.IsEmpty())
@@ -316,17 +398,10 @@ namespace lkWeb.Areas.Admin.Controllers
                 else
                     queryBase.OrderBy = tableDto.DefaultSort;
             }
-            var columnNames = string.Join(',', colDtos.Select(item => item.Name));
-            var tableData = await _sysService.GetPageData(tableId, columnNames, condition, queryBase);
+
+            var tableData = await _sysService.GetPageData(tableId, columnNames, queryCondition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
-            //var outTypeColumnNames = (await _sysService.GetColumnNames(tableId,
-            //    $"ListVisible=1 and DataType='{ColumnType.Out}'", "ListOrder")).data.Split(',');
-            //var multiSelectOutTypeColumnNames = (await _sysService.GetColumnNames(tableId,
-            //    $"ListVisible=1 and DataType='{ColumnType.MultiSelect_Out}'", "ListOrder")).data.Split(',');
-            //var fileTypeColNames = (await _sysService.GetColumnNames(tableId,
-            //    $"ListVisible=1 and DataType='{ColumnType.File}'", "ListOrder")).data.Split(',');
-            //var customColNames = (await _sysService.GetColumnNames(tableId,
-            //    $"ListVisible=1 and DataType='{ColumnType.Custom}'", "ListOrder")).data.Split(',');
+
             foreach (var dicList in tableData.data)
             {
                 Dictionary<string, object> temp = new Dictionary<string, object>();
@@ -406,7 +481,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Add(UrlParameter param, IFormCollection formData)
         {
             var table = (await _tableListService.GetByIdAsync(param.id)).data;
-            var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == param.id && item.AddVisible == 1);
+            var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == param.id);
             var tableColumns = columnResult.data;
             var addModel = new Dictionary<string, string>();
             var result = new Result<string>();
@@ -441,6 +516,14 @@ namespace lkWeb.Areas.Admin.Controllers
                         addModel[column.Name] = colValue;
                     }
 
+                }
+                else
+                {
+                    //列的默认值
+                    if (column.DefaultValue.IsNotEmpty())
+                    {
+                        addModel[column.Name] = column.DefaultValue;
+                    }
                 }
             }
             if (!string.IsNullOrEmpty(result.msg))
@@ -477,7 +560,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             var model = new ViewListModel();
             var tableId = param.extraValue.ToInt32();
-            var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.EditVisible == 1);
+            var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == tableId);
             var tableColumns = columnResult.data;
             var table = (await _tableListService.GetByIdAsync(tableId)).data;
 
@@ -511,6 +594,14 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     else
                         updateModel[column.Name] = formData[column.Name];
+                }
+                else
+                {
+                    //列的默认值
+                    if (column.DefaultValue.IsNotEmpty())
+                    {
+                        updateModel[column.Name] = column.DefaultValue;
+                    }
                 }
             }
             if (!string.IsNullOrEmpty(result.msg))

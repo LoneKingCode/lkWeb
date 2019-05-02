@@ -41,6 +41,11 @@ namespace lkWeb.Service.Dto
         /// 跨列
         /// </summary>
         public int ColSpan { get; set; }
+
+        /// <summary>
+        /// 默认值
+        /// </summary>
+        public string DefaultValue { get; set; }
         #endregion
 
         #region 显示顺序

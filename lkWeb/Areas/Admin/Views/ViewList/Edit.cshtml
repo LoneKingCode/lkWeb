@@ -30,7 +30,7 @@
                 for (int i = 0; i < richTextColumns.Count; i++)
                 {
                     @Html.Raw($"var editor{i} = UE.getEditor('{richTextColumns[i].Name}');")
-                    @Html.Raw($"$('#{richTextColumns[i].Name}').css('width', (window.innerWidth - 102 * {Model.Table.ColumnPerRow}) + 'px').css('height', Math.round(window.innerHeight * 0.3) + 'px');")
+                    @Html.Raw($"$('#{richTextColumns[i].Name}').css('width', (window.innerWidth - 103 * {Model.Table.ColumnPerRow+1}) + 'px').css('height', Math.round(window.innerHeight * 0.3) + 'px');")
                 }
             }
 
@@ -88,7 +88,7 @@
                 string dateTpl = "<div class=\"c-datepicker-date-editor c-datepicker-single-editor {0}\">" +
 " <i class=\"c-datepicker-range__icon kxiconfont icon-clock\"></i>" +
 "<input type = \"text\" autocomplete=\"off\" name=\"{1}\" placeholder=\"选择{2}\" data-val=\"true\" {3}  value=\"{4}\" class=\"c-datepicker-data-input only-date\" value=\"\" style=\"width:100%;\"></div>" +
-                "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span></div>";
+                "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span>";
                 string editorTpl = "<script id=\"{0}\" name=\"{0}\" type=\"text/plain\" style=\"height:250px;\">{1}</script>";
 
 
@@ -145,6 +145,7 @@
                     }
                     else if (column.DataType == ColumnType.RichText)
                     {
+                        sb.Append("<tr>");
                         var contentHtml = string.Format(editorTpl, column.Name, ViewBag.ColumnValue[column.Name]);
                         sb.Append(string.Format(tempTpl, contentHtml));
                         sb.Append("</tr>");

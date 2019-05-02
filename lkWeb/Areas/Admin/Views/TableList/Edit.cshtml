@@ -86,6 +86,12 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-md-2 control-label">查询每行列数</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control" asp-for="SearchColumnPerRow" data-toggle="tooltip" title="例如2" />
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-md-2 control-label">导入类型</label>
             <div class="col-md-4">
                 @Html.DropDownList("ImportType", (SelectList)ViewBag.ImportTypeList, new { @class = "form-control" })
