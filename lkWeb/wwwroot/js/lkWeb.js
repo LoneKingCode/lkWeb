@@ -251,6 +251,9 @@ lkWeb.Upload = function (controlId, url, formParams, successCallback, errorCallb
 }
 //form validation
 lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
+    validationForm.data("validator").settings.ignore = ""; //validate默认对隐藏的元素是不进行校验的，所以忽略了select框的校验
+    validationForm.data("validator").settings.focusInvalid = true;
+    log(validationForm.data("validator").settings.ignore)
     var option = {
         datatype: "json",
         success: function (data) {
@@ -376,7 +379,7 @@ lkWeb.LoadTable = function (tableID, colums, dataUrl, value) {
         }
     };
     var table = $("#" + tableID).DataTable(config);
- 
+
     return table;
 }
 
@@ -408,4 +411,4 @@ lkWeb.GetCurrentUrl = function () {
     return window.location.protocol + "://" + window.location.host;
 }
 
- 
+

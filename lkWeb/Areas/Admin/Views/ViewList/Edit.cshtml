@@ -19,7 +19,7 @@
     </style>
 }
 @section Scripts{
-
+    <script src="~/js/admin/viewlist.js"></script>
     <script type="text/javascript">
         @Html.Raw(Model.Table.EditPageJavaScript)
 
@@ -34,48 +34,9 @@
                 }
             }
 
-            lkWeb.FormValidation($("#lkForm"), function () {
-                lkWeb.RefreshAndClose()
-            })
 
-            //下拉单选
-            $('.chosen-radio').chosen({
-                ltl: true,
-                width: "100%",
-            });
-
-            //下拉多选
-            $('.chosen-checkbox').attr('data-placeholder', '请选择')
-            $('.chosen-checkbox').chosen({
-                allow_single_deselect: true,
-                width: "100%",
-            });
-
-            //选择日期
-            $('.datepicker-date').datePicker({
-                hasShortcut: true,
-                format: 'YYYY-MM-DD',
-                shortcutOptions: [{
-                    name: '今天',
-                    day: '0'
-                }, {
-                    name: '昨天',
-                    day: '-1'
-                }, {
-                    name: '一周前',
-                    day: '-7'
-                }]
-            });
-            //选择日期时间
-            $('.datepicker-datetime').datePicker({
-                format: 'YYYY-MM-DD HH:mm'
-            });
         })
-        function uploadFile(fileInputId, inputId, columnId) {
-            lkWeb.Upload(fileInputId, '@Url.Action("Upload")', { 'id': columnId }, function (result) {
-                $("#" + inputId).val(result.data)
-                })
-        }
+
     </script>
 }
 <form class="form-horizontal" action="@Url.Action("Edit")" method="post" id="lkForm">
@@ -90,6 +51,7 @@
 "<input type = \"text\" autocomplete=\"off\" name=\"{1}\" placeholder=\"选择{2}\" data-val=\"true\" {3}  value=\"{4}\" class=\"c-datepicker-data-input only-date\" value=\"\" style=\"width:100%;\"></div>" +
                 "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span>";
                 string editorTpl = "<script id=\"{0}\" name=\"{0}\" type=\"text/plain\" style=\"height:250px;\">{1}</script>";
+                string validateTpl = "<span class=\"field-validation-valid\" data-valmsg-for=\"{0}\" data-valmsg-replace=\"true\"></span>";
 
 
                 StringBuilder sb = new StringBuilder();
@@ -104,11 +66,11 @@
                     {
                         colspan = column.ColSpan;
                     }
-                    var requireSpan = column.Required == 1 ? "<span class='require'>*</span>":"";
+                    var requireSpan = column.Required == 1 ? "<span class='require'>*</span>" : "";
                     string tempTpl = "<td class='td-left'>" + requireSpan + "<span class='name'>" + column.Description + "</span></td><td colspan='" + colspan + "'>{0}</td>";
                     if (column.DataType == ColumnType.Out || column.DataType == ColumnType.Enum)
                     {
-                        var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], new { @class = "form-control chosen-radio" });
+                        var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], new { @class = "form-control select" });
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
                         var sltHtml = writer.ToString();
@@ -116,13 +78,13 @@
                     }
                     else if (column.DataType == ColumnType.MultiSelect || column.DataType == ColumnType.MultiSelect_Out)
                     {
-                        var htmlAttr = new Object();
-                        htmlAttr = new { @class = "form-control chosen-checkbox", multiple = "multiple", id = "chosen-" + column.Name };
+                        var htmlAttr = new Dictionary<string, object> { { "class", "form-control select" }, { "multiple", "multiple" }, { "id", column.Name },
+                                                { "data-val","true"},{"data-valmsg-for","请选择"+column.Description },{ "data-valmsg-replace","true"} };
                         var content = Html.DropDownList(column.Name, (MultiSelectList)ViewData[column.Name], htmlAttr);
 
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
-                        var sltHtml = writer.ToString();
+                        var sltHtml = writer.ToString() + string.Format(validateTpl, column.Name);
                         sb.Append(string.Format(tempTpl, sltHtml));
                     }
                     else if (column.DataType == ColumnType.Date || column.DataType == ColumnType.Datetime)
@@ -141,7 +103,7 @@
                         (column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "")
                         + $" onclick=\"$('#file{column.Name}').click()\" ", ViewBag.ColumnValue[column.Name]);
                         sb.Append(string.Format(tempTpl, contentHtml));
-                        sb.Append($"<input type='file' id='file{column.Name}' onchange='uploadFile(\"file{column.Name}\",\"{column.Name}\",\"{column.Id}\")' style='display:none;'/>");
+                        sb.Append($"<input type='file' id='file{column.Name}' onchange='uploadFile(\"{Url.Action("Upload")}\",\"file{column.Name}\",\"{column.Name}\",\"{column.Id}\")' style='display:none;'/>");
                     }
                     else if (column.DataType == ColumnType.RichText)
                     {

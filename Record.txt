@@ -1,7 +1,9 @@
-下拉样式出问题
-查询 可以下拉等  查询列数
+查询可见，，，多选
 
-enum multiselect 可以有value
+日期列 日期格式
+
+formvalidation select不验证
+
 
 列 可以设定 文件/图片 像龚那样 图片 下载，预览
  生成列时 读取注释

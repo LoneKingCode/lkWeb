@@ -23,43 +23,12 @@
 }
 
 @section Scripts{
+    <script src="~/js/admin/viewlist.js"></script>
     <script>
         @Html.Raw(Model.Table.ListPageJavaScript)
 
         $(function () {
-            //下拉单选
-            $('.chosen-radio').chosen({
-                ltl: true,
-                width: "100%",
-            });
-
-            //下拉多选
-            $('.chosen-checkbox').attr('data-placeholder', '请选择')
-            $('.chosen-checkbox').chosen({
-                allow_single_deselect: true,
-                width: "100%",
-            });
-
-            //选择日期
-            $('.datepicker-date').datePicker({
-                hasShortcut: true,
-                format: 'YYYY-MM-DD',
-                shortcutOptions: [{
-                    name: '今天',
-                    day: '0'
-                }, {
-                    name: '昨天',
-                    day: '-1'
-                }, {
-                    name: '一周前',
-                    day: '-7'
-                }]
-            });
-            //选择日期时间
-            $('.datepicker-datetime').datePicker({
-                format: 'YYYY-MM-DD HH:mm'
-            });
-
+            
             InitDataTable();
 
             $(".checkAll").click(function () {
@@ -267,7 +236,7 @@
                     string tempTpl = "<td class='td-left'><span class='name'>" + column.Description + "</span></td><td>{0}</td>";
                     if (column.DataType == ColumnType.Out || column.DataType == ColumnType.Enum)
                     {
-                        var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], new { @class = "form-control  chosen-radio" });
+                        var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], new { @class = "form-control  select" });
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
                         var sltHtml = writer.ToString();

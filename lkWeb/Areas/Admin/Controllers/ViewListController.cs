@@ -111,14 +111,14 @@ namespace lkWeb.Areas.Admin.Controllers
                 }
                 else if (column.DataType == ColumnType.MultiSelect)
                 {
-                    var checkStr = column.SelectRange.Split(','); //选项1,选项2
+                    var checkStr = column.SelectRange.Split('|'); //值,选项1|2,选项2
                     var items = new List<SelectListItem>();
                     for (int i = 0; i < checkStr.Length; i++)
                     {
                         items.Add(new SelectListItem
                         {
-                            Value = checkStr[i],
-                            Text = checkStr[i],
+                            Value = checkStr[i].Split(',')[0],
+                            Text = checkStr[i].Split(',')[1],
                         });
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
@@ -177,14 +177,14 @@ namespace lkWeb.Areas.Admin.Controllers
                 }
                 else if (column.DataType == ColumnType.MultiSelect)
                 {
-                    var checkStr = column.SelectRange.Split(','); //选项1,选项2
+                    var checkStr = column.SelectRange.Split('|'); //1,选项1|2,选项2
                     var items = new List<SelectListItem>();
-                    for (int i = 0; i < checkStr.Length; i++)
+                    foreach (var item in checkStr)
                     {
                         items.Add(new SelectListItem
                         {
-                            Value = checkStr[i],
-                            Text = checkStr[i],
+                            Value = item.Split(',')[0],
+                            Text = item.Split(',')[1],
                         });
                     }
                     ViewData[column.Name] = new SelectList(items, "Value", "Text");
@@ -200,11 +200,14 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.EditVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             var tbName = model.Table.Name;
-            var columnValueResult = await _sqlService.Query(
-                string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id));
-            ViewBag.ColumnValue = columnValueResult.First();
+            var columnValue = (await _sqlService.Query(
+                string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id))).First();
+            ViewBag.ColumnValue = columnValue;
             foreach (var column in model.TableColumn)
             {
+                var colValue = string.Empty;
+                if (columnValue.ContainsKey(column.Name))
+                    colValue = columnValue[column.Name].ToString();
                 if (column.DataType == ColumnType.Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
@@ -226,9 +229,7 @@ namespace lkWeb.Areas.Admin.Controllers
                         });
 
                     }
-                    //获取此条out列的主键值
-                    var outColId = columnValueResult.First()[column.Name].ToString();
-                    ViewData[column.Name] = new SelectList(items, "Value", "Text", outColId);
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text", colValue);
 
                 }
                 else if (column.DataType == ColumnType.MultiSelect_Out)
@@ -246,14 +247,21 @@ namespace lkWeb.Areas.Admin.Controllers
                         });
 
                     }
-
-                    var selectValues = (await _sysService.GetMultiSelectOutValue(outSqlModel, param.id.ToString())).data;
+                    var selectValues = new List<object>();
+                    if (outSqlModel.IsSave)
+                        selectValues = (await _sysService.GetMultiSelectOutValue(outSqlModel, param.id.ToString())).data.ToList();
+                    else
+                    {
+                        foreach (var item in colValue.Split(','))
+                        {
+                            selectValues.Add(item);
+                        }
+                    }
                     ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", selectValues);
                 }
                 else if (column.DataType == ColumnType.Enum)
                 {
                     //获取此条数据列类型为Enum的字段的值，以便之后SelectList的默认选中Selected使用
-                    var enumColValue = columnValueResult.First()[column.Name].ToString();
                     var enumStr = column.EnumRange.Split(','); //value,value
                     var items = new List<SelectListItem>();
 
@@ -265,20 +273,20 @@ namespace lkWeb.Areas.Admin.Controllers
                             Text = enumStr[i],
                         });
                     }
-                    ViewData[column.Name] = new SelectList(items, "Value", "Text", enumColValue);
+                    ViewData[column.Name] = new SelectList(items, "Value", "Text", colValue);
                 }
                 else if (column.DataType == ColumnType.MultiSelect)
                 {
-                    var selectValues = columnValueResult.First()[column.Name].ToString().Split(',');
-                    var checkStr = column.SelectRange.Split(','); //选项1,选项2
+                    var selectValues = colValue.Split(',');
+                    var checkStr = column.SelectRange.Split('|'); //1,选项1|2,选项2
                     var items = new List<SelectListItem>();
-                    for (int i = 0; i < checkStr.Length; i++)
+                    foreach (var item in checkStr)
                     {
                         items.Add(new SelectListItem
                         {
-                            Selected = selectValues.Contains(checkStr[i]),
-                            Value = checkStr[i],
-                            Text = checkStr[i],
+                            Selected = selectValues.Contains(item.Split(',')[0]),
+                            Value = item.Split(',')[0],
+                            Text = item.Split(',')[1],
                         });
                     }
                     ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", selectValues);
@@ -326,8 +334,21 @@ namespace lkWeb.Areas.Admin.Controllers
                     {
                         ViewBag.OutColumn[column.Name] = columnValue[column.Name];
                     }
-
-
+                }
+                else if (column.DataType == ColumnType.MultiSelect)
+                {
+                    var selectValues = columnValueResult.First()[column.Name].ToString().Split(',');
+                    var checkStr = column.SelectRange.Split('|'); //1,选项1|2,选项2
+                    var items = new List<SelectListItem>();
+                    var selectText = string.Empty;
+                    foreach (var item in checkStr)
+                    {
+                        if (selectValues.Contains(item.Split(',')[0]))
+                        {
+                            selectText += item.Split(',')[1] + ",";
+                        }
+                    }
+                    ViewBag.ColumnValue[column.Name] = selectText.Trim(',');
                 }
             }
             return View(model);
@@ -356,41 +377,64 @@ namespace lkWeb.Areas.Admin.Controllers
             var count = 0;
             foreach (var queryKey in Request.Query.Keys)
             {
+                queryCondition = string.Empty;
                 //首字母大写
                 var firstUpper = queryKey.Substring(0, 1).ToUpper() + queryKey.Substring(1).ToLower();
                 if (columnNames.Contains(firstUpper))
                 {
-                    queryCondition += $" {queryKey}='{Request.Query[queryKey]}' and";
+                    queryCondition += $" ({queryKey}='{Request.Query[queryKey]}') and";
                     count++;
                 }
             }
             if (count > 0)
                 queryCondition = queryCondition.Substring(0, queryCondition.Length - 3);
+            else
+                queryCondition = "1=1";
 
-
-            string condition = "1=1";
+            string condition = " and 1=1";
 
             if (queryBase.SearchKey.IsNotEmpty())
             {
-                var searchDic = JsonConvert.DeserializeObject(queryBase.SearchKey);
-               // condition = string.Empty;
-               // count = 0;
-               // var searchColumns = (await _sysService.GetColumnNames(tableId, "SearchVisible=1", "ListOrder")).data.Split(',');
-               // foreach (var column in searchColumns)
-               // {
-               //     if (column.IsNotEmpty())
-               //     {
-               //         condition += string.Format(" {0} like '%{1}%' or", column, queryBase.SearchKey);
-               //         count++;
-               //     }
-               // }
-               //if(count>0)
-               // {
-               //     condition = condition.Substring(0, condition.Length - 2); // 为了去掉 like 条件末尾多余的or
-               //     queryCondition = "(" + condition + ") and " + queryCondition;
-               // }
-            }
+                condition = string.Empty;
+                var searchColDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.SearchVisible == 1)).data;
+                var searchDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(queryBase.SearchKey);
+                count = 0;
+                foreach (var searchKey in searchDic.Keys)
+                {
+                    var keyValue = searchDic[searchKey];
+                    var searchColDto = searchColDtos.Where(x => x.Name == searchKey).FirstOrDefault();
+                    if (searchColDto != null && keyValue.IsNotEmpty())
+                    {
+                        count++;
+                        var searchColDataType = searchColDto.DataType;
+                        if (searchColDataType == ColumnType.Custom || searchColDataType == ColumnType.String || searchColDataType == ColumnType.RichText)
+                        {
+                            condition += $" ({searchKey} like '%{keyValue}%') and";
+                        }
+                        else if (searchColDataType == ColumnType.Int || searchColDataType == ColumnType.Decimal || searchColDataType == ColumnType.Out)
+                        {
+                            condition += $" ({searchKey} = '{keyValue}') and";
+                        }
+                        else if (searchColDataType == ColumnType.MultiSelect)
+                        {
 
+                        }
+                        else if (searchColDataType == ColumnType.MultiSelect_Out)
+                        {
+
+                        }
+                        else if (searchColDataType == ColumnType.Date || searchColDataType == ColumnType.Datetime)
+                        {
+                            var endDate = searchDic[searchKey + "_end"];
+                            condition += $" ({searchKey}>='{keyValue}' and {searchKey} <= '{endDate}') and";
+                        }
+                    }
+                }
+                if (count > 0)
+                    condition = " and " + condition.Substring(0, condition.Length - 3);
+                else
+                    condition = " and 1=1";
+            }
             if (queryBase.OrderBy.IsEmpty())
             {
                 if (tableDto.DefaultSort.IsEmpty())
@@ -399,7 +443,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     queryBase.OrderBy = tableDto.DefaultSort;
             }
 
-            var tableData = await _sysService.GetPageData(tableId, columnNames, queryCondition, queryBase);
+            var tableData = await _sysService.GetPageData(tableId, columnNames, queryCondition + condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
 
             foreach (var dicList in tableData.data)
@@ -427,6 +471,22 @@ namespace lkWeb.Areas.Admin.Controllers
                             tempColValue += outValue + ",";
                         }
                         temp[item.Key] = tempColValue.Trim(',');
+                    }
+                    else if (colDto.DataType == ColumnType.MultiSelect)
+                    {
+                        var selectValues = item.Value.ToString().Split(',');
+                        var selectRange = await _sysService.GetColumnValue(tableId, item.Key, "SelectRange");
+                        var checkStr = selectRange.Split('|'); //1,选项1|2,选项2
+                        var items = new List<SelectListItem>();
+                        var selectText = string.Empty;
+                        foreach (var checkItem in checkStr)
+                        {
+                            if (selectValues.Contains(checkItem.Split(',')[0]))
+                            {
+                                selectText += checkItem.Split(',')[1] + ",";
+                            }
+                        }
+                        temp[item.Key] = selectText.Trim(',');
                     }
                     else if (colDto.DataType == ColumnType.Custom)
                     {
@@ -474,6 +534,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 data = listData
             };
             return Json(data);
+
         }
 
         [HttpPost]

@@ -633,8 +633,25 @@ namespace lkWeb.Service.Abstracts
                                     }
                                 }
                             }
+                            else if (currentColDto.DataType == ColumnType.MultiSelect)
+                            {
+                                var selectRange = await GetColumnValue(tableId, currentColDto.Name, "SelectRange");
+                                var checkStr = selectRange.Split('|');
+                                var selectText = colValue.Split(",");
+                                var selectValues = string.Empty;
+                                foreach (var item in checkStr)
+                                {
+                                    if (selectText.Contains(item.Split(',')[1]))
+                                        selectValues += item.Split(',')[0];
+                                }
+                                colValues[colValueCount].Add(selectValues.Trim(','));
+                            }
+                            else
+                            {
+                                colValues[colValueCount].Add(colValue);
+                            }
 
-                            else if (currentColDto.PrimaryKey == 1)
+                            if (currentColDto.PrimaryKey == 1)
                             {
                                 var exist = (await _sqlService.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
                                 if (tableDto.ImportType == TableImportType.插入)
@@ -649,10 +666,7 @@ namespace lkWeb.Service.Abstracts
                                 }
                                 colValues[colValueCount].Add(colValue);
                             }
-                            else
-                            {
-                                colValues[colValueCount].Add(colValue);
-                            }
+
                         }
                     }
                     if (row != 1)
@@ -821,7 +835,6 @@ namespace lkWeb.Service.Abstracts
          " " + DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
                             worksheet.Cells[rowNum, j].Value = col[colName];
                         }
-                        //如果为OUT类型
                         else if (colDataType[colName] == ColumnType.Out)
                         {
                             var outSql = await GetColumnValue(tableId, colName, "OutSql");
@@ -841,6 +854,21 @@ namespace lkWeb.Service.Abstracts
                                 tempColValue += outValue + ",";
                             }
                             worksheet.Cells[rowNum, j].Value = tempColValue.Trim(',');
+                        }
+                        else if (colDataType[colName] == ColumnType.MultiSelect)
+                        {
+                            var selectRange = await GetColumnValue(tableId, colName, "SelectRange");
+                            var checkStr = selectRange.Split('|'); //1,选项1|2,选项2
+                            var selectValues = col[colName].ToString().Split(",");
+                            var selectText = string.Empty;
+                            foreach (var item in checkStr)
+                            {
+                                if (selectValues.Contains(item.Split(',')[0]))
+                                {
+                                    selectText += item.Split(',')[1] + ",";
+                                }
+                            }
+                            worksheet.Cells[rowNum, j].Value = selectText.Trim(',');
                         }
                         //普通情况 包括Enum类型Enum直接保存的为Text value和text一样
                         else
