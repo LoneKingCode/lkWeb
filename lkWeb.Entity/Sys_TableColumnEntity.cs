@@ -46,6 +46,19 @@ namespace lkWeb.Entity
         /// 默认值
         /// </summary>
         public string DefaultValue { get; set; }
+
+        /// <summary>
+        /// 附件最大上传数
+        /// </summary>
+        public int? UploadMaximum { get; set; }
+        /// <summary>
+        /// 附件最低上传数
+        /// </summary>
+        public int? UploadMinimum { get; set; }
+        /// <summary>
+        /// 日期格式
+        /// </summary>
+        public string DateFormat { get; set; }
         #endregion
 
         #region 显示顺序

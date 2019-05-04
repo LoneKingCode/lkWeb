@@ -35,12 +35,15 @@ namespace lkWeb.Service.Abstracts
             else
             {
                 Condition = outSqlArr[2];
-                IsSave = outSqlArr[3] == "1";
-                if (IsSave)
+                if (outSqlArr.Length >= 4)
                 {
-                    SaveTableName = outSqlArr[4];
-                    CurrentTableForeignKey = outSqlArr[5];
-                    OutTableForeignKey = outSqlArr[6];
+                    IsSave = outSqlArr[3] == "1";
+                    if (IsSave)
+                    {
+                        SaveTableName = outSqlArr[4];
+                        CurrentTableForeignKey = outSqlArr[5];
+                        OutTableForeignKey = outSqlArr[6];
+                    }
                 }
             }
         }

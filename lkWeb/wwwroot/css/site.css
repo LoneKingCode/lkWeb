@@ -46,6 +46,13 @@ textarea {
     overflow: hidden;
 }
 
+.table > tbody > tr > td{
+    border:none;
+}
+table.dataTable thead th, table.dataTable thead td {
+    border-bottom: 2px solid #ddd;
+  
+}
 #wrapper {
     width: 100%;
     overflow-x: hidden;

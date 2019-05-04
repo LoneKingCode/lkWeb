@@ -28,7 +28,7 @@
         @Html.Raw(Model.Table.ListPageJavaScript)
 
         $(function () {
-            
+
             InitDataTable();
 
             $(".checkAll").click(function () {
@@ -215,12 +215,12 @@
     </script>
 }
 
-<form class="form-horizontal" id="searchForm">
+<form class="form-horizontal" id="searchForm" style='display:@(Model.TableColumn.Where(item => item.SearchVisible == 1).Count()>0?"block;":"none;")'>
     <table class="table table-content" style="table-layout: unset;">
         <tbody>
             @{
                 string inputTpl = "<input type=\"text\" class=\"form-control\" name=\"{0}\"/>";
-                string dateTpl = "<div class=\"c-datepicker-date-editor c-datepicker-single-editor {0}\" style='width: 35%;'>" +
+                string dateTpl = "<div class=\"c-datepicker-date-editor c-datepicker-single-editor {0}\" style='width: 25%;'>" +
 " <i class=\"c-datepicker-range__icon kxiconfont icon-clock\"></i>" +
 "<input type = \"text\" autocomplete=\"off\" name=\"{1}\" placeholder=\"选择{2}\" class=\"c-datepicker-data-input only-date\" value=\"\" style=\"width:100%;\"></div>";
 
@@ -250,6 +250,15 @@
                         contentHtml += "至" + string.Format(dateTpl, _class, column.Name + "_end", type);
                         sb.Append(string.Format(tempTpl, contentHtml));
 
+                    }
+                    else if (column.DataType == ColumnType.MultiSelect || column.DataType == ColumnType.MultiSelect_Out)
+                    {
+                        var htmlAttr = new Dictionary<string, object> { { "class", "form-control select" }, { "multiple", "multiple" }, { "id", column.Name } };
+                        var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], htmlAttr);
+                        var writer = new System.IO.StringWriter();
+                        content.WriteTo(writer, HtmlEncoder.Default);
+                        var sltHtml = writer.ToString();
+                        sb.Append(string.Format(tempTpl, sltHtml));
                     }
                     else
                     {

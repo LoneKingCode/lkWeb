@@ -159,6 +159,7 @@
 
   <ItemGroup>
     <Folder Include="TagHelpers\" />
+    <Folder Include="wwwroot\lib\bootstrap-datetimepicker\" />
   </ItemGroup>
 
 </Project>

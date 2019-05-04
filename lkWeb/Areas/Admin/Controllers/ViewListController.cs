@@ -415,13 +415,13 @@ namespace lkWeb.Areas.Admin.Controllers
                         {
                             condition += $" ({searchKey} = '{keyValue}') and";
                         }
-                        else if (searchColDataType == ColumnType.MultiSelect)
+                        else if (searchColDataType == ColumnType.MultiSelect) //暂不需要
                         {
-
+                            var selectItems = keyValue.Split(',');
                         }
-                        else if (searchColDataType == ColumnType.MultiSelect_Out)
+                        else if (searchColDataType == ColumnType.MultiSelect_Out) //暂不需要
                         {
-
+                            var selectItems = keyValue.Split(',');
                         }
                         else if (searchColDataType == ColumnType.Date || searchColDataType == ColumnType.Datetime)
                         {

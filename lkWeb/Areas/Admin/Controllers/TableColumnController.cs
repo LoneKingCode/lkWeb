@@ -37,7 +37,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 tableList.Add(new SelectListItem
                 {
                     Value = dto.Id.ToString(),
-                    Text = dto.Name.ToString(),
+                    Text = dto.Name + $"({dto.Description})",
                 });
             }
             ViewBag.TableList = new SelectList(tableList, "Value", "Text");
@@ -46,7 +46,8 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Add(UrlParameter param)
         {
             var result = await _tableListService.GetListAsync(item => item.Id > 0);
-            ViewBag.TableList = new SelectList(result.data, "Id", "Name");
+            var selectItems = result.data.Select(x => new { Id = x.Id, Name = x.Name + $"({x.Description})" }).ToList();
+            ViewBag.TableList = new SelectList(selectItems, "Id", "Name");
             ViewBag.DataTypeList = new SelectList(ColumnType.list);
 
             return View();
@@ -63,7 +64,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 items.Add(new SelectListItem
                 {
                     Value = item.Id.ToString(),
-                    Text = item.Name.ToString(),
+                    Text = item.Name + $"({item.Description})",
                     Selected = colDto.TableId == item.Id
                 });
 
