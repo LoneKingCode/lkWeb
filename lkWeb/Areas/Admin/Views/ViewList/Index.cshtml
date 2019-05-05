@@ -220,9 +220,12 @@
         <tbody>
             @{
                 string inputTpl = "<input type=\"text\" class=\"form-control\" name=\"{0}\"/>";
-                string dateTpl = "<div class=\"c-datepicker-date-editor c-datepicker-single-editor {0}\" style='width: 25%;'>" +
-" <i class=\"c-datepicker-range__icon kxiconfont icon-clock\"></i>" +
-"<input type = \"text\" autocomplete=\"off\" name=\"{1}\" placeholder=\"选择{2}\" class=\"c-datepicker-data-input only-date\" value=\"\" style=\"width:100%;\"></div>";
+                var dateTpl = "<div class='input-group' >" +
+         "<input class=\"form-control datetimepicker \" readonly type=\"text\" name=\"{0}\" value=\"\" data-date-format=\"{1}\">" +
+         "<span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span>" +
+         "<input class=\"form-control datetimepicker\" readonly type=\"text\" name=\"{0}_end\" value=\"\" data-date-format=\"{1}\">" +
+         "<span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span>" +
+         "</div>";
 
                 StringBuilder sb = new StringBuilder();
                 var numPerRow = Model.Table.SearchColumnPerRow < 1 ? 1 : Model.Table.SearchColumnPerRow;
@@ -244,10 +247,8 @@
                     }
                     else if (column.DataType == ColumnType.Datetime)
                     {
-                        string _class = column.DataType == "Date" ? "datepicker-date" : "datepicker-datetime";
-                        string type = column.DataType == "Date" ? "日期" : "时间";
-                        string contentHtml = string.Format(dateTpl, _class, column.Name, type);
-                        contentHtml += "至" + string.Format(dateTpl, _class, column.Name + "_end", type);
+                        string contentHtml = string.Format(dateTpl, column.Name,column.DateFormat);
+                      
                         sb.Append(string.Format(tempTpl, contentHtml));
 
                     }
