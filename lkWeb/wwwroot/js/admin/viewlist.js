@@ -1,4 +1,5 @@
-﻿$(function () {
+﻿
+$(function () {
 
     if ($("#lkForm").length != 0)
         lkWeb.FormValidation($("#lkForm"), function () {
@@ -13,7 +14,7 @@
     );
     $('.select').on("select2:select", function (e) {
         log(e)
-       // $(e.target).select2("close");
+        // $(e.target).select2("close");
     });
     //验证无效
     $(".select").on("select2:close", function (e) {
@@ -21,24 +22,25 @@
         $(this).valid();
         return false;
     });
-    //选择日期
-    $('.datepicker-date').datePicker({
-        hasShortcut: true,
-        format: 'YYYY-MM-DD',
-        shortcutOptions: [{
-            name: '今天',
-            day: '0'
-        }, {
-            name: '昨天',
-            day: '-1'
-        }, {
-            name: '一周前',
-            day: '-7'
-        }]
-    });
-    //选择日期时间
-    $('.datepicker-datetime').datePicker({
-        format: 'YYYY-MM-DD HH:mm'
+
+    $(".datetimepicker").each(function (i, n) {
+        var dateFormat = $(n).attr("data-date-format");
+        if (IsEmpty(dateFormat)) //未设置日期格式的 默认为此格式
+            $(n).attr("data-date-format","yyyy-mm-dd hh:ii");
+        if (dateFormat.indexOf('ii') > 0)
+            minView = 0;
+        else if (dateFormat.indexOf('hh') > 0)
+            minView = 1;
+        else
+            minView = 2;
+        $(n).datetimepicker({
+            autoclose: true,
+            todayBtn: true,
+            language: 'zh-CN',
+            pickerPosition: "bottom-left",
+            todayHighlight: true,
+            minView: minView //0到分钟 1到小时 2及以上到日
+        });
     });
 })
 function uploadFile(url, fileInputId, inputId, columnId) {

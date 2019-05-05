@@ -242,7 +242,7 @@
                         var sltHtml = writer.ToString();
                         sb.Append(string.Format(tempTpl, sltHtml));
                     }
-                    else if (column.DataType == ColumnType.Date || column.DataType == ColumnType.Datetime)
+                    else if (column.DataType == ColumnType.Datetime)
                     {
                         string _class = column.DataType == "Date" ? "datepicker-date" : "datepicker-datetime";
                         string type = column.DataType == "Date" ? "日期" : "时间";

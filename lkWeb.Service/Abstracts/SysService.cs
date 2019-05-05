@@ -140,10 +140,8 @@ namespace lkWeb.Service.Abstracts
                     dataType = ColumnType.Int;
                 else if (columnType.Contains("float") | columnType.Contains("decimal"))
                     dataType = ColumnType.Decimal;
-                else if (columnType.Contains("datetime"))
-                    dataType = ColumnType.Datetime;
                 else if (columnType.Contains("date"))
-                    dataType = ColumnType.Date;
+                    dataType = ColumnType.Datetime;
                 //如果同步生成
                 if (isSync)
                 {
@@ -832,7 +830,7 @@ namespace lkWeb.Service.Abstracts
                         var col = tableData.data[i - 1];
                         var colName = colNameArr[j - 1];
                         //如果为日期 修改excel单元格自定义格式
-                        if (colDataType[colName] == ColumnType.Datetime || colDataType[colName] == ColumnType.Date)
+                        if (colDataType[colName] == ColumnType.Datetime)
                         {
                             worksheet.Cells[rowNum, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.ShortDatePattern +
          " " + DateTimeFormatInfo.CurrentInfo.ShortTimePattern;

@@ -5,13 +5,6 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-            $('.select').select2({
-                placeholder: '请选择',
-                allowClear: true,
-                dropdownParent: $("body")
-            }
-            );
-
             $("[data-toggle='tooltip']").tooltip();
             lkWeb.FormValidation($("#lkForm"), function () {
                 lkWeb.RefreshAndClose()
@@ -50,14 +43,13 @@
     <div class="form-group">
         <label class="col-md-1 control-label">日期格式</label>
         <div class="col-md-2">
-            <select name="DateFormat" multiple="multiple" class="form-control select">
-                <option value="y">年</option>
-                <option value="M">月</option>
-                <option value="d">日</option>
-                <option value="h">时</option>
-                <option value="m">分</option>
-                <option value="s">秒</option>
-                <option value="ms">毫秒</option>
+            <select name="DateFormat" class="form-control">
+                <option value="yyyy-mm-dd">年月日</option>
+                <option value="yyyy-mm-dd hh">年月日时</option>
+                <option value="yyyy-mm-dd hh:ii">年月日时分</option>
+                <option value="mm-dd">月日</option>
+                <option value="mm-dd hh">月日时</option>
+                <option value="mm-dd hh:ii">月日时分</option>
             </select>
         </div>
         <label class="col-md-1 control-label">默认值</label>

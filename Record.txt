@@ -1,6 +1,3 @@
-日期列 日期格式
-非富文本的 textarea
-
 文件，图片
 	列 可以设定 文件/图片 像龚那样 图片 下载，预览
 	文件上传最低数量  最高数量
@@ -39,6 +36,7 @@ syshelper,获取字典下拉选项
 超级管理与给予所有子系统权限
  http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
 	信息发布的 ueditor 上传文件等等。。。 .net core版本
+	上传文件用 fastdfs分布式，提前写好代码
 友情链接
 
 延后问题:

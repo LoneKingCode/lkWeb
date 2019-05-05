@@ -48,7 +48,6 @@
     <Content Include="wwwroot\js\lkWeb.js" />
     <Content Include="wwwroot\js\site.js" />
     <Content Include="wwwroot\js\site.min.js" />
-    <Content Include="wwwroot\css\jquery.dataTables.min.css" />
     <Content Include="wwwroot\lib\bootstrap\.bower.json" />
     <Content Include="wwwroot\lib\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="wwwroot\lib\bootstrap\dist\css\bootstrap-theme.css.map" />

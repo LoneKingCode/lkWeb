@@ -423,7 +423,7 @@ namespace lkWeb.Areas.Admin.Controllers
                         {
                             var selectItems = keyValue.Split(',');
                         }
-                        else if (searchColDataType == ColumnType.Date || searchColDataType == ColumnType.Datetime)
+                        else if ( searchColDataType == ColumnType.Datetime)
                         {
                             var endDate = searchDic[searchKey + "_end"];
                             condition += $" ({searchKey}>='{keyValue}' and {searchKey} <= '{endDate}') and";

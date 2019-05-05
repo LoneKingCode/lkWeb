@@ -59,7 +59,7 @@ namespace lkWeb
             // Add framework services.
             services.AddMvc(option => option.Filters.Add<HttpGlobalExceptionFilter>())
                 .AddJsonOptions(
-                opt => opt.SerializerSettings.DateFormatString = "yyyy/M/d hh:mm:ss"
+                opt => opt.SerializerSettings.DateFormatString = "yyyy-M-d hh:mm:ss"
                 );
 
             services.AddAuthentication();
