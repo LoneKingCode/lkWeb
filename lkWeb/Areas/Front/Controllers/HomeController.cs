@@ -28,7 +28,7 @@ namespace lkWeb.Areas.Front.Controllers
         {
             var model = new SubSystemViewModel();
             model.subSystemType = (await _subSystemTypeService.GetListAsync(x => x.Id > 0)).data.ToList();
-            var subSystems = (await _subSystemService.GetListAsync(x => x.Id > 0)).data.ToList();
+            var subSystems = (await _subSystemService.GetListAsync(x => x.Id > 0 && x.IsHide != 1)).data.OrderBy(x => x.ListOrder).ToList();
             model.subSystem = new Dictionary<int, IList<Service.Dto.Sys_SubSystemDto>>();
             var userResult = _userService.GetCurrentUser();
             if (userResult.flag)
