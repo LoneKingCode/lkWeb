@@ -23,7 +23,7 @@
 }
 
 @section Scripts{
-    <script src="~/js/admin/viewlist.js"></script>
+    <script src="~/js/admin/viewlist.js" asp-append-version="true"></script>
     <script>
         @Html.Raw(Model.Table.ListPageJavaScript)
 
@@ -247,8 +247,8 @@
                     }
                     else if (column.DataType == ColumnType.Datetime)
                     {
-                        string contentHtml = string.Format(dateTpl, column.Name,column.DateFormat);
-                      
+                        string contentHtml = string.Format(dateTpl, column.Name, column.DateFormat);
+
                         sb.Append(string.Format(tempTpl, contentHtml));
 
                     }

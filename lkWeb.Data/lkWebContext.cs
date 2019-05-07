@@ -48,6 +48,8 @@ namespace lkWeb.Data
             modelBuilder.ApplyConfiguration(new SysValueListConfig());
             modelBuilder.ApplyConfiguration(new InfoTypeConfig());
             modelBuilder.ApplyConfiguration(new InfoReleaseConfig());
+            modelBuilder.ApplyConfiguration(new FileConfig());
+
         }
         public override int SaveChanges()
         {

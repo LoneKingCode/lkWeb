@@ -23,7 +23,8 @@
 }
 
 @section Scripts{
-    <script src="~/js/admin/viewlist.js"></script>
+    <script src="~/js/admin/viewlist.js" asp-append-version="true"></script>
+
     <script type="text/javascript">
         @Html.Raw(Model.Table.EditPageJavaScript)
 
@@ -53,9 +54,9 @@
 "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span>";
                 string editorTpl = "<script id=\"{0}\" name=\"{0}\" type=\"text/plain\" style=\"height:250px;\"></script>";
                 string validateTpl = "<span class=\"field-validation-valid\" data-valmsg-for=\"{0}\" data-valmsg-replace=\"true\"></span>";
-                var dateTpl = "<div class='input-group'>"+
-    "<input class=\"form-control datetimepicker\" readonly type=\"text\" name=\"{0}\" value=\"\" data-date-format=\"{1}\" data-val=\"true\" {2}>" +
-    "<span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span><span class=\"field-validation-valid\" data-valmsg-for=\"{0}\" data-valmsg-replace=\"true\"></span></div>";
+                var dateTpl = "<div class='input-group'>" +
+"<input class=\"form-control datetimepicker\" readonly type=\"text\" name=\"{0}\" value=\"\" data-date-format=\"{1}\" data-val=\"true\" {2}>" +
+"<span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span><span class=\"field-validation-valid\" data-valmsg-for=\"{0}\" data-valmsg-replace=\"true\"></span></div>";
                 StringBuilder sb = new StringBuilder();
                 var numPerRow = Model.Table.ColumnPerRow < 1 ? 1 : Model.Table.ColumnPerRow;
                 var count = 0;
@@ -82,7 +83,7 @@
                     else if (column.DataType == ColumnType.MultiSelect || column.DataType == ColumnType.MultiSelect_Out)
                     {
                         var htmlAttr = new Dictionary<string, object> { { "class", "form-control select" }, { "multiple", "multiple" }, { "id", column.Name },
-                                                { "data-val","true"},{"data-valmsg-for","请选择"+column.Description },{ "data-valmsg-replace","true"} };
+                                                                                { "data-val","true"},{"data-valmsg-for","请选择"+column.Description },{ "data-valmsg-replace","true"} };
                         var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], htmlAttr);
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
@@ -91,7 +92,7 @@
                     }
                     else if (column.DataType == ColumnType.Datetime)
                     {
-                        string contentHtml = string.Format(dateTpl,column.Name,column.DateFormat,
+                        string contentHtml = string.Format(dateTpl, column.Name, column.DateFormat,
                                 column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "");
                         sb.Append(string.Format(tempTpl, contentHtml));
 
@@ -114,7 +115,7 @@
                         count++;
                         continue;
                     }
-                    else if(column.DataType == ColumnType.MultiLine_String)
+                    else if (column.DataType == ColumnType.MultiLine_String)
                     {
                         var contentHtml = string.Format(textareaTpl, column.Name);
                         sb.Append(string.Format(tempTpl, contentHtml));
@@ -134,7 +135,57 @@
                 sb.Append("</tr>");
                 @Html.Raw(sb.ToString());
             }
-         
+            <tr>
+                <td class="td-left"><span class="require">*</span><span class="name">测试文件</span></td>
+                <td colspan="999">
+                    <input type="hidden" name="Files" class="file-ids" value="/asd/asd/b.aspx,/asd/asd/c.aspx,/asd/asd/d.aspx" />
+                    @*<input type="file" id="fileTest2" onchange='uploadFile("/admin/viewlist/Upload","fileTest2","Test2","2091")' style="display:none;">*@
+                    <div class="file-list">
+                        <div class="file-item" data-file="/asd/asd/b.aspx">
+                            <img src="~/images/file_icon/icon_file/7z.png" />
+                            <label>啊啊啊文件B</label>
+                            <a href="/asd/asd/b.aspx" download>查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
+                        </div>
+                        <div class="file-item" data-file="/asd/asd/c.aspx">
+                            <img src="~/images/file_icon/icon_file/7z.png" />
+                            <label>啊啊啊文件C</label>
+                            <a href="/asd/asd/c.aspx" download>查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
+                        </div>
+                        <div class="file-item" data-file="/asd/asd/d.aspx">
+                            <img src="~/images/file_icon/icon_file/7z.png" />
+                            <label>啊啊啊文件D</label>
+                            <a href="/asd/asd/d.aspx" download>查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
+                        </div>
+
+                    </div>
+                    <div class="file-upload" data-maximum="5"><i class="fa fa-upload"></i></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="td-left"><span class="require">*</span><span class="name">测试图片</span></td>
+                <td colspan="999">
+                    <input type="hidden" name="Files" class="file-ids" value="/asd/asd/b.aspx,/asd/asd/c.aspx,/asd/asd/d.aspx" />
+                    <div class="file-list images" id="AAA">
+                        <div class="file-item" data-file="/asd/asd/b.aspx">
+                            <img src="~/images/file_icon/icon_file/7z.png" />
+                            <label>啊啊啊文件B</label>
+                            <a href="/asd/asd/b.aspx">查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
+                        </div>
+                        <div class="file-item" data-file="/asd/asd/c.aspx">
+                            <img src="~/images/file_icon/icon_file/7z.png" />
+                            <label>啊啊啊文件C</label>
+                            <a href="/asd/asd/c.aspx">查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
+                        </div>
+                        <div class="file-item" data-file="/asd/asd/d.aspx">
+                            <img src="~/images/file_icon/icon_file/7z.png" />
+                            <label>啊啊啊文件D</label>
+                            <a href="/asd/asd/d.aspx">查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
+                        </div>
+
+                    </div>
+                    <div class="file-upload" data-maximum="5"><i class="fa fa-upload"></i></div>
+                </td>
+            </tr>
         </tbody>
         <tfoot>
             <tr>

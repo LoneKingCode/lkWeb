@@ -46,13 +46,14 @@ textarea {
     overflow: hidden;
 }
 
-.table > tbody > tr > td{
-    border:none;
+.table > tbody > tr > td {
+    border: none;
 }
+
 table.dataTable thead th, table.dataTable thead td {
     border-bottom: 2px solid #ddd;
-  
 }
+
 #wrapper {
     width: 100%;
     overflow-x: hidden;
@@ -448,6 +449,7 @@ nav.page-tabs {
     padding: 3px;
 }
 
+/*ViewList表格样式*/
 .table-content .td-left {
     width: 110px;
     text-align: right;
@@ -464,5 +466,40 @@ nav.page-tabs {
         right: 3px;
     }
 
- 
+.table-content .file-list {
+    float: left;
+    text-align: center;
+}
+
+.table-content .file-item {
+    display: inline-block;
+    width: 105px;
+    height: 80px;
+}
+
+    .table-content .file-item label {
+        display: block;
+        text-overflow: ellipsis;
+        width: 95%;
+        overflow: hidden;
+    }
+
+    .table-content .file-item img {
+        width: 30px;
+        display: block;
+        margin: 0 auto;
+    }
+
+.table-content .file-upload {
+    width: 60px;
+    height: 50px;
+    float: left;
+    position: relative;
+    top: 30px;
+    left: 15px;
+}
+
+    .table-content .file-upload i {
+        font-size: 2.5em;
+    }
 /*#endregion*/

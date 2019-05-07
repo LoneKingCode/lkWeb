@@ -94,6 +94,10 @@ function unescapeHtml(s) {
     return s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&apos;/g, "'");
 }
 
+function unique(arr) {
+    var x = new Set(arr);
+    return [...x];
+}
 
 function getUrlFileName(url) {
     var fileName = url.split("//")[1].split("/");

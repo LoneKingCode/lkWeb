@@ -57,7 +57,8 @@ namespace lkWeb.Service
             CreateMap<Sys_SubSystemEntity, Sys_SubSystemDto>();
             CreateMap<Sys_SubSystemTypeDto, Sys_SubSystemTypeEntity>();
             CreateMap<Sys_SubSystemTypeEntity, Sys_SubSystemTypeDto>();
-
+            CreateMap<Sys_FileDto, Sys_FileEntity>();
+            CreateMap<Sys_FileEntity, Sys_FileDto>();
         }
     }
 }
