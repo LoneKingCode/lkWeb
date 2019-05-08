@@ -38,9 +38,9 @@
                     @Html.Raw($"$('#{richTextColumns[i].Name}').css('width', (window.innerWidth - 103 * {Model.Table.ColumnPerRow+1}) + 'px').css('height', Math.round(window.innerHeight * 0.3) + 'px');")
                 }
             }
-
-
         })
+
+
 
     </script>
 }
@@ -49,6 +49,10 @@
     <table class="table table-content">
         <tbody>
             @{
+                string fileTpl = "<input type=\"hidden\" name=\"{0}\" class=\"file-ids\" value=\"\" />" +
+               "<input type=\"file\" id=\"file{0}\" onchange='uploadFile(this,\"{1}\",\"{2}\")' style=\"display:none;\"  data-minimum=\"{3}\" data-maximum=\"{4}\" data-type=\"{5}\">" +
+                 "<div class=\"file-list {5}\" id=\"{6}\"></div>" +
+                 "<div class=\"file-upload\" onclick=\"$('#file{0}').click()\"><i class=\"fa fa-upload\"></i></div>";
                 string textareaTpl = "<textarea class=\"form-control\" name=\"{0}\" rows=\"3\"></textarea>";
                 string inputTpl = "<input type=\"text\" class=\"form-control\" name=\"{1}\"  data-val=\"true\" {3} data-val-maxlength=\"{0}长度不能超过{2}个字符\" data-val-maxlength-max=\"{2}\"/>" +
 "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span>";
@@ -83,7 +87,7 @@
                     else if (column.DataType == ColumnType.MultiSelect || column.DataType == ColumnType.MultiSelect_Out)
                     {
                         var htmlAttr = new Dictionary<string, object> { { "class", "form-control select" }, { "multiple", "multiple" }, { "id", column.Name },
-                                                                                { "data-val","true"},{"data-valmsg-for","请选择"+column.Description },{ "data-valmsg-replace","true"} };
+                                                                                                                                { "data-val","true"},{"data-valmsg-for","请选择"+column.Description },{ "data-valmsg-replace","true"} };
                         var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], htmlAttr);
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
@@ -97,14 +101,13 @@
                         sb.Append(string.Format(tempTpl, contentHtml));
 
                     }
-                    else if (column.DataType == ColumnType.File)
+                    else if (column.DataType == ColumnType.File || column.DataType == ColumnType.Image)
                     {
-                        var contentHtml = string.Format(inputTpl, column.Description, column.Name,
-                        column.MaxLength, $" readonly placeholder='请选择文件' id='{column.Name}'" +
-                        (column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "")
-                        + $" onclick=\"$('#file{column.Name}').click()\" ");
-                        sb.Append(string.Format(tempTpl, contentHtml));
-                        sb.Append($"<input type='file' id='file{column.Name}' onchange='uploadFile(\"{Url.Action("Upload")}\",\"file{column.Name}\",\"{column.Name}\",\"{column.Id}\")' style='display:none;'/>");
+                        var contentHtml = string.Format(fileTpl, column.Name, Url.Action("Upload"), column.Id, column.UploadMinimum, column.UploadMaximum,
+                             column.DataType == ColumnType.Image ? "images" : "",
+                              column.DataType + column.Name);
+
+                        sb.Append(string.Format(tempTpl, Html.Raw(contentHtml)));
                     }
                     else if (column.DataType == ColumnType.RichText)
                     {
@@ -134,67 +137,16 @@
                 }
                 sb.Append("</tr>");
                 @Html.Raw(sb.ToString());
-            }
-            <tr>
-                <td class="td-left"><span class="require">*</span><span class="name">测试文件</span></td>
-                <td colspan="999">
-                    <input type="hidden" name="Files" class="file-ids" value="/asd/asd/b.aspx,/asd/asd/c.aspx,/asd/asd/d.aspx" />
-                    @*<input type="file" id="fileTest2"  onchange='uploadFile("/admin/viewlist/Upload","fileTest2","Test2","2091")' style="display:none;">*@
-                    <div class="file-list">
-                        <div class="file-item" data-file="/asd/asd/b.aspx">
-                            <img src="~/images/file_icon/icon_file/7z.png" />
-                            <label>啊啊啊文件B</label>
-                            <a href="/asd/asd/b.aspx" download>查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
-                        </div>
-                        <div class="file-item" data-file="/asd/asd/c.aspx">
-                            <img src="~/images/file_icon/icon_file/7z.png" />
-                            <label>啊啊啊文件C</label>
-                            <a href="/asd/asd/c.aspx" download>查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
-                        </div>
-                        <div class="file-item" data-file="/asd/asd/d.aspx">
-                            <img src="~/images/file_icon/icon_file/7z.png" />
-                            <label>啊啊啊文件D</label>
-                            <a href="/asd/asd/d.aspx" download>查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
-                        </div>
-
-                    </div>
-                    <div class="file-upload" data-maximum="5"><i class="fa fa-upload"></i></div>
-                </td>
-            </tr>
-            <tr>
-                <td class="td-left"><span class="require">*</span><span class="name">测试图片</span></td>
-                <td colspan="999">
-                    <input type="hidden" name="Files" class="file-ids" value="/asd/asd/b.aspx,/asd/asd/c.aspx,/asd/asd/d.aspx" />
-                    <div class="file-list images" id="AAA">
-                        <div class="file-item" data-file="/asd/asd/b.aspx">
-                            <img src="~/images/file_icon/icon_file/7z.png" />
-                            <label>啊啊啊文件B</label>
-                            <a href="/asd/asd/b.aspx">查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
-                        </div>
-                        <div class="file-item" data-file="/asd/asd/c.aspx">
-                            <img src="~/images/file_icon/icon_file/7z.png" />
-                            <label>啊啊啊文件C</label>
-                            <a href="/asd/asd/c.aspx">查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
-                        </div>
-                        <div class="file-item" data-file="/asd/asd/d.aspx">
-                            <img src="~/images/file_icon/icon_file/7z.png" />
-                            <label>啊啊啊文件D</label>
-                            <a href="/asd/asd/d.aspx">查看</a> <span class="file-delete" data-file="/asd/asd/c.aspx">删除</span>
-                        </div>
-
-                    </div>
-                    <div class="file-upload" data-maximum="5"><i class="fa fa-upload"></i></div>
-                </td>
-            </tr>
+            }           
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="99">
                     <div class="form-group">
                         <div class="col-md-3 col-md-offset-5">
-                            <button type="submit" class="btn btn-success">确定</button>
+                            <button type="button" class="btn btn-success" id="btnConfirm">确定</button>
                             <button type="button" class="btn btn-default" onclick="lkWeb.Close()">返回</button>
-
+                            <button type="submit" id="btnSubmit" style="display:none;">提交表单</button>
                         </div>
                     </div>
                 </td>

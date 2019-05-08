@@ -27,6 +27,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public readonly ISys_TableListService _tableListService;
         public readonly ISqlService _sqlService;
         public readonly ISysService _sysService;
+       
         public ViewListController(ISys_TableColumnService tableColumnService,
             ISys_TableListService tableListService,
             ISqlService sqlService,
@@ -724,7 +725,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(UrlParameter param, IFormFile file)
         {
-            var result = new Result<string>();
+            var result = new Result<object>();
             var columnId = param.id;
             var forbiddenFileExt = (await _tableColumnService.GetByIdAsync(columnId)).data.ForbiddenFileExtension;
             var dateDir = Path.Combine(DateTime.Now.ToString("yyyy"), DateTime.Now.ToString("MMdd"));
@@ -745,8 +746,17 @@ namespace lkWeb.Areas.Admin.Controllers
                 file.CopyTo(fs);
                 fs.Flush();
             }
+            //....存到数据库sys_file中
+            //
+            //
+            //
+            //
             result.flag = true;
-            result.data = "/" + Path.Combine(WebHelper.UploadDir, dateDir).Replace("\\", "/") + "/" + fileName;
+            result.data =new {
+                fileUrl= "/" + Path.Combine(WebHelper.UploadDir, dateDir).Replace("\\", "/") + "/" + fileName,
+                fileType = fileExt.TrimStart('.'),
+                fileName = Path.GetFileNameWithoutExtension(file.FileName)
+            };
             return Json(result);
         }
 

@@ -1,7 +1,25 @@
 ﻿
+
 $(function () {
 
+    $("#btnConfirm").click(function () {
+        var hasError = false;
+        $("input[type='file']").each(function (i, n) {
+            var minimum = $(n).attr("data-minimum");
+            var filelist = $(n).siblings(".file-list");
+            log(minimum, filelist)
+            if (IsNotEmpty(minimum)) {
+                if (filelist.children('.file-item').length < minimum) {
+                    showMsg('最少上传' + minimum + '个', 'warning');
+                    hasError = true;
+                }
+            }
+        })
 
+        if (!hasError) {
+            $("#btnSubmit").click();
+        }
+    })
     if ($("#lkForm").length != 0)
         lkWeb.FormValidation($("#lkForm"), function () {
             lkWeb.RefreshAndClose();
@@ -44,70 +62,98 @@ $(function () {
         });
     });
 
-
-    //上传文件相关
-    $(".images").each(function (i, n) {
-        var id = $(n).attr('id');
-        if (IsNotEmpty(id))
-            var viewer = new Viewer(document.getElementById(id));
-    });
+    imageViewer();
 
     $(".file-list").on("click", ".file-delete", function () {
-        log('del')
-        var fileIdInput = $(this).parent().parent().siblings('.file-ids');
-        var fileIds = fileIdInput.val();
-        var delFileId = $(this).attr("data-file");
-        if (IsNotEmpty(fileIds)) {
-            var fileIdArr = fileIds.split(",")
-            for (var i = 0; i < fileIdArr.length; i++) {
-                if (fileIdArr[i] == delFileId) {
-                    fileIdArr.splice(i, 1);
-                    break;
-                }
-            }
-            fileIdInput.val(unique(fileIdArr).join(','));
-            $(this).parent().remove();
-        }
-        else {
-            fileIdInput.val('');
-        }
-    });
-
-    $(".file-upload").click(function () {
-        var fileItemTpl = '<div class="file-item" data-file="{3}">' +
-            '<img src="~/images/file_icon/icon_file/{0}.png" />' +
-            '<label>{1}</label>' +
-            '<a href="{2}" download>查看</a> <span class="file-delete" data-file="{3}">删除</span></div>';
-        var maximum = $(this).attr("data-maximum");
-        var filelist = $(this).siblings(".file-list");
-        log('length', filelist.children('.file-item').length)
-        if (filelist.children('.file-item').length >= maximum) {
-            showMsg('最多上传' + maximum + '个', 'warning');
-            return;
-        }
-        else {
-            var fileId = 'aaa/aa/aa' + Math.round(Math.random() * 100);
-            var fileType = 'rar';
-            var fileName = '测试添加噢';
-            var fileItemHtml = fileItemTpl.format(fileType, fileName, fileId, fileId);
-            filelist.append(fileItemHtml);
-
-            var fileIdInput = $(this).parent().parent().siblings('.file-ids');
+        var ctrl = $(this)
+        showConfirm('确认删除？', function () {
+            var fileIdInput = ctrl.parent().parent().siblings('.file-ids');
             var fileIds = fileIdInput.val();
+            var delFileId = ctrl.attr("data-file");
             if (IsNotEmpty(fileIds)) {
-                var fileIdArr = fileIds.split(",");
-                fileIdArr.push(fileId);
+                var fileIdArr = fileIds.split(",")
+                for (var i = 0; i < fileIdArr.length; i++) {
+                    if (fileIdArr[i] == delFileId) {
+                        fileIdArr.splice(i, 1);
+                        break;
+                    }
+                }
                 fileIdInput.val(unique(fileIdArr).join(','));
+                log(ctrl.parent().parent().siblings("input[type='file']").first().attr('data-type'))
+                if (ctrl.parent().parent().siblings("input[type='file']").first().attr('data-type') == "images") {
+                    ctrl.parent().remove();
+                    imageViewer();
+                }
+                else
+                    ctrl.parent().remove();
+
             }
             else {
-                fileIdInput.val(fileId);
+                fileIdInput.val('');
             }
-        }
-    })
+        });
+
+    });
+
+
 });
 
-function uploadFile(url, fileInputId, inputId, columnId) {
-    lkWeb.Upload(fileInputId, url, { 'id': columnId }, function (result) {
-        $("#" + inputId).val(result.data)
-    })
+viewers = [];
+function imageViewer() {
+    for (var i = 0; i < viewers.length; i++) {
+        viewers[i].destroy();
+    }
+    viewers = [];
+    $(".images").each(function (i, n) {
+        var id = $(n).attr('id');
+        if (IsNotEmpty(id)) {
+            var viewer = new Viewer(document.getElementById(id));
+            viewers.push(viewer);
+        }
+    });
+}
+function uploadFile(ctrl, url, columnId) {
+    var maximum = $(ctrl).attr("data-maximum");
+    var filelist = $(ctrl).siblings(".file-list");
+    if (IsEmpty(maximum))
+        maximum = 1;
+    if (filelist.children('.file-item').length >= maximum) {
+        showMsg('最多上传' + maximum + '个', 'warning');
+        return;
+    }
+
+    lkWeb.Upload($(ctrl).attr('id'), url, { 'id': columnId }, function (result) {
+        var fileItemTpl = '<div class="file-item" data-file="{2}">' +
+            '<img src="/images/file_icon/icon_file/{0}.png" />' +
+            '<label>{1}</label>' +
+            '<a href="{2}" download>查看</a>&nbsp; <span class="file-delete" data-file="{2}">删除</span></div>';
+        var imgItemTpl = '<div class="file-item" data-file="{2}">' +
+            '<img src="/images/file_icon/icon_file/{0}.png" />' +
+            '<label>{1}</label>' +
+            '<a href="{2}" target="_blank">查看</a>&nbsp;<span class="file-delete" data-file="{2}">删除</span></div>';
+        var itemTpl = fileItemTpl;
+        var isImage = $(ctrl).attr('data-type') == 'images';
+        if (isImage) {
+            itemTpl = imgItemTpl;
+        }
+        var fileId = result.data.fileUrl;
+        var fileType = result.data.fileType;
+        var fileName = result.data.fileName;
+        var fileItemHtml = itemTpl.format(fileType, fileName, fileId);
+        filelist.append(fileItemHtml);
+
+        var fileIdInput = $(ctrl).siblings('.file-ids');
+        var fileIds = fileIdInput.val();
+        if (IsNotEmpty(fileIds)) {
+            var fileIdArr = fileIds.split(",");
+            fileIdArr.push(fileId);
+            fileIdInput.val(unique(fileIdArr).join(','));
+        }
+        else {
+            fileIdInput.val(fileId);
+        }
+        if (isImage)
+            imageViewer();
+
+    });
 }

@@ -32,6 +32,7 @@ namespace lkWeb.Service.Enum
             Enum,
             MultiSelect,
             File,
+            Image,
             Custom,
             RichText,          
         };

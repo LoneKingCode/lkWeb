@@ -44,8 +44,11 @@
     <table class="table table-content">
         <tbody>
             @{
+                string fileTpl = "<input type=\"hidden\" name=\"{0}\" class=\"file-ids\" value=\"\" />" +
+                "<input type=\"file\" id=\"file{0}\" onchange='uploadFile(this,\"{1}\",\"{2}\")' style=\"display:none;\"  data-minimum=\"{3}\" data-maximum=\"{4}\" data-type=\"{5}\">" +
+                  "<div class=\"file-list {5}\" id=\"{6}\"></div>" +
+                  "<div class=\"file-upload\" onclick=\"$('#file{0}').click()\"><i class=\"fa fa-upload\"></i></div>";
                 string textareaTpl = "<textarea class=\"form-control\" name=\"{0}\" rows=\"3\">{1}</textarea>";
-
                 string inputTpl = "<input type=\"text\" class=\"form-control\" name=\"{1}\"  value=\"{4}\" data-val=\"true\" {3} data-val-maxlength=\"{0}长度不能超过{2}个字符\" data-val-maxlength-max=\"{2}\"/>" +
 "<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span>";
                 string editorTpl = "<script id=\"{0}\" name=\"{0}\" type=\"text/plain\" style=\"height:250px;\">{1}</script>";
@@ -94,14 +97,12 @@
                         sb.Append(string.Format(tempTpl, contentHtml));
 
                     }
-                    else if (column.DataType == ColumnType.File)
+                    else if (column.DataType == ColumnType.File || column.DataType == ColumnType.Image)
                     {
-                        var contentHtml = string.Format(inputTpl, column.Description, column.Name, column.MaxLength,
-                            $" readonly placeholder='请选择文件' id='{column.Name}'" +
-                        (column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "")
-                        + $" onclick=\"$('#file{column.Name}').click()\" ", ViewBag.ColumnValue[column.Name]);
+                        var contentHtml = string.Format(fileTpl, column.Name, Url.Action("Upload"), column.Id, column.UploadMinimum, column.UploadMaximum,
+                           column.DataType == ColumnType.Image ? "images" : "",
+                            column.DataType + column.Name);
                         sb.Append(string.Format(tempTpl, contentHtml));
-                        sb.Append($"<input type='file' id='file{column.Name}' onchange='uploadFile(\"{Url.Action("Upload")}\",\"file{column.Name}\",\"{column.Name}\",\"{column.Id}\")' style='display:none;'/>");
                     }
                     else if (column.DataType == ColumnType.RichText)
                     {
@@ -140,8 +141,9 @@
                 <td colspan="99">
                     <div class="form-group">
                         <div class="col-md-3 col-md-offset-5">
-                            <button type="submit" class="btn btn-success">确定</button>
+                            <button type="button" class="btn btn-success" id="btnConfirm">确定</button>
                             <button type="button" class="btn btn-default" onclick="lkWeb.Close()">返回</button>
+                            <button type="submit" id="btnSubmit" style="display:none;">提交表单</button>
                         </div>
                     </div>
                 </td>

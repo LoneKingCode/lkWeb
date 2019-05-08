@@ -113,10 +113,10 @@ function IsNotEmpty(value) {
     return value != "" && value != null && value != undefined && value != 'undefined' && value != 'null';
 }
 
-function IsFunction(func) {
+ 
+function isFunction(func) {
     return typeof func == "function";
 }
-
 //时间戳 到秒
 var time = function () {
     var time = (new Date()).valueOf();

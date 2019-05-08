@@ -22,7 +22,7 @@ lkWeb.GoAction = function (area, ctrl, action, values, isOpen, title, width, hei
         lkWeb.LayerIndex = layer.open({
             type: 2,
             title: title,
-            shadeClose: true,
+            shadeClose: false,
             shade: 0.8,
             area: [width, height],
             content: url
@@ -162,14 +162,16 @@ lkWeb.Delete = function (area, id, ctrl, table, value) {
 
 lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
     data.__RequestVerificationToken = lkWeb.GetCsrfToken()
+    lkWeb.ShowLoad()
     $.ajax(
         {
             type: 'post',
             url: url,
             data: data,
             success: function (result) {
+                lkWeb.CloseLoad()
                 if (result.flag == true) {
-                    if (IsFunction(successCallBack))
+                    if (isFunction(successCallBack))
                         successCallBack(result);
                     else
                         if (IsNotEmpty(result.msg))
@@ -185,8 +187,8 @@ lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
                 }
             },
             error: function (err) {
-
-                if (IsFunction(errorCallBack))
+                lkWeb.CloseLoad()
+                if (isFunction(errorCallBack))
                     errorCallBack(err);
                 else
                     parent.layer.alert("操作失败");
@@ -222,14 +224,15 @@ lkWeb.Upload = function (controlId, url, formParams, successCallback, errorCallb
         processData: false,//用于对data参数进行序列化处理 这里必须false
         contentType: false, //必须
         success: function (result) {
+            lkWeb.CloseLoad()
             if (result.flag == true) {
-                if (IsFunction(successCallback))
+                if (isFunction(successCallback))
                     successCallback(result)
                 else
                     parent.layer('操作成功')
             }
             else {
-                if (IsFunction(errorCallback))
+                if (isFunction(errorCallback))
                     errorCallback(result)
                 else {
                     if (IsNotEmpty(result.msg))
@@ -238,14 +241,15 @@ lkWeb.Upload = function (controlId, url, formParams, successCallback, errorCallb
                         parent.layer.alert("操作失败")
                 }
             }
-            lkWeb.CloseLoad()
+            
         },
         error: function (err) {
-            if (IsFunction(errorCallback))
+            lkWeb.CloseLoad()
+            if (isFunction(errorCallback))
                 errorCallback(result)
             else
                 parent.layer.alert("请求失败");
-            lkWeb.CloseLoad()
+         
         }
     })
 }
@@ -254,16 +258,18 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
     validationForm.data("validator").settings.ignore = ""; //validate默认对隐藏的元素是不进行校验的，所以忽略了select框的校验
     validationForm.data("validator").settings.focusInvalid = true;
     log(validationForm.data("validator").settings.ignore)
+
     var option = {
         datatype: "json",
         success: function (data) {
+            lkWeb.ShowLoad()
             if (data.flag == true) {
                 if (IsNotEmpty(successMsg))
                     layer.alert(successMsg);
                 else if (IsNotEmpty(data.msg))
                     layer.alert(data.msg);
                 setTimeout(function () {
-                    if (IsFunction(successCallBack))
+                    if (isFunction(successCallBack))
                         successCallBack();
                 }, 1200)
             }
@@ -272,6 +278,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
             }
         },
         error: function (error) {
+            lkWeb.CloseLoad()
             layer.alert("提交请求失败");
             // console.log(error);
         }
@@ -281,6 +288,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
         $(form).ajaxSubmit(option);
         return false;
     };
+    return option;  
 }
 
 //Layer
@@ -300,10 +308,10 @@ lkWeb.Confirm = function (msg, successCallBack, cancelCallBack) {
         btn: ["确认", "取消"]
     },
         function () {
-            if (IsFunction(successCallBack))
+            if (isFunction(successCallBack))
                 successCallBack();
         }, function () {
-            if (IsFunction(cancelCallBack))
+            if (isFunction(cancelCallBack))
                 cancelCallBack();
         }
     )
