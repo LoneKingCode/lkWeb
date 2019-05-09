@@ -262,7 +262,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
     var option = {
         datatype: "json",
         success: function (data) {
-            lkWeb.ShowLoad()
+            lkWeb.CloseLoad()
             if (data.flag == true) {
                 if (IsNotEmpty(successMsg))
                     layer.alert(successMsg);
@@ -285,6 +285,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
     };
     // jQuery Unobtrusive Validation 只能这样设置才有效
     validationForm.data("validator").settings.submitHandler = function (form) {
+        lkWeb.ShowLoad()
         $(form).ajaxSubmit(option);
         return false;
     };

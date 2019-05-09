@@ -27,7 +27,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public readonly ISys_TableListService _tableListService;
         public readonly ISqlService _sqlService;
         public readonly ISysService _sysService;
-       
+
         public ViewListController(ISys_TableColumnService tableColumnService,
             ISys_TableListService tableListService,
             ISqlService sqlService,
@@ -204,6 +204,8 @@ namespace lkWeb.Areas.Admin.Controllers
             var columnValue = (await _sqlService.Query(
                 string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id))).First();
             ViewBag.ColumnValue = columnValue;
+            var fileData = new Dictionary<string, IList<object>>();
+            ViewData["FileData"] = "";
             foreach (var column in model.TableColumn)
             {
                 var colValue = string.Empty;
@@ -292,7 +294,24 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     ViewData[column.Name] = new MultiSelectList(items, "Value", "Text", selectValues);
                 }
+                else if (column.DataType == ColumnType.File || column.DataType == ColumnType.Image)
+                {
+                    var files = colValue.Split(',');
+                    fileData.Add(column.DataType + column.Name, new List<object>());
+                    foreach (var file in files)
+                    {
+                        fileData[column.DataType + column.Name].Add(new
+                        {
+                            fileUrl = file,
+                            fileType = Path.GetExtension(file).TrimStart('.'),
+                            fileName = Path.GetFileNameWithoutExtension(file),
+                            columnType =  column.DataType
+                        });
+                    }
+                }
             }
+            if (fileData.Keys.Count > 0)
+                ViewData["FileData"] = JsonConvert.SerializeObject(fileData);
             return View(model);
         }
 
@@ -424,7 +443,7 @@ namespace lkWeb.Areas.Admin.Controllers
                         {
                             var selectItems = keyValue.Split(',');
                         }
-                        else if ( searchColDataType == ColumnType.Datetime)
+                        else if (searchColDataType == ColumnType.Datetime)
                         {
                             var endDate = searchDic[searchKey + "_end"];
                             condition += $" ({searchKey}>='{keyValue}' and {searchKey} <= '{endDate}') and";
@@ -494,25 +513,30 @@ namespace lkWeb.Areas.Admin.Controllers
                         var model = (await _tableColumnService.GetByExpAsync(x => x.Name == item.Key && x.TableId == tableId)).data;
                         temp[item.Key] = model.CustomContent.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
                     }
-                    else if (colDto.DataType == ColumnType.File)
+                    else if (colDto.DataType == ColumnType.File || colDto.DataType == ColumnType.Image)
                     {
-                        string url = string.Empty;
-                        string text = string.Empty;
-                        string style = string.Empty;
-                        string filePath = Path.Combine(WebHelper.WebRootPath, item.Value.ToString().Replace('/', '\\').TrimStart('\\'));
-                        if (System.IO.File.Exists(filePath))
+                        temp[item.Key] = "";
+                        foreach (var fileUrl in item.Value.ToString().Split(','))
                         {
-                            url = item.Value.ToString();
-                            text = "下载";
-                            style = "btn btn-info";
+                            string url = string.Empty;
+                            string text = string.Empty;
+                            string style = string.Empty;
+                            string filePath = Path.Combine(WebHelper.WebRootPath, fileUrl.Replace('/', '\\').TrimStart('\\'));
+                            if (System.IO.File.Exists(filePath))
+                            {
+                                url = fileUrl;
+                                text = colDto.DataType == ColumnType.File ? "下载" : "查看";
+                                style = "btn btn-info";
+                            }
+                            else
+                            {
+                                url = "javascript:alert(\"无效文件\")";
+                                text = "无效";
+                                style = "btn btn-danger";
+                            }
+                            var attr = colDto.DataType == ColumnType.File ? "download" : "";
+                            temp[item.Key] += $"<a href='{url}' target='_blank' class='{style}' {attr}>{text}</a>";
                         }
-                        else
-                        {
-                            url = "javascript:alert('无效文件')";
-                            text = "无效";
-                            style = "btn btn-danger";
-                        }
-                        temp[item.Key] = $"<a href='{url}' target='_blank' class='{style}' download>{text}</a>";
                     }
                     else
                     {
@@ -752,8 +776,9 @@ namespace lkWeb.Areas.Admin.Controllers
             //
             //
             result.flag = true;
-            result.data =new {
-                fileUrl= "/" + Path.Combine(WebHelper.UploadDir, dateDir).Replace("\\", "/") + "/" + fileName,
+            result.data = new
+            {
+                fileUrl = "/" + Path.Combine(WebHelper.UploadDir, dateDir).Replace("\\", "/") + "/" + fileName,
                 fileType = fileExt.TrimStart('.'),
                 fileName = Path.GetFileNameWithoutExtension(file.FileName)
             };

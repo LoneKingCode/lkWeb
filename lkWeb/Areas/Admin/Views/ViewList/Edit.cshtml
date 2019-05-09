@@ -33,9 +33,31 @@
                     @Html.Raw($"$('#{richTextColumns[i].Name}').css('width', (window.innerWidth - 103 * {Model.Table.ColumnPerRow+1}) + 'px').css('height', Math.round(window.innerHeight * 0.3) + 'px');")
                 }
             }
-
-
+        loadData()
         })
+
+        function loadData() {
+            var fileData = @Html.Raw(ViewData["FileData"]);
+            if (IsEmpty(fileData))
+                return;
+
+            for (var key in fileData) {
+                var items = fileData[key];
+                log('items',items)
+                var itemHtml = "";
+                for (var i in items) {
+                    var item = items[i];
+                    if (item.columnType == "File") {
+                        itemHtml += fileItemTpl.format(item.fileType,item.fileName,item.fileUrl)
+                    }
+                    else {
+                        itemHtml += imgItemTpl.format(item.fileType, item.fileName, item.fileUrl)
+                    }
+                }
+                $("#" + key).html(itemHtml);
+            }
+            imageViewer()
+        }
 
     </script>
 }
@@ -44,7 +66,7 @@
     <table class="table table-content">
         <tbody>
             @{
-                string fileTpl = "<input type=\"hidden\" name=\"{0}\" class=\"file-ids\" value=\"\" />" +
+                string fileTpl = "<input type=\"hidden\" name=\"{0}\" class=\"file-ids\" value=\"{7}\" />" +
                 "<input type=\"file\" id=\"file{0}\" onchange='uploadFile(this,\"{1}\",\"{2}\")' style=\"display:none;\"  data-minimum=\"{3}\" data-maximum=\"{4}\" data-type=\"{5}\">" +
                   "<div class=\"file-list {5}\" id=\"{6}\"></div>" +
                   "<div class=\"file-upload\" onclick=\"$('#file{0}').click()\"><i class=\"fa fa-upload\"></i></div>";
@@ -82,7 +104,7 @@
                     else if (column.DataType == ColumnType.MultiSelect || column.DataType == ColumnType.MultiSelect_Out)
                     {
                         var htmlAttr = new Dictionary<string, object> { { "class", "form-control select" }, { "multiple", "multiple" }, { "id", column.Name },
-                                                    { "data-val","true"},{"data-valmsg-for","请选择"+column.Description },{ "data-valmsg-replace","true"} };
+                                                        { "data-val","true"},{"data-valmsg-for","请选择"+column.Description },{ "data-valmsg-replace","true"} };
                         var content = Html.DropDownList(column.Name, (MultiSelectList)ViewData[column.Name], htmlAttr);
 
                         var writer = new System.IO.StringWriter();
@@ -101,7 +123,7 @@
                     {
                         var contentHtml = string.Format(fileTpl, column.Name, Url.Action("Upload"), column.Id, column.UploadMinimum, column.UploadMaximum,
                            column.DataType == ColumnType.Image ? "images" : "",
-                            column.DataType + column.Name);
+                            column.DataType + column.Name, ViewBag.ColumnValue[column.Name]);
                         sb.Append(string.Format(tempTpl, contentHtml));
                     }
                     else if (column.DataType == ColumnType.RichText)

@@ -112,6 +112,15 @@ function imageViewer() {
         }
     });
 }
+
+var fileItemTpl = '<div class="file-item" data-file="{2}">' +
+    '<img src="/images/file_icon/icon_file/{0}.png" />' +
+    '<label>{1}</label>' +
+    '<a href="{2}" download>查看</a>&nbsp; <span class="file-delete" data-file="{2}">删除</span></div>';
+var imgItemTpl = '<div class="file-item" data-file="{2}">' +
+    '<img src="/images/file_icon/icon_file/{0}.png" />' +
+    '<label>{1}</label>' +
+    '<a href="{2}" target="_blank">查看</a>&nbsp;<span class="file-delete" data-file="{2}">删除</span></div>';
 function uploadFile(ctrl, url, columnId) {
     var maximum = $(ctrl).attr("data-maximum");
     var filelist = $(ctrl).siblings(".file-list");
@@ -121,16 +130,8 @@ function uploadFile(ctrl, url, columnId) {
         showMsg('最多上传' + maximum + '个', 'warning');
         return;
     }
-
     lkWeb.Upload($(ctrl).attr('id'), url, { 'id': columnId }, function (result) {
-        var fileItemTpl = '<div class="file-item" data-file="{2}">' +
-            '<img src="/images/file_icon/icon_file/{0}.png" />' +
-            '<label>{1}</label>' +
-            '<a href="{2}" download>查看</a>&nbsp; <span class="file-delete" data-file="{2}">删除</span></div>';
-        var imgItemTpl = '<div class="file-item" data-file="{2}">' +
-            '<img src="/images/file_icon/icon_file/{0}.png" />' +
-            '<label>{1}</label>' +
-            '<a href="{2}" target="_blank">查看</a>&nbsp;<span class="file-delete" data-file="{2}">删除</span></div>';
+
         var itemTpl = fileItemTpl;
         var isImage = $(ctrl).attr('data-type') == 'images';
         if (isImage) {

@@ -1,14 +1,9 @@
-文件，图片
-	列 可以设定 文件/图片 像龚那样 图片 下载，预览
-	编辑，，读取数据
-	查看文件 图片一个模态框 列表。。。
-	上传文件，，，入库
+ 
+涉及WebHelper.WebRootPath路径的统一下 linux windows    //。。。。 fileUrl.Replace('/', '\\').TrimStart('\\'));
 
 网站后台可以查看错误日志 列表选文件 然后查看。。。
 
 formvalidation select不验证
-
-
 
  生成列时 读取注释
 
@@ -38,8 +33,8 @@ syshelper,获取字典下拉选项
 超级管理与给予所有子系统权限
  http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
 	信息发布的 ueditor 上传文件等等。。。 .net core版本
-	上传文件用 fastdfs分布式，提前写好代码
-友情链接
+	上传文件用 fastdfs分布式之类的，反正有个附件服务器，提前写好代码 上传文件，，，入库
+友情链接 
 
 延后问题:
 	写详细使用文档
