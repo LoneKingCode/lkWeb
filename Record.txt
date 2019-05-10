@@ -1,6 +1,3 @@
- 
-涉及WebHelper.WebRootPath路径的统一下 linux windows    //。。。。 fileUrl.Replace('/', '\\').TrimStart('\\'));
-
 网站后台可以查看错误日志 列表选文件 然后查看。。。
 
 formvalidation select不验证

@@ -305,7 +305,7 @@ namespace lkWeb.Areas.Admin.Controllers
                             fileUrl = file,
                             fileType = Path.GetExtension(file).TrimStart('.'),
                             fileName = Path.GetFileNameWithoutExtension(file),
-                            columnType =  column.DataType
+                            columnType = column.DataType
                         });
                     }
                 }
@@ -521,7 +521,7 @@ namespace lkWeb.Areas.Admin.Controllers
                             string url = string.Empty;
                             string text = string.Empty;
                             string style = string.Empty;
-                            string filePath = Path.Combine(WebHelper.WebRootPath, fileUrl.Replace('/', '\\').TrimStart('\\'));
+                            string filePath = Path.Combine(WebHelper.WebRootPath, fileUrl.Replace('/', Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar));
                             if (System.IO.File.Exists(filePath))
                             {
                                 url = fileUrl;
@@ -778,7 +778,7 @@ namespace lkWeb.Areas.Admin.Controllers
             result.flag = true;
             result.data = new
             {
-                fileUrl = "/" + Path.Combine(WebHelper.UploadDir, dateDir).Replace("\\", "/") + "/" + fileName,
+                fileUrl = "/" + Path.Combine(WebHelper.UploadDir, dateDir).Replace(Path.DirectorySeparatorChar, '/') + "/" + fileName,
                 fileType = fileExt.TrimStart('.'),
                 fileName = Path.GetFileNameWithoutExtension(file.FileName)
             };
