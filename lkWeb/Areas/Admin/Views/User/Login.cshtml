@@ -9,7 +9,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-form/dist/jquery.form.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+ 
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -22,7 +22,16 @@
 
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#loginForm"), function () {
+            var rules = {
+                UserName: {
+                    required: true,                   
+                },
+                Password: {
+                    required: true,
+                },
+
+            }
+            lkWeb.FormValidation("#loginForm", rules, {}, function () {
                 var returnUrl = getParam('ReturnUrl')
                 if (IsNotEmpty(returnUrl))
                     window.location.href = returnUrl
@@ -55,17 +64,12 @@
                             @Html.AntiForgeryToken()
                             <span class="heading">用户登录</span>
                             <div class="form-group">
-                                <input type="text" class="form-control" name="UserName" placeholder="请输入登陆账户"
-                                       data-val="true" data-val-maxlength="用户名长度不能超过20个字符" data-val-maxlength-max="20"
-                                       data-val-minlength="用户名长度不能少于2个字符" data-val-minlength-min="2" data-val-required="用户名不能为空" />
-                                <span class="field-validation-valid" data-valmsg-for="UserName" data-valmsg-replace="true"></span>
+                                <input type="text" class="form-control" name="UserName" placeholder="请输入登陆账户"/>
+
                                 <i class="fa fa-user"></i>
                             </div>
                             <div class="form-group help">
-                                <input type="password" class="form-control" name="Password" placeholder="请输入密码"
-                                       data-val="true" data-val-maxlength="密码长度不能超过20个字符" data-val-maxlength-max="20"
-                                       data-val-minlength="密码长度不能少于3个字符" data-val-minlength-min="2" data-val-required="密码不能为空" />
-                                <span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                                <input type="password" class="form-control" name="Password" placeholder="请输入密码" />
                                 <i class="fa fa-lock"></i>
                                 <a href="#" class="fa fa-question-circle"></a>
                             </div>

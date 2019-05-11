@@ -7,7 +7,25 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#lkForm"), function () {
+            var rules = {
+                Name: {
+                    required: true,
+                },
+                Code: {
+                    required: true,
+                },
+                Value: {
+                    required: true,
+                },
+                Description: {
+                    required: true,
+                },
+                ListOrder: {
+                    required: true,
+                    number: true,
+                },
+            }
+            lkWeb.FormValidation("#lkForm", rules, {}, function () {
                 lkWeb.RefreshAndClose()
             }, "操作成功")
         })
@@ -15,7 +33,8 @@
     </script>
 }
     <form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
-        @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
+        <input type="hidden" name="Id" value="@Model.Id" />
+
         @Html.AntiForgeryToken()
         <div class="form-group">
             <label class="col-md-3 control-label">上级</label>
@@ -26,45 +45,31 @@
         <div class="form-group">
             <label class="col-md-3 control-label">名称</label>
             <div class="col-md-7">
-                <input type="text" class="form-control" asp-for="Name"
-                       data-val="true" data-val-maxlength="名称长度不能超过12个字符" data-val-maxlength-max="12"
-                        data-val-minlength-min="2" data-val-required="名称不能为空" />
-                <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                <input type="text" class="form-control" name="Name" value="@Model.Name" />
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-3 control-label">代码</label>
             <div class="col-md-7">
-                <input type="text" class="form-control" asp-for="Code"
-                       data-val="true" data-val-maxlength="代码长度不能超过12个字符" data-val-maxlength-max="12"
-                      data-val-required="代码不能为空" />
-                <span class="field-validation-valid" data-valmsg-for="Code" data-valmsg-replace="true"></span>
+                <input type="text" class="form-control" name="Code" value="@Model.Code"/>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-3 control-label">值</label>
             <div class="col-md-7">
-                <input type="text" class="form-control" asp-for="Value"
-                       data-val="true" data-val-required="值不能为空" />
-                <span class="field-validation-valid" data-valmsg-for="Value" data-valmsg-replace="true"></span>
+                <input type="text" class="form-control" name="Value" value="@Model.Value"/>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-3 control-label">描述</label>
             <div class="col-md-7">
-                <textarea type="text" class="form-control" asp-for="Description"
-                           data-val-maxlength="描述长度不能超过100个字符" data-val-maxlength-max="100"
-                           rows="3"></textarea>
-                <span class="field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+                <textarea type="text" class="form-control" name="Description" rows="3">"@Model.Description</textarea>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-3 control-label">排序</label>
             <div class="col-md-7">
-                <input type="text" class="form-control" asp-for="ListOrder"
-                       data-val-number="排序必须是一个数字。" data-val-required="排序不能为空" data-val="true" />
-                <span class="field-validation-valid" data-valmsg-for="ListOrder" data-valmsg-replace="true"></span>
-
+                <input type="text" class="form-control" name="ListOrder" value="@Model.ListOrder"/>
             </div>
         </div>
         <div class="form-group">

@@ -1,6 +1,9 @@
 网站后台可以查看错误日志 列表选文件 然后查看。。。
 
-formvalidation select不验证
+
+看设置的 select的value= 有效没效，，无效
+注意 tablecolumn的column.ValidationRule 测试
+修改验证错误信息的颜色
 
  生成列时 读取注释
 

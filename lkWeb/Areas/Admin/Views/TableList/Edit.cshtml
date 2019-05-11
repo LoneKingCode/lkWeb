@@ -7,8 +7,20 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
+            var rules = {
+                Name: {
+                    required: true,
+                },
+                Description: {
+                    required: true,
+                },
+                IsView: {
+                    required: true,
+                    number:true,
+                }
+            }
             $("[data-toggle='tooltip']").tooltip();
-            lkWeb.FormValidation($("#lkForm"), function () {
+            lkWeb.FormValidation("#lkForm", rules, {},function () {
                 lkWeb.RefreshAndClose()
             }, "操作成功")
         })
@@ -16,74 +28,69 @@
     </script>
 }
     <form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
-        @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
+        <input type="hidden" name="Id" value="@Model.Id" />
+
         @Html.AntiForgeryToken()
         <div class="form-group">
             <label class="col-md-1 control-label">表名</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="Name"
-                       data-val="true" data-val-maxlength="表名长度不能超过50个字符" data-val-maxlength-max="50"
-                       data-val-minlength="表名长度不能少于2个字符" data-val-minlength-min="2" data-val-required="表名不能为空" />
-                <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                <input type="text" class="form-control" name="Name" value="@Model.Name"/>
             </div>
             <label class="col-md-1 control-label">表说明</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="Description"
-                       data-val="true" data-val-maxlength="表说明长度不能超过50个字符" data-val-maxlength-max="50"
-                       data-val-minlength="表说明长度不能少于2个字符" data-val-minlength-min="2" data-val-required="表说明不能为空" />
-                <span class="field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+                <input type="text" class="form-control" name="Description" value="@Model.Description"/>
             </div>
             <label class="col-md-1 control-label">删除表名</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="DeleteTableName" data-toggle="tooltip" title="一般为此表名" />
+                <input type="text" class="form-control" name="DeleteTableName" data-toggle="tooltip" title="一般为此表名" value="@Model.DeleteTableName" />
             </div>
             <label class="col-md-1 control-label">详情是否允许</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="AllowDetail" data-toggle="tooltip" title="1 or 0" />
+                <input type="text" class="form-control" name="AllowDetail" value="@Model.AllowDetail" data-toggle="tooltip" title="1 or 0" />
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-1 control-label">查看是否允许</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="AllowView" data-toggle="tooltip" title="1 or 0" />
+                <input type="text" class="form-control" name="AllowView" value="@Model.AllowView" data-toggle="tooltip" title="1 or 0" />
             </div>
             <label class="col-md-1 control-label">添加是否允许</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="AllowAdd" data-toggle="tooltip" title="1 or 0" />
+                <input type="text" class="form-control" name="AllowAdd" value="@Model.AllowAdd" data-toggle="tooltip" title="1 or 0" />
             </div>
             <label class="col-md-1 control-label">编辑是否允许</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="AllowEdit" data-toggle="tooltip" title="1 or 0" />
+                <input type="text" class="form-control" name="AllowEdit" value="@Model.AllowEdit" data-toggle="tooltip" title="1 or 0" />
             </div>
             <label class="col-md-1 control-label">删除是否允许</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="AllowDelete" data-toggle="tooltip" title="1 or 0" />
+                <input type="text" class="form-control" name="AllowDelete" value="@Model.AllowDelete" data-toggle="tooltip" title="1 or 0" />
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-1 control-label">导入是否允许</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="AllowImport" data-toggle="tooltip" title="1 or 0" />
+                <input type="text" class="form-control" name="AllowImport" value="@Model.AllowImport" data-toggle="tooltip" title="1 or 0" />
             </div>
             <label class="col-md-1 control-label">导出是否允许</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="AllowExport" data-toggle="tooltip" title="1 or 0" />
+                <input type="text" class="form-control" name="AllowExport" value="@Model.AllowExport" data-toggle="tooltip" title="1 or 0" />
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">查看,添加编辑宽高</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="ViewEditWidthHeight" data-toggle="tooltip" title="width,height|width,height(单位px或%,非法值默认改为90%)" />
+                <input type="text" class="form-control" name="ViewEditWidthHeight" value="@Model.ViewEditWidthHeight" data-toggle="tooltip" title="width,height|width,height(单位px或%,非法值默认改为90%)" />
             </div>
             <label class="col-md-1 control-label">添加编辑详情每行列数</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="ColumnPerRow" data-toggle="tooltip" title="例如2" />
+                <input type="text" class="form-control" name="ColumnPerRow" value="@Model.ColumnPerRow" data-toggle="tooltip" title="例如2" />
             </div>
             <label class="col-md-1 control-label">查询每行列数</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="SearchColumnPerRow" data-toggle="tooltip" title="例如2" />
+                <input type="text" class="form-control" name="SearchColumnPerRow" value="@Model.SearchColumnPerRow" data-toggle="tooltip" title="例如2" />
             </div>
         </div>
 
@@ -94,87 +101,85 @@
             </div>
             <label class="col-md-1 control-label">是否视图</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="IsView" data-val-maxlength="是否视图长度不能超过2个字符" data-val-maxlength-max="2"
-                       data-val="true" data-val-required="是否视图不能为空" data-toggle="tooltip" title="1 or 0" />
-                <span class="field-validation-valid" data-valmsg-for="IsView" data-valmsg-replace="true"></span>
+                <input type="text" class="form-control" name="IsView" value="@Model.IsView"  />
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">默认排序条件</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="DefaultSort" data-toggle="tooltip" title="例如:Id desc" />
+                <input type="text" class="form-control" name="DefaultSort" value="@Model.DefaultSort"  data-toggle="tooltip" title="例如:Id desc" />
             </div>
             <label class="col-md-1 control-label">允许删除条件</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="ForbiddenDeleteFilter" data-toggle="tooltip" title="例如: Id < 10 可选参数{UserId}" />
+                <input type="text" class="form-control" name="ForbiddenDeleteFilter" value="@Model.ForbiddenDeleteFilter"  data-toggle="tooltip" title="例如: Id < 10 可选参数{UserId}" />
             </div>
             <label class="col-md-1 control-label">允许更新条件</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="ForbiddenUpdateFilter" data-toggle="tooltip" title="例如: Id < 10 可选参数{UserId}" />
+                <input type="text" class="form-control" name="ForbiddenUpdateFilter" value="@Model.ForbiddenUpdateFilter"  data-toggle="tooltip" title="例如: Id < 10 可选参数{UserId}" />
             </div>
             <label class="col-md-1 control-label">允许添加条件</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="ForbiddenAddFilter" placeholder="未实现" />
+                <input type="text" class="form-control" name="ForbiddenAddFilter" value="@Model.ForbiddenAddFilter"  placeholder="未实现" />
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-1 control-label">默认过滤条件</label>
             <div class="col-md-2">
-                <input type="text" class="form-control" asp-for="DefaultFilter" data-toggle="tooltip" title="例如: Id != 1000" />
+                <input type="text" class="form-control" name="DefaultFilter" value="@Model.DefaultFilter"  data-toggle="tooltip" title="例如: Id != 1000" />
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">批量操作</label>
             <div class="col-md-7">
-                <input type="text" class="form-control" asp-for="BatchOperation" data-toggle="tooltip" title="例如: IsTop|是否置顶,Hide|是否隐藏 IsTop为表中字段" />
+                <input type="text" class="form-control" name="BatchOperation" value="@Model.BatchOperation"  data-toggle="tooltip" title="例如: IsTop|是否置顶,Hide|是否隐藏 IsTop为表中字段" />
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">列扩展方法</label>
             <div class="col-md-7">
-                <textarea class="form-control" asp-for="ExtendFunction" rows="3" data-toggle="tooltip" title="{Id}为Id,{UserId}为UserId"></textarea>
+                <textarea class="form-control" name="ExtendFunction" value="@Model.ExtendFunction"  rows="3" data-toggle="tooltip" title="{Id}为Id,{UserId}为UserId"></textarea>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">顶部扩展方法</label>
             <div class="col-md-7">
-                <textarea class="form-control" asp-for="TopExtendFunction" rows="3" data-toggle="tooltip" title="{Id}为Id,{UserId}为UserId"></textarea>
+                <textarea class="form-control" name="TopExtendFunction" value="@Model.TopExtendFunction"  rows="3" data-toggle="tooltip" title="{Id}为Id,{UserId}为UserId"></textarea>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">列表页JS</label>
             <div class="col-md-7">
-                <textarea class="form-control" asp-for="ListPageJavaScript" rows="3" data-toggle="tooltip"></textarea>
+                <textarea class="form-control" name="ListPageJavaScript" value="@Model.ListPageJavaScript"  rows="3" data-toggle="tooltip"></textarea>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">添加页JS</label>
             <div class="col-md-7">
-                <textarea class="form-control" asp-for="AddPageJavaScript" rows="3" data-toggle="tooltip"></textarea>
+                <textarea class="form-control" name="AddPageJavaScript" value="@Model.AddPageJavaScript"  rows="3" data-toggle="tooltip"></textarea>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">编辑页JS</label>
             <div class="col-md-7">
-                <textarea class="form-control" asp-for="EditPageJavaScript" rows="3" data-toggle="tooltip"></textarea>
+                <textarea class="form-control" name="EditPageJavaScript" value="@Model.EditPageJavaScript"  rows="3" data-toggle="tooltip"></textarea>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">详情页JS</label>
             <div class="col-md-7">
-                <textarea class="form-control" asp-for="DetailPageJavaScript" rows="3" data-toggle="tooltip"></textarea>
+                <textarea class="form-control" name="DetailPageJavaScript" value="@Model.DetailPageJavaScript"  rows="3" data-toggle="tooltip"></textarea>
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-1 control-label">自定义CSS</label>
             <div class="col-md-7">
-                <textarea class="form-control" asp-for="CustomCssStyle" rows="3" data-toggle="tooltip"></textarea>
+                <textarea class="form-control" name="CustomCssStyle" value="@Model.CustomCssStyle"  rows="3" data-toggle="tooltip"></textarea>
             </div>
         </div>
 
         <div class="form-group">
-            <div class="col-md-3 col-md-offset-3">
+            <div class="col-md-3 col-md-offset-5">
                 <button type="submit" class="btn btn-success">确定</button>
                 <button type="button" class="btn btn-default" onclick="lkWeb.Close()">返回</button>
             </div>

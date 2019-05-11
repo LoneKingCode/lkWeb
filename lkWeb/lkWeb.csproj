@@ -15,21 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\lib\datatables\media\src\**" />
-    <Compile Remove="wwwroot\lib\datatables\media\unit_testing\**" />
-    <Compile Remove="wwwroot\lib\datatables\scripts\**" />
     <Compile Remove="wwwroot\lib\layer\build\**" />
     <Compile Remove="wwwroot\lib\layer\src\skin\**" />
     <Compile Remove="wwwroot\lib\ueditor\net\**" />
-    <EmbeddedResource Remove="wwwroot\lib\datatables\media\src\**" />
-    <EmbeddedResource Remove="wwwroot\lib\datatables\media\unit_testing\**" />
-    <EmbeddedResource Remove="wwwroot\lib\datatables\scripts\**" />
     <EmbeddedResource Remove="wwwroot\lib\layer\build\**" />
     <EmbeddedResource Remove="wwwroot\lib\layer\src\skin\**" />
     <EmbeddedResource Remove="wwwroot\lib\ueditor\net\**" />
-    <None Remove="wwwroot\lib\datatables\media\src\**" />
-    <None Remove="wwwroot\lib\datatables\media\unit_testing\**" />
-    <None Remove="wwwroot\lib\datatables\scripts\**" />
     <None Remove="wwwroot\lib\layer\build\**" />
     <None Remove="wwwroot\lib\layer\src\skin\**" />
     <None Remove="wwwroot\lib\ueditor\net\**" />
@@ -66,28 +57,10 @@
     <Content Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
     <Content Include="wwwroot\lib\bootstrap\dist\js\npm.js" />
     <Content Include="wwwroot\lib\bootstrap\LICENSE" />
-    <Content Include="wwwroot\lib\DataTables\.bower.json" />
-    <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables.css" />
-    <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables.min.css" />
-    <Content Include="wwwroot\lib\DataTables\media\css\jquery.dataTables_themeroller.css" />
-    <Content Include="wwwroot\lib\DataTables\media\images\favicon.ico" />
-    <Content Include="wwwroot\lib\DataTables\media\images\Sorting icons.psd" />
-    <Content Include="wwwroot\lib\DataTables\media\images\sort_asc.png" />
-    <Content Include="wwwroot\lib\DataTables\media\images\sort_asc_disabled.png" />
-    <Content Include="wwwroot\lib\DataTables\media\images\sort_both.png" />
-    <Content Include="wwwroot\lib\DataTables\media\images\sort_desc.png" />
-    <Content Include="wwwroot\lib\DataTables\media\images\sort_desc_disabled.png" />
-    <Content Include="wwwroot\lib\DataTables\media\js\jquery.dataTables.js" />
-    <Content Include="wwwroot\lib\DataTables\media\js\jquery.js" />
-    <Content Include="wwwroot\lib\jquery-validation-unobtrusive\.bower.json" />
-    <Content Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
-    <Content Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
-    <Content Include="wwwroot\lib\jquery-validation\.bower.json" />
     <Content Include="wwwroot\lib\jquery-validation\dist\additional-methods.js" />
     <Content Include="wwwroot\lib\jquery-validation\dist\additional-methods.min.js" />
     <Content Include="wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
     <Content Include="wwwroot\lib\jquery-validation\dist\jquery.validate.min.js" />
-    <Content Include="wwwroot\lib\jquery-validation\LICENSE.md" />
     <Content Include="wwwroot\lib\layer\.bower.json" />
     <Content Include="wwwroot\lib\layer\bower.json" />
     <Content Include="wwwroot\lib\layer\CHANGELOG.md" />

@@ -10,7 +10,15 @@
         var ue = UE.getEditor('InfoContent');
 
         $(function () {
-            lkWeb.FormValidation($("#lkForm"), function () {
+            var rules = {
+                Title: {
+                    required: true,
+                },
+                InfoContent: {
+                    required: true,
+                },
+            }
+            lkWeb.FormValidation("#lkForm", rules, {}, function () {
                 lkWeb.RefreshAndClose()
             }, "操作成功")
         })
@@ -28,16 +36,15 @@
     <div class="form-group">
         <label class="col-md-3 control-label">标题</label>
         <div class="col-md-7">
-            <input type="text" class="form-control" name="Title"
-                   data-val="true" data-val-maxlength="标题长度不能超过50个字符" data-val-maxlength-max="50"
-                   data-val-minlength="标题长度不能少于2个字符" data-val-minlength-min="2" data-val-required="标题不能为空" />
-            <span class="field-validation-valid" data-valmsg-for="Title" data-valmsg-replace="true"></span>
+            <input type="text" class="form-control" name="Title" />
+
         </div>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">内容</label>
         <div class="col-md-7">
-            <script id="InfoContent" name="InfoContent" type="text/plain" style="height:400px;"></script>
+            <script id="InfoContent" name="InfoContent" type="text/plain" style="height:400px;">
+            </script>
         </div>
     </div>
     <div class="form-group">

@@ -254,10 +254,53 @@ lkWeb.Upload = function (controlId, url, formParams, successCallback, errorCallb
     })
 }
 //form validation
-lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
+lkWeb.FormValidation = function (validationForm, rules, messages, successCallBack, successMsg) {
+    var option = {
+        datatype: "json",
+        success: function (data) {
+            lkWeb.CloseLoad();
+            if (data.flag == true) {
+                if (IsNotEmpty(successMsg))
+                    layer.alert(successMsg);
+                else if (IsNotEmpty(data.msg))
+                    layer.alert(data.msg);
+                setTimeout(function () {
+                    if (isFunction(successCallBack))
+                        successCallBack();
+                }, 1200);
+            }
+            else {
+                layer.alert('操作失败,' + data.msg);
+            }
+        },
+        error: function (error) {
+            lkWeb.CloseLoad();
+            layer.alert("提交请求失败");
+
+        }
+    };
+
+    $(validationForm).validate({
+        rules: rules,
+        messages: messages,
+        errorPlacement: function (error, element) {
+            log(error)
+            error.appendTo(element.parent());
+        },
+        ignore: '',
+        focusInvalid: true,
+        submitHandler: function (form) {
+            lkWeb.ShowLoad();
+            $(form).ajaxSubmit(option);
+            return false;
+        }
+    });
+    return option;  
+}
+
+lkWeb._FormValidation = function (validationForm, successCallBack, successMsg) {
     validationForm.data("validator").settings.ignore = ""; //validate默认对隐藏的元素是不进行校验的，所以忽略了select框的校验
     validationForm.data("validator").settings.focusInvalid = true;
-    log(validationForm.data("validator").settings.ignore)
 
     var option = {
         datatype: "json",
@@ -280,7 +323,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
         error: function (error) {
             lkWeb.CloseLoad()
             layer.alert("提交请求失败");
-            // console.log(error);
+
         }
     };
     // jQuery Unobtrusive Validation 只能这样设置才有效
@@ -289,7 +332,7 @@ lkWeb.FormValidation = function (validationForm, successCallBack, successMsg) {
         $(form).ajaxSubmit(option);
         return false;
     };
-    return option;  
+    return option;
 }
 
 //Layer

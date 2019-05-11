@@ -7,7 +7,18 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-            lkWeb.FormValidation($("#lkForm"), function () {
+            var rules = {
+                Name: {
+                    required: true,
+                },
+                Leader: {
+                    required: true,
+                },
+                Description: {
+                    required: true,
+                },
+            }
+            lkWeb.FormValidation("#lkForm", rules, {},function () {
                 lkWeb.RefreshAndClose()
             }, "操作成功")
         })
@@ -26,27 +37,19 @@
     <div class="form-group">
         <label class="col-md-3 control-label">部门名称</label>
         <div class="col-md-7">
-            <input type="text" class="form-control" asp-for="Name"
-                   data-val="true" data-val-maxlength="部门名称长度不能超过12个字符" data-val-maxlength-max="12"
-                   data-val-minlength="部门名称长度不能少于2个字符" data-val-minlength-min="2" data-val-required="部门名称不能为空" />
-            <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+            <input type="text" class="form-control" name="Name" value="@Model.Name"/>
         </div>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">负责人</label>
         <div class="col-md-7">
-            <input type="text" class="form-control" asp-for="Leader"
-                   data-val="true" data-val-maxlength="负责人长度不能超过12个字符" data-val-maxlength-max="12"
-                   data-val-minlength="负责人长度不能少于2个字符" data-val-minlength-min="2" data-val-required="负责人不能为空" />
-            <span class="field-validation-valid" data-valmsg-for="Leader" data-valmsg-replace="true"></span>
+            <input type="text" class="form-control" name="Leader" value="@Model.Leader" />
         </div>
     </div>
     <div class="form-group">
         <label class="col-md-3 control-label">部门说明</label>
         <div class="col-md-7">
-            <textarea class="form-control" asp-for="Description"
-                      data-val="true" data-val-maxlength="部门说明长度不能超过100个字符" data-val-maxlength-max="100" rows="3">@Model.Description</textarea>
-            <span class="field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+            <textarea class="form-control" name="Description" rows="3">@Model.Description</textarea>
         </div>
     </div>
     <div class="form-group">

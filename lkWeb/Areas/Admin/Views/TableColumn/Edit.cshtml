@@ -7,193 +7,197 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
+            var rules = {
+                Name: {
+                    required: true,
+                },
+                Description: {
+                    required: true,
+                },
+            }
             $("[data-toggle='tooltip']").tooltip();
-            lkWeb.FormValidation($("#lkForm"), function () {
+            lkWeb.FormValidation("#lkForm", rules, {}, function () {
                 lkWeb.RefreshAndClose()
             }, "操作成功")
         })
 
     </script>
 }
-<form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
-    @Html.HiddenFor(item => item.Id, new { @class = "form-control" })
-    @Html.AntiForgeryToken()
-    <div class="form-group">
-        <label class="col-md-1 control-label">所属表</label>
-        <div class="col-md-2">
-            @Html.DropDownList("TableId", (SelectList)ViewBag.TableList, new { @class = "form-control" })
-        </div>
-        <label class="col-md-1 control-label">列名称</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="Name"
-                   data-val="true" data-val-maxlength="列名称长度不能超过12个字符" data-val-maxlength-max="50"
-                   data-val-minlength="列名称长度不能少于2个字符" data-val-minlength-min="2" data-val-required="列名称不能为空" />
-            <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
-        </div>
-        <label class="col-md-1 control-label">列说明</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="Description"
-                   data-val="true" data-val-maxlength="列说明长度不能超过50个字符" data-val-maxlength-max="50"
-                   data-val-required="列说明不能为空" />
-            <span class="field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
-        </div>
-        <label class="col-md-1 control-label">数据类型</label>
-        <div class="col-md-2">
-            @Html.DropDownList("DataType", (SelectList)ViewBag.DataTypeList, new { @class = "form-control" })
-        </div>
-    </div>
+    <form class="form-horizontal" action="@Url.Action("Edit");" method="post" id="lkForm">
+        <input type="hidden" name="Id" value="@Model.Id" />
 
-    <div class="form-group">
-        <label class="col-md-1 control-label">日期格式</label>
-        <div class="col-md-2">
-            <select asp-for="DateFormat" class="form-control">
-                <option value="yyyy-mm-dd">年月日</option>
-                <option value="yyyy-mm-dd hh">年月日时</option>
-                <option value="yyyy-mm-dd hh:ii">年月日时分</option>
-                <option value="mm-dd">月日</option>
-                <option value="mm-dd hh">月日时</option>
-                <option value="mm-dd hh:ii">月日时分</option>
-            </select>
-        </div>
-        <label class="col-md-1 control-label">默认值</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="DefaultValue" />
-        </div>
-        <label class="col-md-1 control-label">是否主键</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="PrimaryKey" data-toggle="tooltip" title="目前只导入导出用到" />
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-md-1 control-label">是否必填</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="Required" />
-        </div>
-        <label class="col-md-1 control-label">输入控制</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="MaxLength" data-toggle="tooltip" title="最大长度" />
-        </div>
-        <label class="col-md-1 control-label">列宽</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="ColumnWidth" data-toggle="tooltip" title="例如:100px或10%" />
-        </div>
-        <label class="col-md-1 control-label">跨列</label>
-        <div class="col-md-2">
-            <input type="number" class="form-control" asp-for="ColSpan" data-toggle="tooltip" title="例如:2或3" />
-        </div>
-    </div>
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label class="col-md-1 control-label">所属表</label>
+            <div class="col-md-2">
+                @Html.DropDownList("TableId", (SelectList)ViewBag.TableList, new { @class = "form-control" })
+            </div>
+            <label class="col-md-1 control-label">列名称</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="Name" value="@Model.Name" />
 
-    <div class="form-group">
-        <label class="col-md-1 control-label">详情显示顺序</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="ViewOrder" />
-        </div>
-        <label class="col-md-1 control-label">列表显示顺序</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="ListOrder" />
-        </div>
-        <label class="col-md-1 control-label">添加编辑显示顺序</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="EditOrder" />
-        </div>
-        <label class="col-md-1 control-label">验证规则</label>
-        <div class="col-md-2">
-            <select class="form-control" asp-for="ValidationRule">
-                <option value="" selected="selected">无</option>
-                <option value="letterNumber='true'">字母数字</option>
-                <option value="cnLetterNumber='true'">汉字字母数字</option>
-                <option value="chinese='true'">汉字</option>
-                <option value="chineseAll='true'">汉字和中文符号</option>
-                <option value="isEmail='true'">邮箱</option>
-                <option value="isIdCard='true'">身份证号</option>
-                <option value="isMobile='true'">手机号</option>
-                <option value="isTel='true'">电话号码</option>
-                <option value="isContactPhone='true'">联系电话(手机/电话)</option>
-                <option value="isZipCode='true'">邮政编码</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-1 control-label">导入是否可见</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="ImportVisible" />
-        </div>
-        <label class="col-md-1 control-label">导出是否可见</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="ExportVisible" />
-        </div>
-        <label class="col-md-1 control-label">详情是否可见</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="ViewVisible" />
-        </div>
-        <label class="col-md-1 control-label">添加是否可见</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="AddVisible" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-1 control-label">查询是否可见</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="SearchVisible" />
-        </div>
-        <label class="col-md-1 control-label">编辑是否可见</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="EditVisible" />
-        </div>
-        <label class="col-md-1 control-label">列表是否可见</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="ListVisible" />
+            </div>
+            <label class="col-md-1 control-label">列说明</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="Description" value="@Model.Description" />
+            </div>
+            <label class="col-md-1 control-label">数据类型</label>
+            <div class="col-md-2">
+                @Html.DropDownList("DataType", (SelectList)ViewBag.DataTypeList, new { @class = "form-control" })
+            </div>
         </div>
 
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-1 control-label">外部SQL</label>
-        <div class="col-md-7">
-            <textarea class="form-control" asp-for="OutSql" rows="3" data-toggle="tooltip"
-                      title="out列类型:例如Id,Name|Sys_Activity|id>0|1|Sys_DeptActivity|DeptId,ActivityId (主键,显示列名|表名|条件|是否保存到它表|保存表名,当前表外键名,Out表外键名)"></textarea>
+        <div class="form-group">
+            <label class="col-md-1 control-label">日期格式</label>
+            <div class="col-md-2">
+                <select name="DateFormat" class="form-control" value="@Model.DateFormat" >
+                    <option value="yyyy-mm-dd">年月日</option>
+                    <option value="yyyy-mm-dd hh">年月日时</option>
+                    <option value="yyyy-mm-dd hh:ii">年月日时分</option>
+                    <option value="mm-dd">月日</option>
+                    <option value="mm-dd hh">月日时</option>
+                    <option value="mm-dd hh:ii">月日时分</option>
+                </select>
+            </div>
+            <label class="col-md-1 control-label">默认值</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="DefaultValue" value="@Model.DefaultValue"  />
+            </div>
+            <label class="col-md-1 control-label">是否主键</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="PrimaryKey" data-toggle="tooltip" title="目前只导入导出用到" value="@Model.PrimaryKey" />
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="col-md-1 control-label">自定义内容</label>
-        <div class="col-md-7">
-            <textarea class="form-control" asp-for="CustomContent" rows="3" data-toggle="tooltip" title="可选参数{UserId} {Id}"></textarea>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-md-1 control-label">枚举值范围</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="EnumRange" data-toggle="tooltip" title="例如 模块,菜单,按钮" />
-        </div>
-        <label class="col-md-1 control-label">多选值范围</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="SelectRange" data-toggle="tooltip" title="例如 1,选项1|2,选项2|3,选项3" />
-        </div>
-
-
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-1 control-label">禁止上传文件类型</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="ForbiddenFileExtension" data-toggle="tooltip" title="例如 aspx|rar|jpg" />
-        </div>
-        <label class="col-md-1 control-label">文件最低上传数</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="UploadMinimum" />
-        </div>
-        <label class="col-md-1 control-label">文件最大上传数</label>
-        <div class="col-md-2">
-            <input type="text" class="form-control" asp-for="UploadMaximum" />
+        <div class="form-group">
+            <label class="col-md-1 control-label">是否必填</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="Required" value="@Model.Required" />
+            </div>
+            <label class="col-md-1 control-label">输入控制</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="MaxLength" data-toggle="tooltip" title="最大长度" value="@Model.MaxLength" />
+            </div>
+            <label class="col-md-1 control-label">列宽</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ColumnWidth" data-toggle="tooltip" title="例如:100px或10%" value="@Model.ColumnWidth" />
+            </div>
+            <label class="col-md-1 control-label">跨列</label>
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="ColSpan" data-toggle="tooltip" title="例如:2或3" value="@Model.ColSpan"  />
+            </div>
         </div>
 
-    </div>
-    <div class="form-group">
-        <div class="col-md-3 col-md-offset-5">
-            <button type="submit" class="btn btn-success">确定</button>
-            <button type="button" class="btn btn-default" onclick="lkWeb.Close()">返回</button>
+        <div class="form-group">
+            <label class="col-md-1 control-label">详情显示顺序</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ViewOrder" value="@Model.ViewOrder" />
+            </div>
+            <label class="col-md-1 control-label">列表显示顺序</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ListOrder" value="@Model.ListOrder" />
+            </div>
+            <label class="col-md-1 control-label">添加编辑显示顺序</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="EditOrder" value="@Model.EditOrder" />
+            </div>
+            <label class="col-md-1 control-label">验证规则</label>
+            <div class="col-md-2">
+                <select class="form-control" name="ValidationRule" value="@Model.ValidationRule">
+                    <option value="" selected="selected">无</option>
+                    <option value="letterNumber:true">字母数字</option>
+                    <option value="cnLetterNumber:true">汉字字母数字</option>
+                    <option value="chinese:true">汉字</option>
+                    <option value="chineseAll:true">汉字和中文符号</option>
+                    <option value="isEmail:true">邮箱</option>
+                    <option value="isIdCard:true">身份证号</option>
+                    <option value="isMobile:true">手机号</option>
+                    <option value="isTel:true">电话号码</option>
+                    <option value="isContactPhone:true">联系电话(手机/电话)</option>
+                    <option value="isZipCode:true">邮政编码</option>
+                </select>
+            </div>
         </div>
-    </div>
-</form>
+
+        <div class="form-group">
+            <label class="col-md-1 control-label">导入是否可见</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ImportVisible" value="@Model.ImportVisible"  />
+            </div>
+            <label class="col-md-1 control-label">导出是否可见</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ExportVisible" value="@Model.ExportVisible" />
+            </div>
+            <label class="col-md-1 control-label">详情是否可见</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ViewVisible" value="@Model.ViewVisible" />
+            </div>
+            <label class="col-md-1 control-label">添加是否可见</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="AddVisible" value="@Model.AddVisible"  />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-1 control-label">查询是否可见</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="SearchVisible" value="@Model.SearchVisible" />
+            </div>
+            <label class="col-md-1 control-label">编辑是否可见</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="EditVisible" value="@Model.EditVisible" />
+            </div>
+            <label class="col-md-1 control-label">列表是否可见</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ListVisible" value="@Model.ListVisible" />
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-1 control-label">外部SQL</label>
+            <div class="col-md-7">
+                <textarea class="form-control" name="OutSql" rows="3" data-toggle="tooltip" value="@Model.OutSql" 
+                          title="out列类型:例如Id,Name|Sys_Activity|id>0|1|Sys_DeptActivity|DeptId,ActivityId (主键,显示列名|表名|条件|是否保存到它表|保存表名,当前表外键名,Out表外键名)"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-1 control-label">自定义内容</label>
+            <div class="col-md-7">
+                <textarea class="form-control" name="CustomContent" value="@Model.CustomContent"  rows="3" data-toggle="tooltip" title="可选参数{UserId} {Id}"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-1 control-label">枚举值范围</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="EnumRange" value="@Model.EnumRange"  data-toggle="tooltip" title="例如 模块,菜单,按钮" />
+            </div>
+            <label class="col-md-1 control-label">多选值范围</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="SelectRange" value="@Model.SelectRange" data-toggle="tooltip" title="例如 1,选项1|2,选项2|3,选项3" />
+            </div>
+
+
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-1 control-label">禁止上传文件类型</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ForbiddenFileExtension" value="@Model.ForbiddenFileExtension" data-toggle="tooltip" title="例如 aspx|rar|jpg" />
+            </div>
+            <label class="col-md-1 control-label">文件最低上传数</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="UploadMinimum" value="@Model.UploadMinimum" />
+            </div>
+            <label class="col-md-1 control-label">文件最大上传数</label>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="UploadMaximum" value="@Model.UploadMaximum"  />
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-md-3 col-md-offset-5">
+                <button type="submit" class="btn btn-success">确定</button>
+                <button type="button" class="btn btn-default" onclick="lkWeb.Close()">返回</button>
+            </div>
+        </div>
+    </form>

@@ -1,4 +1,4 @@
-﻿
+﻿var rules = {};
 
 $(function () {
 
@@ -7,7 +7,7 @@ $(function () {
         $("input[type='file']").each(function (i, n) {
             var minimum = $(n).attr("data-minimum");
             var filelist = $(n).siblings(".file-list");
-            log(minimum, filelist)
+ 
             if (IsNotEmpty(minimum)) {
                 if (filelist.children('.file-item').length < minimum) {
                     showMsg('最少上传' + minimum + '个', 'warning');
@@ -20,8 +20,8 @@ $(function () {
             $("#btnSubmit").click();
         }
     })
-    if ($("#lkForm").length != 0)
-        lkWeb.FormValidation($("#lkForm"), function () {
+    if ("#lkForm".length != 0)
+        lkWeb.FormValidation("#lkForm", rules, {}, function () {
             lkWeb.RefreshAndClose();
         });
 
@@ -31,15 +31,8 @@ $(function () {
         dropdownParent: $("body")
     }
     );
-    $('.select').on("select2:select", function (e) {
-        log(e)
-        // $(e.target).select2("close");
-    });
-    //验证无效
-    $(".select").on("select2:close", function (e) {
-        log('close')
+    $(".select").change(function () {
         $(this).valid();
-        return false;
     });
 
     $(".datetimepicker").each(function (i, n) {
@@ -79,7 +72,7 @@ $(function () {
                     }
                 }
                 fileIdInput.val(unique(fileIdArr).join(','));
-                log(ctrl.parent().parent().siblings("input[type='file']").first().attr('data-type'))
+    
                 if (ctrl.parent().parent().siblings("input[type='file']").first().attr('data-type') == "images") {
                     ctrl.parent().remove();
                     imageViewer();

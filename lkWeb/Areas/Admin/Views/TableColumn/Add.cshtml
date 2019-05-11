@@ -5,8 +5,18 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
+            var rules = {
+                Name: {
+                    required: true,
+                },
+                Description: {
+                    required: true,
+                },
+
+            }
+
             $("[data-toggle='tooltip']").tooltip();
-            lkWeb.FormValidation($("#lkForm"), function () {
+            lkWeb.FormValidation("#lkForm", rules, {}, function () {
                 lkWeb.RefreshAndClose()
             }, "操作成功")
         })
@@ -22,17 +32,12 @@
         </div>
         <label class="col-md-1 control-label">列名称</label>
         <div class="col-md-2">
-            <input type="text" class="form-control" name="Name"
-                   data-val="true" data-val-maxlength="列名称长度不能超过12个字符" data-val-maxlength-max="50"
-                   data-val-minlength="列名称长度不能少于2个字符" data-val-minlength-min="2" data-val-required="列名称不能为空" />
-            <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+            <input type="text" class="form-control" name="Name"/>
         </div>
         <label class="col-md-1 control-label">列说明</label>
         <div class="col-md-2">
-            <input type="text" class="form-control" name="Description"
-                   data-val="true" data-val-maxlength="列说明长度不能超过50个字符" data-val-maxlength-max="50"
-                   data-val-required="列说明不能为空" />
-            <span class="field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+            <input type="text" class="form-control" name="Description" />
+
         </div>
         <label class="col-md-1 control-label">数据类型</label>
         <div class="col-md-2">
@@ -97,16 +102,16 @@
         <div class="col-md-2">
             <select class="form-control" name="ValidationRule">
                 <option value="" selected="selected">无</option>
-                <option value="letterNumber='true'">字母数字</option>
-                <option value="cnLetterNumber='true'">汉字字母数字</option>
-                <option value="chinese='true'">汉字</option>
-                <option value="chineseAll='true'">汉字和中文符号</option>
-                <option value="isEmail='true'">邮箱</option>
-                <option value="isIdCard='true'">身份证号</option>
-                <option value="isMobile='true'">手机号</option>
-                <option value="isTel='true'">电话号码</option>
-                <option value="isContactPhone='true'">联系电话(手机/电话)</option>
-                <option value="isZipCode='true'">邮政编码</option>
+                <option value="letterNumber:true">字母数字</option>
+                <option value="cnLetterNumber:true">汉字字母数字</option>
+                <option value="chinese:true">汉字</option>
+                <option value="chineseAll:true">汉字和中文符号</option>
+                <option value="isEmail:true">邮箱</option>
+                <option value="isIdCard:true">身份证号</option>
+                <option value="isMobile:true">手机号</option>
+                <option value="isTel:true">电话号码</option>
+                <option value="isContactPhone:true">联系电话(手机/电话)</option>
+                <option value="isZipCode:true">邮政编码</option>
             </select>
         </div>
     </div>

@@ -23,6 +23,21 @@
     <script type="text/javascript">
         @Html.Raw(Model.Table.EditPageJavaScript)
 
+        rules = {
+        @{
+            var data = "";
+            var tpl = "{0}:{{ required:{1},maxlength:{2},{3} }},";
+            foreach (var column in Model.TableColumn)
+            {
+                data += string.Format(tpl,column.Name, (
+                    column.Required == 1 ? "true" : "false"),
+                    column.MaxLength, (
+                    string.IsNullOrEmpty(column.ValidationRule) ? "" : column.ValidationRule));
+            }
+            @Html.Raw(data)
+        }
+        };
+
         $(function () {
             //加载富文本
             @{
@@ -37,13 +52,12 @@
         })
 
         function loadData() {
-            var fileData = @Html.Raw(ViewData["FileData"]);
+            var fileData = '@Html.Raw(ViewData["FileData"])';
             if (IsEmpty(fileData))
                 return;
 
             for (var key in fileData) {
                 var items = fileData[key];
-                log('items',items)
                 var itemHtml = "";
                 for (var i in items) {
                     var item = items[i];
@@ -71,13 +85,11 @@
                   "<div class=\"file-list {5}\" id=\"{6}\"></div>" +
                   "<div class=\"file-upload\" onclick=\"$('#file{0}').click()\"><i class=\"fa fa-upload\"></i></div>";
                 string textareaTpl = "<textarea class=\"form-control\" name=\"{0}\" rows=\"3\">{1}</textarea>";
-                string inputTpl = "<input type=\"text\" class=\"form-control\" name=\"{1}\"  value=\"{4}\" data-val=\"true\" {3} data-val-maxlength=\"{0}长度不能超过{2}个字符\" data-val-maxlength-max=\"{2}\"/>" +
-"<span class=\"field-validation-valid\" data-valmsg-for=\"{1}\" data-valmsg-replace=\"true\"></span>";
+                string inputTpl = "<input type=\"text\" class=\"form-control\" name=\"{0}\"  value=\"{2}\" {1}/>";
                 string editorTpl = "<script id=\"{0}\" name=\"{0}\" type=\"text/plain\" style=\"height:250px;\">{1}</script>";
-                string validateTpl = "<span class=\"field-validation-valid\" data-valmsg-for=\"{0}\" data-valmsg-replace=\"true\"></span>";
                 var dateTpl = "<div class='input-group'>" +
-"<input class=\"form-control datetimepicker\" readonly type=\"text\" name=\"{0}\" value=\"{2}\" data-date-format=\"{1}\" data-val=\"true\" {3}>" +
-"<span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span><span class=\"field-validation-valid\" data-valmsg-for=\"{0}\" data-valmsg-replace=\"true\"></span></div>";
+"<input class=\"form-control datetimepicker\" readonly type=\"text\" name=\"{0}\" value=\"{2}\" data-date-format=\"{1}\">" +
+"<span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span></div>";
 
                 StringBuilder sb = new StringBuilder();
                 var numPerRow = Model.Table.ColumnPerRow < 1 ? 1 : Model.Table.ColumnPerRow;
@@ -95,7 +107,8 @@
                     string tempTpl = "<td class='td-left'>" + requireSpan + "<span class='name'>" + column.Description + "</span></td><td colspan='" + colspan + "'>{0}</td>";
                     if (column.DataType == ColumnType.Out || column.DataType == ColumnType.Enum)
                     {
-                        var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], new { @class = "form-control select" });
+                        var htmlAttr = new Dictionary<string, object> { { "class", "form-control select" }, { "id", column.Name } };
+                        var content = Html.DropDownList(column.Name, (SelectList)ViewData[column.Name], htmlAttr);
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
                         var sltHtml = writer.ToString();
@@ -103,19 +116,17 @@
                     }
                     else if (column.DataType == ColumnType.MultiSelect || column.DataType == ColumnType.MultiSelect_Out)
                     {
-                        var htmlAttr = new Dictionary<string, object> { { "class", "form-control select" }, { "multiple", "multiple" }, { "id", column.Name },
-                                                        { "data-val","true"},{"data-valmsg-for","请选择"+column.Description },{ "data-valmsg-replace","true"} };
+                        var htmlAttr = new Dictionary<string, object> { { "class", "form-control select" }, { "multiple", "multiple" }, { "id", column.Name } };
                         var content = Html.DropDownList(column.Name, (MultiSelectList)ViewData[column.Name], htmlAttr);
 
                         var writer = new System.IO.StringWriter();
                         content.WriteTo(writer, HtmlEncoder.Default);
-                        var sltHtml = writer.ToString() + string.Format(validateTpl, column.Name);
+                        var sltHtml = writer.ToString();
                         sb.Append(string.Format(tempTpl, sltHtml));
                     }
                     else if (column.DataType == ColumnType.Datetime)
                     {
-                        string contentHtml = string.Format(dateTpl, column.Name, column.DateFormat, ViewBag.ColumnValue[column.Name],
-                                    column.Required == 1 ? "data-val-required=\"" + column.Description + "不能为空\"" : "");
+                        string contentHtml = string.Format(dateTpl, column.Name, column.DateFormat, ViewBag.ColumnValue[column.Name]);
                         sb.Append(string.Format(tempTpl, contentHtml));
 
                     }
@@ -142,9 +153,7 @@
                     }
                     else
                     {
-                        var contentHtml = string.Format(inputTpl, column.Description, column.Name, column.MaxLength,
-                            $" placeholder='请输入{column.Description}' " + column.ValidationRule + (column.Required == 1 ? " data-val-required=\"" + column.Description + "不能为空\"" : ""),
-                            ViewBag.ColumnValue[column.Name]);
+                        var contentHtml = string.Format(inputTpl, column.Name, $" placeholder='请输入{column.Description}' ", ViewBag.ColumnValue[column.Name]);
                         sb.Append(string.Format(tempTpl, contentHtml));
                     }
                     if (count % numPerRow == 0)
