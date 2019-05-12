@@ -60,6 +60,9 @@ table.dataTable thead th, table.dataTable thead td {
     background-color: #eceded;
     height: calc(100% + 18px);
 }
+.error {
+    color: #e63f3f;
+}
 
 .border-bottom {
     border-bottom: 1px solid #e7eaec !important;
@@ -84,6 +87,57 @@ table.dataTable thead th, table.dataTable thead td {
 
 
 /*#region 后台侧边栏样式*/
+
+.miniMenu .title {
+    display: none
+}
+
+.miniMenu .sidebar-menu a {
+    padding: 9px;
+}
+
+.miniMenu .profile-img {
+    top: 6px;
+    left: -10px;
+    margin-top: 7px;
+    width: 41px;
+    height: 41px;
+    position: relative;
+}
+
+.miniMenu .profile-user {
+    margin-top: 20px;
+    padding: 2px;
+}
+
+.miniMenu .parent-menu-name {
+    display: none;
+}
+
+.miniMenu .menuitem {
+    display: none;
+}
+
+.miniMenu .sidebar-footer > a:nth-child(n+2) {
+    display: none;
+}
+
+.miniMenu .sidebar-footer > a:nth-child(1) {
+    position: relative;
+    left: 16px;
+    top: 2px;
+}
+
+.miniMenu .profile-user > span {
+    margin-left: 13px;
+    position: relative;
+    right: 26px;
+    font-size: .8em;
+    display: block;
+    width: 44px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
 .title {
     padding-top: 7px;
     width: 188px;

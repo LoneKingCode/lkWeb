@@ -9,17 +9,10 @@
                 Name: {
                     required: true,
                 },
-                Code: {
-                    required: true,
-                },
                 Value: {
                     required: true,
                 },
-                Description: {
-                    required: true,
-                },
                 ListOrder: {
-                    required: true,
                     number: true,
                 },
             }
@@ -35,7 +28,7 @@
     <div class="form-group">
         <label class="col-md-3 control-label">上级</label>
         <div class="col-md-7">
-            @Html.DropDownList("ParentId", (SelectList)ViewBag.parents, new { @class = "form-control" })
+            @Html.DropDownList("ParentId", (SelectList)ViewBag.parents, new { @class = "form-control select" })
         </div>
     </div>
     <div class="form-group">

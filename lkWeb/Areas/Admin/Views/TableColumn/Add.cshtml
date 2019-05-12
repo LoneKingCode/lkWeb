@@ -1,4 +1,5 @@
-﻿@{
+﻿@using lkWeb.Service.Enum;
+@{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
     ViewBag.Title = "添加列";
 }
@@ -28,11 +29,11 @@
     <div class="form-group">
         <label class="col-md-1 control-label">所属表</label>
         <div class="col-md-2">
-            @Html.DropDownList("TableId", (SelectList)ViewBag.TableList, new { @class = "form-control" })
+            @Html.DropDownList("TableId", (SelectList)ViewBag.TableList, new { @class = "form-control select" })
         </div>
         <label class="col-md-1 control-label">列名称</label>
         <div class="col-md-2">
-            <input type="text" class="form-control" name="Name"/>
+            <input type="text" class="form-control" name="Name" />
         </div>
         <label class="col-md-1 control-label">列说明</label>
         <div class="col-md-2">
@@ -48,14 +49,7 @@
     <div class="form-group">
         <label class="col-md-1 control-label">日期格式</label>
         <div class="col-md-2">
-            <select name="DateFormat" class="form-control">
-                <option value="yyyy-mm-dd">年月日</option>
-                <option value="yyyy-mm-dd hh">年月日时</option>
-                <option value="yyyy-mm-dd hh:ii">年月日时分</option>
-                <option value="mm-dd">月日</option>
-                <option value="mm-dd hh">月日时</option>
-                <option value="mm-dd hh:ii">月日时分</option>
-            </select>
+            @Html.DropDownList("DateFormat", new SelectList(DateFormat.list, "Value", "Text"), new { @class = "form-control" })
         </div>
         <label class="col-md-1 control-label">默认值</label>
         <div class="col-md-2">
@@ -100,19 +94,7 @@
         </div>
         <label class="col-md-1 control-label">验证规则</label>
         <div class="col-md-2">
-            <select class="form-control" name="ValidationRule">
-                <option value="" selected="selected">无</option>
-                <option value="letterNumber:true">字母数字</option>
-                <option value="cnLetterNumber:true">汉字字母数字</option>
-                <option value="chinese:true">汉字</option>
-                <option value="chineseAll:true">汉字和中文符号</option>
-                <option value="isEmail:true">邮箱</option>
-                <option value="isIdCard:true">身份证号</option>
-                <option value="isMobile:true">手机号</option>
-                <option value="isTel:true">电话号码</option>
-                <option value="isContactPhone:true">联系电话(手机/电话)</option>
-                <option value="isZipCode:true">邮政编码</option>
-            </select>
+            @Html.DropDownList("ValidationRule", new SelectList(ValidationRule.list, "Value", "Text"), new { @class = "form-control" })
         </div>
     </div>
 

@@ -54,12 +54,7 @@
                 }).on('onUnsetSelectValue', function () {
                  });
         })
-            //下拉多选
-            $('.chosen-checkbox').attr('data-placeholder', '请选择')
-            $('.chosen-checkbox').chosen({
-                allow_single_deselect: true,
-                width: "100%",
-            });
+
         })
 
         function ViewIcon() {
@@ -76,7 +71,7 @@
     <div class="form-group">
         <label class="col-md-3 control-label">所属子系统</label>
         <div class="col-md-7">
-            @Html.DropDownList("SubSystemIdA", (MultiSelectList)ViewBag.subSystem, new { @class = "chosen-checkbox", multiple = "multiple", id = "chosen-SubSystem" })
+            @Html.DropDownList("SubSystemIdA", (MultiSelectList)ViewBag.subSystem, new { @class = "form-control select", multiple = "multiple" })
             @*@Html.DropDownListFor(item => item.SubSystemId, (MultiSelectList)ViewBag.subSystem, new { @class = "chosen-checkbox", multiple = "multiple", id = "chosen-SubSystem" })*@
 
         </div>
@@ -85,7 +80,7 @@
         <label class="col-md-3 control-label">上级菜单</label>
         <div class="col-md-7">
             <div class="input-group">
-                <input name="ParentId" type="hidden" id="txtParentId" asp-for="ParentId" />
+                <input name="ParentId" type="hidden" id="txtParentId" value="@Model.ParentId" />
                 <input class="form-control" type="text" autocomplete="off" id="menuList" value="@ViewBag.ParentName" />
                 <div class="input-group-btn">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle>

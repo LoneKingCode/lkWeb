@@ -11,68 +11,27 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - lkWeb</title>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
+    <script src="~/lib/layer/src/layer.js"></script>
+    <link href="~/lib/layer/src/theme/default/layer.css" rel="stylesheet" />
+
+    <script src="~/js/contabs.js"></script>
+
     <script src="~/js/util.js"></script>
     <script src="~/js/lkWeb.js" asp-append-version="true"></script>
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
     <style>
 
-        .miniMenu .title {
-            display: none
-        }
-
-        .miniMenu .sidebar-menu a {
-            padding: 9px;
-        }
-
-        .miniMenu .profile-img {
-            top: 6px;
-            left: -10px;
-            margin-top: 7px;
-            width: 41px;
-            height: 41px;
-            position: relative;
-        }
-
-        .miniMenu .profile-user {
-            margin-top: 20px;
-            padding: 2px;
-        }
-
-        .miniMenu .parent-menu-name {
-            display: none;
-        }
-
-        .miniMenu .menuitem {
-            display: none;
-        }
-
-        .miniMenu .sidebar-footer > a:nth-child(n+2) {
-            display: none;
-        }
-
-        .miniMenu .sidebar-footer > a:nth-child(1) {
-            position: relative;
-            left: 16px;
-            top: 2px;
-        }
-
-        .miniMenu .profile-user > span {
-            margin-left: 13px;
-            position: relative;
-            right: 26px;
-            font-size: .8em;
-            display: block;
-            width: 44px;
-            overflow-x: hidden;
-            text-overflow: ellipsis;
-        }
     </style>
     <script>
         var collapse = false
@@ -238,14 +197,8 @@
         <!-- 右边部分结束 -->
     </div>
 
-    <!--Layer-->
-    <script src="~/lib/layer/src/layer.js"></script>
-    <link href="~/lib/layer/src/theme/default/layer.css" rel="stylesheet" />
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/contabs.js"></script>
-    <script>
-
-    </script>
+ 
+ 
     @RenderSection("Scripts", required: false)
 
 </body>

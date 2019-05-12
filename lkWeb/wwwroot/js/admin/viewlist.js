@@ -7,7 +7,7 @@ $(function () {
         $("input[type='file']").each(function (i, n) {
             var minimum = $(n).attr("data-minimum");
             var filelist = $(n).siblings(".file-list");
- 
+
             if (IsNotEmpty(minimum)) {
                 if (filelist.children('.file-item').length < minimum) {
                     showMsg('最少上传' + minimum + '个', 'warning');
@@ -19,21 +19,12 @@ $(function () {
         if (!hasError) {
             $("#btnSubmit").click();
         }
-    })
+    });
+
     if ("#lkForm".length != 0)
         lkWeb.FormValidation("#lkForm", rules, {}, function () {
             lkWeb.RefreshAndClose();
         });
-
-    $('.select').select2({
-        placeholder: '请选择',
-        allowClear: true,
-        dropdownParent: $("body")
-    }
-    );
-    $(".select").change(function () {
-        $(this).valid();
-    });
 
     $(".datetimepicker").each(function (i, n) {
         var dateFormat = $(n).attr("data-date-format");

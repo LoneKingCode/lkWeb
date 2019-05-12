@@ -7,11 +7,7 @@
         var table_user;
         var departmentID = '@ViewBag.DepartmentID';
         $(function () {
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
-            });
-
+     
             LoadDataTable();
         })
           function LoadDataTable() {

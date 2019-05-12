@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace lkWeb.Service.Enum
 {
+
     public enum UserStatus
     {
         /// <summary>

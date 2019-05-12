@@ -7,11 +7,6 @@
         $(function () {
             InitDataTable();
 
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
-            });
-
             $("#btnSearch").click(function () {
                 lkWeb.Search($("#txtSearchKey").val(), lkTable);
 
@@ -101,7 +96,11 @@
 
         function SelectByTable() {
             var tableId = $("#TableList").val();
-            lkWeb.Search("TableId|" + tableId, lkTable);
+            log(lkTable.ajax)
+            if (IsEmpty(tableId))
+                lkWeb.Search('',lkTable)
+            else
+                lkWeb.Search("TableId|" + tableId, lkTable);
         }
     </script>
 }
@@ -143,7 +142,7 @@
 </div>
 <div class="form-group">
     <div class="input-group">
-        @Html.DropDownList("TableList", (SelectList)ViewBag.TableList, new { @class = "form-control" })
+        @Html.DropDownList("TableList", (SelectList)ViewBag.TableList, new { @class = "form-control select" })
         <span class="input-group-btn">
             <button class="btn btn-primary" type="button" onclick="SelectByTable()"> <i class="fa fa-search"></i> 查看</button>
         </span>

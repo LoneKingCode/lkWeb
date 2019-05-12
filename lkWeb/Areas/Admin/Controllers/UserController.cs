@@ -53,15 +53,17 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Edit(UrlParameter param)
         {
-            var user = new Sys_UserDto();
-            if (param.id != 0)
-                user = (await _userService.GetByIdAsync(param.id)).data;
-            else
-                user = _userService.GetCurrentUser().data;
+            var user = (await _userService.GetByIdAsync(param.id)).data;
             ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
             return View(user);
         }
-
+        public async Task<IActionResult> EditCurrent(UrlParameter param)
+        {
+            var user = new Sys_UserDto();
+            user = _userService.GetCurrentUser().data;
+            ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
+            return View(user);
+        }
         public IActionResult Add(UrlParameter param)
         {
             ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>());
@@ -180,6 +182,26 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             user.Password = SecurityHelper.Md5(user.Password);
             var result = await _userService.UpdateAsync(user);
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditCurrent(UrlParameter param, Sys_UserDto user)
+        {
+            var result = new Result<Sys_UserDto>();
+            var userResult = await _userService.GetByExpAsync(item => item.UserName == user.UserName && item.Password == SecurityHelper.Md5(user.OldPassword));
+            if (userResult.flag)
+            {
+                if (string.IsNullOrEmpty(user.Password))  //密码可以为空 为空就保留现在的密码
+                    user.Password = _userService.GetCurrentUser().data.Password;
+                else //密码可以为空 为空就保留现在的密码
+                    user.Password = SecurityHelper.Md5(user.Password);
+                result = await _userService.UpdateAsync(user);
+            }
+            else
+            {
+                result.msg = "密码错误";
+            }
             return Json(result);
         }
         [HttpPost]

@@ -41,8 +41,8 @@ namespace lkWeb.Service.Abstracts
                     if (IsSave)
                     {
                         SaveTableName = outSqlArr[4];
-                        CurrentTableForeignKey = outSqlArr[5];
-                        OutTableForeignKey = outSqlArr[6];
+                        CurrentTableForeignKey = outSqlArr[5].Split(',')[0];
+                        OutTableForeignKey = outSqlArr[5].Split(',')[1];
                     }
                 }
             }
@@ -116,8 +116,9 @@ namespace lkWeb.Service.Abstracts
             }
             var tableDto = tableResult.data;
             //此SQL语句可以查询制定表的所有列
-            var tableData = await _sqlService.Query(string.Format("select tablename,colName,colType,colLength from v_TableInfo where tablename = '{0}'",
-                tableDto.Name));
+            //string sql = string.Format("select tablename,colName,colType,colLength from v_TableInfo where tablename = '{0}'", tableDto.Name);
+            string sql = string.Format("select TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH as COLUMN_LENGH from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '{0}'", tableDto.Name);
+            var tableData = await _sqlService.Query(sql);
             var tableColumns = new List<Sys_TableColumnDto>();
             var tableColumnDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId)).data;
             var columnNames = new List<string>();
@@ -131,9 +132,9 @@ namespace lkWeb.Service.Abstracts
 
             foreach (var row in tableData)
             {
-                columnNames.Add(row["colName"].ToString());
+                columnNames.Add(row["COLUMN_NAME"].ToString());
                 var dataType = ColumnType.String;
-                var columnType = row["colType"].ToString().ToLower();
+                var columnType = row["DATA_TYPE"].ToString().ToLower();
                 if (columnType.Contains("char"))
                     dataType = ColumnType.String;
                 else if (columnType.Contains("int") || columnType.Contains("bit"))
@@ -146,14 +147,14 @@ namespace lkWeb.Service.Abstracts
                 if (isSync)
                 {
                     //判断之前是否已存在此列 存在则不添加
-                    var exist = tableColumnDtos.Where(item => item.TableId == tableId && item.Name == row["colName"].ToString()).Count() > 0;
+                    var exist = tableColumnDtos.Where(item => item.TableId == tableId && item.Name == row["COLUMN_NAME"].ToString()).Count() > 0;
                     if (!exist)
                     {
                         tableColumns.Add(new Sys_TableColumnDto
                         {
-                            Name = row["colName"].ToString(),
+                            Name = row["COLUMN_NAME"].ToString(),
                             DataType = dataType,
-                            MaxLength = row["colLength"].ObjToInt(),
+                            MaxLength = row["COLUMN_LENGH"].ObjToInt(),
                             TableId = tableDto.Id,
                         });
                     }
@@ -162,9 +163,9 @@ namespace lkWeb.Service.Abstracts
                 {
                     tableColumns.Add(new Sys_TableColumnDto
                     {
-                        Name = row["colName"].ToString(),
+                        Name = row["COLUMN_NAME"].ToString(),
                         DataType = dataType,
-                        MaxLength = row["colLength"].ObjToInt(),
+                        MaxLength = row["COLUMN_LENGH"].ObjToInt(),
                         TableId = tableDto.Id,
                     });
                 }

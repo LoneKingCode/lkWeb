@@ -17,30 +17,26 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 登录账号
         /// </summary>
-        [DisplayName("登录账号*"), Required, StringLength(20, MinimumLength = 5, ErrorMessage = "长度在5-20个字符之间")]
         public string UserName { get; set; }
 
         /// <summary>
         /// 真实姓名
         /// </summary>
-        [DisplayName("真实姓名*"), Required, StringLength(20, MinimumLength = 2, ErrorMessage = "长度在2-20个字符之间")]
         public string RealName { get; set; }
 
         /// <summary>
         /// 邮箱
         /// </summary>
-        [DisplayName("邮箱*"), Required, StringLength(36, MinimumLength = 5, ErrorMessage = "长度在5-36个字符之间")]
         public string Email { get; set; }
 
         /// <summary>
         /// 登录密码
         /// </summary>
-        [DisplayName("登录密码*"), Required, StringLength(36, MinimumLength = 6, ErrorMessage = "长度在6-36个字符之间")]
         public string Password { get; set; }
-         /// <summary>
+
+        /// <summary>
         /// 用户状态
         /// </summary>
-        [DisplayName("用户状态*"), Required]
         public UserStatus Status { get; set; }
 
         /// <summary>
@@ -51,8 +47,12 @@ namespace lkWeb.Service.Dto
             get { return Status.ToString(); }
         }
 
- 
-     
+
+        /// <summary>
+        /// 旧密码
+        /// </summary>
+
+        public string OldPassword { get; set; }
 
         /// <summary>
         /// 记住我

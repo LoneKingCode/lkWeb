@@ -31,11 +31,6 @@
 
             InitDataTable();
 
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
-            });
-
             $("#btnSearch").click(function () {
                 var formObj = $('#searchForm').serializeObject();
                 var formJsonStr = JSON.stringify(formObj);   //通过3转化为json字符串

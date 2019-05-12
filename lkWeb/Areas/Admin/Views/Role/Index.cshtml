@@ -6,12 +6,6 @@
     <script>
         $(function () {
             InitDataTable();
-
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
-            });
-
             $("#btnSearch").click(function () {
                 lkWeb.Search($("#txtSearchKey").val(), lkTable);
 

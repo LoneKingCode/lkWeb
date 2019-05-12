@@ -10,11 +10,6 @@
 
     <script>
         $(function () {
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
-            });
-
             $("#SubSystemId").change(function () {
                 roleId = '';
                 var sysId = $(this).val();

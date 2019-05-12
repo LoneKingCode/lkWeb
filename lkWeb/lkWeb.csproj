@@ -37,8 +37,6 @@
   <ItemGroup>
     <Content Include="wwwroot\js\contabs.js" />
     <Content Include="wwwroot\js\lkWeb.js" />
-    <Content Include="wwwroot\js\site.js" />
-    <Content Include="wwwroot\js\site.min.js" />
     <Content Include="wwwroot\lib\bootstrap\.bower.json" />
     <Content Include="wwwroot\lib\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="wwwroot\lib\bootstrap\dist\css\bootstrap-theme.css.map" />
@@ -119,8 +117,6 @@
   <ItemGroup>
     <None Include="wwwroot\js\contabs.js" />
     <None Include="wwwroot\js\lkWeb.js" />
-    <None Include="wwwroot\js\site.js" />
-    <None Include="wwwroot\js\site.min.js" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,5 @@
 ﻿@using lkWeb.Service.Dto
-@model UserDto
+@model Sys_UserDto
 @{
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
     ViewBag.Title = "用户授权";
@@ -11,11 +11,11 @@
         $(function () {
             InitDataTable_role();
             InitDataTable_auth();
-            $(".checkAll").click(function () {
+            $(".checkAll_role").click(function () {
                 var check = $(this).prop("checked");
                 $(".check_role").prop("checked", check);
             });
-            $(".checkAll-1").click(function () {
+            $(".checkAll_auth").click(function () {
                 var check = $(this).prop("checked");
                 $(".check_auth").prop("checked", check);
             });
@@ -152,7 +152,7 @@
         <thead>
             <tr>
                 <th>
-                    <input type="checkbox" class="checkAll" />
+                    <input type="checkbox" class="checkAll_role" />
                 </th>
                 <th>角色名称</th>
                 <th>操作</th>
@@ -170,7 +170,7 @@
         <thead>
             <tr>
                 <th>
-                    <input type="checkbox" class="checkAll-1" />
+                    <input type="checkbox" class="checkAll_auth" />
                 </th>
                 <th>角色名称</th>
                 <th>操作</th>

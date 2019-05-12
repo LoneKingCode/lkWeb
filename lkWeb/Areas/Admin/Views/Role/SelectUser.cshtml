@@ -7,10 +7,6 @@
         var table_user;
         var roleId = '@ViewBag.RoleId';
         $(function () {
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
-            });
 
             LoadDataTable();
         })

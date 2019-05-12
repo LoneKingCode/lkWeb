@@ -53,7 +53,7 @@ namespace lkWeb.Service.Abstracts
             return GetCurrentUserBySession();
         }
 
-        private async Task<Result<Sys_UserDto>> UserLogin(Sys_UserDto dto)
+        public async Task<Result<Sys_UserDto>> UserLogin(Sys_UserDto dto)
         {
             var userResult = await GetByExpAsync(item => item.UserName == dto.UserName && item.Password == SecurityHelper.Md5(dto.Password));
             return userResult;
@@ -178,7 +178,7 @@ namespace lkWeb.Service.Abstracts
                 result.msg = "请选择要移除的角色";
                 return result;
             }
-            result = await _userRoleService.DeleteAsync(item => roleIds.Contains(item.RoleId));
+            result = await _userRoleService.DeleteAsync(item => roleIds.Contains(item.RoleId) && item.UserId == userResult.data.Id);
 
             return result;
         }

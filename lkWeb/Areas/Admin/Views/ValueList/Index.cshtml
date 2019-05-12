@@ -10,10 +10,6 @@
 
     <script>
         $(function () {
-            $(".checkAll").click(function () {
-                var check = $(this).prop("checked");
-                $(".checkChild").prop("checked", check);
-            });
 
             LoadValueList();
 
@@ -87,10 +83,22 @@
             ];
             lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl, parentValueListId)
          }
-
-        function DelUser() {
+        function DelParent() {
+            if (IsEmpty(parentValueListId)) {
+                layer.alert('请选择要删除的上级项');
+                return
+            }
+            lkWeb.DeleteMulti("admin", [parentValueListId], "ValueList", '', function () {
+                LoadValueList();
+                lkTable.clear();
+            });
+        }
+        function DelChild() {
             var ids = lkWeb.GetCheckValueList($(".checkChild"));
-            if (ids.length < 1) {
+            lkWeb.DeleteMulti("admin", ids, "ValueList", lkTable);
+
+
+            @*if (ids.length < 1) {
                 parent.layer.alert("请选择");
                 return;
             }
@@ -98,7 +106,7 @@
                 btn: ["确认", "取消"]
             }, function () {
                 var data = { ids: ids, __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val() };
-      
+
                 $.ajax(
                     {
                         type: 'post',
@@ -121,7 +129,7 @@
             }, function () {
 
             }
-            )
+            )*@
         }
 
         function AddChildValueItem() {
@@ -132,7 +140,7 @@
             lkWeb.GoAction("admin","valueList", "add", parentValueListId, true, "添加值列表", "80%", "80%");
         }
         function AddParent() {
-         
+
             lkWeb.GoAction("admin", "valueList", "AddParent", 0, true, "添加上级项", "80%", "80%");
         }
 
@@ -142,7 +150,7 @@
     <div class="col-sm-4">
         <div class="form-group">
             <button type="button" class="btn btn-success" onclick="AddParent()">添加上级项</button>
-    
+            <button type="button" class="btn btn-danger" onclick="DelParent()">删除</button>
         </div>
         <div class="panel panel-info">
             <div class="panel-heading">
@@ -163,7 +171,7 @@
             <div class="panel-body">
                 <div class="form-group">
                     <button type="button" class="btn btn-success" onclick="AddChildValueItem()">添加</button>
-                    <button type="button" class="btn btn-danger" onclick="DelUser()">删除</button>
+                    <button type="button" class="btn btn-danger" onclick="DelChild()">删除</button>
                 </div>
                 <table class="table table-striped table-hover" id="lkTable">
                     <thead>

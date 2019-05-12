@@ -1,16 +1,15 @@
+再测试一遍基本功能
+
+service 增加方法  exists， 删除冗余数据
+
 网站后台可以查看错误日志 列表选文件 然后查看。。。
 
-
-看设置的 select的value= 有效没效，，无效
-注意 tablecolumn的column.ValidationRule 测试
-修改验证错误信息的颜色
-
- 生成列时 读取注释
+生成列时 读取注释
 
 syshelper,获取字典下拉选项
 
-
 代码调整
+注意 tablecolumn tablelist 前台页面 直接绑定枚举 TableImportType。。UserStatus 等
   数据库链接 单例 依赖注入 service加个参数就行
   加 region  ajax page
   service调用精简为 services.sdsdsadasd

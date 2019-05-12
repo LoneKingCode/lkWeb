@@ -1,6 +1,7 @@
 ﻿$(function () {
 
-})
+
+});
 
 var lkWeb = {};
 
@@ -64,7 +65,10 @@ lkWeb.GetCsrfToken = function () {
 }
 
 //删除多个
-lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
+lkWeb.DeleteMulti = function (area, ids, ctrl, table, value, action = '', callback) {
+    var _action = '/Delete';
+    if (IsNotEmpty(action))
+        _action = action
     if (ids.length < 1) {
         parent.layer.alert("请选择要删除的数据");
         return;
@@ -72,7 +76,7 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
     parent.layer.confirm("确认删除" + ids.length + "条数据？", {
         btn: ["确认", "取消"]
     }, function () {
-        var postUrl = '/' + area + '/' + ctrl + '/Delete';
+        var postUrl = '/' + area + '/' + ctrl + _action;
         var _value = "";
         if (IsNotEmpty(value))
             _value = value;
@@ -94,7 +98,10 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
                         if (IsNotEmpty(table))
                             table.draw(false);//刷新datatable
                         else {
-                            window.location.reload();
+                            if (isFunction(callback))
+                                callback()
+                            else
+                                window.location.reload();
                         }
                     }
                     else {
@@ -115,50 +122,6 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value) {
     )
 }
 
-//删除单个
-lkWeb.Delete = function (area, id, ctrl, table, value) {
-    parent.layer.confirm("确认删除？", {
-        btn: ["确认", "取消"]
-    },
-        function () {
-            var postUrl = '/' + area + '/' + ctrl + '/Delete';
-            var _value = "";
-            if (IsNotEmpty(value))
-                _value = value;
-            $.ajax(
-                {
-                    type: 'post',
-                    url: postUrl,
-                    data: {
-                        id: id,
-                        value: _value,
-                        __RequestVerificationToken: lkWeb.GetCsrfToken()
-                    },
-                    success: function (result) {
-                        if (result.flag == true) {
-                            parent.layer.alert("删除成功")
-                            if (table != null && table != undefined)
-                                table.draw(false);//刷新datatable
-                            else
-                                window.location.reload();
-                        }
-                        else {
-                            if (IsNotEmpty(result.msg))
-                                parent.layer.alert("操作失败," + result.msg);
-                            else
-                                parent.layer.alert("删除失败");
-                        }
-                    },
-                    error: function (err) {
-                        parent.layer.alert("删除失败");
-                        console.log(err);
-                    }
-                })
-        }, function () {
-
-        }
-    )
-}
 
 lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
     data.__RequestVerificationToken = lkWeb.GetCsrfToken()
@@ -241,7 +204,7 @@ lkWeb.Upload = function (controlId, url, formParams, successCallback, errorCallb
                         parent.layer.alert("操作失败")
                 }
             }
-            
+
         },
         error: function (err) {
             lkWeb.CloseLoad()
@@ -249,7 +212,7 @@ lkWeb.Upload = function (controlId, url, formParams, successCallback, errorCallb
                 errorCallback(result)
             else
                 parent.layer.alert("请求失败");
-         
+
         }
     })
 }
@@ -295,7 +258,7 @@ lkWeb.FormValidation = function (validationForm, rules, messages, successCallBac
             return false;
         }
     });
-    return option;  
+    return option;
 }
 
 lkWeb._FormValidation = function (validationForm, successCallBack, successMsg) {
