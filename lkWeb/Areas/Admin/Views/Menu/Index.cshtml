@@ -65,7 +65,13 @@
             ];
             lkTable = lkWeb.LoadTable("lkTable", columns, dataUrl);
     }
-
+        function SelectBySubSystem() {
+            var sysId = $("#SubSystem").val();
+            if (IsEmpty(sysId))
+                lkWeb.Search('', lkTable)
+            else
+                lkWeb.Search("SubSystemId|" + sysId, lkTable);
+        }
 
     </script>
 }
@@ -73,6 +79,14 @@
     <button type="button" class="btn btn-success" onclick="AddModel()">添加</button>
     <button type="button" class="btn btn-info" onclick="EditModel()">编辑</button>
     <button type="button" class="btn btn-danger" onclick="DelModel()">删除</button>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        @Html.DropDownList("SubSystem", (SelectList)ViewBag.SubSystems, new { @class = "form-control select" })
+        <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" onclick="SelectBySubSystem()"> <i class="fa fa-search"></i> 查看</button>
+        </span>
+    </div>
 </div>
 <div class="form-group">
     <div class="input-group">

@@ -629,10 +629,21 @@ namespace lkWeb.Areas.Admin.Controllers
                     var outValues = multiSelectOutData[key].Split(',');
                     foreach (var outValue in outValues)
                     {
-                        var values = $"'{id}','{outValue}'";
-                        addSqls.Add(string.Format(sql, outSqlModel.SaveTableName,
-                            outSqlModel.CurrentTableForeignKey + "," + outSqlModel.OutTableForeignKey,
-                            values));
+                        var colNames = outSqlModel.CurrentTableForeignKey + "," + outSqlModel.OutTableForeignKey + ",";
+                        var values = $"'{id}','{outValue}',";
+                        if (!string.IsNullOrEmpty(outSqlModel.OtherFieldValue))
+                        {
+                            var otherValues = outSqlModel.OtherFieldValue.Split(','); //a='c',b='3',
+                            foreach (var otherValue in otherValues)
+                            {
+                                colNames += otherValue.Split('=', 2)[0] + ",";
+                                values += otherValue.Split('=', 2)[1] + ",";
+                            }
+                        }
+                        colNames = colNames.Trim(',');
+                        values = values.Trim(',');
+
+                        addSqls.Add(string.Format(sql, outSqlModel.SaveTableName, colNames, values));
                     }
                 }
                 await _sqlService.ExecuteBatch(addSqls);
@@ -705,15 +716,29 @@ namespace lkWeb.Areas.Admin.Controllers
                     var outValues = multiSelectOutData[key].Split(',');
                     foreach (var outValue in outValues)
                     {
-                        var values = $"'{param.id}','{outValue}'";
-                        addSqls.Add(string.Format(sql, outSqlModel.SaveTableName,
-                            outSqlModel.CurrentTableForeignKey + "," + outSqlModel.OutTableForeignKey,
-                            values));
+                        var colNames = outSqlModel.CurrentTableForeignKey + "," + outSqlModel.OutTableForeignKey + ",";
+                        var values = $"'{param.id}','{outValue}',";
+                        if (!string.IsNullOrEmpty(outSqlModel.OtherFieldValue))
+                        {
+                            var otherValues = outSqlModel.OtherFieldValue.Split(','); //a='c',b='3',
+                            foreach (var otherValue in otherValues)
+                            {
+                                colNames += otherValue.Split('=', 2)[0] + ",";
+                                values += otherValue.Split('=', 2)[1] + ",";
+                            }
+                        }
+                        colNames = colNames.Trim(',');
+                        values = values.Trim(',');
+                        addSqls.Add(string.Format(sql, outSqlModel.SaveTableName, colNames, values));
                     }
                     delSqls.Add($"delete from {outSqlModel.SaveTableName} where {outSqlModel.CurrentTableForeignKey} = '{param.id}'");
                 }
-                await _sqlService.ExecuteBatch(delSqls);
-                await _sqlService.ExecuteBatch(addSqls);
+                var execResult = await _sqlService.ExecuteBatch(delSqls);
+                if (execResult == -1)
+                    result.msg += "删除外表旧数据失败,";
+                execResult = await _sqlService.ExecuteBatch(addSqls);
+                if (execResult == -1)
+                    result.msg += "保存外表数据失败";
             }
             return Json(result);
         }

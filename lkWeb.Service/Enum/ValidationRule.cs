@@ -8,6 +8,10 @@ namespace lkWeb.Service.Enum
     {
         public static List<object> list = new List<object> {
             new{
+                Value="",
+                Text="无",
+            },
+            new{
                 Value="letterNumber:true",
                 Text="字母数字",
             },

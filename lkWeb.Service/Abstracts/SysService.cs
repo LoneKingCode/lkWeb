@@ -22,7 +22,7 @@ namespace lkWeb.Service.Abstracts
         /// <summary>
         /// OutSqlModel
         /// </summary>
-        /// <param name="outSql">例如Id,Name|Sys_Activity|id>0|1|Sys_DeptActivity|DeptId,ActivityId (主键,显示列名|表名|条件|是否保存到它表|保存表名,当前表外键名,Out表外键名)</param>
+        /// <param name="outSql">例如Id,Name|Sys_Activity|id>0|1|Sys_DeptActivity|DeptId,ActivityId|a='2',b='3' (主键,显示列名|表名|条件|是否保存到它表|保存表名,当前表外键名,Out表外键名|其他字段值)</param>
         public OutSqlModel(string outSql)
         {
             string[] outSqlArr = outSql.Split('|');
@@ -43,6 +43,10 @@ namespace lkWeb.Service.Abstracts
                         SaveTableName = outSqlArr[4];
                         CurrentTableForeignKey = outSqlArr[5].Split(',')[0];
                         OutTableForeignKey = outSqlArr[5].Split(',')[1];
+                        if (outSqlArr.Length == 7)
+                        {
+                            OtherFieldValue = outSqlArr[6];
+                        }
                     }
                 }
             }
@@ -79,6 +83,10 @@ namespace lkWeb.Service.Abstracts
         /// 外部表外键名
         /// </summary>
         public string OutTableForeignKey { get; set; }
+        /// <summary>
+        /// 其他字段值
+        /// </summary>
+        public string OtherFieldValue { get; set; }
     }
 
     public class SysService : ISysService
@@ -449,7 +457,7 @@ namespace lkWeb.Service.Abstracts
                 result.data = "无";
                 return result;
             }
-            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}={3}",
+            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
                 outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.PrimaryKey, outId));
             result.data = value.IsEmpty() ? "无" : value;
             result.flag = true;
@@ -474,7 +482,7 @@ namespace lkWeb.Service.Abstracts
             var queryResult = await _sqlService.Query(string.Format(sql,
                 outSqlModel.OutTableForeignKey + "," + outSqlModel.CurrentTableForeignKey,
                 outSqlModel.SaveTableName,
-                outSqlModel.CurrentTableForeignKey + "=" + outId));
+                outSqlModel.CurrentTableForeignKey + "='" + outId + "'"));
             var selectValues = queryResult.Select(item => item[outSqlModel.OutTableForeignKey]).ToList();
             result.data = selectValues;
             result.flag = true;

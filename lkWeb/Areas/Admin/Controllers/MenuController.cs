@@ -29,8 +29,10 @@ namespace lkWeb.Areas.Admin.Controllers
 
         #region Page
         // GET: /<controller>/
-        public IActionResult Index(UrlParameter param)
+        public async Task<IActionResult> Index(UrlParameter param)
         {
+            var subSystems = await _subSystemService.GetListAsync(item => item.Id > 0);
+            ViewBag.SubSystems = new SelectList(subSystems.data, "Id", "Name");
             return View();
         }
         public async Task<IActionResult> Add(UrlParameter param)
@@ -85,8 +87,18 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<Sys_MenuDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => x.Name.Contains(queryBase.SearchKey);
+            var searchKey = queryBase.SearchKey;
+
+            if (searchKey.IsNotEmpty())
+            {
+                if (searchKey.Contains("SubSystemId"))  
+                {
+                    var sysId = searchKey.Split('|')[1].ToInt32();
+                    queryExp = x => x.SubSystemId.Contains(sysId.ToString());
+                }
+                else
+                    queryExp = x => x.Name.Contains(searchKey);
+            }
             var result = await _menuService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var allMenu = (await _menuService.GetListAsync(item => item.Id > 0))
                             .data.ToDictionary(item => item.Id, item => item.Name);
