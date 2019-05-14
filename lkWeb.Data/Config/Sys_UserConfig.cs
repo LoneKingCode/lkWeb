@@ -7,13 +7,12 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class SystemOptionConfig : IEntityTypeConfiguration<Sys_SystemOptionEntity>
+    public class Sys_UserConfig : IEntityTypeConfiguration<Sys_UserEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_SystemOptionEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_UserEntity> builder)
         {
-            builder.ToTable("Sys_SystemOption");
-         
-
+            builder.ToTable("Sys_User");
+        
         }
     }
 }

@@ -7,12 +7,13 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-   public  class TableListConfig : IEntityTypeConfiguration<Sys_TableListEntity>
+    public class Sys_ValueListConfig : IEntityTypeConfiguration<Sys_ValueListEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_TableListEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_ValueListEntity> builder)
         {
-            builder.ToTable("Sys_TableList");
-     
+            builder.ToTable("Sys_ValueList");
+         
+
         }
     }
 }

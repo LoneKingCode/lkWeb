@@ -160,7 +160,7 @@ namespace lkWeb.Core.Helper
             {
                 string rawValues = values.ToString();   // writes out as Csv when there are multiple.
 
-                if (!rawValues.IsEmpty())
+                if (!rawValues.Ext_IsEmpty())
                     return (T)Convert.ChangeType(values.ToString(), typeof(T));
             }
             return default(T);

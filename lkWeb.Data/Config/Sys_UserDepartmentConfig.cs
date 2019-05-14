@@ -4,14 +4,13 @@ using System.Text;
 using lkWeb.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 namespace lkWeb.Data.Config
 {
-    public class RoleMenuConfig : IEntityTypeConfiguration<Sys_RoleMenuEntity>
+    public class Sys_UserDepartmentConfig : IEntityTypeConfiguration<Sys_UserDepartmentEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_RoleMenuEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_UserDepartmentEntity> builder)
         {
-            builder.ToTable("Sys_RoleMenu");
+            builder.ToTable("Sys_UserDepartment");
          
         }
     }

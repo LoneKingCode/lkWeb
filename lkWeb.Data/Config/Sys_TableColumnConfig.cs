@@ -7,13 +7,12 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class LoginLogConfig : IEntityTypeConfiguration<Sys_LoginLogEntity>
+    public class Sys_TableColumnConfig : IEntityTypeConfiguration<Sys_TableColumnEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_LoginLogEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_TableColumnEntity> builder)
         {
-            builder.ToTable("Sys_LoginLog");
-  
-
+            builder.ToTable("Sys_TableColumn");
+     
         }
     }
 }

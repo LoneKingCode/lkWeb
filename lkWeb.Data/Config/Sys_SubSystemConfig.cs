@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace lkWeb.Data.Config
 {
-    public class SubSystemConfig : IEntityTypeConfiguration<Sys_SubSystemEntity>
+    public class Sys_SubSystemConfig : IEntityTypeConfiguration<Sys_SubSystemEntity>
     {
         public void Configure(EntityTypeBuilder<Sys_SubSystemEntity> builder)
         {

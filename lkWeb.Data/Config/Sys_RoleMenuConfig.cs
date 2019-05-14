@@ -7,11 +7,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace lkWeb.Data.Config
 {
-    public class UserRoleConfig : IEntityTypeConfiguration<Sys_UserRoleEntity>
+    public class Sys_RoleMenuConfig : IEntityTypeConfiguration<Sys_RoleMenuEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_UserRoleEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_RoleMenuEntity> builder)
         {
-            builder.ToTable("Sys_UserRole");
-         }
+            builder.ToTable("Sys_RoleMenu");
+         
+        }
     }
 }

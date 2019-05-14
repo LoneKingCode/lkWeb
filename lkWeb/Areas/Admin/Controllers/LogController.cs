@@ -26,7 +26,7 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Login(UrlParameter param)
+        public IActionResult Error(UrlParameter param)
         {
             return View();
         }
@@ -34,69 +34,11 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             return View();
         }
-        public IActionResult Operation(UrlParameter param)
-        {
-            return View();
-        }
+
         #endregion
 
         #region Ajax
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetPageDataWithLogin(UrlParameter param, QueryBase queryBase)
-        {
-            Expression<Func<Sys_LoginLogDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.UserName.Contains(queryBase.SearchKey));
-            var dto = await _loginLogService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableModel
-            {
-                draw = queryBase.Draw,
-                recordsTotal = dto.recordsTotal,
-                recordsFiltered = dto.recordsTotal,
-                data = dto.data.Select(d => new
-                {
-                    rowNum = ++queryBase.Start,
-                    userName = d.UserName,
-                    clientIP = d.ClientIP,
-                    clientMac = d.ClientMac,
-                    id = d.Id.ToString(),
-                    createDateTime = d.CreateDateTime.ToString(),
-                    description = d.Description
-                })
-            };
-            return Json(data);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetPageDataWithOperation(UrlParameter param, QueryBase queryBase)
-        {
-            Expression<Func<Sys_OperationLogDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
-                queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.OperationDescription.Contains(queryBase.SearchKey)
-                || x.OperationUrl.Contains(queryBase.SearchKey));
-            var dto = await _operationLogService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
-            var data = new DataTableModel
-            {
-                draw = queryBase.Draw,
-                recordsTotal = dto.recordsTotal,
-                recordsFiltered = dto.recordsTotal,
-                data = dto.data.Select(d => new
-                {
-                    rowNum = ++queryBase.Start,
-                    userName = d.UserName,
-                    operationUrl = d.OperationUrl,
-                    operationDescription = d.OperationDescription,
-                    clientIP = d.ClientIP,
-                    clientMac = d.ClientMac,
-                    id = d.Id.ToString(),
-                    createDateTime = d.CreateDateTime.ToString(),
-                    description = d.Description
-                })
-            };
-            return Json(data);
-        }
-
+         
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetChartDataByDay()

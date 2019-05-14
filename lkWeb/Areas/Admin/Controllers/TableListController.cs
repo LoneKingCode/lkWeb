@@ -55,7 +55,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
             Expression<Func<Sys_TableListDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
+            if (queryBase.SearchKey.Ext_IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var dto = await _tableListService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel

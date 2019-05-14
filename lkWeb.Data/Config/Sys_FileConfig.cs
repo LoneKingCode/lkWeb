@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace lkWeb.Data.Config
 {
-    public class SubSystemTypeConfig : IEntityTypeConfiguration<Sys_SubSystemTypeEntity>
+    public class Sys_FileConfig : IEntityTypeConfiguration<Sys_FileEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_SubSystemTypeEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_FileEntity> builder)
         {
-            builder.ToTable("Sys_SubSystemType");
+            builder.ToTable("Sys_File");
          
         }
     }

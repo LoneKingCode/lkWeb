@@ -22,6 +22,8 @@ namespace lkWeb.Areas.Admin.Controllers
             _infoReleaseService = infoReleaseService;
             _infoTypeService = infoTypeService;
         }
+
+        #region Page
         public IActionResult Index()
         {
             return View();
@@ -41,12 +43,15 @@ namespace lkWeb.Areas.Admin.Controllers
             ViewBag.types = new SelectList(types.data, "Id", "Name", dto.TypeId);
             return View(dto);
         }
+        #endregion
+
+        #region Ajax
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<Sys_InfoReleaseDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
+            if (queryBase.SearchKey.Ext_IsNotEmpty())
                 queryExp = x => x.Title.Contains(queryBase.SearchKey);
             var result = await _infoReleaseService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var allType = (await _infoTypeService.GetListAsync(item => item.Id > 0))
@@ -100,6 +105,6 @@ namespace lkWeb.Areas.Admin.Controllers
             else
                 return Json(await _infoReleaseService.DeleteAsync(param.id));
         }
-
+        #endregion
     }
 }

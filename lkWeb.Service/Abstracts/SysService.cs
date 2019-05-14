@@ -286,17 +286,17 @@ namespace lkWeb.Service.Abstracts
             var tableDto = tableResult.data;
             var orderBy = string.Empty;
             //默认排序条件
-            if (tableDto.DefaultSort.IsNotEmpty())
+            if (tableDto.DefaultSort.Ext_IsNotEmpty())
                 orderBy = tableDto.DefaultSort;
-            if (queryBase.OrderBy.IsNotEmpty())
+            if (queryBase.OrderBy.Ext_IsNotEmpty())
                 orderBy = queryBase.OrderBy + " " + queryBase.OrderDir;
-            if (tableDto.DefaultFilter.IsNotEmpty())
+            if (tableDto.DefaultFilter.Ext_IsNotEmpty())
                 condition += " and " + tableDto.DefaultFilter;
             string sql = "select {0} from {1} where {2} order by {3} offset {4} rows fetch next {5} rows only";
             var queryResult = await _sqlService.Query(string.Format(sql, columns, tableDto.Name, condition,
                 orderBy, queryBase.Start, queryBase.Length));
             result.data = queryResult;
-            result.recordsTotal = (await _sqlService.GetSingle(String.Format("select count(*) from {0} where {1}", tableDto.Name, condition))).ToInt32();
+            result.recordsTotal = (await _sqlService.GetSingle(String.Format("select count(*) from {0} where {1}", tableDto.Name, condition))).Ext_ToInt32();
             return result;
         }
 
@@ -360,7 +360,7 @@ namespace lkWeb.Service.Abstracts
             }
             //返回新增数据的自增列值
             var execResult = await _sqlService.ExecuteScalar(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
-            result.flag = execResult.IsNotEmpty();
+            result.flag = execResult.Ext_IsNotEmpty();
             result.msg = "操作成功";
             result.data = execResult;
             return result;
@@ -452,14 +452,14 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<string>> GetOutValue(OutSqlModel outSqlModel, string outId)
         {
             var result = new Result<String>();
-            if (outId.IsEmpty())
+            if (outId.Ext_IsEmpty())
             {
                 result.data = "无";
                 return result;
             }
             var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
                 outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.PrimaryKey, outId));
-            result.data = value.IsEmpty() ? "无" : value;
+            result.data = value.Ext_IsEmpty() ? "无" : value;
             result.flag = true;
             return result;
 
@@ -474,7 +474,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<IList<object>>> GetMultiSelectOutValue(OutSqlModel outSqlModel, string outId)
         {
             var result = new Result<IList<object>>();
-            if (outId.IsEmpty())
+            if (outId.Ext_IsEmpty())
             {
                 return result;
             }
@@ -500,7 +500,7 @@ namespace lkWeb.Service.Abstracts
         public async Task<Result<string>> GetOutValueId(OutSqlModel outSqlModel, string outValue)
         {
             var result = new Result<String>();
-            if (outValue.IsEmpty())
+            if (outValue.Ext_IsEmpty())
             {
                 return result;
             }
@@ -579,7 +579,7 @@ namespace lkWeb.Service.Abstracts
                 {
                     result.msg += "excel中必须包含\"" + string.Join(',', exceptList) + "\"且有值,";
                 }
-                if (result.msg.IsNotEmpty())
+                if (result.msg.Ext_IsNotEmpty())
                     return result;
                 // 遍历EXCEL文件
                 for (int row = 1; row <= rowCount; row++)
@@ -602,14 +602,14 @@ namespace lkWeb.Service.Abstracts
                             //如果为out类型 需要转换值为对应表的主键Id值
                             if (currentColDto.DataType == ColumnType.Out)
                             {
-                                if (colValue.IsEmpty()) //out列 允许为空
+                                if (colValue.Ext_IsEmpty()) //out列 允许为空
                                     colValues[colValueCount].Add(colValue);
                                 else
                                 {
                                     var outSql = await GetColumnValue(tableId, currentColDto.Name, "OutSql");
                                     var outSqlModel = new OutSqlModel(outSql);
                                     var outValueId = (await GetOutValueId(outSqlModel, colValue)).data;
-                                    if (outValueId.IsNotEmpty())
+                                    if (outValueId.Ext_IsNotEmpty())
                                         colValues[colValueCount].Add(outValueId);
                                     else
                                     {
@@ -620,7 +620,7 @@ namespace lkWeb.Service.Abstracts
 
                             else if (currentColDto.DataType == ColumnType.MultiSelect_Out)
                             {
-                                if (colValue.IsEmpty()) //out列 允许为空
+                                if (colValue.Ext_IsEmpty()) //out列 允许为空
                                     colValues[colValueCount].Add(colValue);
                                 else
                                 {
@@ -683,7 +683,7 @@ namespace lkWeb.Service.Abstracts
                         colValueCount++;
 
                 }
-                if (result.msg.IsNotEmpty()) //如果有错误信息 不继续执行 返回错误信息
+                if (result.msg.Ext_IsNotEmpty()) //如果有错误信息 不继续执行 返回错误信息
                     return result;
                 //将excel中表头的中文列名 转换为对应的 英文列名
                 var colCnAndEndNames = colDtos.ToDictionary(c => c.Description, c => c.Name);

@@ -1,32 +1,26 @@
-
-
-
-删除冗余数据
-
 网站后台可以查看错误日志 列表选文件 然后查看。。。
 
-syshelper,获取字典下拉选项
-
 代码调整
-注意 tablecolumn tablelist 前台页面 直接绑定枚举 TableImportType。。UserStatus 等
   数据库链接 单例 依赖注入 service加个参数就行
-  加 region  ajax page
+
   service调用精简为 services.sdsdsadasd
   viewlist里方法都封装
-   $.ajax({ 封装
-   entity 都加前缀 和表名相同 。。，，， 各种命名 改下
-  dbconfig  没必要单独文件 都放context里
+ 
   services.AddScoped<ISys_UserService, Sys_UserService>(); t4生成 自动注册
    util 放 lkweb.core就行了吧？  ISqlService ISysService             
    services.AddScoped<ISysService, SysService>();            services.AddScoped<ISqlService, SqlService>();
    改成 helper吧
+
    调整startup.cs 里面太乱   
    一个统一的配置文件 像老师的那个那样  当前用户， 各种信息提示，用format
-   public async Task<Result<UserDto>> DeleteAsync  //这种 不需要返回 result，直接一个bool就行
 
 登陆页面，侧边栏菜单 超过 滚动条，点击保留高亮
 
+
+删除冗余数据
+
 延后功能:
+
 统计图表
 超级管理与给予所有子系统权限
  http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
@@ -35,6 +29,7 @@ syshelper,获取字典下拉选项
 友情链接 
 
 延后问题:
+
 	写详细使用文档
 	菜单管理     可以下拉选择菜单 查看此菜单的子菜单 也可以下拉选择子系统
 	菜单编辑页 fuck 不能用SubSystemId不然就不会选中   @Html.DropDownList("SubSystemIdA",    menu.SubSystemId = Request.Form["SubSystemIdA"];

@@ -51,7 +51,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<Sys_DepartmentDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
+            if (queryBase.SearchKey.Ext_IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey)
                 || x.Leader.Contains(queryBase.SearchKey));
             //获取所有部门的id和部门名称

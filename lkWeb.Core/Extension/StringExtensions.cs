@@ -6,9 +6,12 @@ namespace lkWeb.Core.Extension
 {
     public static class StringExtensions
     {
-        public static string[] Ext_Split(this string s,char separator)
+        public static string[] Ext_Split(this string s, char separator)
         {
-            return s.Split(separator);
+            if (string.IsNullOrEmpty(s))
+                return new string[] { };
+            else
+                return s.Split(separator);
         }
 
         /// <summary>
@@ -16,7 +19,7 @@ namespace lkWeb.Core.Extension
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static bool IsEmpty(this string s)
+        public static bool Ext_IsEmpty(this string s)
         {
             return (s == null) || (s.Trim().Length == 0);
         }
@@ -25,18 +28,18 @@ namespace lkWeb.Core.Extension
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static bool IsNotEmpty(this string s)
+        public static bool Ext_IsNotEmpty(this string s)
         {
-            return !s.IsEmpty();
+            return !s.Ext_IsEmpty();
         }
         /// <summary>
         /// 转为int32
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static Int32 ToInt32(this string s)
+        public static Int32 Ext_ToInt32(this string s)
         {
-            if (s.IsEmpty())
+            if (s.Ext_IsEmpty())
                 return -1;
             else
                 return Convert.ToInt32(s);
@@ -46,7 +49,7 @@ namespace lkWeb.Core.Extension
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string InitialUpper(this string s)
+        public static string Ext_InitialUpper(this string s)
         {
             if (s.Length > 1)
             {

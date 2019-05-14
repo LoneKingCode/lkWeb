@@ -7,12 +7,13 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class MenuConfig : IEntityTypeConfiguration<Sys_MenuEntity>
+    public class Sys_InfoReleaseConfig : IEntityTypeConfiguration<Sys_InfoReleaseEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_MenuEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_InfoReleaseEntity> builder)
         {
-            builder.ToTable("Sys_Menu");
-      
+            builder.ToTable("Sys_InfoRelease");
+         
+
         }
     }
 }

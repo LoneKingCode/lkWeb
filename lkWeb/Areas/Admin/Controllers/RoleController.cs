@@ -87,7 +87,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<Sys_RoleDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
+            if (queryBase.SearchKey.Ext_IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var result = await _roleService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var subSystemsResult = await _subSystemService.GetListAsync(x => x.Id > 0);
@@ -158,7 +158,9 @@ namespace lkWeb.Areas.Admin.Controllers
             var menuIds = new List<int>();
             foreach (var item in allMenuList)
             {
-                if (item.SubSystemId.Split(',').ToList().Contains(param.id.ToString()))
+                if (string.IsNullOrEmpty(item.SubSystemId))
+                    continue;
+                if (item.SubSystemId.Ext_Split(',').ToList().Contains(param.id.ToString()))
                     menuIds.Add(item.Id);
             }
             var menuList = (await _menuService.GetListAsync(item => menuIds.Contains(item.Id))).data;
@@ -225,9 +227,9 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetUserListByRole(QueryBase queryBase)
         {
-            if (queryBase.Value.IsEmpty())
+            if (queryBase.Value.Ext_IsEmpty())
                 return Json(new { });
-            var roleId = queryBase.Value.ToInt32();
+            var roleId = queryBase.Value.Ext_ToInt32();
             var users = (await _userRoleService.GetListAsync(item => item.Id > 0 && item.RoleId == roleId))
                 .data.Select(item => item.UserId).ToList();
             Expression<Func<Sys_UserDto, bool>> queryExp = item => item.Id > 0 && users.Contains(item.Id);
@@ -253,7 +255,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetUserListByNotRole(QueryBase queryBase)
         {
-            if (queryBase.Value.IsEmpty())
+            if (queryBase.Value.Ext_IsEmpty())
                 return Json(new { });
             var roleId = Convert.ToInt32(queryBase.Value);
             var users = (await _userRoleService.GetListAsync(item => item.Id > 0 && item.RoleId == roleId))

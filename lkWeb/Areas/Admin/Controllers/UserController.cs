@@ -117,7 +117,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
             Expression<Func<Sys_UserDto, bool>> queryExp = item => item.Id > 0;
-            if (queryBase.SearchKey.IsNotEmpty())
+            if (queryBase.SearchKey.Ext_IsNotEmpty())
                 queryExp = x => (x.UserName.Contains(queryBase.SearchKey) || x.RealName.Contains(queryBase.SearchKey));
             var result = await _userService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var data = new DataTableModel
@@ -270,9 +270,9 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetListByDepartment(QueryBase queryBase)
         {
-            if (queryBase.Value.IsEmpty())
+            if (queryBase.Value.Ext_IsEmpty())
                 return Json(new { });
-            var departmentID = queryBase.Value.ToInt32();
+            var departmentID = queryBase.Value.Ext_ToInt32();
             var users = (await _userDepartmentService.GetListAsync(item => item.Id > 0 && item.DepartmentId == departmentID))
                 .data.Select(item => item.UserId).ToList();
             Expression<Func<Sys_UserDto, bool>> queryExp = item => item.Id > 0 && users.Contains(item.Id);
@@ -298,7 +298,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetListByNotDepartment(QueryBase queryBase)
         {
-            if (queryBase.Value.IsEmpty())
+            if (queryBase.Value.Ext_IsEmpty())
                 return Json(new { });
             var departmentID = Convert.ToInt32(queryBase.Value);
             var users = (await _userDepartmentService.GetListAsync(item => item.Id > 0 && item.DepartmentId == departmentID))

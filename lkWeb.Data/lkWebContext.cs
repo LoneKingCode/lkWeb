@@ -31,24 +31,24 @@ namespace lkWeb.Data
             base.OnModelCreating(modelBuilder);
 
             //设置实体和数据库中表的关系
-            modelBuilder.ApplyConfiguration(new LoginLogConfig());
-            modelBuilder.ApplyConfiguration(new MenuConfig());
-            modelBuilder.ApplyConfiguration(new OperationLog());
-            modelBuilder.ApplyConfiguration(new RoleConfig());
-            modelBuilder.ApplyConfiguration(new RoleMenuConfig());
-            modelBuilder.ApplyConfiguration(new UserConfig());
-            modelBuilder.ApplyConfiguration(new UserRoleConfig());
-            modelBuilder.ApplyConfiguration(new DepartmentConfig());
-            modelBuilder.ApplyConfiguration(new UserDepartmentConfig());
-            modelBuilder.ApplyConfiguration(new TableListConfig());
-            modelBuilder.ApplyConfiguration(new TableColumnConfig());
-            modelBuilder.ApplyConfiguration(new SystemOptionConfig());
-            modelBuilder.ApplyConfiguration(new SubSystemConfig());
-            modelBuilder.ApplyConfiguration(new SubSystemTypeConfig());
-            modelBuilder.ApplyConfiguration(new SysValueListConfig());
-            modelBuilder.ApplyConfiguration(new InfoTypeConfig());
-            modelBuilder.ApplyConfiguration(new InfoReleaseConfig());
-            modelBuilder.ApplyConfiguration(new FileConfig());
+            modelBuilder.ApplyConfiguration(new Sys_LoginLogConfig());
+            modelBuilder.ApplyConfiguration(new Sys_MenuConfig());
+            modelBuilder.ApplyConfiguration(new Sys_OperationLog());
+            modelBuilder.ApplyConfiguration(new Sys_RoleConfig());
+            modelBuilder.ApplyConfiguration(new Sys_RoleMenuConfig());
+            modelBuilder.ApplyConfiguration(new Sys_UserConfig());
+            modelBuilder.ApplyConfiguration(new Sys_UserRoleConfig());
+            modelBuilder.ApplyConfiguration(new Sys_DepartmentConfig());
+            modelBuilder.ApplyConfiguration(new Sys_UserDepartmentConfig());
+            modelBuilder.ApplyConfiguration(new Sys_TableListConfig());
+            modelBuilder.ApplyConfiguration(new Sys_TableColumnConfig());
+            modelBuilder.ApplyConfiguration(new Sys_SystemOptionConfig());
+            modelBuilder.ApplyConfiguration(new Sys_SubSystemConfig());
+            modelBuilder.ApplyConfiguration(new Sys_SubSystemTypeConfig());
+            modelBuilder.ApplyConfiguration(new Sys_ValueListConfig());
+            modelBuilder.ApplyConfiguration(new Sys_InfoTypeConfig());
+            modelBuilder.ApplyConfiguration(new Sys_InfoReleaseConfig());
+            modelBuilder.ApplyConfiguration(new Sys_FileConfig());
 
         }
         public override int SaveChanges()

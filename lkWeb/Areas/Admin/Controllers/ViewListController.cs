@@ -197,7 +197,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.Table = (await _tableListService.GetByIdAsync(param.extraValue.ToInt32())).data;
+            model.Table = (await _tableListService.GetByIdAsync(param.extraValue.Ext_ToInt32())).data;
             var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.EditVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             var tbName = model.Table.Name;
@@ -318,7 +318,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Detail(UrlParameter param)
         {
             var model = new ViewListModel();
-            model.Table = (await _tableListService.GetByIdAsync(param.extraValue.ToInt32())).data;
+            model.Table = (await _tableListService.GetByIdAsync(param.extraValue.Ext_ToInt32())).data;
             var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.ViewVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.ViewOrder).ToList();
             string sql = "select {0} from {1} where {2}";
@@ -385,7 +385,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetPageData(QueryBase queryBase)
         {
 
-            var tableId = queryBase.Value.ToInt32(); //表ID 保存在value中
+            var tableId = queryBase.Value.Ext_ToInt32(); //表ID 保存在value中
             var tableDto = (await _tableListService.GetByIdAsync(tableId)).data;
             var colDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ListVisible == 1)).data.OrderBy(item => item.ListOrder);
             var columnNames = string.Join(',', colDtos.Select(item => item.Name));
@@ -413,7 +413,7 @@ namespace lkWeb.Areas.Admin.Controllers
 
             string condition = " and 1=1";
 
-            if (queryBase.SearchKey.IsNotEmpty())
+            if (queryBase.SearchKey.Ext_IsNotEmpty())
             {
                 condition = string.Empty;
                 var searchColDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.SearchVisible == 1)).data;
@@ -423,7 +423,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 {
                     var keyValue = searchDic[searchKey];
                     var searchColDto = searchColDtos.Where(x => x.Name == searchKey).FirstOrDefault();
-                    if (searchColDto != null && keyValue.IsNotEmpty())
+                    if (searchColDto != null && keyValue.Ext_IsNotEmpty())
                     {
                         count++;
                         var searchColDataType = searchColDto.DataType;
@@ -455,9 +455,9 @@ namespace lkWeb.Areas.Admin.Controllers
                 else
                     condition = " and 1=1";
             }
-            if (queryBase.OrderBy.IsEmpty())
+            if (queryBase.OrderBy.Ext_IsEmpty())
             {
-                if (tableDto.DefaultSort.IsEmpty())
+                if (tableDto.DefaultSort.Ext_IsEmpty())
                     queryBase.OrderBy = "Id";
                 else
                     queryBase.OrderBy = tableDto.DefaultSort;
@@ -547,7 +547,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                 }
                 //替换扩展方法中的参数
-                if (tableDto.ExtendFunction.IsNotEmpty())
+                if (tableDto.ExtendFunction.Ext_IsNotEmpty())
                     temp["ExtendFunction"] = tableDto.ExtendFunction.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
                 listData.Add(temp);
             }
@@ -606,7 +606,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 else
                 {
                     //列的默认值
-                    if (column.DefaultValue.IsNotEmpty())
+                    if (column.DefaultValue.Ext_IsNotEmpty())
                     {
                         addModel[column.Name] = column.DefaultValue;
                     }
@@ -656,7 +656,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(UrlParameter param, IFormCollection formData)
         {
             var model = new ViewListModel();
-            var tableId = param.extraValue.ToInt32();
+            var tableId = param.extraValue.Ext_ToInt32();
             var columnResult = await _tableColumnService.GetListAsync(item => item.TableId == tableId);
             var tableColumns = columnResult.data;
             var table = (await _tableListService.GetByIdAsync(tableId)).data;
@@ -695,7 +695,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 else
                 {
                     //列的默认值
-                    if (column.DefaultValue.IsNotEmpty())
+                    if (column.DefaultValue.Ext_IsNotEmpty())
                     {
                         updateModel[column.Name] = column.DefaultValue;
                     }
@@ -747,7 +747,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(UrlParameter param)
         {
-            var tableId = param.extraValue.ToInt32();
+            var tableId = param.extraValue.Ext_ToInt32();
             var result = await _sysService.Delete(tableId, param.ids);
             return Json(result);
         }
@@ -782,7 +782,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
             string fileExt = Path.GetExtension(file.FileName);
-            if (forbiddenFileExt.IsNotEmpty() && forbiddenFileExt.Split('|').Contains(fileExt.TrimStart('.')))
+            if (forbiddenFileExt.Ext_IsNotEmpty() && forbiddenFileExt.Split('|').Contains(fileExt.TrimStart('.')))
             {
                 result.msg = "不允许的文件类型";
                 return Json(result);

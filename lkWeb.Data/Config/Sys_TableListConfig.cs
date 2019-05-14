@@ -7,13 +7,12 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class InfoReleaseConfig : IEntityTypeConfiguration<Sys_InfoReleaseEntity>
+   public  class Sys_TableListConfig : IEntityTypeConfiguration<Sys_TableListEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_InfoReleaseEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_TableListEntity> builder)
         {
-            builder.ToTable("Sys_InfoRelease");
-         
-
+            builder.ToTable("Sys_TableList");
+     
         }
     }
 }

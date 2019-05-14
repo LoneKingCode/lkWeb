@@ -63,9 +63,9 @@ namespace lkWeb.Areas.Admin.Controllers
 
         public async Task<IActionResult> GetPageData(UrlParameter param, QueryBase queryBase)
         {
-            var parentId = queryBase.Value.ToInt32();
+            var parentId = queryBase.Value.Ext_ToInt32();
             Expression<Func<Sys_ValueListDto, bool>> queryExp = item => item.ParentId == parentId && parentId!=0;
-            if (queryBase.SearchKey.IsNotEmpty())
+            if (queryBase.SearchKey.Ext_IsNotEmpty())
                 queryExp = x => (x.Description.Contains(queryBase.SearchKey) || x.Name.Contains(queryBase.SearchKey));
             var result = await _valueListService.GetPageDataAsync(queryBase, queryExp, queryBase.OrderBy, queryBase.OrderDir);
             var allValueList = (await _valueListService.GetListAsync(item => item.Id > 0))

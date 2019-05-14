@@ -82,11 +82,11 @@ namespace lkWeb.Areas.Admin.Controllers
         {
             Expression<Func<Sys_TableColumnDto, bool>> queryExp = item => item.Id > 0;
             var searchKey = queryBase.SearchKey;
-            if (searchKey.IsNotEmpty())
+            if (searchKey.Ext_IsNotEmpty())
             {
                 if (searchKey.Contains("TableId")) //如果是查找指定表下的列 前台格式为 TableId|Id值
                 {
-                    var tableId = searchKey.Split('|')[1].ToInt32();
+                    var tableId = searchKey.Split('|')[1].Ext_ToInt32();
                     queryExp = x => x.TableId == tableId;
                 }
                 else

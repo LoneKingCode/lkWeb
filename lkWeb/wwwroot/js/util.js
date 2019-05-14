@@ -54,7 +54,7 @@ function showConfirm(msg, callback) {
         layer.close(index);
     });
 }
-function ajaxPost(url, isAddCsrfToken, data, success, error, type = 'post', dataType = 'json', async = true, msgTitle = '') {
+function ajaxPost(url, isAddCsrfToken, data, success, error, type = 'post', dataType = 'json', async = true) {
     if (isAddCsrfToken)
         data['csrfmiddlewaretoken'] = getCsrfToken()
     var index = layer.load();

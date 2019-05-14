@@ -7,12 +7,13 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class TableColumnConfig : IEntityTypeConfiguration<Sys_TableColumnEntity>
+    public class Sys_InfoTypeConfig : IEntityTypeConfiguration<Sys_InfoTypeEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_TableColumnEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_InfoTypeEntity> builder)
         {
-            builder.ToTable("Sys_TableColumn");
-     
+            builder.ToTable("Sys_InfoType");
+         
+
         }
     }
 }

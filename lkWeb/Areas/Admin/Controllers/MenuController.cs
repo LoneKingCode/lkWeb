@@ -59,7 +59,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 ViewBag.ParentName = parentMenu.Name;
             }
 
-            var subSystemIds = menu.SubSystemId.Split(',');
+            var subSystemIds = menu.SubSystemId.Ext_Split(',');
             var subSystems = await _subSystemService.GetListAsync(item => item.Id > 0);
             ViewBag.subSystem = new MultiSelectList(subSystems.data, "Id", "Name", subSystemIds);
             return View(menu);
@@ -72,7 +72,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> GetList(UrlParameter param, string searchKey)
         {
             Expression<Func<Sys_MenuDto, bool>> queryExp = item => item.Id > 0;
-            if (searchKey.IsNotEmpty())
+            if (searchKey.Ext_IsNotEmpty())
                 queryExp = item => item.Id > 0 && (item.Name.Contains(searchKey) || item.Url.Contains(searchKey));
             var result = await _menuService.GetListAsync(queryExp);
             var strData = new
@@ -89,11 +89,11 @@ namespace lkWeb.Areas.Admin.Controllers
             Expression<Func<Sys_MenuDto, bool>> queryExp = item => item.Id > 0;
             var searchKey = queryBase.SearchKey;
 
-            if (searchKey.IsNotEmpty())
+            if (searchKey.Ext_IsNotEmpty())
             {
                 if (searchKey.Contains("SubSystemId"))  
                 {
-                    var sysId = searchKey.Split('|')[1].ToInt32();
+                    var sysId = searchKey.Split('|')[1].Ext_ToInt32();
                     queryExp = x => x.SubSystemId.Contains(sysId.ToString());
                 }
                 else

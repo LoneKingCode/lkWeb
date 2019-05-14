@@ -123,7 +123,7 @@ lkWeb.DeleteMulti = function (area, ids, ctrl, table, value, action = '', callba
 }
 
 
-lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack, table) {
+lkWeb.AjaxPost = function (url, data, successCallBack, errorCallBack) {
     data.__RequestVerificationToken = lkWeb.GetCsrfToken()
     lkWeb.ShowLoad()
     $.ajax(

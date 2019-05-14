@@ -7,13 +7,12 @@ using System.Text;
 
 namespace lkWeb.Data.Config
 {
-    public class SysValueListConfig : IEntityTypeConfiguration<Sys_ValueListEntity>
+    public class Sys_OperationLog : IEntityTypeConfiguration<Sys_OperationLogEntity>
     {
-        public void Configure(EntityTypeBuilder<Sys_ValueListEntity> builder)
+        public void Configure(EntityTypeBuilder<Sys_OperationLogEntity> builder)
         {
-            builder.ToTable("Sys_ValueList");
-         
-
+            builder.ToTable("Sys_OperationLog");
+           
         }
     }
 }
