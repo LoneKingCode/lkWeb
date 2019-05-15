@@ -2,19 +2,16 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/lkWeb",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:53190/",
       "sslPort": 0
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "lkWeb": {
       "commandName": "Project",
       "launchBrowser": true,

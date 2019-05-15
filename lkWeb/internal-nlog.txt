@@ -1,7 +1,0 @@
-2019-04-27 14:18:04.0231 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: ownFile-web
-2019-04-27 14:26:33.6393 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: ownFile-web
-2019-04-27 15:00:42.9252 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: ownFile-web
-2019-04-27 15:31:51.3175 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: ownFile-web
-2019-04-27 15:37:59.7876 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: ownFile-web
-2019-04-27 15:45:24.7962 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: ownFile-web
-2019-04-27 15:46:31.2957 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: ownFile-web

@@ -4,5 +4,40 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Content.cshtml";
 }
 
-<h2>Error</h2>
+@section Scripts{
+    <script>
+        function ShowLog() {
+            var filePath = $("#LogFile").val();
+            if (IsNotEmpty(filePath)) {
+                lkWeb.AjaxPost("@Url.Action("GetLog")", { 'filePath': filePath }, function (res) {
+                    $("#logContent").html(res.data);
+                })
+            }
+        }
+        function Del() {
+            var filePath = $("#LogFile").val();
+            if (IsNotEmpty(filePath)) {
+                lkWeb.Confirm("确认删除？", function () {
+                    lkWeb.AjaxPost("@Url.Action("DelLog")", { 'filePath': filePath }, function (res) {
+                        parent.layer.alert("删除成功");
+                        window.location.reload()
+                    })
+                })
+            }
 
+        }
+    </script>
+}
+@Html.AntiForgeryToken()
+<div class="form-group">
+    <div class="input-group">
+        @Html.DropDownList("LogFile", (SelectList)ViewBag.LogFiles, new { @class = "form-control select" })
+        <span class="input-group-btn">
+            <button class="btn btn-danger" type="button" onclick="Del()"> <i class="fa fa-search"></i> 删除</button>
+            <button class="btn btn-primary" type="button" onclick="ShowLog()"> <i class="fa fa-search"></i> 查看</button>
+        </span>
+    </div>
+</div>
+<div style="width:100%;height:500px;overflow:scroll;" id="logContent">
+
+</div>

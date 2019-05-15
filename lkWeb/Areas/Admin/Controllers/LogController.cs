@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using lkWeb.Areas.Admin.Models;
 using lkWeb.Core.Extension;
+using lkWeb.Core.Helper;
 using lkWeb.Service.Abstracts;
 using lkWeb.Service.Dto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -28,6 +31,18 @@ namespace lkWeb.Areas.Admin.Controllers
         }
         public IActionResult Error(UrlParameter param)
         {
+
+            var logFiles = System.IO.Directory.GetFiles(Path.Combine( AppContext.BaseDirectory, "Logs"));
+            var fileList = new List<object>();
+            foreach (var file in logFiles)
+            {
+                fileList.Add(new
+                {
+                    Value = file,
+                    Text = Path.GetFileName(file)
+                });
+            }
+            ViewBag.LogFiles = new SelectList(fileList, "Value", "Text");
             return View();
         }
         public IActionResult Chart(UrlParameter param)
@@ -38,7 +53,7 @@ namespace lkWeb.Areas.Admin.Controllers
         #endregion
 
         #region Ajax
-         
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetChartDataByDay()
@@ -160,6 +175,41 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> ClearOperationLog()
         {
             var result = await _operationLogService.DeleteAsync(x => x.Id > 0);
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetLog(string filePath)
+        {
+            var result = new Result<string>();
+            try
+            {
+                result.data = await System.IO.File.ReadAllTextAsync(filePath);
+                result.data = result.data.Replace("\n", "<br>");
+                result.flag = true;
+            }
+            catch (Exception ex)
+            {
+
+                result.data = ex.Message;
+            }
+            return Json(result);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DelLog(string filePath)
+        {
+            var result = new Result<string>();
+            try
+            {
+                System.IO.File.Delete(filePath);
+                result.flag = true;
+            }
+            catch (Exception ex)
+            {
+
+                result.data = ex.Message;
+            }
             return Json(result);
         }
         #endregion
