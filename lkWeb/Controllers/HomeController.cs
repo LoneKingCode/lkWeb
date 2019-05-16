@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using lkWeb.Service.Abstracts;
+using lkWeb.Service.Services;
 using AutoMapper;
 using lkWeb.Entity;
 using lkWeb.Service.Dto;

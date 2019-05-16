@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using lkWeb.Areas.Front.Controllers.Base;
 using lkWeb.Areas.Front.Models;
-using lkWeb.Service.Abstracts;
+using lkWeb.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lkWeb.Areas.Front.Controllers

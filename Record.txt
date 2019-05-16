@@ -1,12 +1,11 @@
 代码调整
   数据库链接 单例 依赖注入 service加个参数就行
 
-  service调用精简为 services.sdsdsadasd
+  service调用精简为 ServiceLocator.sdsdsadasd
   viewlist里方法都封装
  
-  services.AddScoped<ISys_UserService, Sys_UserService>(); t4生成 自动注册
    util 放 lkweb.core就行了吧？  ISqlService ISysService             
-   services.AddScoped<ISysService, SysService>();            services.AddScoped<ISqlService, SqlService>();
+   services.AddScoped<ISysService, SysService>();       services.AddScoped<ISqlService, SqlService>();
    改成 helper吧
 
    调整startup.cs 里面太乱   

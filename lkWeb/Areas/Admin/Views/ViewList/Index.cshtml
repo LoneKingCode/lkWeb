@@ -186,7 +186,7 @@
                         else
                         {
                             var sortable = (column.DataType == "Custom").ToString().ToLower();
-                            if (column.ColumnWidth.IsNotEmpty())
+                            if (column.ColumnWidth.Ext_IsNotEmpty())
                             {
                                 columnStr.Append(string.Format(str, column.Name, sortable, $"sWidth:\"{column.ColumnWidth}\""));
                             }
@@ -199,7 +199,7 @@
                      @Html.Raw(columnStr.ToString());
                      }
             @{
-                if (Model.Table.ExtendFunction.IsNotEmpty())
+                if (Model.Table.ExtendFunction.Ext_IsNotEmpty())
                 {
                        @Html.Raw("{\"mData\":\"ExtendFunction\", \"sClass\": \"text-center\" },".ToString())
                 }
@@ -366,7 +366,7 @@
                 StringBuilder headerStr = new StringBuilder();
                 foreach (var column in Model.TableColumn)
                 {
-                    if (column.ColumnWidth.IsNotEmpty())
+                    if (column.ColumnWidth.Ext_IsNotEmpty())
                     {
                         headerStr.Append("<th style='width:" + column.ColumnWidth + ";'>" + column.Description + "</th>");
                     }
@@ -375,7 +375,7 @@
                         headerStr.Append("<th>" + column.Description + "</th>");
                     }
                 }
-                if (Model.Table.ExtendFunction.IsNotEmpty())
+                if (Model.Table.ExtendFunction.Ext_IsNotEmpty())
                 {
                     headerStr.Append("<th>操作</th>");
                 }

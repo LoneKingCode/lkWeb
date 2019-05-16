@@ -8,7 +8,7 @@ using AutoMapper;
 using lkWeb.Service;
 using lkWeb.Data;
 using Microsoft.EntityFrameworkCore;
-using lkWeb.Service.Abstracts;
+using lkWeb.Service.Services;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
 using lkWeb.Entity;
@@ -18,6 +18,7 @@ using Hangfire;
 using lkWeb.Filter;
 using lkWeb.Core.Extension;
 using lkWeb.Core.Helper;
+using lkWeb.Service.Services;
 
 namespace lkWeb
 {
@@ -44,8 +45,6 @@ namespace lkWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //lkWebContext.connectionString = Configuration.GetConnectionString("lkWebConn");
-            //lkWebContext.connectionString = ConfigurationHelper.getConnStr();
             services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString));
             services.AddSession(config =>
             {
@@ -67,28 +66,8 @@ namespace lkWeb
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // Add application services. For instance:
-            services.AddScoped<ISys_UserService, Sys_UserService>();
-            services.AddScoped<ISys_RoleService, Sys_RoleService>();
-            services.AddScoped<ISys_UserRoleService, Sys_UserRoleService>();
-            services.AddScoped<ISys_MenuService, Sys_MenuService>();
-            services.AddScoped<ISys_RoleMenuService, Sys_RoleMenuService>();
-            services.AddScoped<ISys_DepartmentService, Sys_DepartmentService>();
-            services.AddScoped<ISys_UserDepartmentService, Sys_UserDepartmentService>();
-            services.AddScoped<ISys_LoginLogService, Sys_LoginLogService>();
-            services.AddScoped<ISys_OperationLogService, Sys_OperationLogService>();
-            services.AddScoped<ISys_TableListService, Sys_TableListService>();
-            services.AddScoped<ISys_TableColumnService, Sys_TableColumnService>();
-            services.AddScoped<ISys_SubSystemService, Sys_SubSystemService>();
-            services.AddScoped<ISys_SubSystemTypeService, Sys_SubSystemTypeService>();
-            services.AddScoped<ISys_SystemOptionService, Sys_SystemOptionService>();
-            services.AddScoped<ISys_ValueListService, Sys_ValueListService>();
-            services.AddScoped<ISys_InfoReleaseService, Sys_InfoReleaseService>();
-            services.AddScoped<ISys_InfoTypeService, Sys_InfoTypeService>();
-
-            services.AddScoped<ISqlService, SqlService>();
-            services.AddScoped<ISysService, SysService>();
-
-
+            InjectionService.services = services;
+            InjectionService.Injection();
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -113,7 +92,7 @@ namespace lkWeb
             WebHelper._httpContextAccessor = accessor;
             WebHelper._hostingEnvironment = app.ApplicationServices.GetRequiredService<IHostingEnvironment>();
             ServiceLocator.Instance = app.ApplicationServices;
-
+        
             app.UseStaticFiles();//使用静态文件
 
             app.UseSession();
