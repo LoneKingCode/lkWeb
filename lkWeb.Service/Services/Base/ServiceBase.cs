@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using lkWeb.Core.Extension;
 using System.Data.Common;
 
 namespace lkWeb.Service.Services
@@ -17,9 +16,6 @@ namespace lkWeb.Service.Services
     {
         public readonly IMapper _mapper;
  
-   
-        static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
-        static DbContextOptionsBuilder<lkWebContext> dbContextOptionBuilder = new DbContextOptionsBuilder<lkWebContext>(dbContextOption);
         public ServiceBase(IMapper mapper)
         {
             _mapper = mapper;
@@ -30,7 +26,7 @@ namespace lkWeb.Service.Services
         /// <returns></returns>
         public lkWebContext GetDb()
         {
-             return new lkWebContext(dbContextOptionBuilder.UseSqlServer(lkWebContext.connectionString).Options);
+            return ServiceLocator.lkWebContext();
         }
         /// <summary>
         /// 获取DbSet

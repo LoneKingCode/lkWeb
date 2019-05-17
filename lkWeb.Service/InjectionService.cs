@@ -12,9 +12,7 @@ namespace lkWeb.Service.Services
         public static void Injection()
         {
             Injection_Auto();
-
-            services.AddScoped<ISqlService, SqlService>();
-            services.AddScoped<ISysService, SysService>();
+             
         }
     }
 }

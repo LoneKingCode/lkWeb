@@ -12,16 +12,13 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 部门名称
         /// </summary>
-        [Required, DisplayName("角色名称"), MinLength(2), MaxLength(20)]
         public string Name { get; set; }
 
         /// <summary>
         /// 部门描述
         /// </summary>
-        [Required, DisplayName("描述"), MinLength(1), MaxLength(200)]
         public string Description { get; set; }
 
-        [DisplayName("负责人")]
         /// <summary>
         /// 负责人
         /// </summary>
@@ -30,7 +27,6 @@ namespace lkWeb.Service.Dto
         /// <summary>
         /// 上级部门
         /// </summary>
-        [DisplayName("上级部门")]
         public int ParentId { get; set; }
     }
 }

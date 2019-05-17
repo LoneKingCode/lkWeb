@@ -10,9 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.2" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\lkWeb.Data\lkWeb.Data.csproj" />
+    <ProjectReference Include="..\lkWeb.Service\lkWeb.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

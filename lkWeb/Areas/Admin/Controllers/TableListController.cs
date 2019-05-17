@@ -10,6 +10,7 @@ using lkWeb.Service.Dto;
 using lkWeb.Service.Enum;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using lkWeb.Core.Helper;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -17,18 +18,12 @@ namespace lkWeb.Areas.Admin.Controllers
     {
         public readonly ISys_TableListService _tableListService;
         public readonly ISys_TableColumnService _tableColumnService;
-        public readonly ISqlService _sqlService;
-        public readonly ISysService _sysService;
 
         public TableListController(ISys_TableListService tableListService,
-            ISys_TableColumnService tableColumnService,
-            ISqlService sqlService,
-            ISysService sysService)
+            ISys_TableColumnService tableColumnService)
         {
             _tableListService = tableListService;
             _tableColumnService = tableColumnService;
-            _sqlService = sqlService;
-            _sysService = sysService;
         }
 
         #region Page
@@ -117,14 +112,14 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerateColumn(UrlParameter param)
         {
-            var result = await _sysService.GenerateColumn(param.id);
+            var result = await SysHelper.GenerateColumn(param.id);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SyncGenerateColumn(UrlParameter param)
         {
-            var result = await _sysService.GenerateColumn(param.id,true);
+            var result = await SysHelper.GenerateColumn(param.id,true);
             return Json(result);
         }
         #endregion

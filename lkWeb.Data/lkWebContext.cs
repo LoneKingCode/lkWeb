@@ -1,21 +1,14 @@
 ﻿using lkWeb.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Data;
-using System.Text;
-using lkWeb.Core.Extension;
 using lkWeb.Data.Config;
-using lkWeb.Core.Helper;
 
 namespace lkWeb.Data
 {
     public class lkWebContext : DbContext
     {
- 
-        public static string connectionString = ConfigurationHelper.getConnStr();
+
+        public static string connectionString = "";
         public DbSet<Sys_LoginLogEntity> LoginLog { get; set; }
         public DbSet<Sys_MenuEntity> Menu { get; set; }
         public DbSet<Sys_RoleMenuEntity> RoleMenu { get; set; }
@@ -25,6 +18,7 @@ namespace lkWeb.Data
         public DbSet<Sys_UserRoleEntity> UserRole { get; set; }
         public lkWebContext(DbContextOptions<lkWebContext> options) : base(options)
         {
+           
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -59,7 +53,7 @@ namespace lkWeb.Data
             }
             catch (DbUpdateException ex)
             {
-                LoggerHelper.Logger.Error(ex);
+               // LoggerHelper.Logger.Error(ex);
                 return 0;
 
                 //Add your code to inspect the inner exception and/or
@@ -71,7 +65,7 @@ namespace lkWeb.Data
             }
             catch (Exception ex)
             {
-                LoggerHelper.Logger.Error(ex);
+                //LoggerHelper.Logger.Error(ex);
                 return 0;
                 //throw;
             }

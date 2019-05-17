@@ -45,7 +45,9 @@ namespace lkWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString));
+            lkWebContext.connectionString = ConfigurationHelper.getConnStr();
+            // services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString), poolSize: 64);
+            services.AddDbContext<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString),ServiceLifetime.Transient);
             services.AddSession(config =>
             {
                 config.Cookie.Name = "lkWeb.Session";
@@ -92,7 +94,7 @@ namespace lkWeb
             WebHelper._httpContextAccessor = accessor;
             WebHelper._hostingEnvironment = app.ApplicationServices.GetRequiredService<IHostingEnvironment>();
             ServiceLocator.Instance = app.ApplicationServices;
-        
+
             app.UseStaticFiles();//使用静态文件
 
             app.UseSession();

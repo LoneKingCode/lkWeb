@@ -1,5 +1,6 @@
 ﻿using lkWeb.Core.Helper;
 using lkWeb.Data;
+using lkWeb.Service.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,20 +10,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lkWeb.Service.Services
+namespace lkWeb.Core.Helper
 {
-    public class SqlService : ISqlService
+    public static class SqlHelper
     {
-        static DbContextOptions<lkWebContext> dbContextOption = new DbContextOptions<lkWebContext>();
-        static DbContextOptionsBuilder<lkWebContext> dbContextOptionBuilder = new DbContextOptionsBuilder<lkWebContext>(dbContextOption);
-
         /// <summary>
         /// 获取DbContex对象
         /// </summary>
         /// <returns></returns>
-        public lkWebContext GetDb()
+        public static lkWebContext GetDb()
         {
-            return new lkWebContext(dbContextOptionBuilder.UseSqlServer(lkWebContext.connectionString).Options);
+            return ServiceLocator.lkWebContext();
         }
 
         /// <summary>
@@ -30,7 +28,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="sql">SQL语句</param>
         /// <returns></returns>
-        public async Task<int> Execute(string sql)
+        public static async Task<int> Execute(string sql)
         {
             int result = 0;
             using (var db = GetDb())
@@ -61,7 +59,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="listSql">SQL语句集合</param>
         /// <returns></returns>
-        public async Task<int> ExecuteBatch(List<string> listSql)
+        public static async Task<int> ExecuteBatch(List<string> listSql)
         {
             int result = 0;
             using (var db = GetDb())
@@ -95,7 +93,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="sql">SQL语句</param>
         /// <returns></returns>
-        public async Task<string> ExecuteScalar(string sql)
+        public static async Task<string> ExecuteScalar(string sql)
         {
             var conn = GetDb().Database.GetDbConnection();
             try
@@ -126,7 +124,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="sql">SQL语句</param>
         /// <returns></returns>
-        public async Task<List<Dictionary<string, object>>> Query(string sql)
+        public static async Task<List<Dictionary<string, object>>> Query(string sql)
         {
             var results = new List<Dictionary<string, object>>();
             var conn = GetDb().Database.GetDbConnection();
@@ -164,7 +162,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="sql">SQL语句</param>
         /// <returns></returns>
-        public async Task<string> GetSingle(string sql)
+        public static async Task<string> GetSingle(string sql)
         {
             var queryResult = await Query(sql);
             try

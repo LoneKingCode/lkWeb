@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 
-namespace lkWeb.Core.Helper
+namespace lkWeb.Service
 {
 
 
@@ -160,7 +160,7 @@ namespace lkWeb.Core.Helper
             {
                 string rawValues = values.ToString();   // writes out as Csv when there are multiple.
 
-                if (!rawValues.Ext_IsEmpty())
+                if (!string.IsNullOrEmpty(rawValues))
                     return (T)Convert.ChangeType(values.ToString(), typeof(T));
             }
             return default(T);

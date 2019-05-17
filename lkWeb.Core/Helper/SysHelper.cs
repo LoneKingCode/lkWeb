@@ -11,8 +11,10 @@ using OfficeOpenXml;
 using System.Globalization;
 using Microsoft.AspNetCore.Http;
 using lkWeb.Core.Helper;
+using lkWeb.Service.Services;
+using lkWeb.Service;
 
-namespace lkWeb.Service.Services
+namespace lkWeb.Core.Helper
 {
     /// <summary>
     /// 外部Sql Model
@@ -89,34 +91,24 @@ namespace lkWeb.Service.Services
         public string OtherFieldValue { get; set; }
     }
 
-    public class SysService : ISysService
+    public static class SysHelper
     {
-        public readonly ISqlService _sqlService;
-        public readonly ISys_TableListService _tableListService;
-        public readonly ISys_TableColumnService _tableColumnService;
         /// <summary>
         /// 当前用户Id
         /// </summary>
         public static string currentUserId;
 
-        public SysService(ISqlService sqlService,
-            ISys_TableListService tableListService,
-            ISys_TableColumnService tableColumnService)
-        {
-            _sqlService = sqlService;
-            _tableListService = tableListService;
-            _tableColumnService = tableColumnService;
-        }
+
         /// <summary>
         /// 生成列
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <param name="isSync">是否同步生成</param>
         /// <returns></returns>
-        public async Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId, bool isSync = false)
+        public static async Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId, bool isSync = false)
         {
             var result = new Result<List<Sys_TableColumnDto>>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -126,12 +118,12 @@ namespace lkWeb.Service.Services
             //此SQL语句可以查询制定表的所有列
             //string sql = string.Format("select tablename,colName,colType,colLength from v_TableInfo where tablename = '{0}'", tableDto.Name);
             string sql = string.Format("select TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH as COLUMN_LENGH from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '{0}'", tableDto.Name);
-            var tableData = await _sqlService.Query(sql);
+            var tableData = await SqlHelper.Query(sql);
             var tableColumns = new List<Sys_TableColumnDto>();
-            var tableColumnDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId)).data;
+            var tableColumnDtos = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId)).data;
             var columnNames = new List<string>();
             if (!isSync) //如果非同步生成 删除之前的列数据
-                await _tableColumnService.DeleteAsync(item => item.TableId == tableId);
+                await ServiceLocator.Sys_TableColumnService().DeleteAsync(item => item.TableId == tableId);
             if (tableData.Count <= 0)
             {
                 result.msg = $"获取表{tableDto.Name}中的列数据失败，可能表不存在，请检查";
@@ -178,14 +170,14 @@ namespace lkWeb.Service.Services
                     });
                 }
             }
-            var addResult = await _tableColumnService.AddAsync(tableColumns);
+            var addResult = await ServiceLocator.Sys_TableColumnService().AddAsync(tableColumns);
             //有时同步列 如果列数据没变化 count就为0
             addResult.flag = (tableColumns.Count == 0 && isSync) || addResult.flag;
             if (isSync)
             {
                 addResult.msg = $"同步成功，新增{tableColumns.Count}条列数据";
                 //删除已经不需要的列
-                var deleteColumnDtos = (await _tableColumnService.DeleteAsync(item => item.TableId == tableId && !columnNames.Contains(item.Name))).data;
+                var deleteColumnDtos = (await ServiceLocator.Sys_TableColumnService().DeleteAsync(item => item.TableId == tableId && !columnNames.Contains(item.Name))).data;
             }
 
             return addResult;
@@ -199,7 +191,7 @@ namespace lkWeb.Service.Services
         /// <param name="fieldName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public async Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string fieldName, string value)
+        public static async Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string fieldName, string value)
         {
             var result = new Result<List<Sys_TableColumnDto>>();
             List<string> listSql = new List<string>();
@@ -207,7 +199,7 @@ namespace lkWeb.Service.Services
             {
                 listSql.Add(string.Format("update Sys_TableColumn set {0}='{1}' where Id={2}", fieldName, value, id));
             }
-            var execResult = await _sqlService.ExecuteBatch(listSql);
+            var execResult = await SqlHelper.ExecuteBatch(listSql);
             result.flag = execResult == listSql.Count();
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -220,10 +212,10 @@ namespace lkWeb.Service.Services
         /// <param name="fieldName">字段名</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public async Task<Result<List<Sys_TableColumnDto>>> BatchOperation(int tableId, List<int> ids, string fieldName, string value)
+        public static async Task<Result<List<Sys_TableColumnDto>>> BatchOperation(int tableId, List<int> ids, string fieldName, string value)
         {
             var result = new Result<List<Sys_TableColumnDto>>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -236,7 +228,7 @@ namespace lkWeb.Service.Services
             {
                 listSql.Add(string.Format("update {0} set {1}='{2}' where Id={3}", tableDto.Name, fieldName, value, id));
             }
-            var execResult = await _sqlService.ExecuteBatch(listSql);
+            var execResult = await SqlHelper.ExecuteBatch(listSql);
             result.flag = execResult == listSql.Count();
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -249,10 +241,10 @@ namespace lkWeb.Service.Services
         /// <param name="condition">查询条件</param>
         /// <param name="orderBy">排序条件</param>
         /// <returns></returns>
-        public async Task<Result<List<Dictionary<string, object>>>> GetData(int tableId, string columns, string condition, string orderBy)
+        public static async Task<Result<List<Dictionary<string, object>>>> GetData(int tableId, string columns, string condition, string orderBy)
         {
             var result = new Result<List<Dictionary<string, object>>>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -260,7 +252,7 @@ namespace lkWeb.Service.Services
             }
             var tableDto = tableResult.data;
             string sql = "select {0} from {1} where {2} order by {3}";
-            var queryResult = await _sqlService.Query(string.Format(sql, columns, tableDto.Name, condition, orderBy));
+            var queryResult = await SqlHelper.Query(string.Format(sql, columns, tableDto.Name, condition, orderBy));
             result.flag = queryResult.Count > 0;
             result.data = queryResult;
             return result;
@@ -274,10 +266,10 @@ namespace lkWeb.Service.Services
         /// <param name="condition">查询条件</param>
         /// <param name="queryBase">基础查询对象</param>
         /// <returns></returns>
-        public async Task<ResultDto<Dictionary<string, object>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase)
+        public static async Task<ResultDto<Dictionary<string, object>>> GetPageData(int tableId, string columns, string condition, QueryBase queryBase)
         {
             var result = new ResultDto<Dictionary<string, object>>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
                 return result;
             if (tableResult.data.AllowView == 0)
@@ -293,10 +285,10 @@ namespace lkWeb.Service.Services
             if (tableDto.DefaultFilter.Ext_IsNotEmpty())
                 condition += " and " + tableDto.DefaultFilter;
             string sql = "select {0} from {1} where {2} order by {3} offset {4} rows fetch next {5} rows only";
-            var queryResult = await _sqlService.Query(string.Format(sql, columns, tableDto.Name, condition,
+            var queryResult = await SqlHelper.Query(string.Format(sql, columns, tableDto.Name, condition,
                 orderBy, queryBase.Start, queryBase.Length));
             result.data = queryResult;
-            result.recordsTotal = (await _sqlService.GetSingle(String.Format("select count(*) from {0} where {1}", tableDto.Name, condition))).Ext_ToInt32();
+            result.recordsTotal = (await SqlHelper.GetSingle(String.Format("select count(*) from {0} where {1}", tableDto.Name, condition))).Ext_ToInt32();
             return result;
         }
 
@@ -307,17 +299,17 @@ namespace lkWeb.Service.Services
         /// <param name="condition">条件</param>
         /// <param name="orderBy">排序条件</param>
         /// <returns>多个列名逗号隔开</returns>
-        public async Task<Result<string>> GetColumnNames(int tableId, string condition, string orderBy)
+        public static async Task<Result<string>> GetColumnNames(int tableId, string condition, string orderBy)
         {
             var result = new Result<String>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
                 return result;
             }
             var tableDto = tableResult.data;
-            var columnData = await _sqlService.Query($"select * from Sys_TableColumn where TableId={tableId} and {condition} order By {orderBy}");
+            var columnData = await SqlHelper.Query($"select * from Sys_TableColumn where TableId={tableId} and {condition} order By {orderBy}");
             var columnNameStr = string.Empty;
             foreach (var dicList in columnData)
             {
@@ -335,10 +327,10 @@ namespace lkWeb.Service.Services
         /// <param name="tableId">表Id</param>
         /// <param name="addModel">数据键值对</param>
         /// <returns></returns>
-        public async Task<Result<string>> Add(int tableId, Dictionary<string, string> addModel)
+        public static async Task<Result<string>> Add(int tableId, Dictionary<string, string> addModel)
         {
             var result = new Result<string>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -359,7 +351,7 @@ namespace lkWeb.Service.Services
                 sbValue.AppendFormat("'{0}',", item.Value);
             }
             //返回新增数据的自增列值
-            var execResult = await _sqlService.ExecuteScalar(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
+            var execResult = await SqlHelper.ExecuteScalar(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
             result.flag = execResult.Ext_IsNotEmpty();
             result.msg = "操作成功";
             result.data = execResult;
@@ -373,10 +365,10 @@ namespace lkWeb.Service.Services
         /// <param name="updateModel">数据键值对</param>
         /// <param name="id">数据主键Id</param>
         /// <returns></returns>
-        public async Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel, int id)
+        public static async Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel, int id)
         {
             var result = new Result<bool>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -398,7 +390,7 @@ namespace lkWeb.Service.Services
             {
                 sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value, forbiddenUpdateFilter));
             }
-            var execResult = await _sqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
+            var execResult = await SqlHelper.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
             result.flag = execResult == 1;
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -410,10 +402,10 @@ namespace lkWeb.Service.Services
         /// <param name="tableId">表Id</param>
         /// <param name="ids">要删除的id集合</param>
         /// <returns></returns>
-        public async Task<Result<bool>> Delete(int tableId, List<int> ids)
+        public static async Task<Result<bool>> Delete(int tableId, List<int> ids)
         {
             var result = new Result<bool>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -436,7 +428,7 @@ namespace lkWeb.Service.Services
             {
                 sqlList.Add(string.Format(sqlTpl, tableName, id, forbiddenDeleteFilter));
             }
-            var execResult = await _sqlService.ExecuteBatch(sqlList);
+            var execResult = await SqlHelper.ExecuteBatch(sqlList);
             result.flag = execResult == sqlList.Count();
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -449,7 +441,7 @@ namespace lkWeb.Service.Services
         /// <param name="colName">列名</param>
         /// <param name="outId">外键Id值</param>
         /// <returns></returns>
-        public async Task<Result<string>> GetOutValue(OutSqlModel outSqlModel, string outId)
+        public static async Task<Result<string>> GetOutValue(OutSqlModel outSqlModel, string outId)
         {
             var result = new Result<String>();
             if (outId.Ext_IsEmpty())
@@ -457,7 +449,7 @@ namespace lkWeb.Service.Services
                 result.data = "无";
                 return result;
             }
-            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
+            var value = await SqlHelper.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
                 outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.PrimaryKey, outId));
             result.data = value.Ext_IsEmpty() ? "无" : value;
             result.flag = true;
@@ -471,7 +463,7 @@ namespace lkWeb.Service.Services
         /// <param name="colName">列名</param>
         /// <param name="outId">外键Id值</param>
         /// <returns></returns>
-        public async Task<Result<IList<object>>> GetMultiSelectOutValue(OutSqlModel outSqlModel, string outId)
+        public static async Task<Result<IList<object>>> GetMultiSelectOutValue(OutSqlModel outSqlModel, string outId)
         {
             var result = new Result<IList<object>>();
             if (outId.Ext_IsEmpty())
@@ -479,7 +471,7 @@ namespace lkWeb.Service.Services
                 return result;
             }
             string sql = "select {0} from {1} where {2}";
-            var queryResult = await _sqlService.Query(string.Format(sql,
+            var queryResult = await SqlHelper.Query(string.Format(sql,
                 outSqlModel.OutTableForeignKey + "," + outSqlModel.CurrentTableForeignKey,
                 outSqlModel.SaveTableName,
                 outSqlModel.CurrentTableForeignKey + "='" + outId + "'"));
@@ -497,14 +489,14 @@ namespace lkWeb.Service.Services
         /// <param name="colName">列名</param>
         /// <param name="outValue">外键值</param>
         /// <returns></returns>
-        public async Task<Result<string>> GetOutValueId(OutSqlModel outSqlModel, string outValue)
+        public static async Task<Result<string>> GetOutValueId(OutSqlModel outSqlModel, string outValue)
         {
             var result = new Result<String>();
             if (outValue.Ext_IsEmpty())
             {
                 return result;
             }
-            var value = await _sqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
+            var value = await SqlHelper.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
                 outSqlModel.PrimaryKey, outSqlModel.TableName, outSqlModel.TextKey, outValue));
             result.data = value;
             result.flag = true;
@@ -517,10 +509,10 @@ namespace lkWeb.Service.Services
         /// <param name="tableId">表Id</param>
         /// <param name="excelFilePath">Excel文件路径</param>
         /// <returns></returns>
-        public async Task<Result<string>> ImportExcel(int tableId, IFormFile formFile)
+        public static async Task<Result<string>> ImportExcel(int tableId, IFormFile formFile)
         {
             var result = new Result<string>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -532,7 +524,7 @@ namespace lkWeb.Service.Services
                 result.msg = "不允许导入";
                 return result;
             }
-            var colDtos = (await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ImportVisible == 1)).data;
+            var colDtos = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId && item.ImportVisible == 1)).data;
             if (!colDtos.Any())
             {
                 result.msg = "无可导入的列";
@@ -663,7 +655,7 @@ namespace lkWeb.Service.Services
 
                             if (currentColDto.PrimaryKey == 1)
                             {
-                                var exist = (await _sqlService.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
+                                var exist = (await SqlHelper.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
                                 if (tableDto.ImportType == TableImportType.插入)
                                 {
                                     if (exist != "0")
@@ -714,7 +706,7 @@ namespace lkWeb.Service.Services
                 else if (tableDto.ImportType == TableImportType.更新)
                 {
                     string sqlTpl = "update {0} set {1} where {2}";
-                    var primaryKeyResult = await _tableColumnService.GetListAsync(c => c.TableId == tableId && c.PrimaryKey == 1);
+                    var primaryKeyResult = await ServiceLocator.Sys_TableColumnService().GetListAsync(c => c.TableId == tableId && c.PrimaryKey == 1);
                     if (primaryKeyResult.data == null)
                     {
                         result.msg = "请设置主键，因为导入类型为更新";
@@ -749,7 +741,7 @@ namespace lkWeb.Service.Services
                     result.msg += "请在表管理中设置导入类型,";
                 }
 
-                var execResult = await _sqlService.ExecuteBatch(listSql);
+                var execResult = await SqlHelper.ExecuteBatch(listSql);
                 result.flag = execResult == listSql.Count();
                 result.msg = "影响数据条数" + execResult;
             }
@@ -764,9 +756,9 @@ namespace lkWeb.Service.Services
         /// <param name="fieldName">fieldName</param>
         /// <returns></returns>
         /// <returns></returns>
-        public async Task<string> GetColumnValue(int tableId, string columnName, string fieldName)
+        public static async Task<string> GetColumnValue(int tableId, string columnName, string fieldName)
         {
-            return await _sqlService.GetSingle($"select {fieldName} from Sys_TableColumn where TableId={tableId} and Name='{columnName}'");
+            return await SqlHelper.GetSingle($"select {fieldName} from Sys_TableColumn where TableId={tableId} and Name='{columnName}'");
         }
 
         /// <summary>
@@ -774,10 +766,10 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <returns></returns>
-        public async Task<Result<string>> ExportExcel(int tableId, List<int> ids)
+        public static async Task<Result<string>> ExportExcel(int tableId, List<int> ids)
         {
             var result = new Result<string>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -806,7 +798,7 @@ namespace lkWeb.Service.Services
                 var colNames = string.Empty;
                 // 添加worksheet
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
-                var colDtos = await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ExportVisible == 1);
+                var colDtos = await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId && item.ExportVisible == 1);
 
                 if (colDtos.data.Count() < 1)
                 {
@@ -902,10 +894,10 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="tableId">表Id</param>
         /// <returns></returns>
-        public async Task<Result<string>> DownloadImportTemplate(int tableId)
+        public static async Task<Result<string>> DownloadImportTemplate(int tableId)
         {
             var result = new Result<string>();
-            var tableResult = await _tableListService.GetByIdAsync(tableId);
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
@@ -930,7 +922,7 @@ namespace lkWeb.Service.Services
                 var colNames = string.Empty;
                 // 添加worksheet
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("data");
-                var colDtos = await _tableColumnService.GetListAsync(item => item.TableId == tableId && item.ImportVisible == 1);
+                var colDtos = await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId && item.ImportVisible == 1);
                 if (colDtos.data.Count() < 1)
                 {
                     result.msg += "导入可见的列数量为" + colDtos.data.Count();
@@ -960,10 +952,10 @@ namespace lkWeb.Service.Services
         /// <returns></returns>
 
 
-        public async Task<List<Dictionary<string, object>>> GetOutData(OutSqlModel model)
+        public static async Task<List<Dictionary<string, object>>> GetOutData(OutSqlModel model)
         {
             string sql = "select {0} from {1} where {2}";
-            var result = await _sqlService.Query(string.Format(sql,
+            var result = await SqlHelper.Query(string.Format(sql,
                         model.PrimaryKey + "," + model.TextKey, model.TableName, model.Condition));
             return result;
         }

@@ -7,23 +7,22 @@ using lkWeb.Service.Services;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http;
 using lkWeb.Service;
+using lkWeb.Core.Helper;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
     public class HomeController : AdminBaseController
     {
         public readonly ISys_RoleService _roleService;
-        public readonly ISqlService _sqlService;
-        public HomeController(ISys_RoleService roleService, ISqlService sqlService)
+        public HomeController(ISys_RoleService roleService)
         {
             _roleService = roleService;
-            _sqlService = sqlService;
         }
 
         #region Page
         public async Task<IActionResult> Index()
         {
-            var reader = await _sqlService.Query("select * from Sys_User");
+            var reader = await SqlHelper.Query("select * from Sys_User");
             return View();
         }
 

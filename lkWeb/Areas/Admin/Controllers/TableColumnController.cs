@@ -10,6 +10,7 @@ using lkWeb.Service.Dto;
 using lkWeb.Service.Enum;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using lkWeb.Core.Helper;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -17,14 +18,11 @@ namespace lkWeb.Areas.Admin.Controllers
     {
         public readonly ISys_TableColumnService _tableColumnService;
         public readonly ISys_TableListService _tableListService;
-        public readonly ISysService _sysService;
         public TableColumnController(ISys_TableColumnService tableColumnService,
-            ISys_TableListService tableListService,
-            ISysService sysService)
+            ISys_TableListService tableListService)
         {
             _tableColumnService = tableColumnService;
             _tableListService = tableListService;
-            _sysService = sysService;
         }
 
         #region Page
@@ -156,7 +154,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetValue(UrlParameter param, SetColumnAttrModel model)
         {
-            var result = await _sysService.SetColumnValue(param.ids, model.FiledName, model.Value);
+            var result = await SysHelper.SetColumnValue(param.ids, model.FiledName, model.Value);
             return Json(result);
         }
         #endregion

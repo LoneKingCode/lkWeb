@@ -17,18 +17,14 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\lkWeb.Core\lkWeb.Core.csproj" />
     <ProjectReference Include="..\lkWeb.Data\lkWeb.Data.csproj" />
-    <ProjectReference Include="..\lkWeb.Entity\lkWeb.Entity.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="6.2.2" />
-    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.3" />
-    <PackageReference Include="SimpleInjector" Version="4.3.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
-    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="AutoMapper" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
