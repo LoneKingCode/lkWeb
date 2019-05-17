@@ -1,20 +1,24 @@
+框架核心代码拿出来，新建个类库比如admin
+
 SecurityHelper service和core都有一份
 LoggerHelper lkwebcontext savechanges没用
 
 SqlHelper
 SysHelper位置  想一想哪
 
+
 现在 dbcontet生命周期是ServiceLifetime.Transient
 
 代码调整
   service调用精简为 ServiceLocator.sdsdsadasd  参考下git那个框架 再说
-
-  功能检查。。。。。。。。。。。。。。。。。。。。。
-
+  
   viewlist里方法都封装
+  Enum 单文件就行 Enums.cs
+  功能检查。。。。。。。。。。。。。。。。。。。。。
+  代码优化
+   调整startup.cs 里面太乱   写个FrameworkServiceExtension 单独文件添加自己需要的
+   前后端尽量分离下 主要是viewlist那里
 
-
-   调整startup.cs 里面太乱   
    一个统一的配置文件 像老师的那个那样  当前用户， 各种信息提示，用format
 
 登陆页面，侧边栏菜单 超过 滚动条，点击保留高亮
@@ -23,17 +27,20 @@ SysHelper位置  想一想哪
 
 延后功能:
 
+便于安装使用。。。
+
 统计图表
 超级管理与给予所有子系统权限
  http://xgnew.tjise.stonemonth.com/Home/ChooseSystem 页面扒掉用
 	信息发布的 ueditor 上传文件等等。。。 .net core版本
 	上传文件用 fastdfs分布式之类的，反正有个附件服务器，提前写好代码 上传文件，，，入库
+	支持redis缓存
 友情链接 
 
 延后问题:
 
 	写详细使用文档
-	菜单管理     可以下拉选择菜单 查看此菜单的子菜单 也可以下拉选择子系统
+ 
 	菜单编辑页 fuck 不能用SubSystemId不然就不会选中   @Html.DropDownList("SubSystemIdA",    menu.SubSystemId = Request.Form["SubSystemIdA"];
 
 
