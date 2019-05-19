@@ -15,11 +15,14 @@ using lkWeb.Entity;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Hangfire;
-using lkWeb.Filter;
 using lkWeb.Core.Extension;
 using lkWeb.Core.Helper;
-using lkWeb.Service.Services;
-
+using lkWeb.Filter;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using System.Linq;
+using System.Reflection;
+ 
 namespace lkWeb
 {
     public class Startup
@@ -45,9 +48,9 @@ namespace lkWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            lkWebContext.connectionString = ConfigurationHelper.getConnStr(); 
+            lkWebContext.connectionString = ConfigurationHelper.getConnStr();
             // services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString), poolSize: 64);
-            services.AddDbContext<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString),ServiceLifetime.Transient);
+            services.AddDbContext<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString), ServiceLifetime.Transient);
             services.AddSession(config =>
             {
                 config.Cookie.Name = "lkWeb.Session";
@@ -122,9 +125,10 @@ namespace lkWeb
                   template: "{area:exists}/{controller=Control}/{action=Index}/{id?}/{extraValue?}");
                 routes.MapRoute(
                     name: "default",
-                      template: "{area=Front}/{controller=Home}/{action=ChooseSystem}/{id?}/{extraValue?}");
+                      template: "{area=Admin}/{controller=Home}/{action=ChooseSystem}/{id?}/{extraValue?}");
 
             });
+
 
             loggerFactory.AddNLog();//添加NLog
 

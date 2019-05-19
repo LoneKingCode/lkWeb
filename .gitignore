@@ -259,10 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/src/lkWeb/wwwroot/Upload
-/lkWeb/wwwroot/Upload/Temp/2019/0501
-/lkWeb/wwwroot/Upload/2019/0502
-/lkWeb/wwwroot/Upload/2019/0508
-/lkWeb/wwwroot/Upload/2019/0509
-/lkWeb/wwwroot/Upload/2019/0510
-/lkWeb/wwwroot/Upload/Temp/2019/0517
+/lkWeb/wwwroot/Upload
+/deploy

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using lkWeb.Filter;
 using Microsoft.AspNetCore.Mvc;
 
-namespace lkWeb.Areas.Front.Controllers.Base
+namespace lkWeb.Admin.Areas.Front.Controllers.Base
 {
     //[PermissionFilter]
     [Area("Front")]
