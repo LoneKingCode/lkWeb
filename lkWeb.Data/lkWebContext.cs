@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using lkWeb.Data.Config;
+using lkWeb.Core.Helper;
 
 namespace lkWeb.Data
 {
@@ -53,7 +54,7 @@ namespace lkWeb.Data
             }
             catch (DbUpdateException ex)
             {
-               // LoggerHelper.Logger.Error(ex);
+                LoggerHelper.Logger.Error(ex);
                 return 0;
 
                 //Add your code to inspect the inner exception and/or
@@ -65,7 +66,7 @@ namespace lkWeb.Data
             }
             catch (Exception ex)
             {
-                //LoggerHelper.Logger.Error(ex);
+                LoggerHelper.Logger.Error(ex);
                 return 0;
                 //throw;
             }

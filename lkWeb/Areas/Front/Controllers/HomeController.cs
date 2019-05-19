@@ -15,6 +15,9 @@ namespace lkWeb.Admin.Areas.Front.Controllers
         {
             return View();
         }
-      
+        public IActionResult NotFound()
+        {
+            return View();
+        }
     }
 }

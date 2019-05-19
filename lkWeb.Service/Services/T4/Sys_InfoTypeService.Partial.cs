@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
+using lkWeb.Models.Enum;
 using lkWeb.Entity;
 using System.Linq;
-using lkWeb.Core.Extension;
+using lkWeb.Core.Extensions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -167,12 +168,12 @@ namespace lkWeb.Service.Services
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public async Task<ResultDto<Sys_InfoTypeDto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<Sys_InfoTypeDto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<PageResult<Sys_InfoTypeDto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<Sys_InfoTypeDto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
                 var ds = db.Set<Sys_InfoTypeEntity>();
-                var result = new ResultDto<Sys_InfoTypeDto>();
+                var result = new PageResult<Sys_InfoTypeDto>();
                 var where = queryExp.Cast<Sys_InfoTypeDto, Sys_InfoTypeEntity, bool>();
                 var isAsc = !string.IsNullOrEmpty(orderDir) && orderDir.ToLower() != "desc";
                 //暂时没用到这个
@@ -191,7 +192,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        public async Task<ResultDto<Sys_InfoTypeDto>> GetListAsync(Expression<Func<Sys_InfoTypeDto, bool>> queryExp)
+        public async Task<PageResult<Sys_InfoTypeDto>> GetListAsync(Expression<Func<Sys_InfoTypeDto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
@@ -199,7 +200,7 @@ namespace lkWeb.Service.Services
                 var ds = GetDbSet(db);
                 var temp = await ds.Where(_queryExp).OrderBy(item => item.Id).ToListAsync();
                 var dtoData = MapTo<List<Sys_InfoTypeEntity>, List<Sys_InfoTypeDto>>(temp);
-                var result = new ResultDto<Sys_InfoTypeDto>
+                var result = new PageResult<Sys_InfoTypeDto>
                 {
                     data = dtoData,
                     recordsTotal = dtoData.Count,

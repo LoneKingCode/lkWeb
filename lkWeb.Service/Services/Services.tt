@@ -16,8 +16,8 @@
         //定义输出文件
         manager.StartNewFile("I"+name+"Service.Partial.cs",outputPath); 
 #> 
-using lkWeb.Service.Base.Dto;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
+using lkWeb.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -127,10 +127,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
+using lkWeb.Models.Enum;
 using lkWeb.Entity;
 using System.Linq;
-using lkWeb.Core.Extension;
+using lkWeb.Core.Extensions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
@@ -390,7 +391,8 @@ namespace lkWeb.Service.Services
 #>
 using AutoMapper;
 using lkWeb.Entity;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
+using lkWeb.Models.Enum;
 namespace lkWeb.Service.Services
 {
 public partial class AutoMapperConfiguration : Profile

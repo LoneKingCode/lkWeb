@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.Linq;
 
-namespace lkWeb.Core.Extension
+namespace lkWeb.Core.Extensions
 {
     /// <summary>
     /// LambdaExpressionExtensions

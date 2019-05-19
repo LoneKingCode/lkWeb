@@ -1,5 +1,6 @@
 ﻿using lkWeb.Entity;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
+using lkWeb.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,12 +43,12 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="userId">userId</param>
         /// <returns></returns>
-        Task<ResultDto<Sys_RoleDto>> GetUserRoles(int userId);
+        Task<PageResult<Sys_RoleDto>> GetUserRoles(int userId);
         /// <summary>
         /// 获取不是用户所属的角色数据
         /// </summary>
         /// <param name="userId">userId</param>
         /// <returns></returns>
-        Task<ResultDto<Sys_RoleDto>> GetNotUserRoles(int userId);
+        Task<PageResult<Sys_RoleDto>> GetNotUserRoles(int userId);
     }
 }

@@ -1,6 +1,7 @@
 using AutoMapper;
 using lkWeb.Entity;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
+using lkWeb.Models.Enum;
 namespace lkWeb.Service.Services
 {
 public partial class AutoMapperConfiguration : Profile

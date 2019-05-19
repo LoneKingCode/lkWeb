@@ -1,6 +1,6 @@
  
-using lkWeb.Service.Base.Dto;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
+using lkWeb.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -79,14 +79,14 @@ namespace lkWeb.Service.Services
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<Sys_FileDto>> GetPageDataAsync(QueryBase queryBase,
+        Task<PageResult<Sys_FileDto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<Sys_FileDto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<Sys_FileDto>> GetListAsync(Expression<Func<Sys_FileDto, bool>> queryExp);
+        Task<PageResult<Sys_FileDto>> GetListAsync(Expression<Func<Sys_FileDto, bool>> queryExp);
 	}
 }
 

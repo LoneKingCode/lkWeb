@@ -1,6 +1,6 @@
-﻿using lkWeb.Core.Extension;
+﻿using lkWeb.Core.Extensions;
 using lkWeb.Service.Services;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using lkWeb.Models.Enum;
 
 namespace lkWeb.Filter
 {
@@ -73,7 +74,7 @@ namespace lkWeb.Filter
                 if (roles.Contains("超级管理员"))
                     return;
                 //判断用户状态
-                if (user.Status == Service.Enum.UserStatus.禁用 || user.Status == Service.Enum.UserStatus.未激活)
+                if (user.Status == UserStatus.禁用 || user.Status == UserStatus.未激活)
                 {
                     if (isAjax)
                     {

@@ -15,14 +15,14 @@ using lkWeb.Entity;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using Hangfire;
-using lkWeb.Core.Extension;
+using lkWeb.Core.Extensions;
 using lkWeb.Core.Helper;
 using lkWeb.Filter;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using System.Linq;
 using System.Reflection;
- 
+
 namespace lkWeb
 {
     public class Startup
@@ -122,11 +122,16 @@ namespace lkWeb
             {
                 routes.MapRoute(
                   name: "Admin",
-                  template: "{area:exists}/{controller=Control}/{action=Index}/{id?}/{extraValue?}");
-                routes.MapRoute(
-                    name: "default",
-                      template: "{area=Admin}/{controller=Home}/{action=ChooseSystem}/{id?}/{extraValue?}");
+                  template: "{area:exists}/{controller=Home}/{action=ChooseSystem}/{id?}/{extraValue?}");
 
+                routes.MapRoute(
+                  name: "DefaultIndex",
+                  template: "{area:exists}/{controller=exists}/{action=Index}/{id?}/{extraValue?}");
+
+                routes.MapRoute(
+                "default",
+                "{action}/{id?}/{extraValue?}",
+                new { area = "Front", controller = "Home", action = "Index" });
             });
 
 

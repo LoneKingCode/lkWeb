@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using lkWeb.Service.Dto;
 using lkWeb.Entity;
 using System.Linq.Expressions;
-using lkWeb.Service.Enum;
 using Microsoft.EntityFrameworkCore;
 using lkWeb.Core.Helper;
+using lkWeb.Models.System;
+using lkWeb.Models.Enum;
 
 namespace lkWeb.Service.Services
 {
@@ -215,7 +215,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="userId">userId</param>
         /// <returns></returns>
-        public async Task<ResultDto<Sys_RoleDto>> GetUserRoles(int userId)
+        public async Task<PageResult<Sys_RoleDto>> GetUserRoles(int userId)
         {
             using (var db = GetDb())
             {
@@ -223,7 +223,7 @@ namespace lkWeb.Service.Services
                 var roleIds = userRoles.Select(x => x.RoleId).ToList();
                 Expression<Func<Sys_RoleEntity, bool>> exp = item => roleIds.Contains(item.Id);
                 var roles = await db.Role.Where(exp).ToListAsync();
-                var result = new ResultDto<Sys_RoleDto>
+                var result = new PageResult<Sys_RoleDto>
                 {
                     recordsTotal = roles.Count,
                     data = MapTo<List<Sys_RoleEntity>, List<Sys_RoleDto>>(roles)
@@ -237,7 +237,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="id">id</param>
         /// <returns></returns>
-        public async Task<ResultDto<Sys_RoleDto>> GetNotUserRoles(int userId)
+        public async Task<PageResult<Sys_RoleDto>> GetNotUserRoles(int userId)
         {
             using (var db = GetDb())
             {
@@ -248,7 +248,7 @@ namespace lkWeb.Service.Services
 
                 Expression<Func<Sys_RoleEntity, bool>> exp = item => !userRoleIds.Contains(item.Id);
                 var notRoles = await db.Role.Where(exp).ToListAsync();
-                var result = new ResultDto<Sys_RoleDto>
+                var result = new PageResult<Sys_RoleDto>
                 {
                     recordsTotal = notRoles.Count,
                     data = MapTo<List<Sys_RoleEntity>, List<Sys_RoleDto>>(notRoles)

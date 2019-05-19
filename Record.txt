@@ -1,14 +1,11 @@
-框架核心代码拿出来，新建个类库比如admin
+ 
+config.CreateMap<UserEntity, UserDto>().ReverseMap();
 
+ EnumerableExtensions调整
 
-
-SecurityHelper service和core都有一份
-LoggerHelper lkwebcontext savechanges没用
-
-SqlHelper
-SysHelper位置  想一想哪
-
-升级.net core版本
+ TreeDto   ztree的
+  
+ 设置项目生成顺序
 
 现在 dbcontet生命周期是ServiceLifetime.Transient
 

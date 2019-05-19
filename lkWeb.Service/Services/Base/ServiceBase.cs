@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using lkWeb.Data;
-using lkWeb.Service.Dto;
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Data.Common;
+using lkWeb.Models.System;
 
 namespace lkWeb.Service.Services
 {

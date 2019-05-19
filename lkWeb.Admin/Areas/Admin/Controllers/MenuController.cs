@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Services;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
 using System.Linq.Expressions;
-using lkWeb.Core.Extension;
+using lkWeb.Core.Extensions;
 using lkWeb.Admin.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using lkWeb.Models;
+using lkWeb.Models.Enum;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -92,7 +93,7 @@ namespace lkWeb.Admin.Areas.Admin.Controllers
 
             if (searchKey.Ext_IsNotEmpty())
             {
-                if (searchKey.Contains("SubSystemId"))  
+                if (searchKey.Contains("SubSystemId"))
                 {
                     var sysId = searchKey.Split('|')[1].Ext_ToInt32();
                     queryExp = x => x.SubSystemId.Contains(sysId.ToString());
@@ -164,14 +165,14 @@ namespace lkWeb.Admin.Areas.Admin.Controllers
                 var parentMenu = (await _menuService.GetByIdAsync(menu.ParentId)).data;
                 switch (parentMenu.Type)
                 {
-                    case Service.Enum.MenuType.模块:
-                        menu.Type = Service.Enum.MenuType.菜单;
+                    case MenuType.模块:
+                        menu.Type = MenuType.菜单;
                         break;
-                    case Service.Enum.MenuType.菜单:
-                        menu.Type = Service.Enum.MenuType.按钮;
+                    case MenuType.菜单:
+                        menu.Type = MenuType.按钮;
                         break;
-                    case Service.Enum.MenuType.按钮:
-                        menu.Type = Service.Enum.MenuType.按钮;
+                    case MenuType.按钮:
+                        menu.Type = MenuType.按钮;
                         break;
                     default:
                         break;

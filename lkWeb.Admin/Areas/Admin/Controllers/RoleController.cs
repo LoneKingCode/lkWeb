@@ -4,15 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using lkWeb.Service.Services;
-using lkWeb.Service.Dto;
+using lkWeb.Models.System;
 using lkWeb.Admin.Areas.Admin.Models;
 using System.Linq.Expressions;
-using lkWeb.Core.Extension;
+using lkWeb.Core.Extensions;
 using Microsoft.AspNetCore.Identity;
 using lkWeb.Entity;
 using lkWeb.Filter;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using lkWeb.Models;
+using lkWeb.Models.Enum;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -170,7 +171,7 @@ namespace lkWeb.Admin.Areas.Admin.Controllers
                 id = d.Id.ToString(),
                 pId = d.ParentId,
                 name = d.Name,
-                open = d.Type == Service.Enum.MenuType.模块
+                open = d.Type == MenuType.模块
             });
 
             result.AddRange(menus);

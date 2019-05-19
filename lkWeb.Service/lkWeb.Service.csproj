@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\lkWeb.Data\lkWeb.Data.csproj" />
+    <ProjectReference Include="..\lkWeb.Models\lkWeb.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>
