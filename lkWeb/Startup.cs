@@ -45,7 +45,7 @@ namespace lkWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            lkWebContext.connectionString = ConfigurationHelper.getConnStr();
+            lkWebContext.connectionString = ConfigurationHelper.getConnStr(); 
             // services.AddDbContextPool<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString), poolSize: 64);
             services.AddDbContext<lkWebContext>(options => options.UseSqlServer(lkWebContext.connectionString),ServiceLifetime.Transient);
             services.AddSession(config =>

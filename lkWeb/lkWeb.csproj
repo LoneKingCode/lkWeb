@@ -81,7 +81,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\lkWeb.Core\lkWeb.Core.csproj" />
     <ProjectReference Include="..\lkWeb.Service\lkWeb.Service.csproj" />
   </ItemGroup>
 

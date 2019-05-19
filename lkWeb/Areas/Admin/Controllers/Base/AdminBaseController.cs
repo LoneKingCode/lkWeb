@@ -50,7 +50,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     Id = currentUserResult.data.Id,
                     UserName = currentUserResult.data.UserName
                 };
-                SysHelper.currentUserId = CurrentUser.Id.ToString();
+                SysService.currentUserId = CurrentUser.Id.ToString();
                 if (!WebHelper.IsAjax(context.HttpContext))
                 {
                     var operationLogService = ServiceLocator.Get<ISys_OperationLogService>();

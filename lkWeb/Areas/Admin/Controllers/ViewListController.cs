@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using lkWeb.Models;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -75,7 +76,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 if (column.DataType == ColumnType.Out || column.DataType == ColumnType.MultiSelect_Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var queryResult = await SysHelper.GetOutData(outSqlModel); 
+                    var queryResult = await SysService.GetOutData(outSqlModel); 
                     var items = new List<SelectListItem>();
                     foreach (var row in queryResult)
                     {
@@ -136,7 +137,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 if (column.DataType == ColumnType.Out || column.DataType == ColumnType.MultiSelect_Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var queryResult = await SysHelper.GetOutData(outSqlModel);
+                    var queryResult = await SysService.GetOutData(outSqlModel);
                     var items = new List<SelectListItem>();
                     //items.Add(new SelectListItem
                     //{
@@ -195,7 +196,7 @@ namespace lkWeb.Areas.Admin.Controllers
             var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.EditVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.EditOrder).ToList();
             var tbName = model.Table.Name;
-            var columnValue = (await SqlHelper.Query(
+            var columnValue = (await SqlService.Query(
                 string.Format("select {0} from {1} where {2}", "*", tbName, "Id=" + param.id))).First();
             ViewBag.ColumnValue = columnValue;
             var fileData = new Dictionary<string, IList<object>>();
@@ -208,7 +209,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 if (column.DataType == ColumnType.Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var queryResult = await SysHelper.GetOutData(outSqlModel);
+                    var queryResult = await SysService.GetOutData(outSqlModel);
                     var items = new List<SelectListItem>();
 
                     items.Add(new SelectListItem
@@ -232,7 +233,7 @@ namespace lkWeb.Areas.Admin.Controllers
                 else if (column.DataType == ColumnType.MultiSelect_Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var queryResult = await SysHelper.GetOutData(outSqlModel);
+                    var queryResult = await SysService.GetOutData(outSqlModel);
                     var items = new List<SelectListItem>();
                     //遍历outsql查询的数据中全部项
                     foreach (var row in queryResult)
@@ -246,7 +247,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     var selectValues = new List<object>();
                     if (outSqlModel.IsSave)
-                        selectValues = (await SysHelper.GetMultiSelectOutValue(outSqlModel, param.id.ToString())).data.ToList();
+                        selectValues = (await SysService.GetMultiSelectOutValue(outSqlModel, param.id.ToString())).data.ToList();
                     else
                     {
                         foreach (var item in colValue.Split(','))
@@ -318,7 +319,7 @@ namespace lkWeb.Areas.Admin.Controllers
             string sql = "select {0} from {1} where {2}";
             ViewBag.OutColumn = new Dictionary<string, string>();
             var tbName = model.Table.Name;
-            var columnValueResult = await SqlHelper.Query(
+            var columnValueResult = await SqlService.Query(
                 string.Format(sql, "*", tbName, "Id=" + param.id));
             var columnValue = columnValueResult.First();
             ViewBag.ColumnValue = columnValue;
@@ -327,18 +328,18 @@ namespace lkWeb.Areas.Admin.Controllers
                 if (column.DataType == ColumnType.Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var outColValue = await SysHelper.GetOutValue(outSqlModel, columnValue[column.Name].ToString());
+                    var outColValue = await SysService.GetOutValue(outSqlModel, columnValue[column.Name].ToString());
                     ViewBag.OutColumn[column.Name] = outColValue.data;
                 }
                 else if (column.DataType == ColumnType.MultiSelect_Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var queryResult = await SysHelper.GetOutData(outSqlModel);
+                    var queryResult = await SysService.GetOutData(outSqlModel);
 
                     //如果保存到外表 查询的是外表值
                     if (outSqlModel.IsSave)
                     {
-                        var selectValues = (await SysHelper.GetMultiSelectOutValue(outSqlModel, param.id.ToString())).data;
+                        var selectValues = (await SysService.GetMultiSelectOutValue(outSqlModel, param.id.ToString())).data;
                         var outColValues = queryResult.Where(item => selectValues.Contains(item[outSqlModel.PrimaryKey].ToString()))
                             .Select(item => item[outSqlModel.TextKey]).ToList();
                         ViewBag.OutColumn[column.Name] = string.Join(",", outColValues);
@@ -457,7 +458,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     queryBase.OrderBy = tableDto.DefaultSort;
             }
 
-            var tableData = await SysHelper.GetPageData(tableId, columnNames, queryCondition + condition, queryBase);
+            var tableData = await SysService.GetPageData(tableId, columnNames, queryCondition + condition, queryBase);
             List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
 
             foreach (var dicList in tableData.data)
@@ -469,19 +470,19 @@ namespace lkWeb.Areas.Admin.Controllers
                     var colDto = colDtos.Where(x => x.Name == item.Key).First();
                     if (colDto.DataType == ColumnType.Out)
                     {
-                        var outSql = await SysHelper.GetColumnValue(tableId, item.Key, "OutSql");
+                        var outSql = await SysService.GetColumnValue(tableId, item.Key, "OutSql");
                         var outSqlModel = new OutSqlModel(outSql);
-                        temp[item.Key] = (await SysHelper.GetOutValue(outSqlModel, item.Value.ToString())).data;
+                        temp[item.Key] = (await SysService.GetOutValue(outSqlModel, item.Value.ToString())).data;
                     }
                     else if (colDto.DataType == ColumnType.MultiSelect_Out)
                     {
-                        var outSql = await SysHelper.GetColumnValue(tableId, item.Key, "OutSql");
+                        var outSql = await SysService.GetColumnValue(tableId, item.Key, "OutSql");
                         var outSqlModel = new OutSqlModel(outSql);
                         var colValueArr = item.Value.ToString().Split(',');
                         var tempColValue = string.Empty;
                         foreach (var cvalue in colValueArr)
                         {
-                            var outValue = (await SysHelper.GetOutValue(outSqlModel, cvalue)).data;
+                            var outValue = (await SysService.GetOutValue(outSqlModel, cvalue)).data;
                             tempColValue += outValue + ",";
                         }
                         temp[item.Key] = tempColValue.Trim(',');
@@ -489,7 +490,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     else if (colDto.DataType == ColumnType.MultiSelect)
                     {
                         var selectValues = item.Value.ToString().Split(',');
-                        var selectRange = await SysHelper.GetColumnValue(tableId, item.Key, "SelectRange");
+                        var selectRange = await SysService.GetColumnValue(tableId, item.Key, "SelectRange");
                         var checkStr = selectRange.Split('|'); //1,选项1|2,选项2
                         var items = new List<SelectListItem>();
                         var selectText = string.Empty;
@@ -586,7 +587,7 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
 
                     if (pk_cols.Contains(column.Name))
-                        exist = await SqlHelper.GetSingle($"select count(*) from {table.Name} where {column.Name} = '{colValue}'");
+                        exist = await SqlService.GetSingle($"select count(*) from {table.Name} where {column.Name} = '{colValue}'");
                     if (exist != "0")
                     {
                         result.msg += column.Description + "字段为主键，值\"" + colValue + "\"已存在,";
@@ -609,7 +610,7 @@ namespace lkWeb.Areas.Admin.Controllers
             if (!string.IsNullOrEmpty(result.msg))
                 return Json(result);
             addModel["CreateDateTime"] = DateTime.Now.ToString(); //补充上创建时间
-            result = await SysHelper.Add(param.id, addModel);
+            result = await SysService.Add(param.id, addModel);
             var id = result.data; //新增数据的id
 
             //保存到外表
@@ -640,7 +641,7 @@ namespace lkWeb.Areas.Admin.Controllers
                         addSqls.Add(string.Format(sql, outSqlModel.SaveTableName, colNames, values));
                     }
                 }
-                await SqlHelper.ExecuteBatch(addSqls);
+                await SqlService.ExecuteBatch(addSqls);
             }
             return Json(result);
         }
@@ -677,7 +678,7 @@ namespace lkWeb.Areas.Admin.Controllers
                         }
                     }
                     if (pk_cols.Contains(column.Name))
-                        exist = await SqlHelper.GetSingle(
+                        exist = await SqlService.GetSingle(
                             $"select count(*) from {table.Name} where {column.Name} = '{formData[column.Name]}' and Id!={param.id}");
                     if (exist != "0")
                     {
@@ -697,7 +698,7 @@ namespace lkWeb.Areas.Admin.Controllers
             }
             if (!string.IsNullOrEmpty(result.msg))
                 return Json(result);
-            result = await SysHelper.Update(tableId, updateModel, param.id);
+            result = await SysService.Update(tableId, updateModel, param.id);
             //保存到外表
             if (multiSelectOutData.Keys.Count() > 0)
             {
@@ -727,10 +728,10 @@ namespace lkWeb.Areas.Admin.Controllers
                     }
                     delSqls.Add($"delete from {outSqlModel.SaveTableName} where {outSqlModel.CurrentTableForeignKey} = '{param.id}'");
                 }
-                var execResult = await SqlHelper.ExecuteBatch(delSqls);
+                var execResult = await SqlService.ExecuteBatch(delSqls);
                 if (execResult == -1)
                     result.msg += "删除外表旧数据失败,";
-                execResult = await SqlHelper.ExecuteBatch(addSqls);
+                execResult = await SqlService.ExecuteBatch(addSqls);
                 if (execResult == -1)
                     result.msg += "保存外表数据失败";
             }
@@ -742,7 +743,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(UrlParameter param)
         {
             var tableId = param.extraValue.Ext_ToInt32();
-            var result = await SysHelper.Delete(tableId, param.ids);
+            var result = await SysService.Delete(tableId, param.ids);
             return Json(result);
         }
 
@@ -751,7 +752,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Export(UrlParameter param)
         {
             var tableId = param.id;
-            var result = await SysHelper.ExportExcel(tableId, param.ids);
+            var result = await SysService.ExportExcel(tableId, param.ids);
             return Json(result);
         }
 
@@ -760,7 +761,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Import(UrlParameter param, IFormFile file)
         {
             var tableId = param.id;
-            var result = await SysHelper.ImportExcel(tableId, file);
+            var result = await SysService.ImportExcel(tableId, file);
             return Json(result);
         }
 
@@ -809,7 +810,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> DownloadImportTemplate(UrlParameter param)
         {
             var tableId = param.id;
-            var result = await SysHelper.DownloadImportTemplate(tableId);
+            var result = await SysService.DownloadImportTemplate(tableId);
             return Json(result);
         }
 
@@ -818,7 +819,7 @@ namespace lkWeb.Areas.Admin.Controllers
         public async Task<IActionResult> BatchOperation(UrlParameter param, SetColumnAttrModel model)
         {
             var tableId = param.id;
-            var result = await SysHelper.BatchOperation(tableId, param.ids, model.FiledName, model.Value);
+            var result = await SysService.BatchOperation(tableId, param.ids, model.FiledName, model.Value);
             return Json(result);
         }
         #endregion

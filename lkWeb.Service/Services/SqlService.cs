@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lkWeb.Core.Helper
+namespace lkWeb.Service.Services
 {
-    public static class SqlHelper
+    public static class SqlService
     {
         /// <summary>
         /// 获取DbContex对象

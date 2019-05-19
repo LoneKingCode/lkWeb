@@ -11,6 +11,7 @@ using lkWeb.Service.Enum;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using lkWeb.Core.Helper;
+using lkWeb.Models;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -112,14 +113,14 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerateColumn(UrlParameter param)
         {
-            var result = await SysHelper.GenerateColumn(param.id);
+            var result = await SysService.GenerateColumn(param.id);
             return Json(result);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SyncGenerateColumn(UrlParameter param)
         {
-            var result = await SysHelper.GenerateColumn(param.id,true);
+            var result = await SysService.GenerateColumn(param.id,true);
             return Json(result);
         }
         #endregion

@@ -22,7 +22,7 @@ namespace lkWeb.Areas.Admin.Controllers
         #region Page
         public async Task<IActionResult> Index()
         {
-            var reader = await SqlHelper.Query("select * from Sys_User");
+            var reader = await SqlService.Query("select * from Sys_User");
             return View();
         }
 

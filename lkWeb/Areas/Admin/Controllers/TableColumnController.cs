@@ -11,6 +11,7 @@ using lkWeb.Service.Enum;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using lkWeb.Core.Helper;
+using lkWeb.Models;
 
 namespace lkWeb.Areas.Admin.Controllers
 {
@@ -154,7 +155,7 @@ namespace lkWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetValue(UrlParameter param, SetColumnAttrModel model)
         {
-            var result = await SysHelper.SetColumnValue(param.ids, model.FiledName, model.Value);
+            var result = await SysService.SetColumnValue(param.ids, model.FiledName, model.Value);
             return Json(result);
         }
         #endregion

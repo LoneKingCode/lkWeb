@@ -14,7 +14,7 @@ using lkWeb.Core.Helper;
 using lkWeb.Service.Services;
 using lkWeb.Service;
 
-namespace lkWeb.Core.Helper
+namespace lkWeb.Service.Services
 {
     /// <summary>
     /// 外部Sql Model
@@ -91,7 +91,7 @@ namespace lkWeb.Core.Helper
         public string OtherFieldValue { get; set; }
     }
 
-    public static class SysHelper
+    public static class SysService
     {
         /// <summary>
         /// 当前用户Id
@@ -118,7 +118,7 @@ namespace lkWeb.Core.Helper
             //此SQL语句可以查询制定表的所有列
             //string sql = string.Format("select tablename,colName,colType,colLength from v_TableInfo where tablename = '{0}'", tableDto.Name);
             string sql = string.Format("select TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH as COLUMN_LENGH from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '{0}'", tableDto.Name);
-            var tableData = await SqlHelper.Query(sql);
+            var tableData = await SqlService.Query(sql);
             var tableColumns = new List<Sys_TableColumnDto>();
             var tableColumnDtos = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId)).data;
             var columnNames = new List<string>();
@@ -199,7 +199,7 @@ namespace lkWeb.Core.Helper
             {
                 listSql.Add(string.Format("update Sys_TableColumn set {0}='{1}' where Id={2}", fieldName, value, id));
             }
-            var execResult = await SqlHelper.ExecuteBatch(listSql);
+            var execResult = await SqlService.ExecuteBatch(listSql);
             result.flag = execResult == listSql.Count();
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -228,7 +228,7 @@ namespace lkWeb.Core.Helper
             {
                 listSql.Add(string.Format("update {0} set {1}='{2}' where Id={3}", tableDto.Name, fieldName, value, id));
             }
-            var execResult = await SqlHelper.ExecuteBatch(listSql);
+            var execResult = await SqlService.ExecuteBatch(listSql);
             result.flag = execResult == listSql.Count();
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -252,7 +252,7 @@ namespace lkWeb.Core.Helper
             }
             var tableDto = tableResult.data;
             string sql = "select {0} from {1} where {2} order by {3}";
-            var queryResult = await SqlHelper.Query(string.Format(sql, columns, tableDto.Name, condition, orderBy));
+            var queryResult = await SqlService.Query(string.Format(sql, columns, tableDto.Name, condition, orderBy));
             result.flag = queryResult.Count > 0;
             result.data = queryResult;
             return result;
@@ -285,10 +285,10 @@ namespace lkWeb.Core.Helper
             if (tableDto.DefaultFilter.Ext_IsNotEmpty())
                 condition += " and " + tableDto.DefaultFilter;
             string sql = "select {0} from {1} where {2} order by {3} offset {4} rows fetch next {5} rows only";
-            var queryResult = await SqlHelper.Query(string.Format(sql, columns, tableDto.Name, condition,
+            var queryResult = await SqlService.Query(string.Format(sql, columns, tableDto.Name, condition,
                 orderBy, queryBase.Start, queryBase.Length));
             result.data = queryResult;
-            result.recordsTotal = (await SqlHelper.GetSingle(String.Format("select count(*) from {0} where {1}", tableDto.Name, condition))).Ext_ToInt32();
+            result.recordsTotal = (await SqlService.GetSingle(String.Format("select count(*) from {0} where {1}", tableDto.Name, condition))).Ext_ToInt32();
             return result;
         }
 
@@ -309,7 +309,7 @@ namespace lkWeb.Core.Helper
                 return result;
             }
             var tableDto = tableResult.data;
-            var columnData = await SqlHelper.Query($"select * from Sys_TableColumn where TableId={tableId} and {condition} order By {orderBy}");
+            var columnData = await SqlService.Query($"select * from Sys_TableColumn where TableId={tableId} and {condition} order By {orderBy}");
             var columnNameStr = string.Empty;
             foreach (var dicList in columnData)
             {
@@ -351,7 +351,7 @@ namespace lkWeb.Core.Helper
                 sbValue.AppendFormat("'{0}',", item.Value);
             }
             //返回新增数据的自增列值
-            var execResult = await SqlHelper.ExecuteScalar(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
+            var execResult = await SqlService.ExecuteScalar(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
             result.flag = execResult.Ext_IsNotEmpty();
             result.msg = "操作成功";
             result.data = execResult;
@@ -390,7 +390,7 @@ namespace lkWeb.Core.Helper
             {
                 sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value, forbiddenUpdateFilter));
             }
-            var execResult = await SqlHelper.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
+            var execResult = await SqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
             result.flag = execResult == 1;
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -428,7 +428,7 @@ namespace lkWeb.Core.Helper
             {
                 sqlList.Add(string.Format(sqlTpl, tableName, id, forbiddenDeleteFilter));
             }
-            var execResult = await SqlHelper.ExecuteBatch(sqlList);
+            var execResult = await SqlService.ExecuteBatch(sqlList);
             result.flag = execResult == sqlList.Count();
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -449,7 +449,7 @@ namespace lkWeb.Core.Helper
                 result.data = "无";
                 return result;
             }
-            var value = await SqlHelper.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
+            var value = await SqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
                 outSqlModel.TextKey, outSqlModel.TableName, outSqlModel.PrimaryKey, outId));
             result.data = value.Ext_IsEmpty() ? "无" : value;
             result.flag = true;
@@ -471,7 +471,7 @@ namespace lkWeb.Core.Helper
                 return result;
             }
             string sql = "select {0} from {1} where {2}";
-            var queryResult = await SqlHelper.Query(string.Format(sql,
+            var queryResult = await SqlService.Query(string.Format(sql,
                 outSqlModel.OutTableForeignKey + "," + outSqlModel.CurrentTableForeignKey,
                 outSqlModel.SaveTableName,
                 outSqlModel.CurrentTableForeignKey + "='" + outId + "'"));
@@ -496,7 +496,7 @@ namespace lkWeb.Core.Helper
             {
                 return result;
             }
-            var value = await SqlHelper.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
+            var value = await SqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
                 outSqlModel.PrimaryKey, outSqlModel.TableName, outSqlModel.TextKey, outValue));
             result.data = value;
             result.flag = true;
@@ -655,7 +655,7 @@ namespace lkWeb.Core.Helper
 
                             if (currentColDto.PrimaryKey == 1)
                             {
-                                var exist = (await SqlHelper.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
+                                var exist = (await SqlService.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
                                 if (tableDto.ImportType == TableImportType.插入)
                                 {
                                     if (exist != "0")
@@ -741,7 +741,7 @@ namespace lkWeb.Core.Helper
                     result.msg += "请在表管理中设置导入类型,";
                 }
 
-                var execResult = await SqlHelper.ExecuteBatch(listSql);
+                var execResult = await SqlService.ExecuteBatch(listSql);
                 result.flag = execResult == listSql.Count();
                 result.msg = "影响数据条数" + execResult;
             }
@@ -758,7 +758,7 @@ namespace lkWeb.Core.Helper
         /// <returns></returns>
         public static async Task<string> GetColumnValue(int tableId, string columnName, string fieldName)
         {
-            return await SqlHelper.GetSingle($"select {fieldName} from Sys_TableColumn where TableId={tableId} and Name='{columnName}'");
+            return await SqlService.GetSingle($"select {fieldName} from Sys_TableColumn where TableId={tableId} and Name='{columnName}'");
         }
 
         /// <summary>
@@ -955,7 +955,7 @@ namespace lkWeb.Core.Helper
         public static async Task<List<Dictionary<string, object>>> GetOutData(OutSqlModel model)
         {
             string sql = "select {0} from {1} where {2}";
-            var result = await SqlHelper.Query(string.Format(sql,
+            var result = await SqlService.Query(string.Format(sql,
                         model.PrimaryKey + "," + model.TextKey, model.TableName, model.Condition));
             return result;
         }

@@ -14,6 +14,7 @@ using lkWeb.Core.Extension;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using lkWeb.Core.Helper;
+using lkWeb.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

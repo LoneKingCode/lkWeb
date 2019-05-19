@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using lkWeb.Entity;
 using lkWeb.Filter;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using lkWeb.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

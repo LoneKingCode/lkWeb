@@ -1,16 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Primitives;
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using lkWeb.Core.Extension;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 
-namespace lkWeb.Service
+namespace lkWeb.Core.Helper
 {
 
 
