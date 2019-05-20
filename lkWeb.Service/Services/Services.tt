@@ -96,14 +96,14 @@ namespace lkWeb.Service.Services
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        Task<ResultDto<<#=name#>Dto>> GetPageDataAsync(QueryBase queryBase,
+        Task<PageResult<<#=name#>Dto>> GetPageDataAsync(QueryBase queryBase,
             Expression<Func<<#=name#>Dto, bool>> queryExp, string orderBy, string orderDir);
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        Task<ResultDto<<#=name#>Dto>> GetListAsync(Expression<Func<<#=name#>Dto, bool>> queryExp);
+        Task<PageResult<<#=name#>Dto>> GetListAsync(Expression<Func<<#=name#>Dto, bool>> queryExp);
 	}
 }
 
@@ -292,12 +292,12 @@ namespace lkWeb.Service.Services
         /// <param name="orderBy">要排序的列名</param>
         /// <param name="orderDir">asc or desc</param>
         /// <returns></returns>
-        public async Task<ResultDto<<#=name#>Dto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<<#=name#>Dto, bool>> queryExp, string orderBy, string orderDir)
+        public async Task<PageResult<<#=name#>Dto>> GetPageDataAsync(QueryBase queryBase, Expression<Func<<#=name#>Dto, bool>> queryExp, string orderBy, string orderDir)
         {
             using (var db = GetDb())
             {
                 var ds = db.Set<<#=name#>Entity>();
-                var result = new ResultDto<<#=name#>Dto>();
+                var result = new PageResult<<#=name#>Dto>();
                 var where = queryExp.Cast<<#=name#>Dto, <#=name#>Entity, bool>();
                 var isAsc = !string.IsNullOrEmpty(orderDir) && orderDir.ToLower() != "desc";
                 //暂时没用到这个
@@ -316,7 +316,7 @@ namespace lkWeb.Service.Services
         /// </summary>
         /// <param name="queryExp">条件</param>
         /// <returns></returns>
-        public async Task<ResultDto<<#=name#>Dto>> GetListAsync(Expression<Func<<#=name#>Dto, bool>> queryExp)
+        public async Task<PageResult<<#=name#>Dto>> GetListAsync(Expression<Func<<#=name#>Dto, bool>> queryExp)
         {
             using (var db = GetDb())
             {
@@ -324,7 +324,7 @@ namespace lkWeb.Service.Services
                 var ds = GetDbSet(db);
                 var temp = await ds.Where(_queryExp).OrderBy(item => item.Id).ToListAsync();
                 var dtoData = MapTo<List<<#=name#>Entity>, List<<#=name#>Dto>>(temp);
-                var result = new ResultDto<<#=name#>Dto>
+                var result = new PageResult<<#=name#>Dto>
                 {
                     data = dtoData,
                     recordsTotal = dtoData.Count,
@@ -404,7 +404,7 @@ public partial class AutoMapperConfiguration : Profile
        {
 
 		  <#
-	//1.开始输出接口契约文件
+	 
 			foreach (var filePath in files)
             {
 				var file = new FileInfo(filePath);
@@ -412,8 +412,8 @@ public partial class AutoMapperConfiguration : Profile
 				var lowerName =name.ToLower();
 				//定义输出文件
 #>
-				 	CreateMap<<#=name#>Entity, <#=name#>Dto>();
-					CreateMap<<#=name#>Dto, <#=name#>Entity>();
+				 	CreateMap<<#=name#>Entity, <#=name#>Dto>().ReverseMap();
+			 
 					 
 <#
 			}

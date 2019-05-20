@@ -1,11 +1,10 @@
- 
-config.CreateMap<UserEntity, UserDto>().ReverseMap();
-
  EnumerableExtensions调整
 
  TreeDto   ztree的
   
  设置项目生成顺序
+
+ SysService 再分下，EXCEL什么的 单独一个文件
 
 现在 dbcontet生命周期是ServiceLifetime.Transient
 
@@ -14,7 +13,7 @@ config.CreateMap<UserEntity, UserDto>().ReverseMap();
   
   viewlist里方法都封装
   Enum 单文件就行 Enums.cs
-  功能检查。。。。。。。。。。。。。。。。。。。。。
+  功能检查。。。。。。。。。。。。。。。。。。。。。 
   代码优化
    调整startup.cs 里面太乱   写个FrameworkServiceExtension 单独文件添加自己需要的
    前后端尽量分离下 主要是viewlist那里

@@ -46,6 +46,7 @@
 
   <ItemGroup>
     <Folder Include="Services\T4\" />
+    <Folder Include="Front\" />
   </ItemGroup>
 
 </Project>

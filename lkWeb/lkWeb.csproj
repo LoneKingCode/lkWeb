@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\lkWeb.Admin\lkWeb.Admin.csproj" />
-    <ProjectReference Include="..\lkWeb.Service\lkWeb.Service.csproj" />
+    <ProjectReference Include="..\lkWeb.Service\lkWeb.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
