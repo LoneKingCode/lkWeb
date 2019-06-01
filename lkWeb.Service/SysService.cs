@@ -98,7 +98,7 @@ namespace lkWeb.Service
         /// <summary>
         /// 当前用户Id
         /// </summary>
-        public static string currentUserId;
+        public static string currentUserId; //在AdminBaseController中自动赋值
 
 
         /// <summary>
@@ -293,6 +293,114 @@ namespace lkWeb.Service
             result.recordsTotal = (await SqlService.GetSingle(String.Format("select count(*) from {0} where {1}", tableDto.Name, condition))).Ext_ToInt32();
             return result;
         }
+
+        /// <summary>
+        /// 获取已处理的分页数据
+        /// </summary>
+        /// <param name="tableId"></param>
+        /// <param name="condition"></param>
+        /// <param name="queryBase"></param>
+        /// <returns></returns>
+        public static async Task<PageResult<Dictionary<string, object>>> GetProcessedPageData(int tableId, string condition, QueryBase queryBase)
+        {
+            var tableDto = (await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId)).data;
+            var colDtos = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId && item.ListVisible == 1)).data.OrderBy(item => item.ListOrder);
+            var columnNames = string.Join(',', colDtos.Select(item => item.Name));
+            var tableData = await GetPageData(tableId, columnNames, condition, queryBase);
+            List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
+
+            foreach (var dicList in tableData.data)
+            {
+                var temp = new Dictionary<string, object>();
+                temp["rowNum"] = ++queryBase.Start;
+                foreach (var item in dicList)
+                {
+                    var colDto = colDtos.Where(x => x.Name == item.Key).First();
+                    if (colDto.DataType == ColumnType.Out)
+                    {
+                        var outSql = await GetColumnValue(tableId, item.Key, "OutSql");
+                        var outSqlModel = new OutSqlModel(outSql);
+                        temp[item.Key] = (await GetOutValue(outSqlModel, item.Value.ToString())).data;
+                    }
+                    else if (colDto.DataType == ColumnType.MultiSelect_Out)
+                    {
+                        var outSql = await GetColumnValue(tableId, item.Key, "OutSql");
+                        var outSqlModel = new OutSqlModel(outSql);
+                        var colValueArr = item.Value.ToString().Split(',');
+                        var tempColValue = string.Empty;
+                        foreach (var cvalue in colValueArr)
+                        {
+                            var outValue = (await GetOutValue(outSqlModel, cvalue)).data;
+                            tempColValue += outValue + ",";
+                        }
+                        temp[item.Key] = tempColValue.Trim(',');
+                    }
+                    else if (colDto.DataType == ColumnType.MultiSelect)
+                    {
+                        var selectValues = item.Value.ToString().Split(',');
+                        var selectRange = await GetColumnValue(tableId, item.Key, "SelectRange");
+                        var checkStr = selectRange.Split('|'); //1,选项1|2,选项2
+                        var selectText = string.Empty;
+                        foreach (var checkItem in checkStr)
+                        {
+                            if (selectValues.Contains(checkItem.Split(',')[0]))
+                            {
+                                selectText += checkItem.Split(',')[1] + ",";
+                            }
+                        }
+                        temp[item.Key] = selectText.Trim(',');
+                    }
+                    else if (colDto.DataType == ColumnType.Custom)
+                    {
+                        var model = (await ServiceLocator.Sys_TableColumnService().GetByExpAsync(x => x.Name == item.Key && x.TableId == tableId)).data;
+                        temp[item.Key] = model.CustomContent.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", currentUserId);
+                    }
+                    else if (colDto.DataType == ColumnType.File || colDto.DataType == ColumnType.Image)
+                    {
+                        temp[item.Key] = "";
+                        foreach (var fileUrl in item.Value.ToString().Split(','))
+                        {
+                            string url = string.Empty;
+                            string text = string.Empty;
+                            string style = string.Empty;
+                            string filePath = Path.Combine(WebHelper.WebRootPath, fileUrl.Replace('/', Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar));
+                            if (System.IO.File.Exists(filePath))
+                            {
+                                url = fileUrl;
+                                text = colDto.DataType == ColumnType.File ? "下载" : "查看";
+                                style = "btn btn-info";
+                            }
+                            else
+                            {
+                                url = "javascript:alert(\"无效文件\")";
+                                text = "无效";
+                                style = "btn btn-danger";
+                            }
+                            var attr = colDto.DataType == ColumnType.File ? "download" : "";
+                            temp[item.Key] += $"<a href='{url}' target='_blank' class='{style}' {attr}>{text}</a>";
+                        }
+                    }
+                    else
+                    {
+                        if (item.Key == "CreateDateTime") //如果是创建时间 转换下格式显示
+                            temp[item.Key] = Convert.ToDateTime(item.Value).ToString("yyyy/M/d hh:mm:ss");
+                        else
+                            temp[item.Key] = item.Value;
+                    }
+                }
+                //替换扩展方法中的参数
+                if (tableDto.ExtendFunction.Ext_IsNotEmpty())
+                    temp["ExtendFunction"] = tableDto.ExtendFunction.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", currentUserId);
+                listData.Add(temp);
+            }
+            var pageResult = new PageResult<Dictionary<string, object>>
+            {
+                data = listData,
+                recordsTotal = tableData.recordsTotal
+            };
+            return pageResult;
+        }
+
 
         /// <summary>
         /// 获取指定表下列名

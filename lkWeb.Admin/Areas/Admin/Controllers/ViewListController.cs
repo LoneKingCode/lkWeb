@@ -76,7 +76,7 @@ namespace lkWeb.Admin.Areas.Admin.Controllers
                 if (column.DataType == ColumnType.Out || column.DataType == ColumnType.MultiSelect_Out)
                 {
                     var outSqlModel = new OutSqlModel(column.OutSql);
-                    var queryResult = await SysService.GetOutData(outSqlModel); 
+                    var queryResult = await SysService.GetOutData(outSqlModel);
                     var items = new List<SelectListItem>();
                     foreach (var row in queryResult)
                     {
@@ -317,7 +317,7 @@ namespace lkWeb.Admin.Areas.Admin.Controllers
             var result = await _tableColumnService.GetListAsync(item => item.TableId == model.Table.Id && item.ViewVisible == 1);
             model.TableColumn = result.data.OrderBy(c => c.ViewOrder).ToList();
             string sql = "select {0} from {1} where {2}";
-            ViewBag.OutColumn = new Dictionary<string, string>();
+            ViewBag.OutColumn = new Dictionary<string, object>();
             var tbName = model.Table.Name;
             var columnValueResult = await SqlService.Query(
                 string.Format(sql, "*", tbName, "Id=" + param.id));
@@ -457,101 +457,14 @@ namespace lkWeb.Admin.Areas.Admin.Controllers
                 else
                     queryBase.OrderBy = tableDto.DefaultSort;
             }
+            var listData = await SysService.GetProcessedPageData(tableId, queryCondition + condition, queryBase);
 
-            var tableData = await SysService.GetPageData(tableId, columnNames, queryCondition + condition, queryBase);
-            List<Dictionary<string, object>> listData = new List<Dictionary<string, object>>();
-
-            foreach (var dicList in tableData.data)
-            {
-                Dictionary<string, object> temp = new Dictionary<string, object>();
-                temp["rowNum"] = ++queryBase.Start;
-                foreach (var item in dicList)
-                {
-                    var colDto = colDtos.Where(x => x.Name == item.Key).First();
-                    if (colDto.DataType == ColumnType.Out)
-                    {
-                        var outSql = await SysService.GetColumnValue(tableId, item.Key, "OutSql");
-                        var outSqlModel = new OutSqlModel(outSql);
-                        temp[item.Key] = (await SysService.GetOutValue(outSqlModel, item.Value.ToString())).data;
-                    }
-                    else if (colDto.DataType == ColumnType.MultiSelect_Out)
-                    {
-                        var outSql = await SysService.GetColumnValue(tableId, item.Key, "OutSql");
-                        var outSqlModel = new OutSqlModel(outSql);
-                        var colValueArr = item.Value.ToString().Split(',');
-                        var tempColValue = string.Empty;
-                        foreach (var cvalue in colValueArr)
-                        {
-                            var outValue = (await SysService.GetOutValue(outSqlModel, cvalue)).data;
-                            tempColValue += outValue + ",";
-                        }
-                        temp[item.Key] = tempColValue.Trim(',');
-                    }
-                    else if (colDto.DataType == ColumnType.MultiSelect)
-                    {
-                        var selectValues = item.Value.ToString().Split(',');
-                        var selectRange = await SysService.GetColumnValue(tableId, item.Key, "SelectRange");
-                        var checkStr = selectRange.Split('|'); //1,选项1|2,选项2
-                        var items = new List<SelectListItem>();
-                        var selectText = string.Empty;
-                        foreach (var checkItem in checkStr)
-                        {
-                            if (selectValues.Contains(checkItem.Split(',')[0]))
-                            {
-                                selectText += checkItem.Split(',')[1] + ",";
-                            }
-                        }
-                        temp[item.Key] = selectText.Trim(',');
-                    }
-                    else if (colDto.DataType == ColumnType.Custom)
-                    {
-                        var model = (await _tableColumnService.GetByExpAsync(x => x.Name == item.Key && x.TableId == tableId)).data;
-                        temp[item.Key] = model.CustomContent.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
-                    }
-                    else if (colDto.DataType == ColumnType.File || colDto.DataType == ColumnType.Image)
-                    {
-                        temp[item.Key] = "";
-                        foreach (var fileUrl in item.Value.ToString().Split(','))
-                        {
-                            string url = string.Empty;
-                            string text = string.Empty;
-                            string style = string.Empty;
-                            string filePath = Path.Combine(WebHelper.WebRootPath, fileUrl.Replace('/', Path.DirectorySeparatorChar).TrimStart(Path.DirectorySeparatorChar));
-                            if (System.IO.File.Exists(filePath))
-                            {
-                                url = fileUrl;
-                                text = colDto.DataType == ColumnType.File ? "下载" : "查看";
-                                style = "btn btn-info";
-                            }
-                            else
-                            {
-                                url = "javascript:alert(\"无效文件\")";
-                                text = "无效";
-                                style = "btn btn-danger";
-                            }
-                            var attr = colDto.DataType == ColumnType.File ? "download" : "";
-                            temp[item.Key] += $"<a href='{url}' target='_blank' class='{style}' {attr}>{text}</a>";
-                        }
-                    }
-                    else
-                    {
-                        if (item.Key == "CreateDateTime") //如果是创建时间 转换下格式显示
-                            temp[item.Key] = Convert.ToDateTime(item.Value).ToString("yyyy/M/d hh:mm:ss");
-                        else
-                            temp[item.Key] = item.Value;
-                    }
-                }
-                //替换扩展方法中的参数
-                if (tableDto.ExtendFunction.Ext_IsNotEmpty())
-                    temp["ExtendFunction"] = tableDto.ExtendFunction.Replace("{Id}", temp["Id"].ToString()).Replace("{UserId}", CurrentUser.Id.ToString());
-                listData.Add(temp);
-            }
             var data = new DataTableModel
             {
                 draw = queryBase.Draw,
-                recordsTotal = tableData.recordsTotal,
-                recordsFiltered = tableData.recordsTotal,
-                data = listData
+                recordsTotal = listData.recordsTotal,
+                recordsFiltered = listData.recordsTotal,
+                data = listData.data
             };
             return Json(data);
 

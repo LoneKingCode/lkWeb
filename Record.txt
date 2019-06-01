@@ -1,18 +1,11 @@
- EnumerableExtensions调整
+  viewlist里方法都封装
+SysService 再分下，EXCEL什么的 单独一个文件
 
- TreeDto   ztree的
-  
- 设置项目生成顺序
-
- SysService 再分下，EXCEL什么的 单独一个文件
 
 现在 dbcontet生命周期是ServiceLifetime.Transient
 
 代码调整
   service调用精简为 ServiceLocator.sdsdsadasd  参考下git那个框架 再说
-  
-  viewlist里方法都封装
-  Enum 单文件就行 Enums.cs
   功能检查。。。。。。。。。。。。。。。。。。。。。 
   代码优化
    调整startup.cs 里面太乱   写个FrameworkServiceExtension 单独文件添加自己需要的

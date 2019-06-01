@@ -1,4 +1,5 @@
-﻿using System;
+﻿using lkWeb.Models.System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -109,62 +110,60 @@ namespace lkWeb.Core.Extensions
             return source != null ? source.Any() : false;
         }
 
-        ///// <summary>
-        ///// 分页
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="source"></param>
-        ///// <param name="pageIndex">当前页</param>
-        ///// <param name="pageSize">页大小</param>
-        ///// <returns></returns>
-        //public static PagedResult<T> Paging<T>(this IQueryable<T> source, int pageIndex, int pageSize)
-        //{
-        //    if (pageIndex <= 0)
-        //        throw new ArgumentException("Index of current page can not less than 0 !", "pageIndex");
-        //    if (pageSize <= 1)
-        //        throw new ArgumentException("Size of page can not less than 1 !", "pageSize");
+        /// <summary>
+        /// 分页
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="pageIndex">当前页</param>
+        /// <param name="pageSize">页大小</param>
+        /// <returns></returns>
+        public static PageResult<T> Paging<T>(this IQueryable<T> source, int pageIndex, int pageSize) where T : class
+        {
+            if (pageIndex <= 0)
+                throw new ArgumentException("Index of current page can not less than 0 !", "pageIndex");
+            if (pageSize <= 1)
+                throw new ArgumentException("Size of page can not less than 1 !", "pageSize");
 
-        //    var pagedQuery = source
-        //        .Skip((pageIndex - 1) * pageSize)
-        //        .Take(pageSize);
+            var pagedQuery = source
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize);
 
-        //    return new PagedResult<T>
-        //    {
-        //        rows = pagedQuery.ToList(),
-        //        records = source.Count(),
+            return new PageResult<T>
+            {
+                data = pagedQuery.ToList(),
+                recordsTotal = source.Count(),
+                pageIndex = pageIndex,
+                pageSize = pageSize
+            };
+        }
 
-        //        page = pageIndex,
-        //        pagesize = pageSize
-        //    };
-        //}
+        /// <summary>
+        /// 分页
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="pageIndex">当前页</param>
+        /// <param name="pageSize">页大小</param>
+        /// <returns></returns>
+        public static async Task<PageResult<T>> PagingAsync<T>(this IQueryable<T> source, int pageIndex, int pageSize) where T : class
+        {
+            if (pageIndex <= 0)
+                throw new ArgumentException("Index of current page can not less than 0 !", "pageIndex");
+            if (pageSize <= 1)
+                throw new ArgumentException("Size of page can not less than 1 !", "pageSize");
 
-        ///// <summary>
-        ///// 分页
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="source"></param>
-        ///// <param name="pageIndex">当前页</param>
-        ///// <param name="pageSize">页大小</param>
-        ///// <returns></returns>
-        //public static async Task<PagedResult<T>> PagingAsync<T>(this IQueryable<T> source, int pageIndex, int pageSize)
-        //{
-        //    if (pageIndex <= 0)
-        //        throw new ArgumentException("Index of current page can not less than 0 !", "pageIndex");
-        //    if (pageSize <= 1)
-        //        throw new ArgumentException("Size of page can not less than 1 !", "pageSize");
+            var pagedQuery = source
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize);
 
-        //    var pagedQuery = source
-        //        .Skip((pageIndex - 1) * pageSize)
-        //        .Take(pageSize);
-
-        //    return new PagedResult<T>
-        //    {
-        //        rows = await pagedQuery.ToListAsync(),
-        //        records = await source.CountAsync(),
-
-        //        page = pageIndex,
-        //        pagesize = pageSize
-        //    };
-        //}
+            return new PageResult<T>
+            {
+                data = pagedQuery.ToList(),
+                recordsTotal = source.Count(),
+                pageIndex = pageIndex,
+                pageSize = pageSize
+            };
+        }
     }
 }

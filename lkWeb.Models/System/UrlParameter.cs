@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace lkWeb.Models
+namespace lkWeb.Models.System
 {
     public class UrlParameter
     {
