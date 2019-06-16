@@ -16,7 +16,7 @@ using lkWeb.Service;
 using lkWeb.Models.System;
 using lkWeb.Models.Enum;
 
-namespace lkWeb.Service
+namespace lkWeb.Admin
 {
     /// <summary>
     /// 外部Sql Model
@@ -101,138 +101,333 @@ namespace lkWeb.Service
         public static string currentUserId; //在AdminBaseController中自动赋值
 
 
-        /// <summary>
-        /// 生成列
-        /// </summary>
-        /// <param name="tableId">表Id</param>
-        /// <param name="isSync">是否同步生成</param>
-        /// <returns></returns>
-        public static async Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId, bool isSync = false)
-        {
-            var result = new Result<List<Sys_TableColumnDto>>();
-            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
-            if (!tableResult.flag)
-            {
-                result.msg = "未找到指定表";
-                return result;
-            }
-            var tableDto = tableResult.data;
-            //此SQL语句可以查询制定表的所有列
-            //string sql = string.Format("select tablename,colName,colType,colLength from v_TableInfo where tablename = '{0}'", tableDto.Name);
-            string sql = string.Format("select TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH as COLUMN_LENGH from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '{0}'", tableDto.Name);
-            var tableData = await SqlService.Query(sql);
-            var tableColumns = new List<Sys_TableColumnDto>();
-            var tableColumnDtos = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId)).data;
-            var columnNames = new List<string>();
-            if (!isSync) //如果非同步生成 删除之前的列数据
-                await ServiceLocator.Sys_TableColumnService().DeleteAsync(item => item.TableId == tableId);
-            if (tableData.Count <= 0)
-            {
-                result.msg = $"获取表{tableDto.Name}中的列数据失败，可能表不存在，请检查";
-                return result;
-            }
+        #region  增删改
 
-            foreach (var row in tableData)
+        /// <summary>
+        /// 编辑数据
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="formData"></param>
+        /// <returns></returns>
+
+        public static async Task<Result<bool>> Edit(UrlParameter param, IFormCollection formData)
+        {
+            var result = new Result<bool>();
+
+            var tableId = param.extraValue.Ext_ToInt32();
+            var columnResult = await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId);
+            var tableColumns = columnResult.data;
+            var table = (await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId)).data;
+
+            var updateModel = new Dictionary<string, string>();
+            var pk_cols = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
+            var multiSelectOutData = new Dictionary<string, string>();
+
+            foreach (var column in tableColumns)
             {
-                columnNames.Add(row["COLUMN_NAME"].ToString());
-                var dataType = ColumnType.String;
-                var columnType = row["DATA_TYPE"].ToString().ToLower();
-                if (columnType.Contains("char"))
-                    dataType = ColumnType.String;
-                else if (columnType.Contains("int") || columnType.Contains("bit"))
-                    dataType = ColumnType.Int;
-                else if (columnType.Contains("float") | columnType.Contains("decimal"))
-                    dataType = ColumnType.Decimal;
-                else if (columnType.Contains("date"))
-                    dataType = ColumnType.Datetime;
-                //如果同步生成
-                if (isSync)
+                var exist = "0";
+                if (formData.ContainsKey(column.Name))
                 {
-                    //判断之前是否已存在此列 存在则不添加
-                    var exist = tableColumnDtos.Where(item => item.TableId == tableId && item.Name == row["COLUMN_NAME"].ToString()).Count() > 0;
-                    if (!exist)
+                    var colValue = formData[column.Name];
+                    if (column.DataType == ColumnType.MultiSelect_Out)
                     {
-                        tableColumns.Add(new Sys_TableColumnDto
+                        var outSqlModel = new OutSqlModel(column.OutSql);
+                        //如果保存到外表
+                        if (outSqlModel.IsSave)
                         {
-                            Name = row["COLUMN_NAME"].ToString(),
-                            DataType = dataType,
-                            MaxLength = row["COLUMN_LENGH"].ObjToInt(),
-                            TableId = tableDto.Id,
-                        });
+                            multiSelectOutData[column.Name] = colValue;
+                            continue;
+                        }
                     }
+                    if (pk_cols.Contains(column.Name))
+                        exist = await SqlService.GetSingle(
+                            $"select count(*) from {table.Name} where {column.Name} = '{formData[column.Name]}' and Id!={param.id}");
+                    if (exist != "0")
+                    {
+                        result.msg += column.Description + "字段为主键，值\"" + formData[column.Name] + "\"已存在,";
+                    }
+                    else
+                        updateModel[column.Name] = formData[column.Name];
                 }
                 else
                 {
-                    tableColumns.Add(new Sys_TableColumnDto
+                    //列的默认值
+                    if (column.DefaultValue.Ext_IsNotEmpty())
                     {
-                        Name = row["COLUMN_NAME"].ToString(),
-                        DataType = dataType,
-                        MaxLength = row["COLUMN_LENGH"].ObjToInt(),
-                        TableId = tableDto.Id,
-                    });
+                        updateModel[column.Name] = column.DefaultValue;
+                    }
                 }
             }
-            var addResult = await ServiceLocator.Sys_TableColumnService().AddAsync(tableColumns);
-            //有时同步列 如果列数据没变化 count就为0
-            addResult.flag = (tableColumns.Count == 0 && isSync) || addResult.flag;
-            if (isSync)
+            if (!string.IsNullOrEmpty(result.msg))
+                return result;
+            result = await _Edit(tableId, updateModel, param.id);
+            //保存到外表
+            if (multiSelectOutData.Keys.Count() > 0)
             {
-                addResult.msg = $"同步成功，新增{tableColumns.Count}条列数据";
-                //删除已经不需要的列
-                var deleteColumnDtos = (await ServiceLocator.Sys_TableColumnService().DeleteAsync(item => item.TableId == tableId && !columnNames.Contains(item.Name))).data;
+                string sql = "insert into {0}({1}) values({2})";
+                var addSqls = new List<string>();
+                var delSqls = new List<string>();
+                foreach (var key in multiSelectOutData.Keys)
+                {
+                    var outSqlModel = new OutSqlModel(tableColumns.Where(x => x.Name == key).First().OutSql);
+                    var outValues = multiSelectOutData[key].Split(',');
+                    foreach (var outValue in outValues)
+                    {
+                        var colNames = outSqlModel.CurrentTableForeignKey + "," + outSqlModel.OutTableForeignKey + ",";
+                        var values = $"'{param.id}','{outValue}',";
+                        if (!string.IsNullOrEmpty(outSqlModel.OtherFieldValue))
+                        {
+                            var otherValues = outSqlModel.OtherFieldValue.Split(','); //a='c',b='3',
+                            foreach (var otherValue in otherValues)
+                            {
+                                colNames += otherValue.Split('=', 2)[0] + ",";
+                                values += otherValue.Split('=', 2)[1] + ",";
+                            }
+                        }
+                        colNames = colNames.Trim(',');
+                        values = values.Trim(',');
+                        addSqls.Add(string.Format(sql, outSqlModel.SaveTableName, colNames, values));
+                    }
+                    delSqls.Add($"delete from {outSqlModel.SaveTableName} where {outSqlModel.CurrentTableForeignKey} = '{param.id}'");
+                }
+                var execResult = await SqlService.ExecuteBatch(delSqls);
+                if (execResult == -1)
+                    result.msg += "删除外表旧数据失败,";
+                execResult = await SqlService.ExecuteBatch(addSqls);
+                if (execResult == -1)
+                    result.msg += "保存外表数据失败";
             }
-
-            return addResult;
-
-        }
-
-        /// <summary>
-        /// 设置列属性值
-        /// </summary>
-        /// <param name="ids">TableColumn中id</param>
-        /// <param name="fieldName"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static async Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string fieldName, string value)
-        {
-            var result = new Result<List<Sys_TableColumnDto>>();
-            List<string> listSql = new List<string>();
-            foreach (var id in ids)
-            {
-                listSql.Add(string.Format("update Sys_TableColumn set {0}='{1}' where Id={2}", fieldName, value, id));
-            }
-            var execResult = await SqlService.ExecuteBatch(listSql);
-            result.flag = execResult == listSql.Count();
-            result.msg = "影响数据条数" + execResult;
             return result;
         }
         /// <summary>
-        /// 设置列属性值
+        /// 添加数据
         /// </summary>
-        /// <param name="tableId">tableId</param>
-        /// <param name="ids">ids</param>
-        /// <param name="fieldName">字段名</param>
-        /// <param name="value">值</param>
+        /// <param name="param"></param>
+        /// <param name="formData"></param>
         /// <returns></returns>
-        public static async Task<Result<List<Sys_TableColumnDto>>> BatchOperation(int tableId, List<int> ids, string fieldName, string value)
+
+        public static async Task<Result<string>> Add(UrlParameter param, IFormCollection formData)
         {
-            var result = new Result<List<Sys_TableColumnDto>>();
+            var result = new Result<string>();
+            var table = (await ServiceLocator.Sys_TableListService().GetByIdAsync(param.id)).data;
+            var columnResult = await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == param.id);
+            var tableColumns = columnResult.data;
+            var addModel = new Dictionary<string, string>();
+            var pk_cols = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
+            var multiSelectOutData = new Dictionary<string, string>();
+            foreach (var column in tableColumns)
+            {
+                var exist = "0";
+
+                if (formData.ContainsKey(column.Name))
+                {
+                    var colValue = formData[column.Name];
+                    if (column.DataType == ColumnType.MultiSelect_Out)
+                    {
+                        var outSqlModel = new OutSqlModel(column.OutSql);
+                        //如果保存到外表
+                        if (outSqlModel.IsSave)
+                        {
+                            multiSelectOutData[column.Name] = colValue;
+                            continue;
+                        }
+                    }
+
+                    if (pk_cols.Contains(column.Name))
+                        exist = await SqlService.GetSingle($"select count(*) from {table.Name} where {column.Name} = '{colValue}'");
+                    if (exist != "0")
+                    {
+                        result.msg += column.Description + "字段为主键，值\"" + colValue + "\"已存在,";
+                    }
+                    else
+                    {
+                        addModel[column.Name] = colValue;
+                    }
+
+                }
+                else
+                {
+                    //列的默认值
+                    if (column.DefaultValue.Ext_IsNotEmpty())
+                    {
+                        addModel[column.Name] = column.DefaultValue;
+                    }
+                }
+            }
+            if (!string.IsNullOrEmpty(result.msg))
+                return result;
+            addModel["CreateDateTime"] = DateTime.Now.ToString(); //补充上创建时间
+            result = await _Add(param.id, addModel);
+            var id = result.data; //新增数据的id
+
+            //保存到外表
+            if (multiSelectOutData.Keys.Count() > 0)
+            {
+                string sql = "insert into {0}({1}) values({2})";
+                var addSqls = new List<string>();
+                foreach (var key in multiSelectOutData.Keys)
+                {
+                    var outSqlModel = new OutSqlModel(tableColumns.Where(x => x.Name == key).First().OutSql);
+                    var outValues = multiSelectOutData[key].Split(',');
+                    foreach (var outValue in outValues)
+                    {
+                        var colNames = outSqlModel.CurrentTableForeignKey + "," + outSqlModel.OutTableForeignKey + ",";
+                        var values = $"'{id}','{outValue}',";
+                        if (!string.IsNullOrEmpty(outSqlModel.OtherFieldValue))
+                        {
+                            var otherValues = outSqlModel.OtherFieldValue.Split(','); //a='c',b='3',
+                            foreach (var otherValue in otherValues)
+                            {
+                                colNames += otherValue.Split('=', 2)[0] + ",";
+                                values += otherValue.Split('=', 2)[1] + ",";
+                            }
+                        }
+                        colNames = colNames.Trim(',');
+                        values = values.Trim(',');
+
+                        addSqls.Add(string.Format(sql, outSqlModel.SaveTableName, colNames, values));
+                    }
+                }
+                await SqlService.ExecuteBatch(addSqls);
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// 添加数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="addModel">数据键值对</param>
+        /// <returns></returns>
+        private static async Task<Result<string>> _Add(int tableId, Dictionary<string, string> addModel)
+        {
+            var result = new Result<string>();
             var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
             if (!tableResult.flag)
             {
                 result.msg = "未找到指定表";
                 return result;
             }
-            var tableDto = tableResult.data;
+            if (tableResult.data.AllowAdd == 0)
+            {
+                result.msg = "不允许添加";
+                return result;
+            }
+            var tableName = tableResult.data.Name;
+            string sqlTpl = "insert into {0}({1}) values({2}) Select SCOPE_IDENTITY()";
+            StringBuilder sbColumn = new StringBuilder();
+            StringBuilder sbValue = new StringBuilder();
+            foreach (var item in addModel)
+            {
+                sbColumn.Append(item.Key + ",");
+                sbValue.AppendFormat("'{0}',", item.Value);
+            }
+            //返回新增数据的自增列值
+            var execResult = await SqlService.ExecuteScalar(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
+            result.flag = execResult.Ext_IsNotEmpty();
+            result.msg = "操作成功";
+            result.data = execResult;
+            return result;
+        }
 
-            List<string> listSql = new List<string>();
+        /// <summary>
+        /// 更新数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="updateModel">数据键值对</param>
+        /// <param name="id">数据主键Id</param>
+        /// <returns></returns>
+        private static async Task<Result<bool>> _Edit(int tableId, Dictionary<string, string> updateModel, int id)
+        {
+            var result = new Result<bool>();
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            if (tableResult.data.AllowEdit == 0)
+            {
+                result.msg = "不允许编辑";
+                return result;
+            }
+            var tableDto = tableResult.data;
+            var tableName = tableDto.Name;
+            var forbiddenUpdateFilter = "1=1";
+            if (!string.IsNullOrEmpty(tableDto.ForbiddenUpdateFilter))
+                forbiddenUpdateFilter = tableDto.ForbiddenUpdateFilter.Replace("{UserId}", currentUserId);
+            string sqlTpl = "update {0} set {1} where {2} and {3}";
+            StringBuilder sbValue = new StringBuilder();
+            foreach (var item in updateModel)
+            {
+                sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value, forbiddenUpdateFilter));
+            }
+            var execResult = await SqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
+            result.flag = execResult == 1;
+            result.msg = "影响数据条数" + execResult;
+            return result;
+        }
+
+        /// <summary>
+        /// 删除多条数据
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="ids">要删除的id集合</param>
+        /// <returns></returns>
+        public static async Task<Result<bool>> Delete(int tableId, List<int> ids)
+        {
+            var result = new Result<bool>();
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            if (tableResult.data.AllowDelete == 0)
+            {
+                result.msg = "不允许删除";
+                return result;
+            }
+            var tableDto = tableResult.data;
+            var tableName = tableDto.DeleteTableName;
+            //禁止删除条件
+            var forbiddenDeleteFilter = "1=1";
+            if (!string.IsNullOrEmpty(tableDto.ForbiddenDeleteFilter))
+                forbiddenDeleteFilter = tableDto.ForbiddenDeleteFilter.Replace("{UserId}", currentUserId);
+            string sqlTpl = "delete from {0} where Id={1} and {2}";
+            List<string> sqlList = new List<string>();
             foreach (var id in ids)
             {
-                listSql.Add(string.Format("update {0} set {1}='{2}' where Id={3}", tableDto.Name, fieldName, value, id));
+                sqlList.Add(string.Format(sqlTpl, tableName, id, forbiddenDeleteFilter));
             }
-            var execResult = await SqlService.ExecuteBatch(listSql);
-            result.flag = execResult == listSql.Count();
+            var execResult = await SqlService.ExecuteBatch(sqlList);
+            result.flag = execResult == sqlList.Count();
             result.msg = "影响数据条数" + execResult;
+            return result;
+        }
+        #endregion
+
+        #region 获取数据
+
+        /// <summary>
+        /// 根据外键值获取对应外键Id
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="colName">列名</param>
+        /// <param name="outValue">外键值</param>
+        /// <returns></returns>
+        public static async Task<Result<string>> GetOutValueId(OutSqlModel outSqlModel, string outValue)
+        {
+            var result = new Result<String>();
+            if (outValue.Ext_IsEmpty())
+            {
+                return result;
+            }
+            var value = await SqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
+                outSqlModel.PrimaryKey, outSqlModel.TableName, outSqlModel.TextKey, outValue));
+            result.data = value;
+            result.flag = true;
             return result;
         }
         /// <summary>
@@ -402,6 +597,7 @@ namespace lkWeb.Service
         }
 
 
+
         /// <summary>
         /// 获取指定表下列名
         /// </summary>
@@ -428,119 +624,6 @@ namespace lkWeb.Service
             columnNameStr = columnNameStr.Trim(',');
             result.flag = columnData.Any();
             result.data = columnNameStr;
-            return result;
-        }
-
-        /// <summary>
-        /// 添加数据
-        /// </summary>
-        /// <param name="tableId">表Id</param>
-        /// <param name="addModel">数据键值对</param>
-        /// <returns></returns>
-        public static async Task<Result<string>> Add(int tableId, Dictionary<string, string> addModel)
-        {
-            var result = new Result<string>();
-            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
-            if (!tableResult.flag)
-            {
-                result.msg = "未找到指定表";
-                return result;
-            }
-            if (tableResult.data.AllowAdd == 0)
-            {
-                result.msg = "不允许添加";
-                return result;
-            }
-            var tableName = tableResult.data.Name;
-            string sqlTpl = "insert into {0}({1}) values({2}) Select SCOPE_IDENTITY()";
-            StringBuilder sbColumn = new StringBuilder();
-            StringBuilder sbValue = new StringBuilder();
-            foreach (var item in addModel)
-            {
-                sbColumn.Append(item.Key + ",");
-                sbValue.AppendFormat("'{0}',", item.Value);
-            }
-            //返回新增数据的自增列值
-            var execResult = await SqlService.ExecuteScalar(string.Format(sqlTpl, tableName, sbColumn.ToString().Trim(','), sbValue.ToString().Trim(',')));
-            result.flag = execResult.Ext_IsNotEmpty();
-            result.msg = "操作成功";
-            result.data = execResult;
-            return result;
-        }
-
-        /// <summary>
-        /// 更新数据
-        /// </summary>
-        /// <param name="tableId">表Id</param>
-        /// <param name="updateModel">数据键值对</param>
-        /// <param name="id">数据主键Id</param>
-        /// <returns></returns>
-        public static async Task<Result<bool>> Update(int tableId, Dictionary<string, string> updateModel, int id)
-        {
-            var result = new Result<bool>();
-            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
-            if (!tableResult.flag)
-            {
-                result.msg = "未找到指定表";
-                return result;
-            }
-            if (tableResult.data.AllowEdit == 0)
-            {
-                result.msg = "不允许编辑";
-                return result;
-            }
-            var tableDto = tableResult.data;
-            var tableName = tableDto.Name;
-            var forbiddenUpdateFilter = "1=1";
-            if (!string.IsNullOrEmpty(tableDto.ForbiddenUpdateFilter))
-                forbiddenUpdateFilter = tableDto.ForbiddenUpdateFilter.Replace("{UserId}", currentUserId);
-            string sqlTpl = "update {0} set {1} where {2} and {3}";
-            StringBuilder sbValue = new StringBuilder();
-            foreach (var item in updateModel)
-            {
-                sbValue.Append(string.Format("{0} = '{1}',", item.Key, item.Value, forbiddenUpdateFilter));
-            }
-            var execResult = await SqlService.Execute(string.Format(sqlTpl, tableName, sbValue.ToString().Trim(','), "Id=" + id, forbiddenUpdateFilter));
-            result.flag = execResult == 1;
-            result.msg = "影响数据条数" + execResult;
-            return result;
-        }
-
-        /// <summary>
-        /// 删除多条数据
-        /// </summary>
-        /// <param name="tableId">表Id</param>
-        /// <param name="ids">要删除的id集合</param>
-        /// <returns></returns>
-        public static async Task<Result<bool>> Delete(int tableId, List<int> ids)
-        {
-            var result = new Result<bool>();
-            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
-            if (!tableResult.flag)
-            {
-                result.msg = "未找到指定表";
-                return result;
-            }
-            if (tableResult.data.AllowDelete == 0)
-            {
-                result.msg = "不允许删除";
-                return result;
-            }
-            var tableDto = tableResult.data;
-            var tableName = tableDto.DeleteTableName;
-            //禁止删除条件
-            var forbiddenDeleteFilter = "1=1";
-            if (!string.IsNullOrEmpty(tableDto.ForbiddenDeleteFilter))
-                forbiddenDeleteFilter = tableDto.ForbiddenDeleteFilter.Replace("{UserId}", currentUserId);
-            string sqlTpl = "delete from {0} where Id={1} and {2}";
-            List<string> sqlList = new List<string>();
-            foreach (var id in ids)
-            {
-                sqlList.Add(string.Format(sqlTpl, tableName, id, forbiddenDeleteFilter));
-            }
-            var execResult = await SqlService.ExecuteBatch(sqlList);
-            result.flag = execResult == sqlList.Count();
-            result.msg = "影响数据条数" + execResult;
             return result;
         }
 
@@ -593,25 +676,175 @@ namespace lkWeb.Service
         }
 
         /// <summary>
-        /// 根据外键值获取对应外键Id
+        /// 获取列属性值
         /// </summary>
-        /// <param name="tableId">表Id</param>
-        /// <param name="colName">列名</param>
-        /// <param name="outValue">外键值</param>
+        /// <param name="tableId">tableId</param>
+        /// <param name="columnName">columnName</param>
+        /// <param name="fieldName">fieldName</param>
         /// <returns></returns>
-        public static async Task<Result<string>> GetOutValueId(OutSqlModel outSqlModel, string outValue)
+        /// <returns></returns>
+        public static async Task<string> GetColumnValue(int tableId, string columnName, string fieldName)
         {
-            var result = new Result<String>();
-            if (outValue.Ext_IsEmpty())
-            {
-                return result;
-            }
-            var value = await SqlService.GetSingle(string.Format("select {0} from {1} where {2}='{3}'",
-                outSqlModel.PrimaryKey, outSqlModel.TableName, outSqlModel.TextKey, outValue));
-            result.data = value;
-            result.flag = true;
+            return await SqlService.GetSingle($"select {fieldName} from Sys_TableColumn where TableId={tableId} and Name='{columnName}'");
+        }
+
+        /// <summary>
+        /// 获取out数据(列表)
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+
+
+        public static async Task<List<Dictionary<string, object>>> GetOutData(OutSqlModel model)
+        {
+            string sql = "select {0} from {1} where {2}";
+            var result = await SqlService.Query(string.Format(sql,
+                        model.PrimaryKey + "," + model.TextKey, model.TableName, model.Condition));
             return result;
         }
+        #endregion
+
+        #region 操作
+        /// <summary>
+        /// 生成列
+        /// </summary>
+        /// <param name="tableId">表Id</param>
+        /// <param name="isSync">是否同步生成</param>
+        /// <returns></returns>
+        public static async Task<Result<List<Sys_TableColumnDto>>> GenerateColumn(int tableId, bool isSync = false)
+        {
+            var result = new Result<List<Sys_TableColumnDto>>();
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableDto = tableResult.data;
+            //此SQL语句可以查询制定表的所有列
+            //string sql = string.Format("select tablename,colName,colType,colLength from v_TableInfo where tablename = '{0}'", tableDto.Name);
+            string sql = string.Format("select TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH as COLUMN_LENGH from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = '{0}'", tableDto.Name);
+            var tableData = await SqlService.Query(sql);
+            var tableColumns = new List<Sys_TableColumnDto>();
+            var tableColumnDtos = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == tableId)).data;
+            var columnNames = new List<string>();
+            if (!isSync) //如果非同步生成 删除之前的列数据
+                await ServiceLocator.Sys_TableColumnService().DeleteAsync(item => item.TableId == tableId);
+            if (tableData.Count <= 0)
+            {
+                result.msg = $"获取表{tableDto.Name}中的列数据失败，可能表不存在，请检查";
+                return result;
+            }
+
+            foreach (var row in tableData)
+            {
+                columnNames.Add(row["COLUMN_NAME"].ToString());
+                var dataType = ColumnType.String;
+                var columnType = row["DATA_TYPE"].ToString().ToLower();
+                if (columnType.Contains("char"))
+                    dataType = ColumnType.String;
+                else if (columnType.Contains("int") || columnType.Contains("bit"))
+                    dataType = ColumnType.Int;
+                else if (columnType.Contains("float") | columnType.Contains("decimal"))
+                    dataType = ColumnType.Decimal;
+                else if (columnType.Contains("date"))
+                    dataType = ColumnType.Datetime;
+                //如果同步生成
+                if (isSync)
+                {
+                    //判断之前是否已存在此列 存在则不添加
+                    var exist = tableColumnDtos.Where(item => item.TableId == tableId && item.Name == row["COLUMN_NAME"].ToString()).Count() > 0;
+                    if (!exist)
+                    {
+                        tableColumns.Add(new Sys_TableColumnDto
+                        {
+                            Name = row["COLUMN_NAME"].ToString(),
+                            DataType = dataType,
+                            MaxLength = row["COLUMN_LENGH"].ObjToInt(),
+                            TableId = tableDto.Id,
+                        });
+                    }
+                }
+                else
+                {
+                    tableColumns.Add(new Sys_TableColumnDto
+                    {
+                        Name = row["COLUMN_NAME"].ToString(),
+                        DataType = dataType,
+                        MaxLength = row["COLUMN_LENGH"].ObjToInt(),
+                        TableId = tableDto.Id,
+                    });
+                }
+            }
+            var addResult = await ServiceLocator.Sys_TableColumnService().AddAsync(tableColumns);
+            //有时同步列 如果列数据没变化 count就为0
+            addResult.flag = (tableColumns.Count == 0 && isSync) || addResult.flag;
+            if (isSync)
+            {
+                addResult.msg = $"同步成功，新增{tableColumns.Count}条列数据";
+                //删除已经不需要的列
+                var deleteColumnDtos = (await ServiceLocator.Sys_TableColumnService().DeleteAsync(item => item.TableId == tableId && !columnNames.Contains(item.Name))).data;
+            }
+
+            return addResult;
+
+        }
+
+        /// <summary>
+        /// 设置列属性值
+        /// </summary>
+        /// <param name="ids">TableColumn中id</param>
+        /// <param name="fieldName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static async Task<Result<List<Sys_TableColumnDto>>> SetColumnValue(List<int> ids, string fieldName, string value)
+        {
+            var result = new Result<List<Sys_TableColumnDto>>();
+            List<string> listSql = new List<string>();
+            foreach (var id in ids)
+            {
+                listSql.Add(string.Format("update Sys_TableColumn set {0}='{1}' where Id={2}", fieldName, value, id));
+            }
+            var execResult = await SqlService.ExecuteBatch(listSql);
+            result.flag = execResult == listSql.Count();
+            result.msg = "影响数据条数" + execResult;
+            return result;
+        }
+        /// <summary>
+        /// 设置列属性值
+        /// </summary>
+        /// <param name="tableId">tableId</param>
+        /// <param name="ids">ids</param>
+        /// <param name="fieldName">字段名</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public static async Task<Result<List<Sys_TableColumnDto>>> BatchOperation(int tableId, List<int> ids, string fieldName, string value)
+        {
+            var result = new Result<List<Sys_TableColumnDto>>();
+            var tableResult = await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId);
+            if (!tableResult.flag)
+            {
+                result.msg = "未找到指定表";
+                return result;
+            }
+            var tableDto = tableResult.data;
+
+            List<string> listSql = new List<string>();
+            foreach (var id in ids)
+            {
+                listSql.Add(string.Format("update {0} set {1}='{2}' where Id={3}", tableDto.Name, fieldName, value, id));
+            }
+            var execResult = await SqlService.ExecuteBatch(listSql);
+            result.flag = execResult == listSql.Count();
+            result.msg = "影响数据条数" + execResult;
+            return result;
+        }
+
+
+        #endregion
+
+        #region 导入导出
+
 
         /// <summary>
         /// 导入Excel数据
@@ -858,18 +1091,6 @@ namespace lkWeb.Service
             return result;
         }
 
-        /// <summary>
-        /// 获取列属性值
-        /// </summary>
-        /// <param name="tableId">tableId</param>
-        /// <param name="columnName">columnName</param>
-        /// <param name="fieldName">fieldName</param>
-        /// <returns></returns>
-        /// <returns></returns>
-        public static async Task<string> GetColumnValue(int tableId, string columnName, string fieldName)
-        {
-            return await SqlService.GetSingle($"select {fieldName} from Sys_TableColumn where TableId={tableId} and Name='{columnName}'");
-        }
 
         /// <summary>
         /// 导出数据为Excel
@@ -1054,20 +1275,6 @@ namespace lkWeb.Service
             result.flag = true;
             return result;
         }
-
-        /// <summary>
-        /// 获取out数据(列表)
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-
-
-        public static async Task<List<Dictionary<string, object>>> GetOutData(OutSqlModel model)
-        {
-            string sql = "select {0} from {1} where {2}";
-            var result = await SqlService.Query(string.Format(sql,
-                        model.PrimaryKey + "," + model.TextKey, model.TableName, model.Condition));
-            return result;
-        }
+        #endregion
     }
 }
