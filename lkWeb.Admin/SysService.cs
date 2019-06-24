@@ -119,6 +119,8 @@ namespace lkWeb.Admin
             var tableColumns = columnResult.data;
             var table = (await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId)).data;
 
+            SysOperateInterface.OperateTriggerBefore(table, OperateType.编辑, param.id, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
+
             var updateModel = new Dictionary<string, string>();
             var pk_cols = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
             var multiSelectOutData = new Dictionary<string, string>();
@@ -197,6 +199,7 @@ namespace lkWeb.Admin
                 if (execResult == -1)
                     result.msg += "保存外表数据失败";
             }
+            SysOperateInterface.OperateTriggerAfter(table, OperateType.编辑, param.id, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
             return result;
         }
         /// <summary>
@@ -210,6 +213,9 @@ namespace lkWeb.Admin
         {
             var result = new Result<string>();
             var table = (await ServiceLocator.Sys_TableListService().GetByIdAsync(param.id)).data;
+
+            SysOperateInterface.OperateTriggerBefore(table, OperateType.添加, 0, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
+
             var columnResult = await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == param.id);
             var tableColumns = columnResult.data;
             var addModel = new Dictionary<string, string>();
@@ -290,6 +296,7 @@ namespace lkWeb.Admin
                 }
                 await SqlService.ExecuteBatch(addSqls);
             }
+            SysOperateInterface.OperateTriggerAfter(table, OperateType.添加, 0, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
             return result;
         }
 

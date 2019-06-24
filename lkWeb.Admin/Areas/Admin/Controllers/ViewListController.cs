@@ -475,7 +475,7 @@ namespace lkWeb.Admin.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(UrlParameter param, IFormCollection formData)
         {
-            var result = SysService.Add(param, formData);
+            var result =await SysService.Add(param, formData);
             return Json(result);
         }
 
