@@ -4,7 +4,7 @@ using System.Text;
 
 namespace lkWeb.Admin
 {
-    class SysImplementAfter
+   public class SysImplementAfter
     {
     }
 }

@@ -1,15 +1,7 @@
-
-viewlist所有方法 都有回调。操作前后
-
-SysService 再分下，EXCEL什么的 单独一个文件
-
-
 现在 dbcontet生命周期是ServiceLifetime.Transient
 
 代码调整
-  service调用精简为 ServiceLocator.sdsdsadasd  参考下git那个框架 再说
-  功能检查。。。。。。。。。。。。。。。。。。。。。 
-  代码优化
+
    调整startup.cs 里面太乱   写个FrameworkServiceExtension 单独文件添加自己需要的
    前后端尽量分离下 主要是viewlist那里
 

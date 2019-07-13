@@ -4,7 +4,7 @@ using System.Text;
 
 namespace lkWeb.Admin
 {
-    class SysImportAfter
+    public class SysImportAfter
     {
     }
 }

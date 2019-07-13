@@ -119,7 +119,7 @@ namespace lkWeb.Admin
             var tableColumns = columnResult.data;
             var table = (await ServiceLocator.Sys_TableListService().GetByIdAsync(tableId)).data;
 
-            SysOperateInterface.OperateTriggerBefore(table, OperateType.编辑, param.id, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
+            SysOperateInterface.OperateTriggerBefore(table, OperateType.编辑, new List<int> { param.id }, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
 
             var updateModel = new Dictionary<string, string>();
             var pk_cols = (await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.PrimaryKey == 1)).data.Select(x => x.Name);
@@ -199,7 +199,7 @@ namespace lkWeb.Admin
                 if (execResult == -1)
                     result.msg += "保存外表数据失败";
             }
-            SysOperateInterface.OperateTriggerAfter(table, OperateType.编辑, param.id, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
+            SysOperateInterface.OperateTriggerAfter(table, OperateType.编辑, new List<int> { param.id }, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
             return result;
         }
         /// <summary>
@@ -214,7 +214,7 @@ namespace lkWeb.Admin
             var result = new Result<string>();
             var table = (await ServiceLocator.Sys_TableListService().GetByIdAsync(param.id)).data;
 
-            SysOperateInterface.OperateTriggerBefore(table, OperateType.添加, 0, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
+            SysOperateInterface.OperateTriggerBefore(table, OperateType.添加, new List<int> { }, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
 
             var columnResult = await ServiceLocator.Sys_TableColumnService().GetListAsync(item => item.TableId == param.id);
             var tableColumns = columnResult.data;
@@ -296,7 +296,7 @@ namespace lkWeb.Admin
                 }
                 await SqlService.ExecuteBatch(addSqls);
             }
-            SysOperateInterface.OperateTriggerAfter(table, OperateType.添加, 0, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
+            SysOperateInterface.OperateTriggerAfter(table, OperateType.添加, new List<int> { }, formData.ToDictionary(x => x.Key, x => x.Value.ToString()));
             return result;
         }
 
@@ -841,7 +841,11 @@ namespace lkWeb.Admin
             {
                 listSql.Add(string.Format("update {0} set {1}='{2}' where Id={3}", tableDto.Name, fieldName, value, id));
             }
+            var dic = new Dictionary<string, string>();
+            dic.Add(fieldName, value);
+            SysOperateInterface.OperateTriggerBefore(tableDto, OperateType.编辑, ids, dic);
             var execResult = await SqlService.ExecuteBatch(listSql);
+            SysOperateInterface.OperateTriggerAfter(tableDto, OperateType.编辑, ids, dic);
             result.flag = execResult == listSql.Count();
             result.msg = "影响数据条数" + execResult;
             return result;
@@ -903,6 +907,7 @@ namespace lkWeb.Admin
                 var colValues = new List<List<string>>();
                 var colValueCount = 0;
                 var excelCols = new List<string>();
+                var excelColDtos = new List<Sys_TableColumnDto>();
                 //检测必填字段在表头中是否包含
                 for (int col = 1; col <= ColCount; col++)
                 {
@@ -910,7 +915,10 @@ namespace lkWeb.Admin
                     excelCols.Add(colValue);
                     //检测表头是不是已存在的表中的那些列
                     if (colDtos.Where(c => c.Description == colValue).Count() > 0)
+                    {
                         colNames.Add(colValue);
+                        excelColDtos.Add(colDtos.Where(c => c.Description == colValue).First());
+                    }
                     else
                     {
                         result.msg += "列\"" + colValue + "\"在表中不存在,";
@@ -932,7 +940,7 @@ namespace lkWeb.Admin
                     }
                     for (int col = 1; col <= ColCount; col++)
                     {
-                        var currentColDto = colDtos[col - 1];
+                        var currentColDto = excelColDtos[col - 1];
                         //单元格为空时Value属性为Null
                         var colValue = worksheet.Cells[row, col].Value == null ? "" : worksheet.Cells[row, col].Value.ToString();
                         if (row == 1)  //第一行 为表头
@@ -941,8 +949,23 @@ namespace lkWeb.Admin
                         }
                         else
                         {
+                            if (currentColDto.PrimaryKey == 1)
+                            {
+                                var exist = (await SqlService.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
+                                if (tableDto.ImportType == TableImportType.插入)
+                                {
+                                    if (exist != "0")
+                                        result.msg += $"第{row}行,{currentColDto.Description}:{colValue} 错误，该字段为主键，值已存在,";
+                                }
+                                else if (tableDto.ImportType == TableImportType.更新)
+                                {
+                                    if (exist == "0")
+                                        result.msg += $"第{row}行,{currentColDto.Description}:{colValue} 错误，该字段为主键，值不存在,";
+                                }
+                                colValues[colValueCount].Add(colValue);
+                            }
                             //如果为out类型 需要转换值为对应表的主键Id值
-                            if (currentColDto.DataType == ColumnType.Out)
+                            else if (currentColDto.DataType == ColumnType.Out)
                             {
                                 if (colValue.Ext_IsEmpty()) //out列 允许为空
                                     colValues[colValueCount].Add(colValue);
@@ -1003,21 +1026,7 @@ namespace lkWeb.Admin
                                 colValues[colValueCount].Add(colValue);
                             }
 
-                            if (currentColDto.PrimaryKey == 1)
-                            {
-                                var exist = (await SqlService.GetSingle($"select count(*) from {tableDto.Name} where {currentColDto.Name} = '{colValue}'")).ToString();
-                                if (tableDto.ImportType == TableImportType.插入)
-                                {
-                                    if (exist != "0")
-                                        result.msg += $"第{row}行,{currentColDto.Description}:{colValue} 错误，该字段为主键，值已存在,";
-                                }
-                                else if (tableDto.ImportType == TableImportType.更新)
-                                {
-                                    if (exist == "0")
-                                        result.msg += $"第{row}行,{currentColDto.Description}:{colValue} 错误，该字段为主键，值不存在,";
-                                }
-                                colValues[colValueCount].Add(colValue);
-                            }
+
 
                         }
                     }
@@ -1028,7 +1037,7 @@ namespace lkWeb.Admin
                 if (result.msg.Ext_IsNotEmpty()) //如果有错误信息 不继续执行 返回错误信息
                     return result;
                 //将excel中表头的中文列名 转换为对应的 英文列名
-                var colCnAndEndNames = colDtos.ToDictionary(c => c.Description, c => c.Name);
+                var colCnAndEndNames = excelColDtos.ToDictionary(c => c.Description, c => c.Name);
                 var engColNames = colNames.Select(c => colCnAndEndNames[c]).ToList();
                 var listSql = new List<string>();
                 if (tableDto.ImportType == TableImportType.插入)
@@ -1090,8 +1099,9 @@ namespace lkWeb.Admin
                 {
                     result.msg += "请在表管理中设置导入类型,";
                 }
-
+                SysOperateInterface.ImportBefore(tableDto, colValues, excelColDtos);
                 var execResult = await SqlService.ExecuteBatch(listSql);
+                SysOperateInterface.ImportAfter(tableDto, colValues, excelColDtos);
                 result.flag = execResult == listSql.Count();
                 result.msg = "影响数据条数" + execResult;
             }
