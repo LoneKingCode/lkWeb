@@ -24,10 +24,14 @@ namespace lkWeb.Models.Enum
                 Text="月日",
             },
                     new{
-                Value="月日时",
-                Text="月日时分",
+                Value="mm-dd hh",
+                Text="月日时",
             },
 
+                    new{
+                Value="mm-dd hh:ii",
+                Text="月日时分",
+            }
         };
     }
 }

@@ -420,8 +420,7 @@ namespace lkWeb.Admin
         /// <summary>
         /// 根据外键值获取对应外键Id
         /// </summary>
-        /// <param name="tableId">表Id</param>
-        /// <param name="colName">列名</param>
+        /// <param name="outSqlModel"></param>
         /// <param name="outValue">外键值</param>
         /// <returns></returns>
         public static async Task<Result<string>> GetOutValueId(OutSqlModel outSqlModel, string outValue)
