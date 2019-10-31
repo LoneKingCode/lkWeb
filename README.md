@@ -22,13 +22,13 @@
 - 默认排序条件: 例如:Id desc  
 - 禁止删除条件: 例如: Id < 10 可选参数{UserId}  (设定时会判断每条数据，显示/隐藏该条数据的操作按钮)
 - 禁止更新条件: 例如: Id < 10 可选参数{UserId}  (设定时会判断每条数据，显示/隐藏该条数据的操作按钮)
-- 添加编辑详情URL: 添加url,编辑url,详情url (模板在/views/admin/viewlist/custom/template.vue url需要在菜单中添加，组件需为dialog,且需要接收属性operationVisible控制显示/隐藏，operationData(包含有字段id),父级方法loadTableData为刷新表格数据)  
+- 添加编辑详情URL: 添加url,编辑url,详情url  可选参数{Id}{TableId}
 - 列扩展方法: 为html代码 可选参数{Id},{UserId},{TableId}  
 - 顶部扩展方法: 为html代码 可选参数{Id},{UserId},{TableId}  
-- 列表页JS:可选参数{TableId}，http请求使用request({url: "",method: "get/post"}).then(res=>{}).catch(err=>{})  
-- 添加页JS:可选参数{TableId}，http请求使用request({url: "",method: "get/post"}).then(res=>{}).catch(err=>{})  
-- 编辑页JS:可选参数{TableId}，http请求使用request({url: "",method: "get/post"}).then(res=>{}).catch(err=>{})  
-- 详情页JS:可选参数{TableId}，http请求使用request({url: "",method: "get/post"}).then(res=>{}).catch(err=>{})  
+- 列表页JS:可选参数{TableId}
+- 添加页JS:可选参数{TableId} 
+- 编辑页JS:可选参数{TableId}
+- 详情页JS:可选参数{TableId}
 - 自定义CSS:页面通用,表所在页面顶级CSS Class都为表名，样式写为其子样式即可  
 ### 表结构管理 列部分说明
 ##### 数据类型：
